@@ -1,5 +1,5 @@
 CC = gcc
-PROJ = cleric
+PROJ = water
 CPPFLAGS = -Iinclude
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
