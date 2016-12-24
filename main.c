@@ -1,97 +1,131 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
 
-const int xres = 100;
-
-const double distance = 0.66;
-
-const int map[][5] = {
-    { 1, 1, 1, 1, 1 },
-    { 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1 },
-    { 1, 1, 1, 1, 1 },
+struct point
+{
+    double x, y;
 };
 
-struct sprite
+struct vector
 {
-    double x;
-    double y;
-    double rad;
+    struct point a, b;
 };
 
-struct hit
-{
-    double offset;
-    double distance;
+static const int xres = 800;
+
+static const int map[][13] = {
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
 
-int quadrant(const double rad)
+static double mag(const struct vector vector)
 {
-    if(rad < 0.0)
-        return -1;
-    if(rad <= 1.0 * M_PI / 2.0) return 0;
-    if(rad <= 1.0 * M_PI / 1.0) return 1;
-    if(rad <= 3.0 * M_PI / 2.0) return 2;
-    if(rad <= 2.0 * M_PI / 1.0) return 3;
-    // Anything else
+    const double x = pow(vector.b.x - vector.a.x, 2.0);
+    const double y = pow(vector.b.y - vector.a.y, 2.0);
+    return sqrt(x + y);
+}
+
+static struct vector sub(const struct vector i, const struct vector j)
+{
+    struct vector s = i;
+    s.a.x -= j.a.x; s.a.y -= j.a.y;
+    s.b.x -= j.b.x; s.b.y -= j.b.y;
+    return s;
+}
+
+// Step North
+static struct vector sn(const struct vector player, const double m, const double b)
+{
+    const double y = ceil(player.b.y - 1);
+    const double x = (y - b) / m;
+    return (struct vector) { { 0.0, 0.0 }, { x, y } };
+}
+
+// Step East
+static struct vector se(const struct vector player, const double m, const double b)
+{
+    const double x = floor(player.b.x + 1);
+    const double y = m * x + b;
+    return (struct vector) { { 0.0, 0.0 }, { x, y } };
+}
+
+// Step South
+static struct vector ss(const struct vector player, const double m, const double b)
+{
+    const double y = floor(player.b.y + 1);
+    const double x = (y - b) / m;
+    return (struct vector) { { 0.0, 0.0 }, { x, y } };
+}
+
+// Step West
+static struct vector sw(const struct vector player, const double m, const double b)
+{
+    const double x = ceil(player.b.x - 1);
+    const double y = m * x + b;
+    return (struct vector) { { 0.0, 0.0 }, { x, y } };
+}
+
+static int quadrant(const struct vector camera)
+{
+    if(camera.b.x >  0.0 && camera.b.y >= 0.0) return 0;
+    if(camera.b.x <= 0.0 && camera.b.y >  0.0) return 1;
+    if(camera.b.x <  0.0 && camera.b.y <= 0.0) return 2;
+    if(camera.b.x >= 0.0 && camera.b.y <  0.0) return 3;
     return -1;
 }
 
-struct hit dda(const struct sprite sprite, const double rad)
+static struct vector step(const struct vector player, const struct vector camera)
 {
-    const double angle = sprite.rad + rad;
-    double x = 0.0;
-    double y = 0.0;
-    for(;;)
+    const double m = camera.b.y / camera.b.x;
+    const double b = player.b.y - m * player.b.x;
+    const struct vector n = sn(player, m, b); // Step North
+    const struct vector e = se(player, m, b); // Step East
+    const struct vector s = ss(player, m, b); // Step South
+    const struct vector w = sw(player, m, b); // Step West
+    // Step to the next line
+    struct vector next;
+    switch(quadrant(camera))
     {
-        double dx = 0.0;
-        double dy = 0.0;
-        switch(quadrant(angle))
-        {
-            case 0: // rise(+) run(+)
-            case 3: // rise(-) run(+)
-                dx = floor(sprite.x + 1.0) - sprite.x;
-                dy = dx * tan(angle);
-                break;
-            case 1: // rise(+) run(-)
-            case 2: // rise(-) run(-)
-                dx = ceil(sprite.x - 1.0) - sprite.x;
-                dy = dx * tan(angle);
-                break;
-        }
-        x += dx;
-        y += dy;
-        const int px = sprite.x + x;
-        const int py = sprite.y + y;
-        if(map[py][px])
-        {
-            printf("%f: %d %d\n", angle, px, py);
-            break;
-        }
+        case 0: next = mag(sub(e, player)) < mag(sub(s, player)) ? e : s; break;
+        case 1: next = mag(sub(w, player)) < mag(sub(s, player)) ? w : s; break;
+        case 2: next = mag(sub(w, player)) < mag(sub(n, player)) ? w : n; break;
+        case 3: next = mag(sub(e, player)) < mag(sub(n, player)) ? e : n; break;
+        default: fprintf(stderr, "Engine's busted. Great...\n"); exit(1); break;
     }
-    return (struct hit){ 0.0, 0.0 };
+    const int x = next.b.x;
+    const int y = next.b.y;
+    // Is it a horizontal line?
+    if(next.b.y == floor(next.b.y))
+    {
+        if(map[y][x] || map[y - 1][x]) return next; // Wall?
+    }
+    else // its a vertical line!
+    {
+        if(map[y][x] || map[y][x - 1]) return next; // Wall?
+    }
+    // Seems like we didn't find a wall so let's move onto the next line
+    return step(next, camera);
 }
 
 int main(void)
 {
-    struct sprite hero;
-    hero.x = 1.5;
-    hero.y = 7.5;
-    hero.rad = 1.0 * M_PI / 2.0;
     const int half = xres / 2;
-    for(double i = half; i > -half; i--)
+    for(int col = -half; col < half; col++)
     {
-        const double line = i / half;
-        const double rad = atan2(line, distance);
-        const struct hit wall = dda(hero, rad);
+        const double pan = (double)col / half;
+        const struct vector player = { { 0.0, 0.0 }, { 3.5, 3.5 } };
+        const struct vector camera = { { 0.0, 0.0 }, { .66, pan } };
+        const struct vector hit = step(player, camera);
+        const struct vector view = sub(hit, player);
+        // Fish eye correction
+        printf("%f\n", view.b.x);
     }
     return 0;
 }
