@@ -95,10 +95,10 @@ static struct point step(const struct point player, const double slope, const in
     return step(next, slope, sector);
 }
 
-static int quadrant(const double theta)
+static int quadrant(const double radians)
 {
-    const double x = cos(theta);
-    const double y = sin(theta);
+    const double x = cos(radians);
+    const double y = sin(radians);
     if(x >= 0.0 && y >= 0.0) return 0;
     if(x <= 0.0 && y >= 0.0) return 1;
     if(x <= 0.0 && y <= 0.0) return 2;
@@ -116,7 +116,7 @@ int main(void)
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     // Player init
     struct point player = { 2.5, 2.5 };
-    double angle = 0.0;
+    double theta = 0.0;
     const double d0 = 0.025;
     const double dy = 0.025;
     const double dx = 0.025;
@@ -124,20 +124,20 @@ int main(void)
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(;;)
     {
-        const uint32_t t0 = SDL_GetTicks();
+        const int t0 = SDL_GetTicks();
         // Keyboard
         SDL_PumpEvents();
         // Keyboard exit
         if(key[SDL_SCANCODE_LCTRL] && key[SDL_SCANCODE_D]) break;
         // Keyboard rotation
-        if(key[SDL_SCANCODE_H]) angle -= d0;
-        if(key[SDL_SCANCODE_L]) angle += d0;
+        if(key[SDL_SCANCODE_H]) theta -= d0;
+        if(key[SDL_SCANCODE_L]) theta += d0;
         // Player movement
         struct point temp = player;
-        if(key[SDL_SCANCODE_W]) temp.x += dx * cos(angle), temp.y += dy * sin(angle);
-        if(key[SDL_SCANCODE_S]) temp.x -= dx * cos(angle), temp.y -= dy * sin(angle);
-        if(key[SDL_SCANCODE_A]) temp.y -= dx * cos(angle), temp.x += dy * sin(angle);
-        if(key[SDL_SCANCODE_D]) temp.y += dx * cos(angle), temp.x -= dy * sin(angle);
+        if(key[SDL_SCANCODE_W]) temp.x += dx * cos(theta), temp.y += dy * sin(theta);
+        if(key[SDL_SCANCODE_S]) temp.x -= dx * cos(theta), temp.y -= dy * sin(theta);
+        if(key[SDL_SCANCODE_A]) temp.y -= dx * cos(theta), temp.x += dy * sin(theta);
+        if(key[SDL_SCANCODE_D]) temp.y += dx * cos(theta), temp.x -= dy * sin(theta);
         const int x = temp.x;
         const int y = temp.y;
         player = map[y][x] ? player : temp; // Collision detection
@@ -149,14 +149,14 @@ int main(void)
         {
             const double pan = 2.0 * (double)col / xres - 1.0;
             const double focal = 2.5;
-            const double radians = atan2(pan, focal);
-            const double theta = radians + angle;
-            const double slope = tan(theta);
-            const struct point wall = step(player, slope, quadrant(theta));
+            const double sigma = atan2(pan, focal);
+            const double radians = sigma + theta;
+            const double slope = tan(radians);
+            const struct point wall = step(player, slope, quadrant(radians));
             const struct point ray = sub(wall, player);
             // Fish eye correction
             const double magnitude = mag(ray);
-            const double normal = magnitude * cos(radians);
+            const double normal = magnitude * cos(sigma);
             // Wall height
             const double height = yres / normal;
             const double top = (yres / 2.0) - (height / 2.0);
@@ -167,10 +167,12 @@ int main(void)
             SDL_SetRenderDrawColor(renderer, 0x00, 0x00, torch > 0xFF ? 0xFF : torch, 0x00);
             SDL_RenderDrawLine(renderer, col, top, col, bot);
         }
-        // Render columns
+        // Render wall
         SDL_RenderPresent(renderer);
-        const unsigned t1 = SDL_GetTicks();
-        fprintf(stderr, "fps: %u\n", 1000 / (t1 - t0));
+        const int t1 = SDL_GetTicks();
+        const int dt = t1 - t0;
+        // 100 Fps
+        SDL_Delay(10 - dt < 0 ? 0 : dt);
     }
     // Cleanup
     SDL_DestroyWindow(window);

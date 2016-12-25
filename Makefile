@@ -3,7 +3,7 @@ PROJ = water
 CPPFLAGS = -Iinclude
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
-CFLAGS = -Wall -Wextra -Wshadow -std=gnu11 -pedantic -Og -g
+CFLAGS = -Wall -Wextra -Wshadow -std=gnu11 -pedantic -Ofast
 LDFLAGS = -lm -lSDL2
 TARGET_ARCH = -march=native
 DEPDIR := deps
