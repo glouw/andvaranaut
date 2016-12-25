@@ -80,7 +80,6 @@ static struct point step(const struct point player, const double slope, const in
         case 1: next = mag(sub(w, player)) < mag(sub(s, player)) ? w : s; break;
         case 2: next = mag(sub(w, player)) < mag(sub(n, player)) ? w : n; break;
         case 3: next = mag(sub(e, player)) < mag(sub(n, player)) ? e : n; break;
-        default: fprintf(stderr, "Engine's broken... Great.\n"); exit(1); break;
     }
     // Check the map
     const int x = next.x;
@@ -121,13 +120,14 @@ int main(void)
     // Player init
     struct point player = { 2.5, 2.5 };
     double angle = 0.0;
-    const double d0 = 0.01;
-    const double dy = 0.01;
-    const double dx = 0.01;
+    const double d0 = 0.025;
+    const double dy = 0.025;
+    const double dx = 0.025;
     // Game loop
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(;;)
     {
+        const uint32_t t0 = SDL_GetTicks();
         // Keyboard
         SDL_PumpEvents();
         // Keyboard exit
@@ -145,7 +145,6 @@ int main(void)
         const int y = temp.y;
         player = map[y][x] ? player : temp; // Collision detection
         // Clear screen
-        const uint32_t t0 = SDL_GetTicks();
         SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
         SDL_RenderClear(renderer);
         // Buffer columns
