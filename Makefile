@@ -4,7 +4,7 @@ CPPFLAGS = -Iinclude
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -Wall -Wextra -Wshadow -std=gnu11 -pedantic -Og -g
-LDFLAGS = -lm -lncurses
+LDFLAGS = -lm -lSDL2
 TARGET_ARCH = -march=native
 DEPDIR := deps
 $(shell mkdir -p $(DEPDIR) >/dev/null)
