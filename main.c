@@ -165,10 +165,9 @@ int main(void)
             const double brightness = 500.0;
             const double torch = brightness / pow(magnitude, 2.0);
             SDL_SetRenderDrawColor(renderer, 0x00, 0x00, torch > 0xFF ? 0xFF : torch, 0x00);
-            // Buffer wall
             SDL_RenderDrawLine(renderer, col, top, col, bot);
         }
-        // Render walls
+        // Render columns
         SDL_RenderPresent(renderer);
         const unsigned t1 = SDL_GetTicks();
         fprintf(stderr, "fps: %u\n", 1000 / (t1 - t0));
