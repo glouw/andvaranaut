@@ -5,4 +5,4 @@ water engine
     move: w,a,s,d
     turn: h, l
 
-    ![alt tag](http://i.imgur.com/gZmiHwG.png)
+    ![alt tag](https://raw.githubusercontent.com/yellingintothefan/water/master/images/screenshot.png)
