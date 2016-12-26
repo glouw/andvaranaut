@@ -125,14 +125,14 @@ int main(void)
     for(;;)
     {
         const int t0 = SDL_GetTicks();
-        // Keyboard
+        // Keyboard update
         SDL_PumpEvents();
         // Keyboard exit
         if(key[SDL_SCANCODE_LCTRL] && key[SDL_SCANCODE_D]) break;
         // Keyboard rotation
         if(key[SDL_SCANCODE_H]) theta -= d0;
         if(key[SDL_SCANCODE_L]) theta += d0;
-        // Player movement
+        // Keyboard movement
         struct point temp = player;
         if(key[SDL_SCANCODE_W]) temp.x += dx * cos(theta), temp.y += dy * sin(theta);
         if(key[SDL_SCANCODE_S]) temp.x -= dx * cos(theta), temp.y -= dy * sin(theta);
