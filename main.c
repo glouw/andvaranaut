@@ -172,7 +172,8 @@ int main(void)
         const int t1 = SDL_GetTicks();
         const int dt = t1 - t0;
         // 100 Fps
-        SDL_Delay(10 - dt < 0 ? 0 : dt);
+        const int ms = 10 - dt < 0 ? 0 : dt;
+        SDL_Delay(ms);
     }
     // Cleanup
     SDL_DestroyWindow(window);
