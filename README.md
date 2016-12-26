@@ -5,5 +5,5 @@ water engine
     move: w,a,s,d
     turn: h, l
 
-    ![ScreenShot](/images/hallway.png)
+    ![ScreenShot](https://raw.githubusercontent.com/yellingintothefan/water/master/images/hallway.png)
 
