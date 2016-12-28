@@ -119,7 +119,7 @@ int main(void)
     // SDL init
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
-    SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     // Hero init
     struct point hero = { 2.5, 3.5 };
     double theta = 0.0;
@@ -150,9 +150,6 @@ int main(void)
         const int x = temp.x;
         const int y = temp.y;
         hero = map[y][x] ? hero : temp;
-        // Clear screen
-        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
-        SDL_RenderClear(renderer);
         // Buffer columns
         for(int col = 0; col < xres; col++)
         {
@@ -174,10 +171,11 @@ int main(void)
             const double torch = 300.0;
             const double brightness = torch / (magnitude * magnitude);
             const double lumi = brightness > 0xFF ? 0xFF : brightness;
-            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, lumi, 0x00);
-            SDL_RenderDrawLine(renderer, col, top < 0.0 ? 0.0 : top, col, bot > yres ? yres : bot);
+            //SDL_RenderDrawLine(renderer, col, top < 0.0 ? 0.0 : top, col, bot > yres ? yres : bot);
         }
         // Render columns
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, gpu, NULL, NULL);
         SDL_RenderPresent(renderer);
         const int t1 = SDL_GetTicks();
         const int dt = t1 - t0;
