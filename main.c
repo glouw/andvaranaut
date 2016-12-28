@@ -24,8 +24,8 @@ struct point
 
 static double mag(const struct point point)
 {
-    const double x = pow(point.x, 2.0);
-    const double y = pow(point.y, 2.0);
+    const double x = point.x * point.x;
+    const double y = point.y * point.y;
     return sqrt(x + y);
 }
 
