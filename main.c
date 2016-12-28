@@ -1,16 +1,19 @@
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 
 static const int map[][13] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
 
@@ -34,30 +37,30 @@ static struct point sub(const struct point i, const struct point j)
     return temp;
 }
 
-static struct point sn(const struct point hero, const double m, const double b)
+static struct point sn(const struct point hero, const double m, const double b) // Step north
 {
-    const double y = ceil(hero.y - 1);
+    const double y = ceil(hero.y - 1.0);
     const double x = (y - b) / m;
     return (struct point){ x, y };
 }
 
-static struct point se(const struct point hero, const double m, const double b)
+static struct point se(const struct point hero, const double m, const double b) // Step east
 {
-    const double x = floor(hero.x + 1);
+    const double x = floor(hero.x + 1.0);
     const double y = m * x + b;
     return (struct point){ x, y };
 }
 
-static struct point ss(const struct point hero, const double m, const double b)
+static struct point ss(const struct point hero, const double m, const double b) // Step south
 {
-    const double y = floor(hero.y + 1);
+    const double y = floor(hero.y + 1.0);
     const double x = (y - b) / m;
     return (struct point){ x, y };
 }
 
-static struct point sw(const struct point hero, const double m, const double b)
+static struct point sw(const struct point hero, const double m, const double b) // Step west
 {
-    const double x = ceil(hero.x - 1);
+    const double x = ceil(hero.x - 1.0);
     const double y = m * x + b;
     return (struct point){ x, y };
 }
@@ -67,33 +70,35 @@ static struct point closest(const struct point hero, const struct point i, const
     return mag(sub(i, hero)) < mag(sub(j, hero)) ? i : j;
 }
 
+static bool hor(const struct point point)
+{
+    return point.y == floor(point.y);
+}
+
+static bool ver(const struct point point)
+{
+    return point.x == floor(point.x);
+}
+
 static struct point step(const struct point hero, const double m, const int quadrant)
 {
     const double b = hero.y - m * hero.x;
     // Step to the next line
-    struct point next;
+    struct point point;
     switch(quadrant)
     {
-        case 0: next = closest(hero, se(hero, m, b), ss(hero, m, b)); break;
-        case 1: next = closest(hero, sw(hero, m, b), ss(hero, m, b)); break;
-        case 2: next = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
-        case 3: next = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
+        case 0: point = closest(hero, se(hero, m, b), ss(hero, m, b)); break;
+        case 1: point = closest(hero, sw(hero, m, b), ss(hero, m, b)); break;
+        case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
+        case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
-    // Check the map
-    const int x = next.x;
-    const int y = next.y;
-    // Horizontal line?
-    if(next.y == floor(next.y))
-    {
-        if(map[y][x] || map[y - 1][x]) return next; // Is it a wall?
-    }
-    // Vertical line
-    else
-    {
-        if(map[y][x] || map[y][x - 1]) return next; // Please be a wall...
-    }
-    // No Wall? Next line
-    return step(next, m, quadrant);
+    // Was a wall found?
+    const int x = point.x;
+    const int y = point.y;
+    if(hor(point)) { if(map[y][x] || map[y - 1][x]) return point; }
+    if(ver(point)) { if(map[y][x] || map[y][x - 1]) return point; }
+    // No wall? Find the next line
+    return step(point, m, quadrant);
 }
 
 static int quadrant(const double radians)
@@ -115,15 +120,14 @@ int main(void)
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-    // hero init
-    struct point hero = { 2.5, 2.5 };
+    // Hero init
+    struct point hero = { 2.5, 3.5 };
     double theta = 0.0;
     const double d0 = 0.025;
     const double dy = 0.025;
     const double dx = 0.025;
     // Game loop
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
-    //for(int iteration = 0; iteration < 1; iteration++)
     for(;;)
     {
         const int t0 = SDL_GetTicks();
@@ -140,9 +144,10 @@ int main(void)
         if(key[SDL_SCANCODE_S]) temp.x -= dx * cos(theta), temp.y -= dy * sin(theta);
         if(key[SDL_SCANCODE_A]) temp.y -= dx * cos(theta), temp.x += dy * sin(theta);
         if(key[SDL_SCANCODE_D]) temp.y += dx * cos(theta), temp.x -= dy * sin(theta);
+        // Collision detection
         const int x = temp.x;
         const int y = temp.y;
-        hero = map[y][x] ? hero : temp; // Collision detection
+        hero = map[y][x] ? hero : temp;
         // Clear screen
         SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
         SDL_RenderClear(renderer);
@@ -159,19 +164,19 @@ int main(void)
             // Fish eye correction
             const double magnitude = mag(ray);
             const double normal = magnitude * cos(sigma);
-            // Wall height
-            const double zoom = 200.0;
+            // Column height
+            const double zoom = 250.0;
             const double height = round(zoom * focal / normal);
             const double top = (yres / 2.0) - (height / 2.0);
             const double bot = top + height;
-            // Torch brightness
-            const double brightness = 500.0;
+            // Column brightness
+            const double brightness = 300.0;
             const double torch = brightness / pow(magnitude, 2.0);
             const double lumi = torch > 0xFF ? 0xFF : torch;
             SDL_SetRenderDrawColor(renderer, lumi, lumi, lumi, 0x00);
-            SDL_RenderDrawLine(renderer, col, top, col, bot);
+            SDL_RenderDrawLine(renderer, col, top < 0.0 ? 0.0 : top, col, bot > yres ? yres : bot);
         }
-        // Render wall
+        // Render columns
         SDL_RenderPresent(renderer);
         const int t1 = SDL_GetTicks();
         const int dt = t1 - t0;
