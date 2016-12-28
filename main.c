@@ -180,7 +180,7 @@ int main(void)
         SDL_RenderPresent(renderer);
         const int t1 = SDL_GetTicks();
         const int dt = t1 - t0;
-        const int ms = 10 - dt < 0 ? 0 : dt;
+        const int ms = 16 - dt < 0 ? 0 : dt;
         SDL_Delay(ms);
     }
     // Cleanup
