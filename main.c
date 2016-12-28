@@ -135,15 +135,17 @@ int main(void)
         SDL_PumpEvents();
         // Keyboard exit
         if(key[SDL_SCANCODE_LCTRL] && key[SDL_SCANCODE_D]) break;
+        if(key[SDL_SCANCODE_RCTRL] && key[SDL_SCANCODE_D]) break;
         // Keyboard rotation
         if(key[SDL_SCANCODE_H]) theta -= d0;
         if(key[SDL_SCANCODE_L]) theta += d0;
         // Keyboard movement
         struct point temp = hero;
-        if(key[SDL_SCANCODE_W]) temp.x += dx * cos(theta), temp.y += dy * sin(theta);
-        if(key[SDL_SCANCODE_S]) temp.x -= dx * cos(theta), temp.y -= dy * sin(theta);
-        if(key[SDL_SCANCODE_A]) temp.y -= dx * cos(theta), temp.x += dy * sin(theta);
-        if(key[SDL_SCANCODE_D]) temp.y += dx * cos(theta), temp.x -= dy * sin(theta);
+        const struct point direction = { dx * cos(theta), dy * sin(theta) };
+        if(key[SDL_SCANCODE_W]) temp.x += direction.x, temp.y += direction.y;
+        if(key[SDL_SCANCODE_S]) temp.x -= direction.x, temp.y -= direction.y;
+        if(key[SDL_SCANCODE_A]) temp.y -= direction.x, temp.x += direction.y;
+        if(key[SDL_SCANCODE_D]) temp.y += direction.x, temp.x -= direction.y;
         // Collision detection
         const int x = temp.x;
         const int y = temp.y;
@@ -158,8 +160,7 @@ int main(void)
             const double focal = 3.0;
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
-            const double m = tan(radians);
-            const struct point wall = step(hero, m, quadrant(radians));
+            const struct point wall = step(hero, tan(radians), quadrant(radians));
             const struct point ray = sub(wall, hero);
             // Fish eye correction
             const double magnitude = mag(ray);
@@ -170,10 +171,10 @@ int main(void)
             const double top = (yres / 2.0) - (height / 2.0);
             const double bot = top + height;
             // Column brightness
-            const double brightness = 300.0;
-            const double torch = brightness / pow(magnitude, 2.0);
-            const double lumi = torch > 0xFF ? 0xFF : torch;
-            SDL_SetRenderDrawColor(renderer, lumi, lumi, lumi, 0x00);
+            const double torch = 300.0;
+            const double brightness = torch / (magnitude * magnitude);
+            const double lumi = brightness > 0xFF ? 0xFF : brightness;
+            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, lumi, 0x00);
             SDL_RenderDrawLine(renderer, col, top < 0.0 ? 0.0 : top, col, bot > yres ? yres : bot);
         }
         // Render columns
