@@ -121,7 +121,7 @@ int main(void)
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     const int format = SDL_GetWindowPixelFormat(window);
-    SDL_PixelFormat* info = SDL_AllocFormat(format); (void)info; // Good to have but hide for now
+    SDL_PixelFormat* info = SDL_AllocFormat(format); (void)info; // Good to have, but hide for now
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero init
     struct point hero = { 2.5, 3.5 };
