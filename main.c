@@ -72,13 +72,21 @@ static struct point closest(const struct point hero, const struct point i, const
 
 static bool hor(const struct point point)
 {
-    return point.y == floor(point.y);
+    const int x = point.x;
+    const int y = point.y;
+    return point.y == y && (map[y][x] || map[y - 1][x]);
+}
+
+static bool ver(const struct point point)
+{
+    const int x = point.x;
+    const int y = point.y;
+    return point.x == x && (map[y][x] || map[y][x - 1]);
 }
 
 static struct point step(const struct point hero, const double m, const int quadrant)
 {
     const double b = hero.y - m * hero.x;
-    // Step to the next line
     struct point point;
     switch(quadrant)
     {
@@ -87,13 +95,7 @@ static struct point step(const struct point hero, const double m, const int quad
         case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
-    // Was a wall found?
-    const int x = point.x;
-    const int y = point.y;
-    if(hor(point)) { if(map[y][x] || map[y - 1][x]) return point; }
-    else           { if(map[y][x] || map[y][x - 1]) return point; }
-    // No wall? Find the next line
-    return step(point, m, quadrant);
+    return hor(point) || ver(point) ? point : step(point, m, quadrant);
 }
 
 static int quadrant(const double radians)
@@ -147,7 +149,7 @@ int main(void)
         const int y = temp.y;
         hero = map[y][x] ? hero : temp;
         // Buffer columns
-        void* bytes; int pitch; SDL_LockTexture(gpu, NULL, &bytes, &pitch); (void)pitch;
+        void* bytes; int pitch; SDL_LockTexture(gpu, NULL, &bytes, &pitch);
         uint32_t* const pixel = (uint32_t*)bytes;
         for(int col = 0; col < xres; col++)
         {
