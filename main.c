@@ -118,10 +118,6 @@ int main(void)
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, xres, yres);
-    #define A(c) (c << 24) // Alpha
-    #define R(c) (c << 16) // Red
-    #define G(c) (c <<  8) // Green
-    #define B(c) (c <<  0) // Blue
     // Hero
     struct point hero = { 2.5, 3.5 };
     double theta = 0.0;
@@ -154,7 +150,7 @@ int main(void)
         hero = map[y][x] ? hero : temp;
         // Buffer columns
         void* bytes; int pitch; SDL_LockTexture(gpu, NULL, &bytes, &pitch);
-        uint32_t* const pixel = (uint32_t*)bytes;
+        uint32_t* const pixels = (uint32_t*)bytes;
         for(int col = 0; col < xres; col++)
         {
             const double pan = 2.0 * (double)col / xres - 1.0;
@@ -167,7 +163,7 @@ int main(void)
             const double magnitude = mag(ray);
             const double normal = magnitude * cos(sigma);
             // Column height
-            const double zoom = 250.0;
+            const double zoom = 300.0;
             const double height = round(zoom * focal / normal);
             const double top = (yres / 2.0) - (height / 2.0);
             const double bot = top + height;
@@ -180,9 +176,13 @@ int main(void)
             const int b = top < 0 ? 0 : top;
             const int c = bot > yres ? yres : bot;
             const int d = yres;
-            for(int j = a; j < b; j++) pixel[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(0x00); // Ceiling
-            for(int j = b; j < c; j++) pixel[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(lumi); // Wall
-            for(int j = c; j < d; j++) pixel[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(0x00); // Floor
+            #define A(c) (c << 24) // Alpha
+            #define R(c) (c << 16) // Red
+            #define G(c) (c <<  8) // Green
+            #define B(c) (c <<  0) // Blue
+            for(int j = a; j < b; j++) pixels[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(0x00); // Ceiling
+            for(int j = b; j < c; j++) pixels[j * xres + col] = A(0x00) | R(lumi) | G(lumi) | B(lumi); // Wall
+            for(int j = c; j < d; j++) pixels[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(0x00); // Floor
         }
         SDL_UnlockTexture(gpu);
         // Render columns
