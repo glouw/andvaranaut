@@ -109,6 +109,13 @@ static int quadrant(const double radians)
     return -1;
 }
 
+static double percent(struct point point)
+{
+    double integral;
+    const int x = point.x;
+    return point.x == x ? modf(point.y, &integral) : modf(point.x, &integral);
+}
+
 int main(void)
 {
     const int xres = 800;
@@ -118,6 +125,7 @@ int main(void)
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, xres, yres);
+    SDL_Surface* const surface = SDL_LoadBMP("textures/hello.bmp");
     // Hero
     struct point hero = { 2.5, 3.5 };
     double theta = 0.0;
@@ -194,6 +202,7 @@ int main(void)
         SDL_Delay(ms < 0 ? 0 : ms);
     }
     // Cleanup
+    SDL_FreeSurface(surface);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(gpu);
