@@ -31,10 +31,7 @@ static double mag(const struct point point)
 
 static struct point sub(const struct point i, const struct point j)
 {
-    struct point temp = i;
-    temp.x -= j.x;
-    temp.y -= j.y;
-    return temp;
+    return (struct point){ i.x - j.x, i.y - j.y };
 }
 
 static struct point sn(const struct point hero, const double m, const double b) // Step north
@@ -84,20 +81,6 @@ static bool ver(const struct point point)
     return point.x == x && (map[y][x] || map[y][x - 1]);
 }
 
-static struct point step(const struct point hero, const double m, const int quadrant)
-{
-    const double b = hero.y - m * hero.x;
-    struct point point;
-    switch(quadrant)
-    {
-        case 0: point = closest(hero, se(hero, m, b), ss(hero, m, b)); break;
-        case 1: point = closest(hero, sw(hero, m, b), ss(hero, m, b)); break;
-        case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
-        case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
-    }
-    return hor(point) || ver(point) ? point : step(point, m, quadrant);
-}
-
 static int quadrant(const double radians)
 {
     const double x = cos(radians);
@@ -109,36 +92,54 @@ static int quadrant(const double radians)
     return -1;
 }
 
-static double percentage(struct point point)
+static struct point step(const struct point hero, const double m, const int quad)
 {
-    double null;
-    const int x = point.x;
-    return point.x == x ? modf(point.y, &null) : modf(point.x, &null);
+    const double b = hero.y - m * hero.x;
+    struct point point;
+    switch(quad)
+    {
+        case 0: point = closest(hero, se(hero, m, b), ss(hero, m, b)); break;
+        case 1: point = closest(hero, sw(hero, m, b), ss(hero, m, b)); break;
+        case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
+        case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
+    }
+    return hor(point) || ver(point) ? point : step(point, m, quad);
 }
 
-static bool collision(struct point point)
+static double percentage(const struct point point)
+{
+    double null;
+    return ver(point) ? modf(point.y, &null) : modf(point.x, &null);
+}
+
+static bool collision(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
     return map[y][x];
 }
 
+static SDL_Surface* load(const char* path, const uint32_t format)
+{
+    SDL_Surface* const surface = SDL_LoadBMP(path);
+    SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
+    SDL_Surface* const convert = SDL_ConvertSurface(surface, allocation, 0);
+    return convert;
+}
+
 int main(void)
 {
     const int xres = 800;
     const int yres = 600;
+    // Video init
     SDL_Init(SDL_INIT_VIDEO);
-    // Pixel format
+    const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    const uint32_t pformat = SDL_PIXELFORMAT_ARGB8888;
-    SDL_Texture* const gpu = SDL_CreateTexture(renderer, pformat, SDL_TEXTUREACCESS_STREAMING, xres, yres);
-    SDL_Surface* surface = SDL_LoadBMP("textures/hello.bmp");
-    const SDL_PixelFormat* const allocation = SDL_AllocFormat(pformat);
-    surface = SDL_ConvertSurface(surface, allocation, 0);
+    SDL_Surface* const surface = load("textures/wall.bmp", format);
+    SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero
-    struct point hero = { 2.5, 3.5 };
-    double theta = 0.0;
+    struct point hero = { 2.5, 3.5 }; double theta = 0.0;
     const double d0 = 0.025;
     const double dy = 0.025;
     const double dx = 0.025;
@@ -165,7 +166,7 @@ int main(void)
         // Collision detection
         hero = collision(temp) ? hero : temp;
         // Buffer columns
-        void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
+        void* bytes; int null; SDL_LockTexture(texture, NULL, &bytes, &null);
         uint32_t* const pixels = (uint32_t*)bytes;
         for(int col = 0; col < xres; col++)
         {
@@ -176,14 +177,13 @@ int main(void)
             const struct point wall = step(hero, tan(radians), quadrant(radians));
             const struct point ray = sub(wall, hero);
             // Fish eye correction
-            const double magnitude = mag(ray);
-            const double normal = magnitude * cos(sigma);
+            const double normal = mag(ray) * cos(sigma);
             // Column height
             const double zoom = 300.0;
             const double height = round(zoom * focal / normal);
             const double top = round((yres / 2.0) - (height / 2.0));
             const double bot = top + height;
-            // Drawing
+            // Buffer colums
             const int a = 0;
             const int b = top < 0 ? 0 : top;
             const int c = bot > yres ? yres : bot;
@@ -191,21 +191,21 @@ int main(void)
             const int w = surface->w;
             const int h = surface->h;
             // Wall
-            const uint32_t* const texture = surface->pixels;
+            const uint32_t* const piece = surface->pixels;
             const double xper = percentage(wall);
             const int x = w * xper;
             for(int j = b; j < c; j++)
             {
                 const double yper = (j - top) / height;
                 const int y = h * yper;
-                pixels[j * xres + col] = texture[y * w + x];
+                pixels[j * xres + col] = piece[y * w + x];
             }
             for(int j = a; j < b; j++) pixels[j * xres + col] = 0x00000000; // Ceiling
             for(int j = c; j < d; j++) pixels[j * xres + col] = 0x00000000; // Floor
         }
-        SDL_UnlockTexture(gpu);
+        SDL_UnlockTexture(texture);
         // Render columns
-        SDL_RenderCopy(renderer, gpu, NULL, NULL);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
         const int t1 = SDL_GetTicks();
         const int dt = t1 - t0;
@@ -217,7 +217,7 @@ int main(void)
     SDL_FreeSurface(surface);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
-    SDL_DestroyTexture(gpu);
+    SDL_DestroyTexture(texture);
     SDL_Quit();
     return 0;
 }
