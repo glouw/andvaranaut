@@ -14,6 +14,10 @@ static const int map[][13] = {
     { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
 
@@ -67,11 +71,11 @@ static struct point closest(const struct point hero, const struct point i, const
     return mag(sub(i, hero)) < mag(sub(j, hero)) ? i : j;
 }
 
-static double fw(const struct point point) // Facing west
+static double fn(const struct point point) // Facing north
 {
     const int x = point.x;
     const int y = point.y;
-    return point.x - x == 0.0 && map[y][x] && map[y][x - 1] == 0;
+    return point.y - y == 0.0 && map[y][x] && map[y - 1][x] == 0;
 }
 
 static double fe(const struct point point) // Facing east
@@ -88,11 +92,11 @@ static double fs(const struct point point) // Facing south
     return point.y - y == 0.0 && map[y][x] == 0 && map[y - 1][x];
 }
 
-static double fn(const struct point point) // Facing north
+static double fw(const struct point point) // Facing west
 {
     const int x = point.x;
     const int y = point.y;
-    return point.y - y == 0.0 && map[y][x] && map[y - 1][x] == 0;
+    return point.x - x == 0.0 && map[y][x] && map[y][x - 1] == 0;
 }
 
 static bool hor(const struct point point)
@@ -103,6 +107,16 @@ static bool hor(const struct point point)
 static bool ver(const struct point point)
 {
     return fe(point) || fw(point);
+}
+
+static double percentage(const struct point point)
+{
+    double null;
+    if(fn(point)) return 0.0 + modf(point.x, &null);
+    if(fe(point)) return 1.0 - modf(point.y, &null);
+    if(fs(point)) return 1.0 - modf(point.x, &null);
+    if(fw(point)) return 0.0 + modf(point.y, &null);
+    return 0.0;
 }
 
 static int quadrant(const double radians)
@@ -128,16 +142,6 @@ static struct point step(const struct point hero, const double m, const int quad
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
     return hor(point) || ver(point) ? point : step(point, m, quadrant);
-}
-
-static double percentage(const struct point point)
-{
-    double null;
-    if(fw(point)) return 0.0 + modf(point.y, &null);
-    if(fe(point)) return 1.0 - modf(point.y, &null);
-    if(fs(point)) return 1.0 - modf(point.x, &null);
-    if(fn(point)) return 0.0 + modf(point.x, &null);
-    return 0.0;
 }
 
 static bool collision(const struct point point)
