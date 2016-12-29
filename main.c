@@ -113,12 +113,16 @@ int main(void)
 {
     const int xres = 800;
     const int yres = 600;
-    // SDL init
     SDL_Init(SDL_INIT_VIDEO);
+    // Pixel format
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, xres, yres);
-    // Hero init
+    #define A(c) (c << 24) // Alpha
+    #define R(c) (c << 16) // Red
+    #define G(c) (c <<  8) // Green
+    #define B(c) (c <<  0) // Blue
+    // Hero
     struct point hero = { 2.5, 3.5 };
     double theta = 0.0;
     const double d0 = 0.025;
@@ -176,9 +180,9 @@ int main(void)
             const int b = top < 0 ? 0 : top;
             const int c = bot > yres ? yres : bot;
             const int d = yres;
-            for(int j = a; j < b; j++) pixel[j * xres + col] = 0x00 << 16 | 0x00 << 8 | 0x00; // Ceiling
-            for(int j = b; j < c; j++) pixel[j * xres + col] = lumi << 16 | lumi << 8 | lumi; // Wall
-            for(int j = c; j < d; j++) pixel[j * xres + col] = 0x00 << 16 | 0x00 << 8 | 0x00; // Floor
+            for(int j = a; j < b; j++) pixel[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(0x00); // Ceiling
+            for(int j = b; j < c; j++) pixel[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(lumi); // Wall
+            for(int j = c; j < d; j++) pixel[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(0x00); // Floor
         }
         SDL_UnlockTexture(gpu);
         // Render columns
