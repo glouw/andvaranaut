@@ -67,18 +67,42 @@ static struct point closest(const struct point hero, const struct point i, const
     return mag(sub(i, hero)) < mag(sub(j, hero)) ? i : j;
 }
 
-static bool hor(const struct point point)
+static double fw(const struct point point) // Facing west
 {
     const int x = point.x;
     const int y = point.y;
-    return point.y == y && (map[y][x] || map[y - 1][x]);
+    return point.x - x == 0.0 && map[y][x] && map[y][x - 1] == 0;
+}
+
+static double fe(const struct point point) // Facing east
+{
+    const int x = point.x;
+    const int y = point.y;
+    return point.x - x == 0.0 && map[y][x] == 0 && map[y][x - 1];
+}
+
+static double fs(const struct point point) // Facing south
+{
+    const int x = point.x;
+    const int y = point.y;
+    return point.y - y == 0.0 && map[y][x] == 0 && map[y - 1][x];
+}
+
+static double fn(const struct point point) // Facing north
+{
+    const int x = point.x;
+    const int y = point.y;
+    return point.y - y == 0.0 && map[y][x] && map[y - 1][x] == 0;
+}
+
+static bool hor(const struct point point)
+{
+    return fn(point) || fs(point);
 }
 
 static bool ver(const struct point point)
 {
-    const int x = point.x;
-    const int y = point.y;
-    return point.x == x && (map[y][x] || map[y][x - 1]);
+    return fe(point) || fw(point);
 }
 
 static int quadrant(const double radians)
@@ -92,24 +116,28 @@ static int quadrant(const double radians)
     return -1;
 }
 
-static struct point step(const struct point hero, const double m, const int quad)
+static struct point step(const struct point hero, const double m, const int quadrant)
 {
     const double b = hero.y - m * hero.x;
     struct point point;
-    switch(quad)
+    switch(quadrant)
     {
         case 0: point = closest(hero, se(hero, m, b), ss(hero, m, b)); break;
         case 1: point = closest(hero, sw(hero, m, b), ss(hero, m, b)); break;
         case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
-    return hor(point) || ver(point) ? point : step(point, m, quad);
+    return hor(point) || ver(point) ? point : step(point, m, quadrant);
 }
 
 static double percentage(const struct point point)
 {
     double null;
-    return ver(point) ? modf(point.y, &null) : modf(point.x, &null);
+    if(fw(point)) return 0.0 + modf(point.y, &null);
+    if(fe(point)) return 1.0 - modf(point.y, &null);
+    if(fs(point)) return 1.0 - modf(point.x, &null);
+    if(fn(point)) return 0.0 + modf(point.x, &null);
+    return 0.0;
 }
 
 static bool collision(const struct point point)
@@ -129,8 +157,8 @@ static SDL_Surface* load(const char* path, const uint32_t format)
 
 int main(void)
 {
-    const int xres = 800;
-    const int yres = 600;
+    const int xres = 640;
+    const int yres = 480;
     // Video init
     SDL_Init(SDL_INIT_VIDEO);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
@@ -140,9 +168,9 @@ int main(void)
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero
     struct point hero = { 2.5, 3.5 }; double theta = 0.0;
-    const double d0 = 0.025;
-    const double dy = 0.025;
-    const double dx = 0.025;
+    const double d0 = 0.045;
+    const double dy = 0.055;
+    const double dx = 0.055;
     // Game loop
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(;;)
@@ -171,7 +199,7 @@ int main(void)
         for(int col = 0; col < xres; col++)
         {
             const double pan = 2.0 * (double)col / xres - 1.0;
-            const double focal = 3.0;
+            const double focal = 1.0;
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
             const struct point wall = step(hero, tan(radians), quadrant(radians));
@@ -179,7 +207,7 @@ int main(void)
             // Fish eye correction
             const double normal = mag(ray) * cos(sigma);
             // Column height
-            const double zoom = 300.0;
+            const double zoom = xres / 2;
             const double height = round(zoom * focal / normal);
             const double top = round((yres / 2.0) - (height / 2.0));
             const double bot = top + height;
