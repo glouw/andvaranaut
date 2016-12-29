@@ -4,3 +4,5 @@ water engine
 
     move: w,a,s,d
     turn: h, l
+
+    see README in textures for texture credits
