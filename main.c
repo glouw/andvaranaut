@@ -75,11 +75,6 @@ static bool hor(const struct point point)
     return point.y == floor(point.y);
 }
 
-static bool ver(const struct point point)
-{
-    return point.x == floor(point.x);
-}
-
 static struct point step(const struct point hero, const double m, const int quadrant)
 {
     const double b = hero.y - m * hero.x;
@@ -96,7 +91,7 @@ static struct point step(const struct point hero, const double m, const int quad
     const int x = point.x;
     const int y = point.y;
     if(hor(point)) { if(map[y][x] || map[y - 1][x]) return point; }
-    if(ver(point)) { if(map[y][x] || map[y][x - 1]) return point; }
+    else           { if(map[y][x] || map[y][x - 1]) return point; }
     // No wall? Find the next line
     return step(point, m, quadrant);
 }
@@ -120,9 +115,7 @@ int main(void)
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    const int format = SDL_GetWindowPixelFormat(window);
-    SDL_PixelFormat* info = SDL_AllocFormat(format); (void)info; // Good to have, but hide for now
-    SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
+    SDL_Texture* const gpu = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero init
     struct point hero = { 2.5, 3.5 };
     double theta = 0.0;
@@ -154,9 +147,8 @@ int main(void)
         const int y = temp.y;
         hero = map[y][x] ? hero : temp;
         // Buffer columns
-        void* bytes = NULL;
-        int pitch = 0;
-        SDL_LockTexture(gpu, NULL, &bytes, &pitch);
+        void* bytes; int pitch; SDL_LockTexture(gpu, NULL, &bytes, &pitch); (void)pitch;
+        uint32_t* const pixel = (uint32_t*)bytes;
         for(int col = 0; col < xres; col++)
         {
             const double pan = 2.0 * (double)col / xres - 1.0;
@@ -178,16 +170,13 @@ int main(void)
             const double brightness = torch / (magnitude * magnitude);
             const unsigned lumi = brightness > 0xFF ? 0xFF : brightness;
             // Drawing
-            #define max(a, b) (a > b ? b : a)
-            #define min(a, b) (a < b ? b : a)
             const int a = 0;
-            const int b = min(top, 0);
-            const int c = max(bot, yres);
+            const int b = top < 0 ? 0 : top;
+            const int c = bot > yres ? yres : bot;
             const int d = yres;
-            uint32_t* const pixel = (uint32_t*)bytes;
-            for(int j = a; j < b; j++) pixel[j * pitch / sizeof(*pixel) + col] = 0x00 << 16 | 0x00 << 8 | 0x00; // Ceiling
-            for(int j = b; j < c; j++) pixel[j * pitch / sizeof(*pixel) + col] = 0x00 << 16 | 0x00 << 8 | lumi; // Wall
-            for(int j = c; j < d; j++) pixel[j * pitch / sizeof(*pixel) + col] = 0x00 << 16 | 0x00 << 8 | 0x00; // Floor
+            for(int j = a; j < b; j++) pixel[j * xres + col] = 0x00 << 16 | 0x00 << 8 | 0x00; // Ceiling
+            for(int j = b; j < c; j++) pixel[j * xres + col] = lumi << 16 | lumi << 8 | lumi; // Wall
+            for(int j = c; j < d; j++) pixel[j * xres + col] = 0x00 << 16 | 0x00 << 8 | 0x00; // Floor
         }
         SDL_UnlockTexture(gpu);
         // Render columns
