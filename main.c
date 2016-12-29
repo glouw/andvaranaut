@@ -109,11 +109,18 @@ static int quadrant(const double radians)
     return -1;
 }
 
-static double percent(struct point point)
+static double percentage(struct point point)
 {
-    double integral;
+    double null;
     const int x = point.x;
-    return point.x == x ? modf(point.y, &integral) : modf(point.x, &integral);
+    return point.x == x ? modf(point.y, &null) : modf(point.x, &null);
+}
+
+static bool collision(struct point point)
+{
+    const int x = point.x;
+    const int y = point.y;
+    return map[y][x];
 }
 
 int main(void)
@@ -124,8 +131,11 @@ int main(void)
     // Pixel format
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    SDL_Texture* const gpu = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, xres, yres);
-    SDL_Surface* const surface = SDL_LoadBMP("textures/hello.bmp");
+    const uint32_t pformat = SDL_PIXELFORMAT_ARGB8888;
+    SDL_Texture* const gpu = SDL_CreateTexture(renderer, pformat, SDL_TEXTUREACCESS_STREAMING, xres, yres);
+    SDL_Surface* surface = SDL_LoadBMP("textures/hello.bmp");
+    const SDL_PixelFormat* const allocation = SDL_AllocFormat(pformat);
+    surface = SDL_ConvertSurface(surface, allocation, 0);
     // Hero
     struct point hero = { 2.5, 3.5 };
     double theta = 0.0;
@@ -153,11 +163,9 @@ int main(void)
         if(key[SDL_SCANCODE_A]) temp.y -= direction.x, temp.x += direction.y;
         if(key[SDL_SCANCODE_D]) temp.y += direction.x, temp.x -= direction.y;
         // Collision detection
-        const int x = temp.x;
-        const int y = temp.y;
-        hero = map[y][x] ? hero : temp;
+        hero = collision(temp) ? hero : temp;
         // Buffer columns
-        void* bytes; int pitch; SDL_LockTexture(gpu, NULL, &bytes, &pitch);
+        void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
         uint32_t* const pixels = (uint32_t*)bytes;
         for(int col = 0; col < xres; col++)
         {
@@ -173,24 +181,27 @@ int main(void)
             // Column height
             const double zoom = 300.0;
             const double height = round(zoom * focal / normal);
-            const double top = (yres / 2.0) - (height / 2.0);
+            const double top = round((yres / 2.0) - (height / 2.0));
             const double bot = top + height;
-            // Column brightness
-            const double torch = 300.0;
-            const double brightness = torch / (magnitude * magnitude);
-            const unsigned lumi = brightness > 0xFF ? 0xFF : brightness;
             // Drawing
             const int a = 0;
             const int b = top < 0 ? 0 : top;
             const int c = bot > yres ? yres : bot;
             const int d = yres;
-            #define A(c) (c << 24) // Alpha
-            #define R(c) (c << 16) // Red
-            #define G(c) (c <<  8) // Green
-            #define B(c) (c <<  0) // Blue
-            for(int j = a; j < b; j++) pixels[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(0x00); // Ceiling
-            for(int j = b; j < c; j++) pixels[j * xres + col] = A(0x00) | R(lumi) | G(lumi) | B(lumi); // Wall
-            for(int j = c; j < d; j++) pixels[j * xres + col] = A(0x00) | R(0x00) | G(0x00) | B(0x00); // Floor
+            const int w = surface->w;
+            const int h = surface->h;
+            // Wall
+            const uint32_t* const texture = surface->pixels;
+            const double xper = percentage(wall);
+            const int x = w * xper;
+            for(int j = b; j < c; j++)
+            {
+                const double yper = (j - top) / height;
+                const int y = h * yper;
+                pixels[j * xres + col] = texture[y * w + x];
+            }
+            for(int j = a; j < b; j++) pixels[j * xres + col] = 0x00000000; // Ceiling
+            for(int j = c; j < d; j++) pixels[j * xres + col] = 0x00000000; // Floor
         }
         SDL_UnlockTexture(gpu);
         // Render columns
@@ -198,8 +209,9 @@ int main(void)
         SDL_RenderPresent(renderer);
         const int t1 = SDL_GetTicks();
         const int dt = t1 - t0;
-        const int ms = 16 - dt;
-        SDL_Delay(ms < 0 ? 0 : ms);
+        const int fps = 60;
+        const int delay = 1000 / fps - dt;
+        SDL_Delay(delay < 0 ? 0 : delay);
     }
     // Cleanup
     SDL_FreeSurface(surface);
