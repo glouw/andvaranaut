@@ -11,7 +11,7 @@ $(shell mkdir -p $(DEPDIR) >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
 COMPILE = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
-LINK = $(CC) $(LDFLAGS) $(OBJS) $(TARGET_ARCH) -o
+LINK = $(CC) $(OBJS) $(TARGET_ARCH) $(LDFLAGS) -o
 POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
 
 $(PROJ): $(OBJS)
