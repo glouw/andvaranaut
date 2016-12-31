@@ -264,8 +264,8 @@ int main(void)
                 const double t = dis / normal;
                 const struct point tile = add(hero, mul(ray, t));
                 const struct cache cache = {
-                    w * (tile.x - (int)tile.x),
-                    h * (tile.y - (int)tile.y),
+                    w * (tile.x - floor(tile.x)),
+                    h * (tile.y - floor(tile.y)),
                 };
                 caches[i] = cache;
             }
@@ -280,7 +280,7 @@ int main(void)
             for(int i = 0, row = ct; row < cb; i++, row++)
             {
                 const uint32_t* const piece = surface->pixels;
-                const struct cache cache = caches[cb - 1 - i];
+                const struct cache cache = caches[(fb - ft) - 1 - i];
                 screen[row * xres + col] = piece[cache.y * w + cache.x];
             }
         }
