@@ -1,22 +1,14 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-static const int map[][13] = {
+static const uint8_t map[][13] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
     { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
@@ -36,6 +28,16 @@ static double mag(const struct point point)
 static struct point sub(const struct point i, const struct point j)
 {
     return (struct point){ i.x - j.x, i.y - j.y };
+}
+
+static struct point add(const struct point i, const struct point j)
+{
+    return (struct point){ i.x + j.x, i.y + j.y };
+}
+
+static struct point mul(const struct point i, const double n)
+{
+    return (struct point){ i.x * n, i.y * n };
 }
 
 static struct point sn(const struct point hero, const double m, const double b) // Step north
@@ -111,11 +113,10 @@ static bool ver(const struct point point)
 
 static double percentage(const struct point point)
 {
-    double null;
-    if(fn(point)) return 0.0 + modf(point.x, &null);
-    if(fe(point)) return 1.0 - modf(point.y, &null);
-    if(fs(point)) return 1.0 - modf(point.x, &null);
-    if(fw(point)) return 0.0 + modf(point.y, &null);
+    if(fn(point)) return 0.0 + (point.x - (int)point.x);
+    if(fe(point)) return 1.0 - (point.y - (int)point.y);
+    if(fs(point)) return 1.0 - (point.x - (int)point.x);
+    if(fw(point)) return 0.0 + (point.y - (int)point.y);
     return 0.0;
 }
 
@@ -130,18 +131,17 @@ static int quadrant(const double radians)
     return -1;
 }
 
-static struct point step(const struct point hero, const double m, const int quadrant)
+static struct point step(const struct point hero, const double m, const double b, const int q)
 {
-    const double b = hero.y - m * hero.x;
     struct point point;
-    switch(quadrant)
+    switch(q)
     {
         case 0: point = closest(hero, se(hero, m, b), ss(hero, m, b)); break;
         case 1: point = closest(hero, sw(hero, m, b), ss(hero, m, b)); break;
         case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
-    return hor(point) || ver(point) ? point : step(point, m, quadrant);
+    return hor(point) || ver(point) ? point : step(point, m, b, q);
 }
 
 static bool collision(const struct point point)
@@ -163,7 +163,6 @@ int main(void)
 {
     const int xres = 640;
     const int yres = 480;
-    // Video init
     SDL_Init(SDL_INIT_VIDEO);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
@@ -171,10 +170,11 @@ int main(void)
     SDL_Surface* const surface = load("textures/wall.bmp", format);
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero
-    struct point hero = { 2.5, 3.5 }; double theta = 0.0;
-    const double d0 = 0.045;
-    const double dy = 0.055;
-    const double dx = 0.055;
+    struct point hero = { 2.5, 2.5 };
+    double theta = 0.0;
+    const double d0 = 0.060;
+    const double dy = 0.080;
+    const double dx = 0.080;
     // Game loop
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(;;)
@@ -197,43 +197,73 @@ int main(void)
         if(key[SDL_SCANCODE_D]) temp.y += direction.x, temp.x -= direction.y;
         // Collision detection
         hero = collision(temp) ? hero : temp;
-        // Buffer columns
-        void* bytes; int null; SDL_LockTexture(texture, NULL, &bytes, &null);
-        uint32_t* const pixels = (uint32_t*)bytes;
+        // Cast
+        void* bytes;
+        int null;
+        SDL_LockTexture(texture, NULL, &bytes, &null);
+        uint32_t* const screen = (uint32_t*)bytes;
         for(int col = 0; col < xres; col++)
         {
             const double pan = 2.0 * (double)col / xres - 1.0;
             const double focal = 1.0;
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
-            const struct point wall = step(hero, tan(radians), quadrant(radians));
+            const double m = tan(radians);
+            const double b = hero.y - m * hero.x;
+            const double q = quadrant(radians);
+            const struct point wall = step(hero, m, b, q);
             const struct point ray = sub(wall, hero);
             // Fish eye correction
             const double normal = mag(ray) * cos(sigma);
-            // Column height
-            const double zoom = xres / 2;
-            const double height = round(zoom * focal / normal);
-            const double top = round((yres / 2.0) - (height / 2.0));
+            // Wall height
+            const double height = round(yres / normal);
+            const double top = (yres / 2.0) - (height / 2.0);
             const double bot = top + height;
-            // Buffer colums
-            const int a = 0;
-            const int b = top < 0 ? 0 : top;
-            const int c = bot > yres ? yres : bot;
-            const int d = yres;
+            // Prepare column buffer
+            const int ct = 0;
+            const int cb = top < 0 ? 0 : top;
+            const int ft = bot > yres ? yres : bot;
+            const int fb = yres;
+            int x;
+            int y;
+            double xper;
+            double yper;
+            const uint32_t* const piece = surface->pixels;
             const int w = surface->w;
             const int h = surface->h;
-            // Wall
-            const uint32_t* const piece = surface->pixels;
-            const double xper = percentage(wall);
-            const int x = w * xper;
-            for(int j = b; j < c; j++)
+            // Buffer wall
+            xper = percentage(wall);
+            x = w * xper;
+            for(int row = cb; row < ft; row++)
             {
-                const double yper = (j - top) / height;
-                const int y = h * yper;
-                pixels[j * xres + col] = piece[y * w + x];
+                yper = (row - top) / height;
+                y = h * yper;
+                screen[row * xres + col] = piece[y * w + x];
             }
-            for(int j = a; j < b; j++) pixels[j * xres + col] = 0x00000000; // Ceiling
-            for(int j = c; j < d; j++) pixels[j * xres + col] = 0x00000000; // Floor
+            // Buffer ceiling
+            for(int row = ct; row < cb; row++)
+            {
+                const double dis = -yres / (2.0 * row - yres);
+                const double t = dis / normal;
+                const struct point floor = add(hero, mul(ray, t));
+                xper = floor.x - (int)floor.x;
+                yper = floor.y - (int)floor.y;
+                x = w * xper;
+                y = h * yper;
+                screen[row * xres + col] = piece[y * w + x];
+            }
+            // Buffer floor
+            for(int row = ft; row < fb; row++)
+            {
+                const double dis = +yres / (2.0 * row - yres);
+                const double t = dis / normal;
+                const struct point floor = add(hero, mul(ray, t));
+                xper = floor.x - (int)floor.x;
+                yper = floor.y - (int)floor.y;
+                x = w * xper;
+                y = h * yper;
+                screen[row * xres + col] = piece[y * w + x];
+            }
         }
         SDL_UnlockTexture(texture);
         // Render columns
