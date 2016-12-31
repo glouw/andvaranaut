@@ -118,16 +118,6 @@ static double fw(const struct point point) // Facing west
     return point.x - x == 0.0 && map[y][x] && map[y][x - 1] == 0;
 }
 
-static bool hor(const struct point point)
-{
-    return fn(point) || fs(point);
-}
-
-static bool ver(const struct point point)
-{
-    return fe(point) || fw(point);
-}
-
 static double percentage(const struct point point)
 {
     if(fn(point)) return 0.0 + (point.x - (int)point.x);
@@ -137,15 +127,14 @@ static double percentage(const struct point point)
     return 0.0;
 }
 
-static int quadrant(const double radians)
+static bool hor(const struct point point)
 {
-    const double x = cos(radians);
-    const double y = sin(radians);
-    if(x >= 0.0 && y >= 0.0) return 0;
-    if(x <= 0.0 && y >= 0.0) return 1;
-    if(x <= 0.0 && y <= 0.0) return 2;
-    if(x >= 0.0 && y <= 0.0) return 3;
-    return -1;
+    return fn(point) || fs(point);
+}
+
+static bool ver(const struct point point)
+{
+    return fe(point) || fw(point);
 }
 
 static struct point step(const struct point hero, const double m, const double b, const int q)
@@ -159,6 +148,26 @@ static struct point step(const struct point hero, const double m, const double b
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
     return hor(point) || ver(point) ? point : step(point, m, b, q);
+}
+
+static int quadrant(const double radians)
+{
+    const double x = cos(radians);
+    const double y = sin(radians);
+    if(x >= 0.0 && y >= 0.0) return 0;
+    if(x <= 0.0 && y >= 0.0) return 1;
+    if(x <= 0.0 && y <= 0.0) return 2;
+    if(x >= 0.0 && y <= 0.0) return 3;
+    return -1;
+}
+
+static struct point cast(const struct point hero, const double radians)
+{
+    const double m = tan(radians);
+    const double b = hero.y - m * hero.x;
+    const double q = quadrant(radians);
+    const struct point wall = step(hero, m, b, q);
+    return wall;
 }
 
 static bool collision(const struct point point)
@@ -222,10 +231,7 @@ int main(void)
             const double focal = 1.0;
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
-            const double m = tan(radians);
-            const double b = hero.y - m * hero.x;
-            const double q = quadrant(radians);
-            const struct point wall = step(hero, m, b, q);
+            const struct point wall = cast(hero, radians);
             const struct point ray = sub(wall, hero);
             // Fish eye correction
             const double normal = mag(ray) * cos(sigma);
@@ -234,19 +240,19 @@ int main(void)
             const double height = round(size * focal / normal);
             const double top = (yres / 2.0) - (height / 2.0);
             const double bot = top + height;
-            // Prepare column buffer
+            // Clamp
             const int ct = 0;
             const int cb = top < 0 ? 0 : top;
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
+            // Alias
             const int w = surface->w;
             const int h = surface->h;
-            // Surface for wall, floor, and ceiling
-            const uint32_t* const piece = surface->pixels;
             // Buffer wall
             const int x = w * percentage(wall);
             for(int row = cb; row < ft; row++)
             {
+                const uint32_t* const piece = surface->pixels;
                 const int y = h * (row - top) / height;
                 screen[row * xres + col] = piece[y * w + x];
             }
@@ -266,12 +272,14 @@ int main(void)
             // Buffer floor
             for(int i = 0, row = ft; row < fb; i++, row++)
             {
+                const uint32_t* const piece = surface->pixels;
                 const struct cache cache = caches[i];
                 screen[row * xres + col] = piece[cache.y * w + cache.x];
             }
             // Buffer ceiling (Mirrors the floor)
             for(int i = 0, row = ct; row < cb; i++, row++)
             {
+                const uint32_t* const piece = surface->pixels;
                 const struct cache cache = caches[cb - 1 - i];
                 screen[row * xres + col] = piece[cache.y * w + cache.x];
             }
