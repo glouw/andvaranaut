@@ -7,26 +7,26 @@ static const uint8_t map[][13] = {
     { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
     { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
 
@@ -197,9 +197,9 @@ int main(void)
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero
     struct point hero = { 2.5, 2.5 }; double theta = 0.0;
-    const double d0 = 0.060;
-    const double dy = 0.080;
-    const double dx = 0.080;
+    const double d0 = 0.080;
+    const double dy = 0.100;
+    const double dx = 0.100;
     // Game loop
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(;;)
@@ -245,19 +245,21 @@ int main(void)
             const int cb = top < 0 ? 0 : top;
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
-            // Alias
+            // Name alias
             const int w = surface->w;
             const int h = surface->h;
             // Buffer wall
             const int x = w * percentage(wall);
             for(int row = cb; row < ft; row++)
             {
-                const uint32_t* const piece = surface->pixels;
+                const uint32_t* const pixels = surface->pixels;
                 const int y = h * (row - top) / height;
-                screen[row * xres + col] = piece[y * w + x];
+                const uint32_t pixel = pixels[y * w + x];
+                screen[row * xres + col] = pixel;
             }
             // Cache floor and ceiling tiles
             struct cache { int x, y; } caches[yres / 2];
+            const int sz = fb - ft;
             for(int i = 0, row = ft; row < fb; i++, row++)
             {
                 const double dis = yres / (2.0 * row - yres);
@@ -272,16 +274,18 @@ int main(void)
             // Buffer floor
             for(int i = 0, row = ft; row < fb; i++, row++)
             {
-                const uint32_t* const piece = surface->pixels;
+                const uint32_t* const pixels = surface->pixels;
                 const struct cache cache = caches[i];
-                screen[row * xres + col] = piece[cache.y * w + cache.x];
+                const uint32_t pixel = pixels[cache.y * w + cache.x];
+                screen[row * xres + col] = pixel;
             }
             // Buffer ceiling (Mirrors the floor)
             for(int i = 0, row = ct; row < cb; i++, row++)
             {
-                const uint32_t* const piece = surface->pixels;
-                const struct cache cache = caches[(fb - ft) - 1 - i];
-                screen[row * xres + col] = piece[cache.y * w + cache.x];
+                const uint32_t* const pixels = surface->pixels;
+                const struct cache cache = caches[sz - 1 - i];
+                const uint32_t pixel = pixels[cache.y * w + cache.x];
+                screen[row * xres + col] = pixel;
             }
         }
         SDL_UnlockTexture(texture);
