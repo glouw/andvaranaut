@@ -10,6 +10,23 @@ static const uint8_t map[][13] = {
     { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
 
@@ -162,16 +179,15 @@ static SDL_Surface* load(const char* path, const uint32_t format)
 int main(void)
 {
     const int xres = 640;
-    const int yres = 480;
+    const int yres = 360;
     SDL_Init(SDL_INIT_VIDEO);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
-    SDL_Window* const window = SDL_CreateWindow("water", 120, 80, xres, yres, SDL_WINDOW_SHOWN);
+    SDL_Window* const window = SDL_CreateWindow("water", 25, 120, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Surface* const surface = load("textures/wall.bmp", format);
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero
-    struct point hero = { 2.5, 2.5 };
-    double theta = 0.0;
+    struct point hero = { 2.5, 2.5 }; double theta = 0.0;
     const double d0 = 0.060;
     const double dy = 0.080;
     const double dx = 0.080;
@@ -197,10 +213,8 @@ int main(void)
         if(key[SDL_SCANCODE_D]) temp.y += direction.x, temp.x -= direction.y;
         // Collision detection
         hero = collision(temp) ? hero : temp;
-        // Cast
-        void* bytes;
-        int null;
-        SDL_LockTexture(texture, NULL, &bytes, &null);
+        // Cast a ray for each column of the screen
+        void* bytes; int null; SDL_LockTexture(texture, NULL, &bytes, &null);
         uint32_t* const screen = (uint32_t*)bytes;
         for(int col = 0; col < xres; col++)
         {
@@ -216,7 +230,8 @@ int main(void)
             // Fish eye correction
             const double normal = mag(ray) * cos(sigma);
             // Wall height
-            const double height = round(yres / normal);
+            const double size = yres;
+            const double height = round(size * focal / normal);
             const double top = (yres / 2.0) - (height / 2.0);
             const double bot = top + height;
             // Prepare column buffer
@@ -224,45 +239,41 @@ int main(void)
             const int cb = top < 0 ? 0 : top;
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
-            int x;
-            int y;
-            double xper;
-            double yper;
-            const uint32_t* const piece = surface->pixels;
             const int w = surface->w;
             const int h = surface->h;
+            // Surface for wall, floor, and ceiling
+            const uint32_t* const piece = surface->pixels;
             // Buffer wall
-            xper = percentage(wall);
-            x = w * xper;
+            const int x = w * percentage(wall);
             for(int row = cb; row < ft; row++)
             {
-                yper = (row - top) / height;
-                y = h * yper;
+                const int y = h * (row - top) / height;
                 screen[row * xres + col] = piece[y * w + x];
             }
-            // Buffer ceiling
-            for(int row = ct; row < cb; row++)
+            // Cache floor and ceiling tiles
+            struct cache { int x, y; } caches[yres / 2];
+            for(int i = 0, row = ft; row < fb; i++, row++)
             {
-                const double dis = -yres / (2.0 * row - yres);
+                const double dis = yres / (2.0 * row - yres);
                 const double t = dis / normal;
-                const struct point floor = add(hero, mul(ray, t));
-                xper = floor.x - (int)floor.x;
-                yper = floor.y - (int)floor.y;
-                x = w * xper;
-                y = h * yper;
-                screen[row * xres + col] = piece[y * w + x];
+                const struct point tile = add(hero, mul(ray, t));
+                const struct cache cache = {
+                    w * (tile.x - (int)tile.x),
+                    h * (tile.y - (int)tile.y),
+                };
+                caches[i] = cache;
             }
             // Buffer floor
-            for(int row = ft; row < fb; row++)
+            for(int i = 0, row = ft; row < fb; i++, row++)
             {
-                const double dis = +yres / (2.0 * row - yres);
-                const double t = dis / normal;
-                const struct point floor = add(hero, mul(ray, t));
-                xper = floor.x - (int)floor.x;
-                yper = floor.y - (int)floor.y;
-                x = w * xper;
-                y = h * yper;
-                screen[row * xres + col] = piece[y * w + x];
+                const struct cache cache = caches[i];
+                screen[row * xres + col] = piece[cache.y * w + cache.x];
+            }
+            // Buffer ceiling (Mirrors the floor)
+            for(int i = 0, row = ct; row < cb; i++, row++)
+            {
+                const struct cache cache = caches[cb - 1 - i];
+                screen[row * xres + col] = piece[cache.y * w + cache.x];
             }
         }
         SDL_UnlockTexture(texture);
