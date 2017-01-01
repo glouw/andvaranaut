@@ -77,7 +77,6 @@ int main(void)
             const double focal = 1.0;
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
-            // Cast a ray
             const struct point wall = cast(hero, radians);
             if(out_of_map(wall))
             {
@@ -85,9 +84,9 @@ int main(void)
                 continue;
             }
             const struct point ray = sub(wall, hero);
-            // Fish eye correction
+            // Correct the fish eye
             const double normal = mag(ray) * cos(sigma);
-            // Wall height
+            // Calculate the wall height
             const double size = yres;
             const double height = round(size * focal / normal);
             const double top = (yres / 2.0) - (height / 2.0);
@@ -123,7 +122,7 @@ int main(void)
                 const int hh = flooring->h;
                 const int xx = ww * (party.x - floor(party.x));
                 const int yy = hh * (party.y - floor(party.y));
-                // GPU buffer cache
+                // GPU buffer
                 const uint32_t* const pixels = flooring->pixels;
                 screen[row * xres + col] = pixels[yy * ww + xx];
             }
@@ -137,7 +136,7 @@ int main(void)
                 const int hh = ceiling->h;
                 const int xx = ww * (party.x - floor(party.x));
                 const int yy = hh * (party.y - floor(party.y));
-                // GPU buffer cache
+                // GPU buffer
                 const uint32_t* const pixels = ceiling->pixels;
                 screen[row * xres + col] = pixels[yy * ww + xx];
             }
