@@ -1,39 +1,46 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-static const uint8_t map[][13] = {
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+#define rows 9
+#define cols 9
+
+static const uint8_t wallings[rows][cols] = {
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 1, 0, 0, 0, 0, 0, 1, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 1, 0, 0, 0, 0, 0, 1, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
 
-struct point
-{
-    double x, y;
+static const uint8_t ceilings[rows][cols] = {
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
+
+static const uint8_t floorings[rows][cols] = {
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 2, 2, 2, 2, 2, 2, 2, 1 },
+    { 1, 2, 1, 1, 1, 1, 1, 2, 1 },
+    { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
+    { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
+    { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
+    { 1, 2, 1, 1, 1, 1, 1, 2, 1 },
+    { 1, 2, 2, 2, 2, 2, 2, 2, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+};
+
+struct point { double x, y; };
 
 static double mag(const struct point point)
 {
@@ -90,32 +97,32 @@ static struct point closest(const struct point hero, const struct point i, const
     return mag(sub(i, hero)) < mag(sub(j, hero)) ? i : j;
 }
 
-static double fn(const struct point point) // Facing north
+static bool fn(const struct point point) // Facing north
 {
     const int x = point.x;
     const int y = point.y;
-    return point.y - y == 0.0 && map[y][x] && map[y - 1][x] == 0;
+    return point.y - y == 0.0 && wallings[y + 0][x + 0] && wallings[y - 1][x + 0] == 0;
 }
 
-static double fe(const struct point point) // Facing east
+static bool fe(const struct point point) // Facing east
 {
     const int x = point.x;
     const int y = point.y;
-    return point.x - x == 0.0 && map[y][x] == 0 && map[y][x - 1];
+    return point.x - x == 0.0 && wallings[y + 0][x + 0] == 0 && wallings[y + 0][x - 1];
 }
 
-static double fs(const struct point point) // Facing south
+static bool fs(const struct point point) // Facing south
 {
     const int x = point.x;
     const int y = point.y;
-    return point.y - y == 0.0 && map[y][x] == 0 && map[y - 1][x];
+    return point.y - y == 0.0 && wallings[y + 0][x + 0] == 0 && wallings[y - 1][x + 0];
 }
 
-static double fw(const struct point point) // Facing west
+static bool fw(const struct point point) // Facing west
 {
     const int x = point.x;
     const int y = point.y;
-    return point.x - x == 0.0 && map[y][x] && map[y][x - 1] == 0;
+    return point.x - x == 0.0 && wallings[y + 0][x + 0] && wallings[y + 0][x - 1] == 0;
 }
 
 static double percentage(const struct point point)
@@ -127,14 +134,12 @@ static double percentage(const struct point point)
     return 0.0;
 }
 
-static bool hor(const struct point point)
-{
-    return fn(point) || fs(point);
-}
+static inline bool hor(const struct point point) { return fn(point) || fs(point); }
+static inline bool ver(const struct point point) { return fe(point) || fw(point); }
 
-static bool ver(const struct point point)
+static inline bool wall(const struct point point)
 {
-    return fe(point) || fw(point);
+    return hor(point) || ver(point);
 }
 
 static struct point step(const struct point hero, const double m, const double b, const int q)
@@ -147,7 +152,12 @@ static struct point step(const struct point hero, const double m, const double b
         case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
-    return hor(point) || ver(point) ? point : step(point, m, b, q);
+    const bool out = point.x > cols - 1 || point.y > rows - 1;
+    // Out of bounds?
+    if(out) puts("Ray casted out of bounds");
+    if(out) return (struct point){ 0.0, 0.0 };
+    // Else Keep going
+    return wall(point) ? point : step(point, m, b, q);
 }
 
 static int quadrant(const double radians)
@@ -166,18 +176,43 @@ static struct point cast(const struct point hero, const double radians)
     const double m = tan(radians);
     const double b = hero.y - m * hero.x;
     const double q = quadrant(radians);
-    const struct point wall = step(hero, m, b, q);
-    return wall;
+    const struct point hit = step(hero, m, b, q);
+    return hit;
+}
+
+static int getwalling(const struct point point)
+{
+    const int x = point.x;
+    const int y = point.y;
+    if(fn(point)) return wallings[y + 0][x + 0];
+    if(fe(point)) return wallings[y + 0][x - 1];
+    if(fw(point)) return wallings[y + 0][x + 0];
+    if(fs(point)) return wallings[y - 1][x + 0];
+    return -1;
 }
 
 static bool collision(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return map[y][x];
+    return wallings[y][x];
 }
 
-static SDL_Surface* load(const char* path, const uint32_t format)
+static int getflooring(const struct point point)
+{
+    const int x = point.x;
+    const int y = point.y;
+    return collision(point) ? wallings[y][x] : floorings[y][x];
+}
+
+static int getceiling(const struct point point)
+{
+    const int x = point.x;
+    const int y = point.y;
+    return collision(point) ? wallings[y][x] : ceilings[y][x];
+}
+
+static SDL_Surface* load(const uint32_t format, const char* path)
 {
     SDL_Surface* const surface = SDL_LoadBMP(path);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
@@ -193,10 +228,22 @@ int main(void)
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Window* const window = SDL_CreateWindow("water", 25, 120, xres, yres, SDL_WINDOW_SHOWN);
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    SDL_Surface* const surface = load("textures/wall.bmp", format);
-    SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
+    SDL_Surface* tiles[10] = { NULL };
+    SDL_Surface* sprts[10] = { NULL };
+    #define T(n, tile) tiles[n] = load(format, "tiles/"tile);
+    #define LD_TILES                                        \
+        T(0, "error.bmp")                                   \
+        T(1, "stone.bmp")                                   \
+        T(2, "wood.bmp")
+    #define S(n, sprt) sprts[n] = load(format, "sprts/"sprt);
+    #define LD_SPRTS \
+        S(0, "soldier.bmp")
+    LD_TILES
+    LD_SPRTS
+    // GPU
+    SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero
-    struct point hero = { 2.5, 2.5 }; double theta = 0.0;
+    struct point hero = { 1.5, 4.5 }; double theta = 0.0;
     const double d0 = 0.080;
     const double dy = 0.100;
     const double dx = 0.100;
@@ -223,7 +270,7 @@ int main(void)
         // Collision detection
         hero = collision(temp) ? hero : temp;
         // Cast a ray for each column of the screen
-        void* bytes; int null; SDL_LockTexture(texture, NULL, &bytes, &null);
+        void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
         uint32_t* const screen = (uint32_t*)bytes;
         for(int col = 0; col < xres; col++)
         {
@@ -231,8 +278,8 @@ int main(void)
             const double focal = 1.0;
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
-            const struct point wall = cast(hero, radians);
-            const struct point ray = sub(wall, hero);
+            const struct point hit = cast(hero, radians);
+            const struct point ray = sub(hit, hero);
             // Fish eye correction
             const double normal = mag(ray) * cos(sigma);
             // Wall height
@@ -240,57 +287,59 @@ int main(void)
             const double height = round(size * focal / normal);
             const double top = (yres / 2.0) - (height / 2.0);
             const double bot = top + height;
-            // Clamp
+            // Clamping
             const int ct = 0;
             const int cb = top < 0 ? 0 : top;
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
-            // Name alias
-            const int w = surface->w;
-            const int h = surface->h;
-            // Buffer wall
-            const int x = w * percentage(wall);
+            // Walling
+            SDL_Surface* const walling = tiles[getwalling(hit)];
+            const int w = walling->w;
+            const int h = walling->h;
+            const int x = w * percentage(hit);
             for(int row = cb; row < ft; row++)
             {
-                const uint32_t* const pixels = surface->pixels;
+                const uint32_t* const pixels = walling->pixels;
                 const int y = h * (row - top) / height;
-                const uint32_t pixel = pixels[y * w + x];
-                screen[row * xres + col] = pixel;
+                screen[row * xres + col] = pixels[y * w + x];
             }
-            // Cache floor and ceiling tiles
-            struct cache { int x, y; } caches[yres / 2];
+            // Flooring
             const int sz = fb - ft;
+            struct point caches[sz];
             for(int i = 0, row = ft; row < fb; i++, row++)
             {
                 const double dis = yres / (2.0 * row - yres);
                 const double t = dis / normal;
-                const struct point tile = add(hero, mul(ray, t));
-                const struct cache cache = {
-                    w * (tile.x - floor(tile.x)),
-                    h * (tile.y - floor(tile.y)),
-                };
-                caches[i] = cache;
+                const struct point party = add(hero, mul(ray, t > 1.0 ? 1.0 : t));
+                // Put cache
+                caches[i] = party;
+                SDL_Surface* const flooring = tiles[getflooring(party)];
+                const int ww = flooring->w;
+                const int hh = flooring->h;
+                const int xx = ww * (party.x - floor(party.x));
+                const int yy = hh * (party.y - floor(party.y));
+                // Buffer
+                const uint32_t* const pixels = flooring->pixels;
+                screen[row * xres + col] = pixels[yy * ww + xx];
             }
-            // Buffer floor
-            for(int i = 0, row = ft; row < fb; i++, row++)
-            {
-                const uint32_t* const pixels = surface->pixels;
-                const struct cache cache = caches[i];
-                const uint32_t pixel = pixels[cache.y * w + cache.x];
-                screen[row * xres + col] = pixel;
-            }
-            // Buffer ceiling (Mirrors the floor)
+            // Ceiling
             for(int i = 0, row = ct; row < cb; i++, row++)
             {
-                const uint32_t* const pixels = surface->pixels;
-                const struct cache cache = caches[sz - 1 - i];
-                const uint32_t pixel = pixels[cache.y * w + cache.x];
-                screen[row * xres + col] = pixel;
+                // Get cache
+                const struct point party = caches[sz - 1 - i];
+                SDL_Surface* const ceiling = tiles[getceiling(party)];
+                const int ww = ceiling->w;
+                const int hh = ceiling->h;
+                const int xx = ww * (party.x - floor(party.x));
+                const int yy = hh * (party.y - floor(party.y));
+                // Buffer
+                const uint32_t* const pixels = ceiling->pixels;
+                screen[row * xres + col] = pixels[yy * ww + xx];
             }
         }
-        SDL_UnlockTexture(texture);
+        SDL_UnlockTexture(gpu);
         // Render columns
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderCopy(renderer, gpu, NULL, NULL);
         SDL_RenderPresent(renderer);
         const int t1 = SDL_GetTicks();
         const int dt = t1 - t0;
@@ -299,10 +348,12 @@ int main(void)
         SDL_Delay(delay < 0 ? 0 : delay);
     }
     // Cleanup
-    SDL_FreeSurface(surface);
+    #define len(array) (int)(sizeof(array) / sizeof(*array))
+    for(int i = 0; i < len(tiles); i++) SDL_FreeSurface(tiles[i]);
+    for(int i = 0; i < len(sprts); i++) SDL_FreeSurface(sprts[i]);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
-    SDL_DestroyTexture(texture);
+    SDL_DestroyTexture(gpu);
     SDL_Quit();
     return 0;
 }
