@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-static SDL_Surface* store(const uint32_t format, const char* path)
+static SDL_Surface* load_bmp(const uint32_t format, const char* path)
 {
     SDL_Surface* const surface = SDL_LoadBMP(path);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
@@ -22,12 +22,12 @@ int main(void)
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Surface* tiles[10] = { NULL };
     SDL_Surface* sprts[10] = { NULL };
-    #define T(n, tile) tiles[n] = store(format, "tiles/"tile);
+    #define T(n, tile) tiles[n] = load_bmp(format, "tiles/"tile);
     #define LD_TILES                                        \
         T(1, "error.bmp")                                   \
         T(2, "stone.bmp")                                   \
         T(3, "wood.bmp")
-    #define S(n, sprt) sprts[n] = store(format, "sprts/"sprt);
+    #define S(n, sprt) sprts[n] = load_bmp(format, "sprts/"sprt);
     #define LD_SPRTS                                        \
         S(0, "soldier.bmp")
     LD_TILES
@@ -39,7 +39,7 @@ int main(void)
     // GPU
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Load map
-    load("maps/test");
+    load_map("maps/test");
     // Hero
     struct point hero = { 2.5, 4.5 }; double theta = 0.0;
     const double d0 = 0.080;
@@ -98,10 +98,10 @@ int main(void)
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
             // GPU buffer walling
-            const SDL_Surface* const walling = tiles[getwalling(hit)];
+            const SDL_Surface* const walling = tiles[get_walling(hit)];
             const int w = walling->w;
             const int h = walling->h;
-            const int x = w * percentage(hit);
+            const int x = w * wall_percentage(hit);
             for(int row = cb; row < ft; row++)
             {
                 const uint32_t* const pixels = walling->pixels;
@@ -118,7 +118,7 @@ int main(void)
                 const struct point party = add(hero, mul(ray, t > 1.0 ? 1.0 : t));
                 // Put cache
                 caches[i] = party;
-                const SDL_Surface* const flooring = tiles[getflooring(party)];
+                const SDL_Surface* const flooring = tiles[get_flooring(party)];
                 const int ww = flooring->w;
                 const int hh = flooring->h;
                 const int xx = ww * (party.x - floor(party.x));
@@ -132,7 +132,7 @@ int main(void)
             {
                 // Get cache
                 const struct point party = caches[sz - 1 - i];
-                const SDL_Surface* const ceiling = tiles[getceiling(party)];
+                const SDL_Surface* const ceiling = tiles[get_ceiling(party)];
                 const int ww = ceiling->w;
                 const int hh = ceiling->h;
                 const int xx = ww * (party.x - floor(party.x));
@@ -161,6 +161,6 @@ int main(void)
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(gpu);
     SDL_Quit();
-    unload();
+    unload_map();
     return 0;
 }

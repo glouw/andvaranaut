@@ -128,7 +128,7 @@ double mag(const struct point point)
     return sqrt(x + y);
 }
 
-double percentage(const struct point point)
+double wall_percentage(const struct point point)
 {
     if(fn(point)) return 0.0 + (point.x - floor(point.x));
     if(fe(point)) return 1.0 - (point.y - floor(point.y));
@@ -151,7 +151,7 @@ struct point cast(const struct point hero, const double radians)
     return hit;
 }
 
-int getwalling(const struct point point)
+int get_walling(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
@@ -169,14 +169,14 @@ bool collision(const struct point point)
     return wallings[y][x];
 }
 
-int getflooring(const struct point point)
+int get_flooring(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
     return floorings[y][x];
 }
 
-int getceiling(const struct point point)
+int get_ceiling(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;

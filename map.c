@@ -53,14 +53,14 @@ static void kill(uint8_t** const array)
     free(array);
 }
 
-void unload(void)
+void unload_map(void)
 {
     kill(ceilings);
     kill(wallings);
     kill(floorings);
 }
 
-void load(const char* path)
+void load_map(const char* path)
 {
     FILE* fp = fopen(path, "r");
     char* line;
