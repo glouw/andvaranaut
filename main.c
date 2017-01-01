@@ -6,13 +6,13 @@
 
 static const uint8_t wallings[rows][cols] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 1, 0, 0, 0, 0, 0, 1, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
     { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 1, 0, 0, 0, 0, 0, 1, 1 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
 
@@ -31,11 +31,11 @@ static const uint8_t ceilings[rows][cols] = {
 static const uint8_t floorings[rows][cols] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
     { 1, 2, 2, 2, 2, 2, 2, 2, 1 },
-    { 1, 2, 1, 1, 1, 1, 1, 2, 1 },
-    { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
     { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
     { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
-    { 1, 2, 1, 1, 1, 1, 1, 2, 1 },
+    { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
+    { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
+    { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
     { 1, 2, 2, 2, 2, 2, 2, 2, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
@@ -251,10 +251,14 @@ int main(void)
         T(1, "stone.bmp")                                   \
         T(2, "wood.bmp")
     #define S(n, sprt) sprts[n] = load(format, "sprts/"sprt);
-    #define LD_SPRTS \
+    #define LD_SPRTS                                        \
         S(0, "soldier.bmp")
     LD_TILES
     LD_SPRTS
+    #undef T
+    #undef S
+    #undef LD_TILES
+    #undef LD_SPRTS
     // GPU
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero
@@ -327,7 +331,7 @@ int main(void)
             {
                 const double dis = yres / (2.0 * row - yres);
                 const double t = dis / normal;
-                const struct point party = add(hero, mul(ray, t > 1.0 ? 1.0 : t));
+                const struct point party = add(hero, mul(ray, t));
                 // Put cache
                 caches[i] = party;
                 const SDL_Surface* const flooring = tiles[getflooring(party)];
