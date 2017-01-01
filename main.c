@@ -1,8 +1,8 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-#define rows 9
-#define cols 9
+#define rows 9 // To be dynamic
+#define cols 9 // To be dynamic
 
 static const uint8_t wallings[rows][cols] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
@@ -294,7 +294,7 @@ int main(void)
             const double focal = 1.0;
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
-            // Cast a ray and get where the wall is hit
+            // Cast a ray
             const struct point hit = cast(hero, radians);
             const struct point ray = sub(hit, hero);
             // Fish eye correction
@@ -339,7 +339,7 @@ int main(void)
                 const uint32_t* const pixels = flooring->pixels;
                 screen[row * xres + col] = pixels[yy * ww + xx];
             }
-            // Ceiling
+            // Buffer ceiling
             for(int i = 0, row = ct; row < cb; i++, row++)
             {
                 // Get cache
