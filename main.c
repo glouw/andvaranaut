@@ -289,10 +289,12 @@ int main(void)
         uint32_t* const screen = (uint32_t*)bytes;
         for(int col = 0; col < xres; col++)
         {
+            // 90 degree field of view
             const double pan = 2.0 * (double)col / xres - 1.0;
             const double focal = 1.0;
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
+            // Cast a ray and get where the wall is hit
             const struct point hit = cast(hero, radians);
             const struct point ray = sub(hit, hero);
             // Fish eye correction
@@ -302,12 +304,12 @@ int main(void)
             const double height = round(size * focal / normal);
             const double top = (yres / 2.0) - (height / 2.0);
             const double bot = top + height;
-            // Clamping
+            // Clamp
             const int ct = 0;
             const int cb = top < 0 ? 0 : top;
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
-            // Walling
+            // Buffer walling
             SDL_Surface* const walling = tiles[getwalling(hit)];
             const int w = walling->w;
             const int h = walling->h;
@@ -318,7 +320,7 @@ int main(void)
                 const int y = h * (row - top) / height;
                 screen[row * xres + col] = pixels[y * w + x];
             }
-            // Flooring
+            // Buffer flooring
             const int sz = fb - ft;
             struct point caches[sz];
             for(int i = 0, row = ft; row < fb; i++, row++)
@@ -333,7 +335,7 @@ int main(void)
                 const int hh = flooring->h;
                 const int xx = ww * (party.x - floor(party.x));
                 const int yy = hh * (party.y - floor(party.y));
-                // Buffer
+                // Buffer cache
                 const uint32_t* const pixels = flooring->pixels;
                 screen[row * xres + col] = pixels[yy * ww + xx];
             }
@@ -347,7 +349,7 @@ int main(void)
                 const int hh = ceiling->h;
                 const int xx = ww * (party.x - floor(party.x));
                 const int yy = hh * (party.y - floor(party.y));
-                // Buffer
+                // Buffer cache
                 const uint32_t* const pixels = ceiling->pixels;
                 screen[row * xres + col] = pixels[yy * ww + xx];
             }
@@ -356,6 +358,7 @@ int main(void)
         // Render columns
         SDL_RenderCopy(renderer, gpu, NULL, NULL);
         SDL_RenderPresent(renderer);
+        // Delay
         const int t1 = SDL_GetTicks();
         const int dt = t1 - t0;
         const int fps = 60;
