@@ -30,13 +30,13 @@ static const uint8_t ceilings[rows][cols] = {
 
 static const uint8_t floorings[rows][cols] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 2, 2, 2, 2, 2, 2, 2, 1 },
+    { 1, 2, 2, 2, 1, 2, 2, 2, 1 },
+    { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
     { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
     { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
-    { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
-    { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
     { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
-    { 1, 2, 2, 2, 2, 2, 2, 2, 1 },
+    { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
+    { 1, 2, 2, 2, 1, 2, 2, 2, 1 },
     { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
 
@@ -217,14 +217,14 @@ static int getflooring(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return collision(point) ? wallings[y][x] : floorings[y][x];
+    return floorings[y][x];
 }
 
 static int getceiling(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return collision(point) ? wallings[y][x] : ceilings[y][x];
+    return ceilings[y][x];
 }
 
 static SDL_Surface* load(const uint32_t format, const char* path)
@@ -262,7 +262,7 @@ int main(void)
     // GPU
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Hero
-    struct point hero = { 1.5, 4.5 }; double theta = 0.0;
+    struct point hero = { 2.5, 4.5 }; double theta = 0.0;
     const double d0 = 0.080;
     const double dy = 0.100;
     const double dx = 0.100;
@@ -331,7 +331,7 @@ int main(void)
             {
                 const double dis = yres / (2.0 * row - yres);
                 const double t = dis / normal;
-                const struct point party = add(hero, mul(ray, t));
+                const struct point party = add(hero, mul(ray, t > 1.0 ? 1.0 : t));
                 // Put cache
                 caches[i] = party;
                 const SDL_Surface* const flooring = tiles[getflooring(party)];
