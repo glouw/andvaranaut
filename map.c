@@ -18,7 +18,7 @@ static char* get_line(FILE* const fp)
     return buffer;
 }
 
-static uint8_t** build(void)
+static uint8_t** fresh_2d_array(void)
 {
     uint8_t** const array = malloc(rows * sizeof(uint8_t*));
     for(int i = 0; i < rows; i++)
@@ -33,7 +33,7 @@ static uint8_t** build(void)
 
 static uint8_t** get_tile(FILE* const fp)
 {
-    uint8_t** const array = build();
+    uint8_t** const array = fresh_2d_array();
     for(int i = 0; i < rows; i++)
     {
         char* const line = get_line(fp);
@@ -46,7 +46,7 @@ static uint8_t** get_tile(FILE* const fp)
     return array;
 }
 
-static void kill(uint8_t** const array)
+static void kill_2d_array(uint8_t** const array)
 {
     for(int i = 0; i < rows; i++)
         free(array[i]);
@@ -55,9 +55,9 @@ static void kill(uint8_t** const array)
 
 void unload_map(void)
 {
-    kill(ceilings);
-    kill(wallings);
-    kill(floorings);
+    kill_2d_array(ceilings);
+    kill_2d_array(wallings);
+    kill_2d_array(floorings);
 }
 
 void load_map(const char* path)

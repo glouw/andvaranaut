@@ -90,7 +90,7 @@ static inline struct point step(const struct point hero, const double m, const d
         case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
-    if(out(point))
+    if(out_of_map(point))
         return (struct point){ -1.0, -1.0 };
     return wall(point) ? point : step(point, m, b, q);
 }
@@ -137,7 +137,7 @@ double wall_percentage(const struct point point)
     return 0.0;
 }
 
-bool out(const struct point point)
+bool out_of_map(const struct point point)
 {
     return point.x >= cols || point.y >= rows || point.x < 0 || point.y < 0;
 }
@@ -162,7 +162,7 @@ int get_walling(const struct point point)
     return -1;
 }
 
-bool collision(const struct point point)
+bool wall_collision(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;

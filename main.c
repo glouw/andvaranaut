@@ -66,7 +66,7 @@ int main(void)
         if(key[SDL_SCANCODE_A]) temp.y -= direction.x, temp.x += direction.y;
         if(key[SDL_SCANCODE_D]) temp.y += direction.x, temp.x -= direction.y;
         // Collision detection
-        hero = collision(temp) ? hero : temp;
+        hero = wall_collision(temp) ? hero : temp;
         // Cast a ray for each column of the screen
         void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
         uint32_t* const screen = (uint32_t*)bytes;
@@ -78,13 +78,13 @@ int main(void)
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
             // Cast a ray
-            const struct point hit = cast(hero, radians);
-            if(out(hit))
+            const struct point wall = cast(hero, radians);
+            if(out_of_map(wall))
             {
                 puts("warning: wall ray out of bounds");
                 continue;
             }
-            const struct point ray = sub(hit, hero);
+            const struct point ray = sub(wall, hero);
             // Fish eye correction
             const double normal = mag(ray) * cos(sigma);
             // Wall height
@@ -98,10 +98,10 @@ int main(void)
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
             // GPU buffer walling
-            const SDL_Surface* const walling = tiles[get_walling(hit)];
+            const SDL_Surface* const walling = tiles[get_walling(wall)];
             const int w = walling->w;
             const int h = walling->h;
-            const int x = w * wall_percentage(hit);
+            const int x = w * wall_percentage(wall);
             for(int row = cb; row < ft; row++)
             {
                 const uint32_t* const pixels = walling->pixels;
