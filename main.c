@@ -97,7 +97,7 @@ int main(void)
             const int cb = top < 0 ? 0 : top;
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
-            // Buffer walling
+            // GPU buffer walling
             const SDL_Surface* const walling = tiles[getwalling(hit)];
             const int w = walling->w;
             const int h = walling->h;
@@ -108,7 +108,7 @@ int main(void)
                 const int y = h * (row - top) / height;
                 screen[row * xres + col] = pixels[y * w + x];
             }
-            // Buffer flooring
+            // GPU buffer flooring (with cache)
             const int sz = fb - ft;
             struct point caches[sz];
             for(int i = 0, row = ft; row < fb; i++, row++)
@@ -123,11 +123,11 @@ int main(void)
                 const int hh = flooring->h;
                 const int xx = ww * (party.x - floor(party.x));
                 const int yy = hh * (party.y - floor(party.y));
-                // Buffer cache
+                // GPU buffer cache
                 const uint32_t* const pixels = flooring->pixels;
                 screen[row * xres + col] = pixels[yy * ww + xx];
             }
-            // Buffer ceiling
+            // GPU buffer ceiling
             for(int i = 0, row = ct; row < cb; i++, row++)
             {
                 // Get cache
@@ -137,7 +137,7 @@ int main(void)
                 const int hh = ceiling->h;
                 const int xx = ww * (party.x - floor(party.x));
                 const int yy = hh * (party.y - floor(party.y));
-                // Buffer cache
+                // GPU buffer cache
                 const uint32_t* const pixels = ceiling->pixels;
                 screen[row * xres + col] = pixels[yy * ww + xx];
             }
