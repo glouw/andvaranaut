@@ -40,7 +40,10 @@ static const uint8_t floorings[rows][cols] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
 };
 
-struct point { double x, y; };
+struct point
+{
+    double x, y;
+};
 
 static double mag(const struct point point)
 {
@@ -127,19 +130,31 @@ static bool fw(const struct point point) // Facing west
 
 static double percentage(const struct point point)
 {
-    if(fn(point)) return 0.0 + (point.x - (int)point.x);
-    if(fe(point)) return 1.0 - (point.y - (int)point.y);
-    if(fs(point)) return 1.0 - (point.x - (int)point.x);
-    if(fw(point)) return 0.0 + (point.y - (int)point.y);
+    if(fn(point)) return 0.0 + (point.x - floor(point.x));
+    if(fe(point)) return 1.0 - (point.y - floor(point.y));
+    if(fs(point)) return 1.0 - (point.x - floor(point.x));
+    if(fw(point)) return 0.0 + (point.y - floor(point.y));
     return 0.0;
 }
 
-static inline bool hor(const struct point point) { return fn(point) || fs(point); }
-static inline bool ver(const struct point point) { return fe(point) || fw(point); }
+static bool hor(const struct point point)
+{
+    return fn(point) || fs(point);
+}
 
-static inline bool wall(const struct point point)
+static bool ver(const struct point point)
+{
+    return fe(point) || fw(point);
+}
+
+static bool wall(const struct point point)
 {
     return hor(point) || ver(point);
+}
+
+static bool out(const struct point point)
+{
+    return point.x >= cols || point.y >= rows || point.x < 0 || point.y < 0;
 }
 
 static struct point step(const struct point hero, const double m, const double b, const int q)
@@ -152,11 +167,11 @@ static struct point step(const struct point hero, const double m, const double b
         case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
-    const bool out = point.x > cols - 1 || point.y > rows - 1;
-    // Out of bounds?
-    if(out) puts("Ray casted out of bounds");
-    if(out) return (struct point){ 0.0, 0.0 };
-    // Else Keep going
+    if(out(point))
+    {
+        puts("warning: ray casting out of bounds");
+        return (struct point){ 0.0, 0.0 };
+    }
     return wall(point) ? point : step(point, m, b, q);
 }
 
