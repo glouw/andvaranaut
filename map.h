@@ -8,5 +8,5 @@ uint8_t** ceilings;
 uint8_t** wallings;
 uint8_t** floorings;
 
-void map_load(const char* path);
-void map_kill(void);
+void unload(void);
+void load(const char* path);

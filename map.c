@@ -53,7 +53,14 @@ static void kill(uint8_t** const array)
     free(array);
 }
 
-void map_load(const char* path)
+void unload(void)
+{
+    kill(ceilings);
+    kill(wallings);
+    kill(floorings);
+}
+
+void load(const char* path)
 {
     FILE* fp = fopen(path, "r");
     char* line;
@@ -61,21 +68,14 @@ void map_load(const char* path)
     line = getln(fp);
     sscanf(line, "%d", &rows);
     free(line);
-    // Cols
+    // Columns
     line = getln(fp);
     sscanf(line, "%d", &cols);
     free(line);
-    // The good stuff
+    // Map
     ceilings = get(fp);
     wallings = get(fp);
     floorings = get(fp);
     // Done
     fclose(fp);
-}
-
-void map_kill(void)
-{
-    kill(ceilings);
-    kill(wallings);
-    kill(floorings);
 }

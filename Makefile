@@ -1,9 +1,9 @@
 CC = gcc
 PROJ = water
 CPPFLAGS = -Iinclude
-SRCS = main.c map.c
+SRCS = main.c map.c geom.c
 OBJS = $(SRCS:.c=.o)
-CFLAGS = -Wall -Wextra -Wshadow -std=c11 -pedantic -Ofast -flto
+CFLAGS = -Wall -Wextra -Wshadow -std=c99 -pedantic -Ofast -flto
 LDFLAGS = -lm -lSDL2
 TARGET_ARCH = -march=native
 DEPDIR := deps
