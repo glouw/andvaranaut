@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char* getln(FILE* const fp)
+static char* get_line(FILE* const fp)
 {
     if(ungetc(getc(fp), fp) == EOF)
         return NULL;
@@ -18,7 +18,7 @@ static char* getln(FILE* const fp)
     return buffer;
 }
 
-static uint8_t** heap(void)
+static uint8_t** build(void)
 {
     uint8_t** const array = malloc(rows * sizeof(uint8_t*));
     for(int i = 0; i < rows; i++)
@@ -31,12 +31,12 @@ static uint8_t** heap(void)
     return array;
 }
 
-static uint8_t** get(FILE* const fp)
+static uint8_t** get_tile(FILE* const fp)
 {
-    uint8_t** const array = heap();
+    uint8_t** const array = build();
     for(int i = 0; i < rows; i++)
     {
-        char* const line = getln(fp);
+        char* const line = get_line(fp);
         const char* tile;
         int j = 0;
         for(char* temp = line; (tile = strtok(temp, " ")); temp = NULL)
@@ -65,17 +65,17 @@ void load_map(const char* path)
     FILE* fp = fopen(path, "r");
     char* line;
     // Rows
-    line = getln(fp);
+    line = get_line(fp);
     sscanf(line, "%d", &rows);
     free(line);
     // Columns
-    line = getln(fp);
+    line = get_line(fp);
     sscanf(line, "%d", &cols);
     free(line);
     // Map
-    ceilings = get(fp);
-    wallings = get(fp);
-    floorings = get(fp);
+    ceilings  = get_tile(fp);
+    wallings  = get_tile(fp);
+    floorings = get_tile(fp);
     // Done
     fclose(fp);
 }
