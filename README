@@ -4,3 +4,11 @@ water engine
 
     move: w,a,s,d
     turn: h, l
+
+    maps are stored
+    <row>
+    <col>
+    <ceilings> (row x col)
+    <wallings> (row x col)
+    <floorings>(row x col)
+

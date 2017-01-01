@@ -1,17 +1,17 @@
 CC = gcc
 PROJ = water
 CPPFLAGS = -Iinclude
-SRCS = main.c
+SRCS = main.c map.c
 OBJS = $(SRCS:.c=.o)
-CFLAGS = -Wall -Wextra -Wshadow -std=c11 -pedantic -Ofast
+CFLAGS = -Wall -Wextra -Wshadow -std=c11 -pedantic -Ofast -flto
 LDFLAGS = -lm -lSDL2
 TARGET_ARCH = -march=native
 DEPDIR := deps
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
-COMPILE = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
-LINK = $(CC) $(OBJS) $(TARGET_ARCH) $(LDFLAGS) -o
+COMPILE = $(CC) $(CFLAGS) $(DEPFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+LINK = $(CC) $(CFLAGS) $(OBJS) $(TARGET_ARCH) $(LDFLAGS) -o
 POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
 
 $(PROJ): $(OBJS)

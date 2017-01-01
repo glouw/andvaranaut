@@ -1,44 +1,7 @@
+#include "map.h"
+
 #include <SDL2/SDL.h>
 #include <stdbool.h>
-
-#define rows 9 // To be dynamic
-#define cols 9 // To be dynamic
-
-static const uint8_t wallings[rows][cols] = {
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-};
-
-static const uint8_t ceilings[rows][cols] = {
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-};
-
-static const uint8_t floorings[rows][cols] = {
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 2, 2, 2, 1, 2, 2, 2, 1 },
-    { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
-    { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
-    { 1, 2, 1, 2, 2, 2, 1, 2, 1 },
-    { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
-    { 1, 2, 1, 2, 1, 2, 1, 2, 1 },
-    { 1, 2, 2, 2, 1, 2, 2, 2, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-};
 
 struct point
 {
@@ -168,10 +131,7 @@ static struct point step(const struct point hero, const double m, const double b
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
     if(out(point))
-    {
-        puts("warning: ray casting out of bounds");
-        return (struct point){ 0.0, 0.0 };
-    }
+        return (struct point){ -1.0, -1.0 };
     return wall(point) ? point : step(point, m, b, q);
 }
 
@@ -227,7 +187,7 @@ static int getceiling(const struct point point)
     return ceilings[y][x];
 }
 
-static SDL_Surface* load(const uint32_t format, const char* path)
+static SDL_Surface* store(const uint32_t format, const char* path)
 {
     SDL_Surface* const surface = SDL_LoadBMP(path);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
@@ -245,12 +205,12 @@ int main(void)
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Surface* tiles[10] = { NULL };
     SDL_Surface* sprts[10] = { NULL };
-    #define T(n, tile) tiles[n] = load(format, "tiles/"tile);
+    #define T(n, tile) tiles[n] = store(format, "tiles/"tile);
     #define LD_TILES                                        \
-        T(0, "error.bmp")                                   \
-        T(1, "stone.bmp")                                   \
-        T(2, "wood.bmp")
-    #define S(n, sprt) sprts[n] = load(format, "sprts/"sprt);
+        T(1, "error.bmp")                                   \
+        T(2, "stone.bmp")                                   \
+        T(3, "wood.bmp")
+    #define S(n, sprt) sprts[n] = store(format, "sprts/"sprt);
     #define LD_SPRTS                                        \
         S(0, "soldier.bmp")
     LD_TILES
@@ -261,6 +221,8 @@ int main(void)
     #undef LD_SPRTS
     // GPU
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
+    // Load map
+    map_load("maps/test");
     // Hero
     struct point hero = { 2.5, 4.5 }; double theta = 0.0;
     const double d0 = 0.080;
@@ -300,6 +262,11 @@ int main(void)
             const double radians = sigma + theta;
             // Cast a ray
             const struct point hit = cast(hero, radians);
+            if(out(hit))
+            {
+                puts("warning: wall ray out of bounds");
+                continue;
+            }
             const struct point ray = sub(hit, hero);
             // Fish eye correction
             const double normal = mag(ray) * cos(sigma);
@@ -377,5 +344,6 @@ int main(void)
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(gpu);
     SDL_Quit();
+    map_kill();
     return 0;
 }
