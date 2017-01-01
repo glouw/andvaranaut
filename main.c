@@ -310,7 +310,7 @@ int main(void)
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
             // Buffer walling
-            SDL_Surface* const walling = tiles[getwalling(hit)];
+            const SDL_Surface* const walling = tiles[getwalling(hit)];
             const int w = walling->w;
             const int h = walling->h;
             const int x = w * percentage(hit);
@@ -330,7 +330,7 @@ int main(void)
                 const struct point party = add(hero, mul(ray, t > 1.0 ? 1.0 : t));
                 // Put cache
                 caches[i] = party;
-                SDL_Surface* const flooring = tiles[getflooring(party)];
+                const SDL_Surface* const flooring = tiles[getflooring(party)];
                 const int ww = flooring->w;
                 const int hh = flooring->h;
                 const int xx = ww * (party.x - floor(party.x));
@@ -344,7 +344,7 @@ int main(void)
             {
                 // Get cache
                 const struct point party = caches[sz - 1 - i];
-                SDL_Surface* const ceiling = tiles[getceiling(party)];
+                const SDL_Surface* const ceiling = tiles[getceiling(party)];
                 const int ww = ceiling->w;
                 const int hh = ceiling->h;
                 const int xx = ww * (party.x - floor(party.x));
