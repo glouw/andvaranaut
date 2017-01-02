@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-static SDL_Surface* load_bmp(const uint32_t format, const char* path)
+static SDL_Surface* loadbmp(const uint32_t format, const char* path)
 {
     SDL_Surface* const surface = SDL_LoadBMP(path);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
@@ -22,12 +22,12 @@ int main(void)
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Surface* tiles[10] = { NULL };
     SDL_Surface* sprts[10] = { NULL };
-    #define T(n, tile) tiles[n] = load_bmp(format, "tiles/"tile);
+    #define T(n, tile) tiles[n] = loadbmp(format, "tiles/"tile);
     #define LD_TILES                                        \
         T(1, "error.bmp")                                   \
         T(2, "stone.bmp")                                   \
         T(3, "wood.bmp")
-    #define S(n, sprt) sprts[n] = load_bmp(format, "sprts/"sprt);
+    #define S(n, sprt) sprts[n] = loadbmp(format, "sprts/"sprt);
     #define LD_SPRTS                                        \
         S(0, "soldier.bmp")
     LD_TILES
@@ -39,7 +39,7 @@ int main(void)
     // GPU
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
     // Load map
-    load_map("maps/test");
+    map_load("maps/test");
     // Hero
     struct point hero = { 2.5, 4.5 }; double theta = 0.0;
     const double d0 = 0.080;
@@ -66,7 +66,7 @@ int main(void)
         if(key[SDL_SCANCODE_A]) temp.y -= direction.x, temp.x += direction.y;
         if(key[SDL_SCANCODE_D]) temp.y += direction.x, temp.x -= direction.y;
         // Collision detection
-        hero = wall_collision(temp) ? hero : temp;
+        hero = geom_wallcollision(temp) ? hero : temp;
         // Cast a ray for each column of the screen
         void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
         uint32_t* const screen = (uint32_t*)bytes;
@@ -77,15 +77,15 @@ int main(void)
             const double focal = 1.0;
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
-            const struct point wall = cast(hero, radians);
-            if(out_of_map(wall))
+            const struct point wall = geom_cast(hero, radians);
+            if(geom_outofbounds(wall))
             {
                 puts("warning: wall ray out of bounds");
                 continue;
             }
-            const struct point ray = sub(wall, hero);
+            const struct point rayw = geom_sub(wall, hero);
             // Correct the fish eye
-            const double normal = mag(ray) * cos(sigma);
+            const double normal = geom_mag(rayw) * cos(sigma);
             // Calculate the wall height
             const double size = yres;
             const double height = round(size * focal / normal);
@@ -97,10 +97,11 @@ int main(void)
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
             // GPU buffer walling
-            const SDL_Surface* const walling = tiles[get_walling(wall)];
+            const int t = geom_wallingtile(wall);
+            const SDL_Surface* const walling = tiles[t];
             const int w = walling->w;
             const int h = walling->h;
-            const int x = w * wall_percentage(wall);
+            const int x = w * geom_wallpercentage(wall);
             for(int row = cb; row < ft; row++)
             {
                 const uint32_t* const pixels = walling->pixels;
@@ -112,12 +113,17 @@ int main(void)
             struct point caches[sz];
             for(int i = 0, row = ft; row < fb; i++, row++)
             {
+                // dis can be precomputed
                 const double dis = yres / (2.0 * row - yres);
-                const double t = dis / normal;
-                const struct point party = add(hero, mul(ray, t > 1.0 ? 1.0 : t));
+                const double proj = dis / normal;
+                // Occasionaly projects to 101% - 103%
+                const double percent = proj > 1.0 ? 1.0 : proj;
+                const struct point rayf = geom_mul(rayw, percent);
+                const struct point party = geom_add(hero, rayf);
                 // Put cache
                 caches[i] = party;
-                const SDL_Surface* const flooring = tiles[get_flooring(party)];
+                const int tt = geom_flooringtile(party);
+                const SDL_Surface* const flooring = tiles[tt];
                 const int ww = flooring->w;
                 const int hh = flooring->h;
                 const int xx = ww * (party.x - floor(party.x));
@@ -131,7 +137,8 @@ int main(void)
             {
                 // Get cache
                 const struct point party = caches[sz - 1 - i];
-                const SDL_Surface* const ceiling = tiles[get_ceiling(party)];
+                const int tt = geom_ceilingtile(party);
+                const SDL_Surface* const ceiling = tiles[tt];
                 const int ww = ceiling->w;
                 const int hh = ceiling->h;
                 const int xx = ww * (party.x - floor(party.x));
@@ -160,6 +167,6 @@ int main(void)
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(gpu);
     SDL_Quit();
-    unload_map();
+    map_unload();
     return 0;
 }

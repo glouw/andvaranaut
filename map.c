@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char* get_line(FILE* const fp)
+static char* getline(FILE* const fp)
 {
     if(ungetc(getc(fp), fp) == EOF)
         return NULL;
@@ -18,7 +18,7 @@ static char* get_line(FILE* const fp)
     return buffer;
 }
 
-static uint8_t** fresh_2d_array(void)
+static uint8_t** fresh2d(void)
 {
     uint8_t** const array = malloc(rows * sizeof(uint8_t*));
     for(int i = 0; i < rows; i++)
@@ -31,12 +31,12 @@ static uint8_t** fresh_2d_array(void)
     return array;
 }
 
-static uint8_t** get_tile(FILE* const fp)
+static uint8_t** gettile(FILE* const fp)
 {
-    uint8_t** const array = fresh_2d_array();
+    uint8_t** const array = fresh2d();
     for(int i = 0; i < rows; i++)
     {
-        char* const line = get_line(fp);
+        char* const line = getline(fp);
         const char* tile;
         int j = 0;
         for(char* temp = line; (tile = strtok(temp, " ")); temp = NULL)
@@ -46,36 +46,36 @@ static uint8_t** get_tile(FILE* const fp)
     return array;
 }
 
-static void kill_2d_array(uint8_t** const array)
+static void kill2d(uint8_t** const array)
 {
     for(int i = 0; i < rows; i++)
         free(array[i]);
     free(array);
 }
 
-void unload_map(void)
+void map_unload(void)
 {
-    kill_2d_array(ceilings);
-    kill_2d_array(wallings);
-    kill_2d_array(floorings);
+    kill2d(ceilings);
+    kill2d(wallings);
+    kill2d(floorings);
 }
 
-void load_map(const char* path)
+void map_load(const char* path)
 {
     FILE* fp = fopen(path, "r");
     char* line;
     // Rows
-    line = get_line(fp);
+    line = getline(fp);
     sscanf(line, "%d", &rows);
     free(line);
     // Columns
-    line = get_line(fp);
+    line = getline(fp);
     sscanf(line, "%d", &cols);
     free(line);
     // Map
-    ceilings  = get_tile(fp);
-    wallings  = get_tile(fp);
-    floorings = get_tile(fp);
+    ceilings  = gettile(fp);
+    wallings  = gettile(fp);
+    floorings = gettile(fp);
     // Done
     fclose(fp);
 }
