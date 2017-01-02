@@ -187,5 +187,5 @@ geom_ceilingtile(const struct point point)
 bool
 geom_outofbounds(const struct point point)
 {
-    return point.x >= cols || point.y >= rows || point.x < 0 || point.y < 0;
+    return point.x >= xmax || point.y >= ymax || point.x < 0 || point.y < 0;
 }

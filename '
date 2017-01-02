@@ -5,7 +5,7 @@
 
 static double* diss;
 
-static void oparties(const int yres)
+static void precompute(const int yres)
 {
     diss = malloc(sizeof(double) * yres);
     for(int row = 0; row < yres; row++)
@@ -24,11 +24,9 @@ int main(void)
 {
     const int xres = 640;
     const int yres = 360;
-    // Optimize floor and ceiling parties
-    oparties(yres);
-    // Load the map
+    precompute(yres);
+    // Load map
     map_load("maps/test");
-    // Boot up SDL
     SDL_Init(SDL_INIT_VIDEO);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Window* const window = SDL_CreateWindow("water", 25, 120, xres, yres, SDL_WINDOW_SHOWN);
@@ -171,7 +169,7 @@ int main(void)
         const int delay = 1000 / fps - dt;
         SDL_Delay(delay < 0 ? 0 : delay);
     }
-    // Cleanup SDL
+    // Cleanup
     #define len(array) (int)(sizeof(array) / sizeof(*array))
     for(int i = 0; i < len(tiles); i++) SDL_FreeSurface(tiles[i]);
     for(int i = 0; i < len(sprts); i++) SDL_FreeSurface(sprts[i]);
@@ -179,9 +177,7 @@ int main(void)
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(gpu);
     SDL_Quit();
-    // Cleanup map
     map_unload();
-    // Cleanup party optimization
     free(diss);
     return 0;
 }

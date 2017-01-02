@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-int rows;
-int cols;
+int ymax;
+int xmax;
 uint8_t** ceilings;
 uint8_t** wallings;
 uint8_t** floorings;
