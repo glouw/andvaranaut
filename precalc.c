@@ -1,0 +1,25 @@
+#include "precalc.h"
+
+#include <stdlib.h>
+#include <math.h>
+
+void precalc_optimize(const int xres, const int yres)
+{
+    precalc_distances = malloc(sizeof(double) * yres);
+    for(int row = 0; row < yres; row++)
+    {
+        precalc_distances[row] = yres / (2.0 * row - yres);
+    }
+    precalc_sigmas = malloc(sizeof(double) * xres);
+    for(int col = 0; col < xres; col++)
+    {
+        const double pan = 2.0 * (double)col / xres - 1.0;
+        precalc_sigmas[col] = atan2(pan, 1.0); // 90 FOV
+    }
+}
+
+void precalc_unload(void)
+{
+    free(precalc_distances);
+    free(precalc_sigmas);
+}

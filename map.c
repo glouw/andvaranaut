@@ -20,13 +20,13 @@ static char* getline(FILE* const fp)
 
 static uint8_t** fresh2d(void)
 {
-    uint8_t** const array = malloc(ymax * sizeof(uint8_t*));
-    for(int i = 0; i < ymax; i++)
+    uint8_t** const array = malloc(map_ymax * sizeof(uint8_t*));
+    for(int i = 0; i < map_ymax; i++)
         array[i] = NULL;
-    for(int i = 0; i < ymax; i++)
-        array[i] = malloc(xmax * sizeof(uint8_t));
-    for(int i = 0; i < ymax; i++)
-    for(int j = 0; j < xmax; j++)
+    for(int i = 0; i < map_ymax; i++)
+        array[i] = malloc(map_xmax * sizeof(uint8_t));
+    for(int i = 0; i < map_ymax; i++)
+    for(int j = 0; j < map_xmax; j++)
         array[i][j] = 0;
     return array;
 }
@@ -34,7 +34,7 @@ static uint8_t** fresh2d(void)
 static uint8_t** gettile(FILE* const fp)
 {
     uint8_t** const array = fresh2d();
-    for(int i = 0; i < ymax; i++)
+    for(int i = 0; i < map_ymax; i++)
     {
         char* const line = getline(fp);
         const char* tile;
@@ -48,34 +48,34 @@ static uint8_t** gettile(FILE* const fp)
 
 static void kill2d(uint8_t** const array)
 {
-    for(int i = 0; i < ymax; i++)
+    for(int i = 0; i < map_ymax; i++)
         free(array[i]);
     free(array);
 }
 
 void map_unload(void)
 {
-    kill2d(ceilings);
-    kill2d(wallings);
-    kill2d(floorings);
+    kill2d(map_ceilings);
+    kill2d(map_wallings);
+    kill2d(map_floorings);
 }
 
 void map_load(const char* path)
 {
     FILE* fp = fopen(path, "r");
     char* line;
-    // ymax
+    // map_ymax
     line = getline(fp);
-    sscanf(line, "%d", &ymax);
+    sscanf(line, "%d", &map_ymax);
     free(line);
-    // Columns
+    // xmax
     line = getline(fp);
-    sscanf(line, "%d", &xmax);
+    sscanf(line, "%d", &map_xmax);
     free(line);
     // Map
-    ceilings  = gettile(fp);
-    wallings  = gettile(fp);
-    floorings = gettile(fp);
+    map_ceilings = gettile(fp);
+    map_wallings = gettile(fp);
+    map_floorings = gettile(fp);
     // Done
     fclose(fp);
 }

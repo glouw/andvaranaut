@@ -31,6 +31,7 @@ geom_ceilingtile(const struct point point);
 bool
 geom_outofbounds(const struct point point);
 
+// Performance inlines
 static inline struct point
 geom_sub(const struct point i, const struct point j)
 {

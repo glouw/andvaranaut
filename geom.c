@@ -41,7 +41,7 @@ fn(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return point.y - y == 0.0 && wallings[y + 0][x + 0] && wallings[y - 1][x + 0] == 0;
+    return point.y - y == 0.0 && map_wallings[y + 0][x + 0] && map_wallings[y - 1][x + 0] == 0;
 }
 
 static inline bool
@@ -49,7 +49,7 @@ fe(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return point.x - x == 0.0 && wallings[y + 0][x + 0] == 0 && wallings[y + 0][x - 1];
+    return point.x - x == 0.0 && map_wallings[y + 0][x + 0] == 0 && map_wallings[y + 0][x - 1];
 }
 
 static inline bool
@@ -57,7 +57,7 @@ fs(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return point.y - y == 0.0 && wallings[y + 0][x + 0] == 0 && wallings[y - 1][x + 0];
+    return point.y - y == 0.0 && map_wallings[y + 0][x + 0] == 0 && map_wallings[y - 1][x + 0];
 }
 
 static inline bool
@@ -65,7 +65,7 @@ fw(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return point.x - x == 0.0 && wallings[y + 0][x + 0] && wallings[y + 0][x - 1] == 0;
+    return point.x - x == 0.0 && map_wallings[y + 0][x + 0] && map_wallings[y + 0][x - 1] == 0;
 }
 
 static inline bool
@@ -104,7 +104,7 @@ step(const struct point hero, const double m, const double b, const int q)
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
     if(geom_outofbounds(point))
-        return (struct point){ -1.0, -1.0 };
+        return point;
     return wall(point) ? point : step(point, m, b, q);
 }
 
@@ -153,7 +153,7 @@ geom_wallcollision(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return wallings[y][x];
+    return map_wallings[y][x];
 }
 
 int
@@ -161,10 +161,10 @@ geom_wallingtile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    if(fn(point)) return wallings[y + 0][x + 0];
-    if(fe(point)) return wallings[y + 0][x - 1];
-    if(fw(point)) return wallings[y + 0][x + 0];
-    if(fs(point)) return wallings[y - 1][x + 0];
+    if(fn(point)) return map_wallings[y + 0][x + 0];
+    if(fe(point)) return map_wallings[y + 0][x - 1];
+    if(fw(point)) return map_wallings[y + 0][x + 0];
+    if(fs(point)) return map_wallings[y - 1][x + 0];
     return -1;
 }
 
@@ -173,7 +173,7 @@ geom_flooringtile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return floorings[y][x];
+    return map_floorings[y][x];
 }
 
 int
@@ -181,11 +181,11 @@ geom_ceilingtile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return ceilings[y][x];
+    return map_ceilings[y][x];
 }
 
 bool
 geom_outofbounds(const struct point point)
 {
-    return point.x >= xmax || point.y >= ymax || point.x < 0 || point.y < 0;
+    return point.x >= map_xmax || point.y >= map_ymax || point.x < 0 || point.y < 0;
 }

@@ -1,7 +1,7 @@
 CC = gcc
 PROJ = water
 CPPFLAGS = -Iinclude
-SRCS = main.c map.c geom.c
+SRCS = main.c map.c geom.c precalc.c util.c
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -Wall -Wextra -Wshadow -std=c99 -pedantic -Ofast -flto
 LDFLAGS = -lm -lSDL2
