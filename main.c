@@ -2,7 +2,6 @@
 #include "geom.h"
 
 #include <SDL2/SDL.h>
-#include <stdbool.h>
 
 static SDL_Surface* loadbmp(const uint32_t format, const char* path)
 {
@@ -75,6 +74,7 @@ int main(void)
             // 90 degree field of view
             const double pan = 2.0 * (double)col / xres - 1.0;
             const double focal = 1.0;
+            // NOTE: sigma can be precomputed
             const double sigma = atan2(pan, focal);
             const double radians = sigma + theta;
             const struct point wall = geom_cast(hero, radians);
@@ -113,7 +113,7 @@ int main(void)
             struct point caches[sz];
             for(int i = 0, row = ft; row < fb; i++, row++)
             {
-                // dis can be precomputed
+                // NOTE: dis can be precomputed
                 const double dis = yres / (2.0 * row - yres);
                 const double proj = dis / normal;
                 // Occasionaly projects to 101% - 103%
@@ -126,8 +126,8 @@ int main(void)
                 const SDL_Surface* const flooring = tiles[tt];
                 const int ww = flooring->w;
                 const int hh = flooring->h;
-                const int xx = ww * (party.x - floor(party.x));
-                const int yy = hh * (party.y - floor(party.y));
+                const int xx = ww * geom_mod(party.x);
+                const int yy = hh * geom_mod(party.y);
                 // GPU buffer
                 const uint32_t* const pixels = flooring->pixels;
                 screen[row * xres + col] = pixels[yy * ww + xx];
@@ -141,8 +141,8 @@ int main(void)
                 const SDL_Surface* const ceiling = tiles[tt];
                 const int ww = ceiling->w;
                 const int hh = ceiling->h;
-                const int xx = ww * (party.x - floor(party.x));
-                const int yy = hh * (party.y - floor(party.y));
+                const int xx = ww * geom_mod(party.x);
+                const int yy = hh * geom_mod(party.y);
                 // GPU buffer
                 const uint32_t* const pixels = ceiling->pixels;
                 screen[row * xres + col] = pixels[yy * ww + xx];

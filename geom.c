@@ -131,10 +131,10 @@ geom_mag(const struct point point)
 double
 geom_wallpercentage(const struct point point)
 {
-    if(fn(point)) return 0.0 + (point.x - floor(point.x));
-    if(fe(point)) return 1.0 - (point.y - floor(point.y));
-    if(fs(point)) return 1.0 - (point.x - floor(point.x));
-    if(fw(point)) return 0.0 + (point.y - floor(point.y));
+    if(fn(point)) return 0.0 + geom_mod(point.x);
+    if(fe(point)) return 1.0 - geom_mod(point.y);
+    if(fs(point)) return 1.0 - geom_mod(point.x);
+    if(fw(point)) return 0.0 + geom_mod(point.y);
     return 0.0;
 }
 

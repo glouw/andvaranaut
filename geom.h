@@ -48,3 +48,9 @@ geom_mul(const struct point i, const double n)
 {
     return (struct point){ i.x * n, i.y * n };
 }
+
+static inline double
+geom_mod(const double d)
+{
+    return d - (int)d;
+}
