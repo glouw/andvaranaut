@@ -96,7 +96,7 @@ main(void)
             const int ft = bot > yres ? yres : bot;
             const int fb = yres;
             // Buffers walling column in GPU memory
-            const int t = geom_wallingtile(wall);
+            const int t = geom_getwallingtile(wall);
             const SDL_Surface* const walling = tiles[t];
             const int w = walling->w;
             const int h = walling->h;
@@ -117,7 +117,7 @@ main(void)
                 const struct point rayf = geom_mul(rayw, percent);
                 const struct point floor = geom_add(hero, rayf);
                 caches[i] = floor;
-                const int tt = geom_flooringtile(floor);
+                const int tt = geom_getflooringtile(floor);
                 const SDL_Surface* const flooring = tiles[tt];
                 const int ww = flooring->w;
                 const int hh = flooring->h;
@@ -130,7 +130,7 @@ main(void)
             for(int i = 0, row = ct; row < cb; i++, row++)
             {
                 const struct point ceil = caches[sz - i - 1];
-                const int tt = geom_ceilingtile(ceil);
+                const int tt = geom_getceilingtile(ceil);
                 const SDL_Surface* const ceiling = tiles[tt];
                 const int ww = ceiling->w;
                 const int hh = ceiling->h;

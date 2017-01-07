@@ -157,7 +157,7 @@ geom_wallcollision(const struct point point)
 }
 
 int
-geom_bankingtile(const struct point point)
+geom_getbankingtile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
@@ -165,7 +165,7 @@ geom_bankingtile(const struct point point)
 }
 
 int
-geom_wallingtile(const struct point point)
+geom_getwallingtile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
@@ -177,7 +177,7 @@ geom_wallingtile(const struct point point)
 }
 
 int
-geom_flooringtile(const struct point point)
+geom_getflooringtile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
@@ -185,7 +185,7 @@ geom_flooringtile(const struct point point)
 }
 
 int
-geom_ceilingtile(const struct point point)
+geom_getceilingtile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
