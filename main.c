@@ -140,7 +140,7 @@ main(void)
                 const int cx = cw * geom_mod(ceil.x);
                 const int cy = ch * geom_mod(ceil.y);
                 const uint32_t* const pixels = ceiling->pixels;
-                screen[row * xres + col] = ct ? pixels[cy * cw + cx] : 0x0;
+                screen[row * xres + col] = pixels[cy * cw + cx];
             }
         }
         // Releases the GPU

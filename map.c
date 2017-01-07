@@ -74,7 +74,6 @@ print2d(uint8_t** const array)
 void
 map_unload(void)
 {
-    kill2d(map_bankings);
     kill2d(map_ceilings);
     kill2d(map_wallings);
     kill2d(map_floorings);
@@ -94,12 +93,10 @@ map_load(const char* path)
     sscanf(line, "%d", &map_xmax);
     free(line);
     // Map
-    map_bankings = gettile(fp);
     map_ceilings = gettile(fp);
     map_wallings = gettile(fp);
     map_floorings = gettile(fp);
     // Done
-    print2d(map_bankings);
     print2d(map_ceilings);
     print2d(map_wallings);
     print2d(map_floorings);

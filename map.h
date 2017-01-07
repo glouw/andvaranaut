@@ -4,7 +4,6 @@
 
 int map_ymax;
 int map_xmax;
-uint8_t** map_bankings;
 uint8_t** map_ceilings;
 uint8_t** map_wallings;
 uint8_t** map_floorings;

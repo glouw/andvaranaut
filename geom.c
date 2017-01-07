@@ -157,14 +157,6 @@ geom_wallcollision(const struct point point)
 }
 
 int
-geom_getbankingtile(const struct point point)
-{
-    const int x = point.x;
-    const int y = point.y;
-    return map_bankings[y][x];
-}
-
-int
 geom_getwallingtile(const struct point point)
 {
     const int x = point.x;
