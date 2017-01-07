@@ -20,6 +20,9 @@ bool
 geom_wallcollision(const struct point point);
 
 int
+geom_bankingtile(const struct point point);
+
+int
 geom_wallingtile(const struct point point);
 
 int

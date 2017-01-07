@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char* getline(FILE* const fp)
+static char*
+getline(FILE* const fp)
 {
     if(ungetc(getc(fp), fp) == EOF)
         return NULL;
@@ -18,7 +19,8 @@ static char* getline(FILE* const fp)
     return buffer;
 }
 
-static uint8_t** fresh2d(void)
+static uint8_t**
+fresh2d(void)
 {
     uint8_t** const array = malloc(map_ymax * sizeof(uint8_t*));
     for(int i = 0; i < map_ymax; i++)
@@ -31,7 +33,8 @@ static uint8_t** fresh2d(void)
     return array;
 }
 
-static uint8_t** gettile(FILE* const fp)
+static uint8_t**
+gettile(FILE* const fp)
 {
     uint8_t** const array = fresh2d();
     for(int i = 0; i < map_ymax; i++)
@@ -46,14 +49,16 @@ static uint8_t** gettile(FILE* const fp)
     return array;
 }
 
-static void kill2d(uint8_t** const array)
+static void
+kill2d(uint8_t** const array)
 {
     for(int i = 0; i < map_ymax; i++)
         free(array[i]);
     free(array);
 }
 
-static void print2d(uint8_t** const array)
+static void
+print2d(uint8_t** const array)
 {
     for(int i = 0; i < map_ymax; i++)
     {
@@ -66,14 +71,16 @@ static void print2d(uint8_t** const array)
     }
 }
 
-void map_unload(void)
+void
+map_unload(void)
 {
     kill2d(map_ceilings);
     kill2d(map_wallings);
     kill2d(map_floorings);
 }
 
-void map_load(const char* path)
+void
+map_load(const char* path)
 {
     FILE* fp = fopen(path, "r");
     char* line;

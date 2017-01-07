@@ -4,7 +4,8 @@
 
 #include <SDL2/SDL.h>
 
-static SDL_Surface* loadbmp(const uint32_t format, const char* path)
+static SDL_Surface*
+loadbmp(const uint32_t format, const char* path)
 {
     SDL_Surface* const surface = SDL_LoadBMP(path);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
@@ -12,7 +13,8 @@ static SDL_Surface* loadbmp(const uint32_t format, const char* path)
     return convert;
 }
 
-int main(void)
+int
+main(void)
 {
     const int xres = 800;
     const int yres = 400;
