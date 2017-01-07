@@ -4,7 +4,7 @@
 
 #include <SDL2/SDL.h>
 
-SDL_Surface* loadbmp(const uint32_t format, const char* path)
+static SDL_Surface* loadbmp(const uint32_t format, const char* path)
 {
     SDL_Surface* const surface = SDL_LoadBMP(path);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
