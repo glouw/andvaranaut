@@ -25,8 +25,10 @@ main(void)
     // Boots up SDL
     SDL_Init(SDL_INIT_VIDEO);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
-    SDL_Window* const window = SDL_CreateWindow("water", 25, 120, xres, yres, SDL_WINDOW_SHOWN);
-    SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    const uint32_t mode = SDL_RENDERER_ACCELERATED;
+    const uint32_t estate = SDL_WINDOW_SHOWN;
+    SDL_Window* const window = SDL_CreateWindow("water", 25, 120, xres, yres, estate);
+    SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, mode);
     // Loads all textures and sprites
     SDL_Surface* tiles[10] = { NULL };
     SDL_Surface* sprts[10] = { NULL };
@@ -45,7 +47,8 @@ main(void)
     #undef LD_TILES
     #undef LD_SPRTS
     // Readys the GPU
-    SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, xres, yres);
+    const uint32_t access = SDL_TEXTUREACCESS_STREAMING;
+    SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, access, xres, yres);
     // Creates the hero
     struct point hero = { 2.5, 4.5 }; double theta = 0.0;
     const double d0 = 0.080;
