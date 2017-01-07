@@ -85,7 +85,7 @@ map_load(const char* path)
 {
     FILE* fp = fopen(path, "r");
     char* line;
-    // map_ymax
+    // ymax
     line = getline(fp);
     sscanf(line, "%d", &map_ymax);
     free(line);
