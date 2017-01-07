@@ -93,18 +93,18 @@ main(void)
             const double height = round(precalc_focal * size / normal);
             const double top = round((yres / 2.0) - (height / 2.0));
             const double bot = top + height;
-            // Clamps the ceilling and floor to the screen size
-            const int ct = 0;
-            const int cb = top < 0 ? 0 : top;
-            const int ft = bot > yres ? yres : bot;
-            const int fb = yres;
+            // Clamps the top and the bottom of the ceilling and floor to the screen
+            const int ctc = 0;
+            const int cbc = top < 0 ? 0 : top;
+            const int ftc = bot > yres ? yres : bot;
+            const int fbc = yres;
             // Buffers walling column in GPU memory
             const int t = geom_getwallingtile(wall);
             const SDL_Surface* const walling = tiles[t];
             const int w = walling->w;
             const int h = walling->h;
             const int x = w * geom_wallpercentage(wall);
-            for(int row = cb; row < ft; row++)
+            for(int row = cbc; row < ftc; row++)
             {
                 const uint32_t* const pixels = walling->pixels;
                 const int y = h * (row - top) / height;
@@ -112,8 +112,8 @@ main(void)
             }
             // Buffers flooring column in GPU memory
             struct point caches[yres / 2];
-            const int sz = fb - ft;
-            for(int i = 0, row = ft; row < fb; i++, row++)
+            const int sz = fbc - ftc;
+            for(int i = 0, row = ftc; row < fbc; i++, row++)
             {
                 const double dis = precalc_distances[row];
                 const double percent = dis / normal;
@@ -130,7 +130,7 @@ main(void)
                 screen[row * xres + col] = pixels[yy * ww + xx];
             }
             // Buffers ceiling column in GPU memory
-            for(int i = 0, row = ct; row < cb; i++, row++)
+            for(int i = 0, row = ctc; row < cbc; i++, row++)
             {
                 const struct point ceil = caches[sz - i - 1];
                 const int tt = geom_getceilingtile(ceil);
