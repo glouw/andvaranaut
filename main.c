@@ -30,9 +30,9 @@ int main(void)
     SDL_Surface* sprts[10] = { NULL };
     #define T(n, tile) tiles[n] = loadbmp(format, "tiles/"tile);
     #define LD_TILES                                           \
-        T(1, "error.bmp")                                      \
-        T(2, "stone.bmp")                                      \
-        T(3, "wood.bmp")
+        T(0, "error.bmp")                                      \
+        T(1, "stone.bmp")                                      \
+        T(2, "wood.bmp")
     #define S(n, sprt) sprts[n] = loadbmp(format, "sprts/"sprt);
     #define LD_SPRTS                                           \
         S(0, "soldier.bmp")
