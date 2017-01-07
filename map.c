@@ -74,6 +74,7 @@ print2d(uint8_t** const array)
 void
 map_unload(void)
 {
+    kill2d(map_bankings);
     kill2d(map_ceilings);
     kill2d(map_wallings);
     kill2d(map_floorings);
