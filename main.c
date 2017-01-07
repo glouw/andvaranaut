@@ -90,7 +90,7 @@ int main(void)
             // Calculates the wall height
             const double size = yres;
             const double height = round(precalc_focal * size / normal);
-            const double top = (yres / 2.0) - (height / 2.0);
+            const double top = round((yres / 2.0) - (height / 2.0));
             const double bot = top + height;
             // Clamps the ceilling and floor to the screen size
             const int ct = 0;
