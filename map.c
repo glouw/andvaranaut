@@ -53,6 +53,19 @@ static void kill2d(uint8_t** const array)
     free(array);
 }
 
+static void print2d(uint8_t** const array)
+{
+    for(int i = 0; i < map_ymax; i++)
+    {
+        for(int j = 0; j < map_xmax; j++)
+        {
+            printf("%d", array[i][j]);
+            putchar(' ');
+        }
+        putchar('\n');
+    }
+}
+
 void map_unload(void)
 {
     kill2d(map_ceilings);
@@ -77,5 +90,8 @@ void map_load(const char* path)
     map_wallings = gettile(fp);
     map_floorings = gettile(fp);
     // Done
+    print2d(map_ceilings);
+    print2d(map_wallings);
+    print2d(map_floorings);
     fclose(fp);
 }
