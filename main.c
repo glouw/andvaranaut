@@ -79,11 +79,7 @@ int main(void)
         {
             const double radians = precalc_sigmas[col] + theta;
             const struct point wall = geom_cast(hero, radians);
-            if(geom_outofbounds(wall))
-            {
-                puts("warning: wall ray out of bounds");
-                continue;
-            }
+            if(geom_outofbounds(wall)) continue;
             const struct point rayw = geom_sub(wall, hero);
             // Corrects the fish eye
             const double normal = geom_mag(rayw) * cos(precalc_sigmas[col]);

@@ -86,10 +86,12 @@ void map_load(const char* path)
     sscanf(line, "%d", &map_xmax);
     free(line);
     // Map
+    map_bankings = gettile(fp);
     map_ceilings = gettile(fp);
     map_wallings = gettile(fp);
     map_floorings = gettile(fp);
     // Done
+    print2d(map_bankings);
     print2d(map_ceilings);
     print2d(map_wallings);
     print2d(map_floorings);
