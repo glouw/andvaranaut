@@ -85,9 +85,9 @@ main(void)
             const double radians = precalc_sigmas[col] + theta;
             const struct point wall = geom_cast(hero, radians);
             if(geom_outofbounds(wall)) continue;
-            const struct point rayw = geom_sub(wall, hero);
+            const struct point wray = geom_sub(wall, hero);
             // Corrects the fish eye
-            const double normal = geom_mag(rayw) * cos(precalc_sigmas[col]);
+            const double normal = geom_mag(wray) * cos(precalc_sigmas[col]);
             // Calculates the wall height
             const double size = yres;
             const double height = round(precalc_focal * size / normal);
@@ -99,16 +99,16 @@ main(void)
             const int ftc = bot > yres ? yres : bot;
             const int fbc = yres;
             // Buffers walling column in GPU memory
-            const int t = geom_getwallingtile(wall);
-            const SDL_Surface* const walling = tiles[t];
-            const int w = walling->w;
-            const int h = walling->h;
-            const int x = w * geom_wallpercentage(wall);
+            const int wt = geom_getwallingtile(wall);
+            const SDL_Surface* const walling = tiles[wt];
+            const int ww = walling->w;
+            const int wh = walling->h;
+            const int wx = ww * geom_wallpercentage(wall);
             for(int row = cbc; row < ftc; row++)
             {
                 const uint32_t* const pixels = walling->pixels;
-                const int y = h * (row - top) / height;
-                screen[row * xres + col] = pixels[y * w + x];
+                const int wy = wh * (row - top) / height;
+                screen[row * xres + col] = pixels[wy * ww + wx];
             }
             // Buffers flooring column in GPU memory
             struct point caches[yres / 2];
@@ -117,30 +117,30 @@ main(void)
             {
                 const double dis = precalc_distances[row];
                 const double percent = dis / normal;
-                const struct point rayf = geom_mul(rayw, percent);
-                const struct point floor = geom_add(hero, rayf);
+                const struct point fray = geom_mul(wray, percent);
+                const struct point floor = geom_add(hero, fray);
                 caches[i] = floor;
-                const int tt = geom_getflooringtile(floor);
-                const SDL_Surface* const flooring = tiles[tt];
-                const int ww = flooring->w;
-                const int hh = flooring->h;
-                const int xx = ww * geom_mod(floor.x);
-                const int yy = hh * geom_mod(floor.y);
+                const int ft = geom_getflooringtile(floor);
+                const SDL_Surface* const flooring = tiles[ft];
+                const int fw = flooring->w;
+                const int fh = flooring->h;
+                const int fx = fw * geom_mod(floor.x);
+                const int fy = fh * geom_mod(floor.y);
                 const uint32_t* const pixels = flooring->pixels;
-                screen[row * xres + col] = pixels[yy * ww + xx];
+                screen[row * xres + col] = pixels[fy * fw + fx];
             }
             // Buffers ceiling column in GPU memory
             for(int i = 0, row = ctc; row < cbc; i++, row++)
             {
                 const struct point ceil = caches[sz - i - 1];
-                const int tt = geom_getceilingtile(ceil);
-                const SDL_Surface* const ceiling = tiles[tt];
-                const int ww = ceiling->w;
-                const int hh = ceiling->h;
-                const int xx = ww * geom_mod(ceil.x);
-                const int yy = hh * geom_mod(ceil.y);
+                const int ct = geom_getceilingtile(ceil);
+                const SDL_Surface* const ceiling = tiles[ct];
+                const int cw = ceiling->w;
+                const int ch = ceiling->h;
+                const int cx = cw * geom_mod(ceil.x);
+                const int cy = ch * geom_mod(ceil.y);
                 const uint32_t* const pixels = ceiling->pixels;
-                screen[row * xres + col] = tt ? pixels[yy * ww + xx] : 0x0;
+                screen[row * xres + col] = ct ? pixels[cy * cw + cx] : 0x0;
             }
         }
         // Releases the GPU
