@@ -115,8 +115,7 @@ int main(void)
             for(int i = 0, row = ft; row < fb; i++, row++)
             {
                 const double dis = precalc_distances[row];
-                const double proj = dis / normal;
-                const double percent = proj > 1.0 ? 1.0 : proj;
+                const double percent = dis / normal;
                 const struct point rayf = geom_mul(rayw, percent);
                 const struct point floor = geom_add(hero, rayf);
                 caches[i] = floor;
