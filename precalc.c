@@ -5,7 +5,8 @@
 
 double precalc_focal = 1.0;
 
-void precalc_optimize(const int xres, const int yres)
+void
+precalc_optimize(const int xres, const int yres)
 {
     precalc_distances = malloc(sizeof(double) * yres);
     for(int row = 0; row < yres; row++)
@@ -20,7 +21,8 @@ void precalc_optimize(const int xres, const int yres)
     }
 }
 
-void precalc_unload(void)
+void
+precalc_unload(void)
 {
     free(precalc_distances);
     free(precalc_sigmas);
