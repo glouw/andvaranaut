@@ -12,16 +12,16 @@ double
 geom_mag(const struct point point);
 
 double
-geom_epercent(const struct point point, uint8_t** encloser);
+geom_epercent(const struct point point, uint8_t** enclosure);
 
 struct point
-geom_cast(const struct point hero, const double radians, uint8_t** encloser);
+geom_cast(const struct point hero, const double radians, uint8_t** enclosure);
 
 bool
-geom_collision(const struct point point);
+geom_ecoll(const struct point point, uint8_t** enclosure);
 
 int
-geom_etile(const struct point point, uint8_t** encloser);
+geom_etile(const struct point point, uint8_t** enclosure);
 
 int
 geom_ftile(const struct point point);

@@ -20,24 +20,24 @@ getline(FILE* const fp)
 }
 
 static uint8_t**
-fresh2d(void)
+fresh(void)
 {
-    uint8_t** const array = malloc(map_ymax * sizeof(uint8_t*));
-    for(int i = 0; i < map_ymax; i++)
+    uint8_t** const array = malloc(map_y * sizeof(uint8_t*));
+    for(int i = 0; i < map_y; i++)
         array[i] = NULL;
-    for(int i = 0; i < map_ymax; i++)
-        array[i] = malloc(map_xmax * sizeof(uint8_t));
-    for(int i = 0; i < map_ymax; i++)
-    for(int j = 0; j < map_xmax; j++)
+    for(int i = 0; i < map_y; i++)
+        array[i] = malloc(map_x * sizeof(uint8_t));
+    for(int i = 0; i < map_y; i++)
+    for(int j = 0; j < map_x; j++)
         array[i][j] = 0;
     return array;
 }
 
 static uint8_t**
-gettile(FILE* const fp)
+getparty(FILE* const fp)
 {
-    uint8_t** const array = fresh2d();
-    for(int i = 0; i < map_ymax; i++)
+    uint8_t** const array = fresh();
+    for(int i = 0; i < map_y; i++)
     {
         char* const line = getline(fp);
         const char* tile;
@@ -50,18 +50,18 @@ gettile(FILE* const fp)
 }
 
 static void
-kill2d(uint8_t** const array)
+kill(uint8_t** const array)
 {
-    for(int i = 0; i < map_ymax; i++)
+    for(int i = 0; i < map_y; i++)
         free(array[i]);
     free(array);
 }
 
 static void
-print2d(uint8_t** const array)
+print(uint8_t** const array)
 {
-    for(int i = 0; i < map_ymax; i++) {
-    for(int j = 0; j < map_xmax; j++)
+    for(int i = 0; i < map_y; i++) {
+    for(int j = 0; j < map_x; j++)
         printf("%d ", array[i][j]);
     putchar('\n');
     }
@@ -70,10 +70,10 @@ print2d(uint8_t** const array)
 void
 map_unload(void)
 {
-    kill2d(map_roofings);
-    kill2d(map_ceilings);
-    kill2d(map_wallings);
-    kill2d(map_floorings);
+    kill(map_r);
+    kill(map_c);
+    kill(map_w);
+    kill(map_f);
 }
 
 void
@@ -83,7 +83,7 @@ map_load(const char* path)
     char* line;
     // Map size
     line = getline(fp);
-    sscanf(line, "%d %d", &map_xmax, &map_ymax);
+    sscanf(line, "%d %d", &map_x, &map_y);
     free(line);
     // Inside or outside
     int temp;
@@ -93,16 +93,16 @@ map_load(const char* path)
     map_outside = !map_inside;
     free(line);
     // Map
-    map_roofings = gettile(fp);
-    map_ceilings = gettile(fp);
-    map_wallings = gettile(fp);
-    map_floorings = gettile(fp);
+    map_r = getparty(fp);
+    map_c = getparty(fp);
+    map_w = getparty(fp);
+    map_f = getparty(fp);
     // Done
-    printf("%d %d\n", map_xmax, map_ymax);
+    printf("map size: x %d: y %d\n", map_x, map_y);
     printf("%s\n", map_inside ? "inside" : "outside");
-    print2d(map_roofings);
-    print2d(map_ceilings);
-    print2d(map_wallings);
-    print2d(map_floorings);
+    print(map_r);
+    print(map_c);
+    print(map_w);
+    print(map_f);
     fclose(fp);
 }
