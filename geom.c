@@ -103,8 +103,7 @@ step(const struct point hero, const double m, const double b, const int q)
         case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
-    if(geom_outofbounds(point))
-        return point;
+    if(geom_out(point)) return point;
     return wall(point) ? point : step(point, m, b, q);
 }
 
@@ -129,7 +128,7 @@ geom_mag(const struct point point)
 }
 
 double
-geom_wallpercentage(const struct point point)
+geom_wpercent(const struct point point)
 {
     if(fn(point)) return 0.0 + geom_mod(point.x);
     if(fe(point)) return 1.0 - geom_mod(point.y);
@@ -149,7 +148,7 @@ geom_cast(const struct point hero, const double radians)
 }
 
 bool
-geom_wallcollision(const struct point point)
+geom_collision(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
@@ -157,7 +156,7 @@ geom_wallcollision(const struct point point)
 }
 
 int
-geom_getwallingtile(const struct point point)
+geom_wtile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
@@ -169,7 +168,7 @@ geom_getwallingtile(const struct point point)
 }
 
 int
-geom_getflooringtile(const struct point point)
+geom_ftile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
@@ -177,7 +176,7 @@ geom_getflooringtile(const struct point point)
 }
 
 int
-geom_getceilingtile(const struct point point)
+geom_ctile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
@@ -185,7 +184,7 @@ geom_getceilingtile(const struct point point)
 }
 
 bool
-geom_outofbounds(const struct point point)
+geom_out(const struct point point)
 {
     return point.x >= map_xmax || point.y >= map_ymax || point.x < 0 || point.y < 0;
 }

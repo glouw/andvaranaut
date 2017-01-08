@@ -11,27 +11,26 @@ double
 geom_mag(const struct point point);
 
 double
-geom_wallpercentage(const struct point point);
+geom_wpercent(const struct point point);
 
 struct point
 geom_cast(const struct point hero, const double radians);
 
 bool
-geom_wallcollision(const struct point point);
+geom_collision(const struct point point);
 
 int
-geom_getwallingtile(const struct point point);
+geom_wtile(const struct point point);
 
 int
-geom_getflooringtile(const struct point point);
+geom_ftile(const struct point point);
 
 int
-geom_getceilingtile(const struct point point);
+geom_ctile(const struct point point);
 
 bool
-geom_outofbounds(const struct point point);
+geom_out(const struct point point);
 
-// Performance inlines
 static inline struct point
 geom_sub(const struct point i, const struct point j)
 {

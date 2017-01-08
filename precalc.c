@@ -16,7 +16,7 @@ void precalc_optimize(const int xres, const int yres)
     for(int col = 0; col < xres; col++)
     {
         const double pan = 2.0 * (double)col / xres - 1.0;
-        precalc_sigmas[col] = atan2(pan, precalc_focal); // 90 FOV
+        precalc_sigmas[col] = atan2(pan, precalc_focal);
     }
 }
 

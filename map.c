@@ -60,14 +60,10 @@ kill2d(uint8_t** const array)
 static void
 print2d(uint8_t** const array)
 {
-    for(int i = 0; i < map_ymax; i++)
-    {
-        for(int j = 0; j < map_xmax; j++)
-        {
-            printf("%d", array[i][j]);
-            putchar(' ');
-        }
-        putchar('\n');
+    for(int i = 0; i < map_ymax; i++) {
+    for(int j = 0; j < map_xmax; j++)
+        printf("%d ", array[i][j]);
+    putchar('\n');
     }
 }
 
@@ -84,13 +80,9 @@ map_load(const char* path)
 {
     FILE* fp = fopen(path, "r");
     char* line;
-    // ymax
+    // Map size
     line = getline(fp);
-    sscanf(line, "%d", &map_ymax);
-    free(line);
-    // xmax
-    line = getline(fp);
-    sscanf(line, "%d", &map_xmax);
+    sscanf(line, "%d %d", &map_xmax, &map_ymax);
     free(line);
     // Map
     map_ceilings = gettile(fp);
