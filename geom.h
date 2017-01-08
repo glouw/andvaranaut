@@ -24,10 +24,13 @@ int
 geom_etile(const struct point point, uint8_t** enclosure);
 
 int
-geom_ftile(const struct point point);
+geom_rtile(const struct point point);
 
 int
 geom_ctile(const struct point point);
+
+int
+geom_ftile(const struct point point);
 
 bool
 geom_out(const struct point point);

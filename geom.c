@@ -168,11 +168,11 @@ geom_etile(const struct point point, uint8_t** enclosure)
 }
 
 int
-geom_ftile(const struct point point)
+geom_rtile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return map_f[y][x];
+    return map_r[y][x];
 }
 
 int
@@ -181,6 +181,14 @@ geom_ctile(const struct point point)
     const int x = point.x;
     const int y = point.y;
     return map_c[y][x];
+}
+
+int
+geom_ftile(const struct point point)
+{
+    const int x = point.x;
+    const int y = point.y;
+    return map_f[y][x];
 }
 
 bool
