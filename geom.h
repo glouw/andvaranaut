@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdint.h>
 
 struct point
 {
@@ -11,16 +12,16 @@ double
 geom_mag(const struct point point);
 
 double
-geom_wpercent(const struct point point);
+geom_epercent(const struct point point, uint8_t** encloser);
 
 struct point
-geom_cast(const struct point hero, const double radians);
+geom_cast(const struct point hero, const double radians, uint8_t** encloser);
 
 bool
 geom_collision(const struct point point);
 
 int
-geom_wtile(const struct point point);
+geom_etile(const struct point point, uint8_t** encloser);
 
 int
 geom_ftile(const struct point point);

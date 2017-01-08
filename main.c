@@ -83,7 +83,7 @@ main(void)
         for(int col = 0; col < xres; col++)
         {
             const double radians = precalc_sigmas[col] + theta;
-            const struct point wall = geom_cast(hero, radians);
+            const struct point wall = geom_cast(hero, radians, map_wallings);
             if(geom_out(wall)) continue;
             const struct point wray = geom_sub(wall, hero);
             // Corrects fish eye
@@ -96,11 +96,11 @@ main(void)
             const int wtc = wt < 0 ? 0 : wt;
             const int wbc = wb > yres ? yres : wb;
             // Buffers walling column in GPU memory
-            const int wtile = geom_wtile(wall);
+            const int wtile = geom_etile(wall, map_wallings);
             const SDL_Surface* const walling = tiles[wtile];
             const int ww = walling->w;
             const int wh = walling->h;
-            const int wx = ww * geom_wpercent(wall);
+            const int wx = ww * geom_epercent(wall, map_wallings);
             for(int row = wtc; row < wbc; row++)
             {
                 const uint32_t* const pixels = walling->pixels;
