@@ -83,7 +83,7 @@ map_load(const char* path)
     char* line;
     // Map size
     line = getline(fp);
-    sscanf(line, "%d %d", &map_x, &map_y);
+    sscanf(line, "%d %d", &map_y, &map_x);
     free(line);
     // Inside or outside
     int temp;
@@ -98,7 +98,7 @@ map_load(const char* path)
     map_w = getparty(fp);
     map_f = getparty(fp);
     // Done
-    printf("map size: x %d: y %d\n", map_x, map_y);
+    printf("map size {\n\tx = %d\n\ty = %d\n}\n", map_x, map_y);
     printf("%s\n", map_inside ? "inside" : "outside");
     print(map_r);
     print(map_c);
