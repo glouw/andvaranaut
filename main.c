@@ -14,14 +14,17 @@ loadbmp(const uint32_t format, const char* path)
 }
 
 int
-main(void)
+main(const int argc, const char* const argv[])
 {
+    // Command line: <bin map>
+    if(argc != 2) return 1;
     const int xres = 800;
     const int yres = 400;
     // Resolution based calculation optimizations
     precalc_optimize(xres, yres);
     // Loads map
-    map_load("maps/inside");
+    const char* map = argv[1];
+    map_load(map);
     // Boots up SDL
     SDL_Init(SDL_INIT_VIDEO);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
@@ -87,14 +90,15 @@ main(void)
             if(geom_out(wall)) continue;
             const struct point wray = geom_sub(wall, hero);
             // Corrects fish eye
-            const double normal = geom_mag(wray) * cos(precalc_sigmas[col]);
+            const double wnormal = geom_mag(wray) * cos(precalc_sigmas[col]);
             // Calculates wall height
-            const double height = round(precalc_focal * yres / normal);
-            const double wt = round((yres / 2.0) - (height / 2.0));
-            const double wb = wt + height;
-            // Clamps wall top and bottom to screen
-            const int wtc = wt < 0 ? 0 : wt;
-            const int wbc = wb > yres ? yres : wb;
+            const double wheight = round(precalc_focal * yres / wnormal);
+            const double wt = round((yres / 2.0) - (wheight / 2.0));
+            const double wb = wt + wheight;
+            // Clamps wall top to the screen
+            const int wtc = wt < 0.0 ? 0 : (int)wt;
+            // Clamps the wall bottom to the screen
+            const int wbc = wb > (double)yres ? yres : (int)wb;
             // Buffers walling column in GPU memory
             const int wtile = geom_etile(wall, map_wallings);
             const SDL_Surface* const walling = tiles[wtile];
@@ -104,7 +108,7 @@ main(void)
             for(int row = wtc; row < wbc; row++)
             {
                 const uint32_t* const pixels = walling->pixels;
-                const int wy = wh * (row - wt) / height;
+                const int wy = wh * (row - wt) / wheight;
                 screen[row * xres + col] = pixels[wy * ww + wx];
             }
             // Clamps floor bottom to screen
@@ -115,7 +119,7 @@ main(void)
             for(int i = 0, row = wbc; row < fbc; i++, row++)
             {
                 const double dis = precalc_distances[row];
-                const double percent = dis / normal;
+                const double percent = dis / wnormal;
                 const struct point fray = geom_mul(wray, percent);
                 const struct point floor = geom_add(hero, fray);
                 caches[i] = floor;
@@ -128,20 +132,64 @@ main(void)
                 const uint32_t* const pixels = flooring->pixels;
                 screen[row * xres + col] = pixels[fy * fw + fx];
             }
-            // Clamps ceiling top to screen
-            const int ctc = 0;
-            // Buffers ceiling column in GPU memory
-            for(int i = 0, row = ctc; row < wtc; i++, row++)
+            if(map_inside)
             {
-                const struct point ceil = caches[sz - i - 1];
-                const int ctile = geom_ctile(ceil);
-                const SDL_Surface* const ceiling = tiles[ctile];
-                const int cw = ceiling->w;
-                const int ch = ceiling->h;
-                const int cx = cw * geom_mod(ceil.x);
-                const int cy = ch * geom_mod(ceil.y);
-                const uint32_t* const pixels = ceiling->pixels;
-                screen[row * xres + col] = pixels[cy * cw + cx];
+                // Clamps ceiling top to screen
+                const int ctc = 0;
+                // Buffers ceiling column in GPU memory
+                for(int i = 0, row = ctc; row < wtc; i++, row++)
+                {
+                    const struct point ceil = caches[sz - i - 1];
+                    const int ctile = geom_ctile(ceil);
+                    const SDL_Surface* const ceiling = tiles[ctile];
+                    const int cw = ceiling->w;
+                    const int ch = ceiling->h;
+                    const int cx = cw * geom_mod(ceil.x);
+                    const int cy = ch * geom_mod(ceil.y);
+                    const uint32_t* const pixels = ceiling->pixels;
+                    screen[row * xres + col] = pixels[cy * cw + cx];
+                }
+            }
+            if(map_outside)
+            {
+                // Buffers roof column in GPU memory
+                const struct point roof = geom_cast(hero, radians, map_roofings);
+                if(geom_out(roof)) continue;
+                const struct point rray = geom_sub(roof, hero);
+                // Corrects fish eye
+                const double rnormal = geom_mag(rray) * cos(precalc_sigmas[col]);
+                // Calculates roof height
+                const double rheight = round(precalc_focal * yres / rnormal);
+                const double rt = round((yres / 2.0) - (rheight / 2.0));
+                const double rb = rt + rheight;
+                // Shifts the roof up
+                const double rts = rt - rheight;
+                const double rbs = rb - rheight;
+                // Clamps the roof top to the top of the screen
+                const int rtsc = rts < 0.0 ? 0 : (int)rts;
+                // Clamps the roof bottom to the top of the screen
+                const int rbsc = rbs < 0.0 ? 0 : (int)rbs;
+                // Buffers roofing column in GPU memory
+                const int rtile = geom_etile(roof, map_roofings);
+                const SDL_Surface* const roofing = tiles[rtile];
+                const int rw = roofing->w;
+                const int rh = roofing->h;
+                const int rx = rw * geom_epercent(roof, map_roofings);
+                for(int row = rtsc; row < rbsc; row++)
+                {
+                    const uint32_t* const pixels = roofing->pixels;
+                    const int ry = rh * (row - rts) / rheight;
+                    screen[row * xres + col] = pixels[ry * rw + rx];
+                }
+                // Clamps sky top to screen
+                const int stc = 0;
+                // Clamps sky bottom to roof top shift
+                const int sbc = rtsc;
+                // Buffers sky column in GPU memory
+                for(int row = stc; row < sbc; row++)
+                {
+                    screen[row * xres + col] = 0x0000000;
+                }
             }
         }
         // Releases GPU
