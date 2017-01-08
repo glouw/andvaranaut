@@ -21,7 +21,7 @@ main(void)
     // Resolution based calculation optimizations
     precalc_optimize(xres, yres);
     // Loads map
-    map_load("maps/test");
+    map_load("maps/inside");
     // Boots up SDL
     SDL_Init(SDL_INIT_VIDEO);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
@@ -50,7 +50,7 @@ main(void)
     const uint32_t access = SDL_TEXTUREACCESS_STREAMING;
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, access, xres, yres);
     // Creates hero
-    struct point hero = { 2.5, 4.5 }; double theta = 0.0;
+    struct point hero = { 2.5, 2.5 }; double theta = 0.0;
     const double d0 = 0.080;
     const double dy = 0.100;
     const double dx = 0.100;

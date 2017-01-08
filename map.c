@@ -70,6 +70,7 @@ print2d(uint8_t** const array)
 void
 map_unload(void)
 {
+    kill2d(map_roofings);
     kill2d(map_ceilings);
     kill2d(map_wallings);
     kill2d(map_floorings);
@@ -84,11 +85,22 @@ map_load(const char* path)
     line = getline(fp);
     sscanf(line, "%d %d", &map_xmax, &map_ymax);
     free(line);
+    // Inside or outside
+    int temp;
+    line = getline(fp);
+    sscanf(line, "%d", &temp);
+    map_inside = (bool)temp;
+    map_outside = !map_inside;
+    free(line);
     // Map
+    map_roofings = gettile(fp);
     map_ceilings = gettile(fp);
     map_wallings = gettile(fp);
     map_floorings = gettile(fp);
     // Done
+    printf("%d %d\n", map_xmax, map_ymax);
+    printf("%s\n", map_inside ? "inside" : "outside");
+    print2d(map_roofings);
     print2d(map_ceilings);
     print2d(map_wallings);
     print2d(map_floorings);
