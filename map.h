@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-int map_y;
-int map_x;
+int map_ysz;
+int map_xsz;
 bool map_inside;
 bool map_outside;
 // Roofing tiles

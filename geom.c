@@ -193,8 +193,8 @@ geom_ftile(const struct point point)
 bool
 geom_in(const struct point point)
 {
-    const bool x = point.x < (double)map_x && point.x > 0.0;
-    const bool y = point.y < (double)map_y && point.y > 0.0;
+    const bool x = point.x < (double)map_xsz && point.x > 0.0;
+    const bool y = point.y < (double)map_ysz && point.y > 0.0;
     return x && y;
 }
 

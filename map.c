@@ -22,13 +22,13 @@ getln(FILE* const fp)
 static uint8_t**
 fresh(void)
 {
-    uint8_t** const array = malloc(map_y * sizeof(uint8_t*));
-    for(int i = 0; i < map_y; i++)
+    uint8_t** const array = malloc(map_ysz * sizeof(uint8_t*));
+    for(int i = 0; i < map_ysz; i++)
         array[i] = NULL;
-    for(int i = 0; i < map_y; i++)
-        array[i] = malloc(map_x * sizeof(uint8_t));
-    for(int i = 0; i < map_y; i++)
-    for(int j = 0; j < map_x; j++)
+    for(int i = 0; i < map_ysz; i++)
+        array[i] = malloc(map_xsz * sizeof(uint8_t));
+    for(int i = 0; i < map_ysz; i++)
+    for(int j = 0; j < map_xsz; j++)
         array[i][j] = 0;
     return array;
 }
@@ -37,7 +37,7 @@ static uint8_t**
 getparty(FILE* const fp)
 {
     uint8_t** const array = fresh();
-    for(int i = 0; i < map_y; i++)
+    for(int i = 0; i < map_ysz; i++)
     {
         char* const line = getln(fp);
         const char* tile;
@@ -52,7 +52,7 @@ getparty(FILE* const fp)
 static void
 kill(uint8_t** const array)
 {
-    for(int i = 0; i < map_y; i++)
+    for(int i = 0; i < map_ysz; i++)
         free(array[i]);
     free(array);
 }
@@ -60,8 +60,8 @@ kill(uint8_t** const array)
 static void
 print(uint8_t** const array)
 {
-    for(int i = 0; i < map_y; i++) {
-    for(int j = 0; j < map_x; j++)
+    for(int i = 0; i < map_ysz; i++) {
+    for(int j = 0; j < map_xsz; j++)
         printf("%d ", array[i][j]);
     putchar('\n');
     }
@@ -83,7 +83,7 @@ map_load(const char* path)
     char* line;
     // Map size
     line = getln(fp);
-    sscanf(line, "%d %d", &map_y, &map_x);
+    sscanf(line, "%d %d", &map_ysz, &map_xsz);
     free(line);
     // Inside or outside
     int temp;
@@ -98,7 +98,7 @@ map_load(const char* path)
     map_w = getparty(fp);
     map_f = getparty(fp);
     // Done
-    printf("map size {\n\tx = %d\n\ty = %d\n}\n", map_x, map_y);
+    printf("map size {\n\tx = %d\n\ty = %d\n}\n", map_xsz, map_ysz);
     printf("%s\n", map_inside ? "inside" : "outside");
     print(map_r);
     print(map_c);

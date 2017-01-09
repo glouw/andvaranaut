@@ -55,7 +55,7 @@ main(const int argc, const char* const argv[])
     SDL_Texture* const gpu = SDL_CreateTexture(renderer, format, access, xres, yres);
     // Hero creation
     struct point hero = { 2.5, 2.5 }; double theta = 0.0;
-    const double d0 = 0.080;
+    const double d0 = 0.100;
     const double dy = 0.100;
     const double dx = 0.100;
     // Game loop
@@ -94,8 +94,8 @@ main(const int argc, const char* const argv[])
             // Ray fish eye correction
             const double wnormal = geom_mag(wray) * cos(precalc_sigmas[col]);
             // Wall height calculation
-            const double wheight = round(precalc_focal * yres / wnormal);
-            const double wt = round((yres / 2.0) - (wheight / 2.0));
+            const double wheight = round(precalc_focal * (double)yres / wnormal);
+            const double wt = (double)yres / 2.0 - wheight / 2.0;
             const double wb = wt + wheight;
             // Wall top clamping
             const int wtc = wt < 0.0 ? 0 : (int)wt;
@@ -172,8 +172,8 @@ main(const int argc, const char* const argv[])
                 // Ray fish eye correction
                 const double rnormal = geom_mag(rray) * cos(precalc_sigmas[col]);
                 // Roof height calculation
-                const double rheight = round(precalc_focal * yres / rnormal);
-                const double rt = round((yres / 2.0) - (rheight / 2.0));
+                const double rheight = round(precalc_focal * (double)yres / rnormal);
+                const double rt = (double)yres / 2.0 - (double)rheight / 2.0;
                 const double rb = rt + rheight;
                 // Roof top shift
                 const double rts = rt - rheight;
