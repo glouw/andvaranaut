@@ -5,7 +5,7 @@
 #include <string.h>
 
 static char*
-getline(FILE* const fp)
+getln(FILE* const fp)
 {
     if(ungetc(getc(fp), fp) == EOF)
         return NULL;
@@ -39,7 +39,7 @@ getparty(FILE* const fp)
     uint8_t** const array = fresh();
     for(int i = 0; i < map_y; i++)
     {
-        char* const line = getline(fp);
+        char* const line = getln(fp);
         const char* tile;
         int j = 0;
         for(char* temp = line; (tile = strtok(temp, " ")); temp = NULL)
@@ -82,12 +82,12 @@ map_load(const char* path)
     FILE* fp = fopen(path, "r");
     char* line;
     // Map size
-    line = getline(fp);
+    line = getln(fp);
     sscanf(line, "%d %d", &map_y, &map_x);
     free(line);
     // Inside or outside
     int temp;
-    line = getline(fp);
+    line = getln(fp);
     sscanf(line, "%d", &temp);
     map_inside = (bool)temp;
     map_outside = !map_inside;

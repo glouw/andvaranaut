@@ -1,4 +1,4 @@
-CC = gcc
+CC = clang
 PROJ = water
 CPPFLAGS = -Iinclude
 SRCS = main.c map.c geom.c precalc.c
