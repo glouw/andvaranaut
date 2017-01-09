@@ -1,9 +1,11 @@
-CC = clang
+CC = gcc
 PROJ = water
 CPPFLAGS = -Iinclude
 SRCS = main.c map.c geom.c precalc.c
 OBJS = $(SRCS:.c=.o)
-CFLAGS = -Wall -Wextra -Wshadow -std=c99 -pedantic -Ofast -flto
+CFLAGS = -Wall -Wextra -Wshadow -std=c99 -pedantic\
+		 -Ofast -flto -fwhole-program -fassociative-math -freciprocal-math\
+		 -fno-signed-zeros -fno-trapping-math -frename-registers -funroll-loops
 LDFLAGS = -lm -lSDL2
 TARGET_ARCH = -march=native
 DEPDIR := deps

@@ -33,6 +33,9 @@ int
 geom_ftile(const struct point point);
 
 bool
+geom_in(const struct point point);
+
+bool
 geom_out(const struct point point);
 
 static inline struct point

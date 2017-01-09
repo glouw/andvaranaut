@@ -143,8 +143,7 @@ geom_cast(const struct point hero, const double radians, uint8_t** enclosure)
     const double m = tan(radians);
     const double b = hero.y - m * hero.x;
     const double q = quadrant(radians);
-    const struct point hit = step(hero, m, b, q, enclosure);
-    return hit;
+    return step(hero, m, b, q, enclosure);
 }
 
 bool
@@ -192,7 +191,15 @@ geom_ftile(const struct point point)
 }
 
 bool
+geom_in(const struct point point)
+{
+    const bool x = point.x < (double)map_x && point.x > 0.0;
+    const bool y = point.y < (double)map_y && point.y > 0.0;
+    return x && y;
+}
+
+bool
 geom_out(const struct point point)
 {
-    return point.x >= map_x || point.y >= map_y || point.x < 0 || point.y < 0;
+    return !geom_in(point);
 }
