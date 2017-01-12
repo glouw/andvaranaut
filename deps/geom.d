@@ -1,5 +1,5 @@
-geom.o: geom.c geom.h map.h
+geom.o: geom.c geom.h Map.h
 
 geom.h:
 
-map.h:
+Map.h:

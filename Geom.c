@@ -1,6 +1,6 @@
-#include "geom.h"
+#include "Geom.h"
 
-#include "map.h"
+#include "Map.h"
 
 #include <math.h>
 
@@ -89,7 +89,7 @@ wall(const struct point point, uint8_t** enclosure)
 static inline struct point
 closest(const struct point hero, const struct point i, const struct point j)
 {
-    return geom_mag(geom_sub(i, hero)) < geom_mag(geom_sub(j, hero)) ? i : j;
+    return Geom_mag(Geom_sub(i, hero)) < Geom_mag(Geom_sub(j, hero)) ? i : j;
 }
 
 static inline struct point
@@ -103,7 +103,7 @@ step(const struct point hero, const double m, const double b, const int q, uint8
         case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
         case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
     }
-    if(geom_out(point)) return point;
+    if(Geom_out(point)) return point;
     return wall(point, enclosure) ? point : step(point, m, b, q, enclosure);
 }
 
@@ -120,7 +120,7 @@ quadrant(const double radians)
 }
 
 double
-geom_mag(const struct point point)
+Geom_mag(const struct point point)
 {
     const double x = point.x * point.x;
     const double y = point.y * point.y;
@@ -128,17 +128,17 @@ geom_mag(const struct point point)
 }
 
 double
-geom_epercent(const struct point point, uint8_t** enclosure)
+Geom_epercent(const struct point point, uint8_t** enclosure)
 {
-    if(fn(point, enclosure)) return 0.0 + geom_mod(point.x);
-    if(fe(point, enclosure)) return 1.0 - geom_mod(point.y);
-    if(fs(point, enclosure)) return 1.0 - geom_mod(point.x);
-    if(fw(point, enclosure)) return 0.0 + geom_mod(point.y);
+    if(fn(point, enclosure)) return 0.0 + Geom_mod(point.x);
+    if(fe(point, enclosure)) return 1.0 - Geom_mod(point.y);
+    if(fs(point, enclosure)) return 1.0 - Geom_mod(point.x);
+    if(fw(point, enclosure)) return 0.0 + Geom_mod(point.y);
     return 0.0;
 }
 
 struct point
-geom_cast(const struct point hero, const double radians, uint8_t** enclosure)
+Geom_cast(const struct point hero, const double radians, uint8_t** enclosure)
 {
     const double m = tan(radians);
     const double b = hero.y - m * hero.x;
@@ -147,7 +147,7 @@ geom_cast(const struct point hero, const double radians, uint8_t** enclosure)
 }
 
 bool
-geom_ecoll(const struct point point, uint8_t** enclosure)
+Geom_ecoll(const struct point point, uint8_t** enclosure)
 {
     const int x = point.x;
     const int y = point.y;
@@ -155,7 +155,7 @@ geom_ecoll(const struct point point, uint8_t** enclosure)
 }
 
 int
-geom_etile(const struct point point, uint8_t** enclosure)
+Geom_etile(const struct point point, uint8_t** enclosure)
 {
     const int x = point.x;
     const int y = point.y;
@@ -167,39 +167,31 @@ geom_etile(const struct point point, uint8_t** enclosure)
 }
 
 int
-geom_rtile(const struct point point)
+Geom_ctile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return map_r[y][x];
+    return Map_ceiling[y][x];
 }
 
 int
-geom_ctile(const struct point point)
+Geom_ftile(const struct point point)
 {
     const int x = point.x;
     const int y = point.y;
-    return map_c[y][x];
-}
-
-int
-geom_ftile(const struct point point)
-{
-    const int x = point.x;
-    const int y = point.y;
-    return map_f[y][x];
+    return Map_floring[y][x];
 }
 
 bool
-geom_in(const struct point point)
+Geom_in(const struct point point)
 {
-    const bool x = point.x < (double)map_xsz && point.x > 0.0;
-    const bool y = point.y < (double)map_ysz && point.y > 0.0;
+    const bool x = point.x < (double)Map_xsz && point.x > 0.0;
+    const bool y = point.y < (double)Map_ysz && point.y > 0.0;
     return x && y;
 }
 
 bool
-geom_out(const struct point point)
+Geom_out(const struct point point)
 {
-    return !geom_in(point);
+    return !Geom_in(point);
 }

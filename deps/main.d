@@ -1,7 +1,11 @@
-main.o: main.c map.h geom.h precalc.h
+main.o: main.c Geom.h Precalc.h Display.h Hero.h Map.h
 
-map.h:
+Geom.h:
 
-geom.h:
+Precalc.h:
 
-precalc.h:
+Display.h:
+
+Hero.h:
+
+Map.h:
