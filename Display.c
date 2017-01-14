@@ -17,8 +17,9 @@ static const uint32_t access = SDL_TEXTUREACCESS_STREAMING;
 static SDL_Window* window;
 static SDL_Texture* gpu;
 static SDL_Renderer* renderer;
-static SDL_Surface* tiles[10];
-static SDL_Surface* sprts[10];
+#define SURFACES 10
+static SDL_Surface* tiles[SURFACES];
+static SDL_Surface* sprts[SURFACES];
 
 // Loads a BMP based on the pixel format and returns a surface tile
 static SDL_Surface*

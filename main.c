@@ -1,6 +1,4 @@
 #include "Display.h"
-#include "Map.h"
-#include "Hero.h"
 
 int
 main(const int argc, const char* const argv[])

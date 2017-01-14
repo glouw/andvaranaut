@@ -2,8 +2,6 @@
 
 #include "Point.h"
 
-#include <stdint.h>
-
 typedef struct map
 {
     int ysz;
