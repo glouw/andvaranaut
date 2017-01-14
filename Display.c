@@ -133,7 +133,6 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen, const Map m
 void
 Display_RenderFrame(const Hero hero, const Map map)
 {
-    const int t0 = SDL_GetTicks();
     // GPU readying
     void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
     uint32_t* const screen = (uint32_t*)bytes;
@@ -144,14 +143,6 @@ Display_RenderFrame(const Hero hero, const Map map)
     // GPU screen update
     SDL_RenderCopy(renderer, gpu, NULL, NULL);
     SDL_RenderPresent(renderer);
-    // FPS
-    const int t1 = SDL_GetTicks();
-    const int dt = t1 - t0;
-    const int fps = 60;
-    // Display
-    // Correction
-    const int delay = 1000 / fps - dt;
-    SDL_Delay(delay < 0 ? 0 : delay);
 }
 
 // Sets up SDL
