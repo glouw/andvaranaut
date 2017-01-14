@@ -1,9 +1,9 @@
-main.o: main.c Geom.h Display.h Hero.h Map.h
-
-Geom.h:
+main.o: main.c Display.h Hero.h Geom.h Map.h
 
 Display.h:
 
 Hero.h:
+
+Geom.h:
 
 Map.h:

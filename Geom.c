@@ -4,111 +4,96 @@
 
 #include <math.h>
 
-static inline struct point
-sn(const struct point hero, const double m, const double b)
+static inline Point
+sn(const Point where, const double m, const double b)
 {
-    const double y = ceil(hero.y - 1.0);
+    const double y = ceil(where.y - 1.0);
     const double x = (y - b) / m;
-    return (struct point){ x, y };
+    return (Point){ x, y };
 }
 
-static inline struct point
-se(const struct point hero, const double m, const double b)
+static inline Point
+se(const Point where, const double m, const double b)
 {
-    const double x = floor(hero.x + 1.0);
+    const double x = floor(where.x + 1.0);
     const double y = m * x + b;
-    return (struct point){ x, y };
+    return (Point){ x, y };
 }
 
-static inline struct point
-ss(const struct point hero, const double m, const double b)
+static inline Point
+ss(const Point where, const double m, const double b)
 {
-    const double y = floor(hero.y + 1.0);
+    const double y = floor(where.y + 1.0);
     const double x = (y - b) / m;
-    return (struct point){ x, y };
+    return (Point){ x, y };
 }
 
-static inline struct point
-sw(const struct point hero, const double m, const double b)
+static inline Point
+sw(const Point where, const double m, const double b)
 {
-    const double x = ceil(hero.x - 1.0);
+    const double x = ceil(where.x - 1.0);
     const double y = m * x + b;
-    return (struct point){ x, y };
+    return (Point){ x, y };
 }
 
 static inline bool
-fn(const struct point point, uint8_t** enclosure)
+fn(const Point point, uint8_t** party)
 {
     const int x = point.x;
     const int y = point.y;
-    return point.y - y == 0.0 && enclosure[y + 0][x + 0] && enclosure[y - 1][x + 0] == 0;
+    return point.y - y == 0.0 && party[y + 0][x + 0] && party[y - 1][x + 0] == 0;
 }
 
 static inline bool
-fe(const struct point point, uint8_t** enclosure)
+fe(const Point point, uint8_t** party)
 {
     const int x = point.x;
     const int y = point.y;
-    return point.x - x == 0.0 && enclosure[y + 0][x + 0] == 0 && enclosure[y + 0][x - 1];
+    return point.x - x == 0.0 && party[y + 0][x + 0] == 0 && party[y + 0][x - 1];
 }
 
 static inline bool
-fs(const struct point point, uint8_t** enclosure)
+fs(const Point point, uint8_t** party)
 {
     const int x = point.x;
     const int y = point.y;
-    return point.y - y == 0.0 && enclosure[y + 0][x + 0] == 0 && enclosure[y - 1][x + 0];
+    return point.y - y == 0.0 && party[y + 0][x + 0] == 0 && party[y - 1][x + 0];
 }
 
 static inline bool
-fw(const struct point point, uint8_t** enclosure)
+fw(const Point point, uint8_t** party)
 {
     const int x = point.x;
     const int y = point.y;
-    return point.x - x == 0.0 && enclosure[y + 0][x + 0] && enclosure[y + 0][x - 1] == 0;
+    return point.x - x == 0.0 && party[y + 0][x + 0] && party[y + 0][x - 1] == 0;
 }
 
 static inline bool
-hor(const struct point point, uint8_t** enclosure)
+Horiztal(const Point point, uint8_t** party)
 {
-    return fn(point, enclosure) || fs(point, enclosure);
+    return fn(point, party) || fs(point, party);
 }
 
 static inline bool
-ver(const struct point point, uint8_t** enclosure)
+Vertical(const Point point, uint8_t** party)
 {
-    return fe(point, enclosure) || fw(point, enclosure);
+    return fe(point, party) || fw(point, party);
 }
 
 static inline bool
-wall(const struct point point, uint8_t** enclosure)
+Enclosure(const Point point, uint8_t** party)
 {
-    return hor(point, enclosure) || ver(point, enclosure);
+    return Horiztal(point, party) || Vertical(point, party);
 }
 
-static inline struct point
-closest(const struct point hero, const struct point i, const struct point j)
+static inline Point
+Closest(const Point where, const Point i, const Point j)
 {
-    return Geom_mag(Geom_sub(i, hero)) < Geom_mag(Geom_sub(j, hero)) ? i : j;
-}
-
-static inline struct point
-step(const struct point hero, const double m, const double b, const int q, uint8_t** enclosure)
-{
-    struct point point;
-    switch(q)
-    {
-        case 0: point = closest(hero, se(hero, m, b), ss(hero, m, b)); break;
-        case 1: point = closest(hero, sw(hero, m, b), ss(hero, m, b)); break;
-        case 2: point = closest(hero, sw(hero, m, b), sn(hero, m, b)); break;
-        case 3: point = closest(hero, se(hero, m, b), sn(hero, m, b)); break;
-    }
-    if(Geom_out(point)) return point;
-    return wall(point, enclosure) ? point : step(point, m, b, q, enclosure);
+    return Geom_Magnitude(Geom_Sub(i, where)) < Geom_Magnitude(Geom_Sub(j, where)) ? i : j;
 }
 
 static inline int
-quadrant(const double radians)
+Quadrant(const double radians)
 {
     const double x = cos(radians);
     const double y = sin(radians);
@@ -120,7 +105,7 @@ quadrant(const double radians)
 }
 
 double
-Geom_mag(const struct point point)
+Geom_Magnitude(const Point point)
 {
     const double x = point.x * point.x;
     const double y = point.y * point.y;
@@ -128,70 +113,73 @@ Geom_mag(const struct point point)
 }
 
 double
-Geom_epercent(const struct point point, uint8_t** enclosure)
+Geom_Percent(const Point point, uint8_t** party)
 {
-    if(fn(point, enclosure)) return 0.0 + Geom_mod(point.x);
-    if(fe(point, enclosure)) return 1.0 - Geom_mod(point.y);
-    if(fs(point, enclosure)) return 1.0 - Geom_mod(point.x);
-    if(fw(point, enclosure)) return 0.0 + Geom_mod(point.y);
+    if(fn(point, party)) return 0.0 + Geom_Decimal(point.x);
+    if(fe(point, party)) return 1.0 - Geom_Decimal(point.y);
+    if(fs(point, party)) return 1.0 - Geom_Decimal(point.x);
+    if(fw(point, party)) return 0.0 + Geom_Decimal(point.y);
     return 0.0;
 }
 
-struct point
-Geom_cast(const struct point hero, const double radians, uint8_t** enclosure)
+static inline Point
+Step(const Point where, const double m, const double b, const int q, const Map map)
+{
+    uint8_t** const party = map.walling;
+    Point point;
+    switch(q)
+    {
+        case 0: point = Closest(where, se(where, m, b), ss(where, m, b)); break;
+        case 1: point = Closest(where, sw(where, m, b), ss(where, m, b)); break;
+        case 2: point = Closest(where, sw(where, m, b), sn(where, m, b)); break;
+        case 3: point = Closest(where, se(where, m, b), sn(where, m, b)); break;
+    }
+    if(Geom_Out(point, map)) return point;
+    return Enclosure(point, party) ? point : Step(point, m, b, q, map);
+}
+
+Point
+Geom_Cast(const Point where, const double radians, const Map map)
 {
     const double m = tan(radians);
-    const double b = hero.y - m * hero.x;
-    const double q = quadrant(radians);
-    return step(hero, m, b, q, enclosure);
+    const double b = where.y - m * where.x;
+    const double q = Quadrant(radians);
+    return Step(where, m, b, q, map);
 }
 
 bool
-Geom_ecoll(const struct point point, uint8_t** enclosure)
+Geom_In(const Point point, const Map map)
 {
-    const int x = point.x;
-    const int y = point.y;
-    return enclosure[y][x];
-}
-
-int
-Geom_etile(const struct point point, uint8_t** enclosure)
-{
-    const int x = point.x;
-    const int y = point.y;
-    if(fn(point, enclosure)) return enclosure[y + 0][x + 0];
-    if(fe(point, enclosure)) return enclosure[y + 0][x - 1];
-    if(fw(point, enclosure)) return enclosure[y + 0][x + 0];
-    if(fs(point, enclosure)) return enclosure[y - 1][x + 0];
-    return -1;
-}
-
-int
-Geom_ctile(const struct point point)
-{
-    const int x = point.x;
-    const int y = point.y;
-    return Map_ceiling[y][x];
-}
-
-int
-Geom_ftile(const struct point point)
-{
-    const int x = point.x;
-    const int y = point.y;
-    return Map_floring[y][x];
-}
-
-bool
-Geom_in(const struct point point)
-{
-    const bool x = point.x < (double)Map_xsz && point.x > 0.0;
-    const bool y = point.y < (double)Map_ysz && point.y > 0.0;
+    const bool x = point.x < (double)map.xsz && point.x > 0.0;
+    const bool y = point.y < (double)map.ysz && point.y > 0.0;
     return x && y;
 }
 
 bool
-Geom_out(const struct point point)
+Geom_Out(const Point point, const Map map)
 {
-    return !Geom_in(point);
+    return !Geom_In(point, map);
+}
+
+bool
+Geom_Collision(const Point point, uint8_t** party)
+{
+    const int x = point.x;
+    const int y = point.y;
+    return party[y][x];
+}
+
+uint8_t
+Geom_Tile(const Point point, uint8_t** party, const bool enclosure)
+{
+    const int x = point.x;
+    const int y = point.y;
+    if(enclosure)
+    {
+        if(fn(point, party)) return party[y + 0][x + 0];
+        if(fe(point, party)) return party[y + 0][x - 1];
+        if(fw(point, party)) return party[y + 0][x + 0];
+        if(fs(point, party)) return party[y - 1][x + 0];
+    }
+    return party[y][x];
 }

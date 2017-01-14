@@ -51,16 +51,16 @@ Optimize()
 
 // Renders one screen column based on hero position
 static void
-RenderColumn(const Hero hero, const int col, uint32_t* const screen)
+RenderColumn(const Hero hero, const int col, uint32_t* const screen, const Map map)
 {
     /* Wall Ray Casting */
     const double radians = sigmas[col] + hero.theta;
-    const struct point wall = Geom_cast(hero.where, radians, Map_walling);
+    const Point wall = Geom_Cast(hero.where, radians, map);
     // Renders an artifact column if the ray left the map
-    if(Geom_out(wall)) return;
-    const struct point wray = Geom_sub(wall, hero.where);
+    if(Geom_Out(wall, map)) return;
+    const Point wray = Geom_Sub(wall, hero.where);
     // Ray fish eye correction
-    const double wnormal = Geom_mag(wray) * cos(sigmas[col]);
+    const double wnormal = Geom_Magnitude(wray) * cos(sigmas[col]);
     // Wall height calculation
     const double wheight = round(focal * (double)yres / wnormal);
     const double wt = (double)yres / 2.0 - wheight / 2.0;
@@ -70,12 +70,12 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen)
     // Wall bottom clamping
     const int wbc = wb > (double)yres ? yres : (int)wb;
     // Wall tile inspection
-    const int wtile = Geom_etile(wall, Map_walling);
+    const int wtile = Geom_Tile(wall, map.walling, true);
     // Wall tile BMP texture
     const SDL_Surface* const walling = tiles[wtile];
     const int ww = walling->w;
     const int wh = walling->h;
-    const int wx = ww * Geom_epercent(wall, Map_walling);
+    const int wx = ww * Geom_Percent(wall, map.walling);
     // GPU buffering
     for(int row = wtc; row < wbc; row++)
     {
@@ -84,7 +84,7 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen)
         screen[row * xres + col] = pixels[wy * ww + wx];
     }
     /* Floor Ray Casting */
-    struct point caches[yres / 2];
+    Point caches[yres / 2];
     // Floor bottom clamping
     const int fbc = yres;
     // Floor height calculation
@@ -93,20 +93,20 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen)
     {
         const double dis = distances[row];
         const double percent = dis / wnormal;
-        const struct point fray = Geom_mul(wray, percent);
-        const struct point floor = Geom_add(hero.where, fray);
+        const Point fray = Geom_Mul(wray, percent);
+        const Point flor = Geom_Add(hero.where, fray);
         // Caches floor calculations for ceiling use
-        caches[i] = floor;
+        caches[i] = flor;
         // Floor tile inspection
-        const int ftile = Geom_ftile(floor);
+        const int ftile = Geom_Tile(flor, map.floring, false);
         // Floor tile BMP texture
-        const SDL_Surface* const flooring = tiles[ftile];
-        const int fw = flooring->w;
-        const int fh = flooring->h;
-        const int fx = fw * Geom_mod(floor.x);
-        const int fy = fh * Geom_mod(floor.y);
+        const SDL_Surface* const floring = tiles[ftile];
+        const int fw = floring->w;
+        const int fh = floring->h;
+        const int fx = fw * Geom_Decimal(flor.x);
+        const int fy = fh * Geom_Decimal(flor.y);
         // GPU buffering
-        const uint32_t* const pixels = flooring->pixels;
+        const uint32_t* const pixels = floring->pixels;
         screen[row * xres + col] = pixels[fy * fw + fx];
     }
     // Ceiling top clamp
@@ -115,15 +115,15 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen)
     for(int i = 0, row = ctc; row < wtc; i++, row++)
     {
         // Gets ceiling cache
-        const struct point ceil = caches[fheight - i - 1];
+        const Point ceil = caches[fheight - i - 1];
         // Ceiling tile inspection
-        const int ctile = Geom_ctile(ceil);
+        const int ctile = Geom_Tile(ceil, map.ceiling, false);
         // Ceiling tile BMP texture
         const SDL_Surface* const ceiling = tiles[ctile];
         const int cw = ceiling->w;
         const int ch = ceiling->h;
-        const int cx = cw * Geom_mod(ceil.x);
-        const int cy = ch * Geom_mod(ceil.y);
+        const int cx = cw * Geom_Decimal(ceil.x);
+        const int cy = ch * Geom_Decimal(ceil.y);
         // GPU buffering
         const uint32_t* const pixels = ceiling->pixels;
         screen[row * xres + col] = pixels[cy * cw + cx];
@@ -132,14 +132,14 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen)
 
 // Renders all screem columns based on hero position
 void
-Display_RenderFrame(const Hero hero)
+Display_RenderFrame(const Hero hero, const Map map)
 {
     const int t0 = SDL_GetTicks();
     // GPU readying
     void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
     uint32_t* const screen = (uint32_t*)bytes;
     // For all columns of the screen
-    for(int col = 0; col < xres; col++) RenderColumn(hero, col, screen);
+    for(int col = 0; col < xres; col++) RenderColumn(hero, col, screen, map);
     // GPU release
     SDL_UnlockTexture(gpu);
     // GPU screen update
@@ -149,6 +149,8 @@ Display_RenderFrame(const Hero hero)
     const int t1 = SDL_GetTicks();
     const int dt = t1 - t0;
     const int fps = 60;
+    // Display
+    // Correction
     const int delay = 1000 / fps - dt;
     SDL_Delay(delay < 0 ? 0 : delay);
 }

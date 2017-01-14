@@ -1,17 +1,19 @@
 #pragma once
 
 #include <stdint.h>
-#include <stdbool.h>
 
-int Map_ysz;
-int Map_xsz;
+typedef struct map
+{
+    int ysz;
+    int xsz;
+    uint8_t** ceiling;
+    uint8_t** walling;
+    uint8_t** floring;
+}
+Map;
 
-uint8_t** Map_ceiling;
-uint8_t** Map_walling;
-uint8_t** Map_floring;
-
-void
-Map_Shutdown();
-
-void
+Map
 Map_Load(const char* const path);
+
+void
+Map_Unload(Map map);

@@ -1,63 +1,57 @@
 #pragma once
 
+#include "Map.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 
-struct point
+typedef struct point
 {
     double x, y;
-};
+}
+Point;
 
 double
-Geom_mag(const struct point point);
+Geom_Magnitude(const Point point);
 
 double
-Geom_epercent(const struct point point, uint8_t** enclosure);
+Geom_Percent(const Point point, uint8_t** party);
 
-struct point
-Geom_cast(const struct point hero, const double radians, uint8_t** enclosure);
-
-bool
-Geom_ecoll(const struct point point, uint8_t** enclosure);
-
-int
-Geom_etile(const struct point point, uint8_t** enclosure);
-
-int
-Geom_rtile(const struct point point);
-
-int
-Geom_ctile(const struct point point);
-
-int
-Geom_ftile(const struct point point);
+Point
+Geom_Cast(const Point where, const double radians, const Map map);
 
 bool
-Geom_in(const struct point point);
+Geom_Collision(const Point point, uint8_t** party);
+
+uint8_t
+Geom_Tile(const Point point, uint8_t** party, const bool enclosure);
 
 bool
-Geom_out(const struct point point);
+Geom_In(const Point point, const Map map);
 
-static inline struct point
-Geom_sub(const struct point i, const struct point j)
+bool
+Geom_Out(const Point point, const Map map);
+
+static inline Point
+Geom_Sub(const Point i, const Point j)
 {
-    return (struct point){ i.x - j.x, i.y - j.y };
+    return (Point){ i.x - j.x, i.y - j.y };
 }
 
-static inline struct point
-Geom_add(const struct point i, const struct point j)
+static inline Point
+Geom_Add(const Point i, const Point j)
 {
-    return (struct point){ i.x + j.x, i.y + j.y };
+    return (Point){ i.x + j.x, i.y + j.y };
 }
 
-static inline struct point
-Geom_mul(const struct point i, const double n)
+static inline Point
+Geom_Mul(const Point i, const double n)
 {
-    return (struct point){ i.x * n, i.y * n };
+    return (Point){ i.x * n, i.y * n };
 }
 
 static inline double
-Geom_mod(const double d)
+Geom_Decimal(const double d)
 {
     return d - (int)d;
 }
