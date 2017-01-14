@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 static char*
 GetLine(FILE* const fp)
@@ -49,14 +50,6 @@ GetParty(FILE* const fp, const int ysz, const int xsz)
 }
 
 static void
-KillParty(uint8_t** const array, const int ysz)
-{
-    for(int i = 0; i < ysz; i++)
-        free(array[i]);
-    free(array);
-}
-
-static void
 PrintParty(uint8_t** const array, const int ysz, const int xsz)
 {
     for(int i = 0; i < ysz; i++) {
@@ -78,9 +71,15 @@ Print(Map map)
 void
 Map_Unload(Map map)
 {
-    KillParty(map.ceiling, map.ysz);
-    KillParty(map.walling, map.ysz);
-    KillParty(map.floring, map.ysz);
+    for(int i = 0; i < map.ysz; i++)
+    {
+        free(map.ceiling[i]);
+        free(map.walling[i]);
+        free(map.floring[i]);
+    }
+    free(map.ceiling);
+    free(map.walling);
+    free(map.floring);
 }
 
 Map
@@ -109,4 +108,43 @@ Map_Load(const char* const path)
     };
     Print(map);
     return map;
+}
+
+static inline Point
+Step(const Point where, const double m, const double b, const int q, const Map map)
+{
+    uint8_t** const party = map.walling;
+    Point point;
+    switch(q)
+    {
+        case 0: point = Point_Closest(where, Point_SE(where, m, b), Point_SS(where, m, b)); break;
+        case 1: point = Point_Closest(where, Point_SW(where, m, b), Point_SS(where, m, b)); break;
+        case 2: point = Point_Closest(where, Point_SW(where, m, b), Point_SN(where, m, b)); break;
+        case 3: point = Point_Closest(where, Point_SE(where, m, b), Point_SN(where, m, b)); break;
+    }
+    if(Map_Out(point, map)) return point;
+    return Point_Enclosure(point, party) ? point : Step(point, m, b, q, map);
+}
+
+Point
+Map_Cast(const Point where, const double radians, const Map map)
+{
+    const double m = tan(radians);
+    const double b = where.y - m * where.x;
+    const double q = Point_Quadrant(radians);
+    return Step(where, m, b, q, map);
+}
+
+bool
+Map_In(const Point point, const Map map)
+{
+    const bool x = point.x < (double)map.xsz && point.x > 0.0;
+    const bool y = point.y < (double)map.ysz && point.y > 0.0;
+    return x && y;
+}
+
+bool
+Map_Out(const Point point, const Map map)
+{
+    return !Map_In(point, map);
 }

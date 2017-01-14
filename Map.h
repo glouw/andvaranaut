@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Point.h"
+
 #include <stdint.h>
 
 typedef struct map
@@ -17,3 +19,12 @@ Map_Load(const char* const path);
 
 void
 Map_Unload(Map map);
+
+Point
+Map_Cast(const Point where, const double radians, const Map map);
+
+bool
+Map_In(const Point point, const Map map);
+
+bool
+Map_Out(const Point point, const Map map);

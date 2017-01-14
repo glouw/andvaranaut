@@ -1,7 +1,5 @@
 #include "Display.h"
 
-#include "Map.h"
-
 #include "SDL2/SDL.h"
 
 // Precalculations for optimization
@@ -55,12 +53,12 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen, const Map m
 {
     /* Wall Ray Casting */
     const double radians = sigmas[col] + hero.theta;
-    const Point wall = Geom_Cast(hero.where, radians, map);
+    const Point wall = Map_Cast(hero.where, radians, map);
     // Renders an artifact column if the ray left the map
-    if(Geom_Out(wall, map)) return;
-    const Point wray = Geom_Sub(wall, hero.where);
+    if(Map_Out(wall, map)) return;
+    const Point wray = Point_Sub(wall, hero.where);
     // Ray fish eye correction
-    const double wnormal = Geom_Magnitude(wray) * cos(sigmas[col]);
+    const double wnormal = Point_Magnitude(wray) * cos(sigmas[col]);
     // Wall height calculation
     const double wheight = round(focal * (double)yres / wnormal);
     const double wt = (double)yres / 2.0 - wheight / 2.0;
@@ -70,12 +68,12 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen, const Map m
     // Wall bottom clamping
     const int wbc = wb > (double)yres ? yres : (int)wb;
     // Wall tile inspection
-    const int wtile = Geom_Tile(wall, map.walling, true);
+    const int wtile = Point_Tile(wall, map.walling, true);
     // Wall tile BMP texture
     const SDL_Surface* const walling = tiles[wtile];
     const int ww = walling->w;
     const int wh = walling->h;
-    const int wx = ww * Geom_Percent(wall, map.walling);
+    const int wx = ww * Point_Percent(wall, map.walling);
     // GPU buffering
     for(int row = wtc; row < wbc; row++)
     {
@@ -93,18 +91,18 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen, const Map m
     {
         const double dis = distances[row];
         const double percent = dis / wnormal;
-        const Point fray = Geom_Mul(wray, percent);
-        const Point flor = Geom_Add(hero.where, fray);
+        const Point fray = Point_Mul(wray, percent);
+        const Point flor = Point_Add(hero.where, fray);
         // Caches floor calculations for ceiling use
         caches[i] = flor;
         // Floor tile inspection
-        const int ftile = Geom_Tile(flor, map.floring, false);
+        const int ftile = Point_Tile(flor, map.floring, false);
         // Floor tile BMP texture
         const SDL_Surface* const floring = tiles[ftile];
         const int fw = floring->w;
         const int fh = floring->h;
-        const int fx = fw * Geom_Decimal(flor.x);
-        const int fy = fh * Geom_Decimal(flor.y);
+        const int fx = fw * Point_Decimal(flor.x);
+        const int fy = fh * Point_Decimal(flor.y);
         // GPU buffering
         const uint32_t* const pixels = floring->pixels;
         screen[row * xres + col] = pixels[fy * fw + fx];
@@ -117,13 +115,13 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen, const Map m
         // Gets ceiling cache
         const Point ceil = caches[fheight - i - 1];
         // Ceiling tile inspection
-        const int ctile = Geom_Tile(ceil, map.ceiling, false);
+        const int ctile = Point_Tile(ceil, map.ceiling, false);
         // Ceiling tile BMP texture
         const SDL_Surface* const ceiling = tiles[ctile];
         const int cw = ceiling->w;
         const int ch = ceiling->h;
-        const int cx = cw * Geom_Decimal(ceil.x);
-        const int cy = ch * Geom_Decimal(ceil.y);
+        const int cx = cw * Point_Decimal(ceil.x);
+        const int cy = ch * Point_Decimal(ceil.y);
         // GPU buffering
         const uint32_t* const pixels = ceiling->pixels;
         screen[row * xres + col] = pixels[cy * cw + cx];

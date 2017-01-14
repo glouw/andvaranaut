@@ -22,5 +22,5 @@ Hero_Move(Hero hero, Map map)
     if(key[SDL_SCANCODE_A]) temp.where.y -= direction.x, temp.where.x += direction.y;
     if(key[SDL_SCANCODE_D]) temp.where.y += direction.x, temp.where.x -= direction.y;
     // Hero collision detection
-    return Geom_Collision(temp.where, map.walling) ? hero : temp;
+    return Point_Collision(temp.where, map.walling) ? hero : temp;
 }

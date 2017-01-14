@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Geom.h"
 #include "Map.h"
 
 typedef struct hero

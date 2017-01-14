@@ -1,7 +1,7 @@
-Hero.o: Hero.c Hero.h Geom.h Map.h
+Hero.o: Hero.c Hero.h Map.h Point.h
 
 Hero.h:
 
-Geom.h:
-
 Map.h:
+
+Point.h:
