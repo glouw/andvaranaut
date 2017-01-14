@@ -1,24 +1,28 @@
 #include "Display.h"
 
 #include "Map.h"
-#include "Precalc.h"
 
 #include "SDL2/SDL.h"
 
-const double Display_focal = 1.0;
-const int Display_xres = 800;
-const int Display_yres = 400;
-
+// Precalculations for optimization
+static double* distances;
+static double* sigmas;
+// Display constant definitions
+static const double focal = 1.0;
+static const int xres = 800;
+static const int yres = 400;
 static const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
 static const uint32_t mode = SDL_RENDERER_ACCELERATED;
 static const uint32_t estate = SDL_WINDOW_SHOWN;
 static const uint32_t access = SDL_TEXTUREACCESS_STREAMING;
+// SDL related
 static SDL_Window* window;
 static SDL_Texture* gpu;
+static SDL_Renderer* renderer;
 static SDL_Surface* tiles[10];
 static SDL_Surface* sprts[10];
-static SDL_Renderer* renderer;
 
+// Loads a BMP based on the pixel format and returns a surface tile
 static SDL_Surface*
 LoadBMP(const char* const path)
 {
@@ -28,24 +32,43 @@ LoadBMP(const char* const path)
     return convert;
 }
 
+// Optimizes row and column calculations
+static void
+Optimize()
+{
+    // Rows
+    distances = malloc(sizeof(double) * yres);
+    for(int row = 0; row < yres; row++)
+        distances[row] = focal * yres / (2 * (row + 1) - yres);
+    // Columns
+    sigmas = malloc(sizeof(double) * xres);
+    for(int col = 0; col < xres; col++)
+    {
+        const double pan = 2.0 * (double)col / xres - 1.0;
+        sigmas[col] = atan2(pan, focal);
+    }
+}
+
+// Renders one screen column based on hero position
 static void
 RenderColumn(const Hero hero, const int col, uint32_t* const screen)
 {
     /* Wall Ray Casting */
-    const double radians = Precalc_sigmas[col] + hero.theta;
+    const double radians = sigmas[col] + hero.theta;
     const struct point wall = Geom_cast(hero.where, radians, Map_walling);
+    // Renders an artifact column if the ray left the map
     if(Geom_out(wall)) return;
     const struct point wray = Geom_sub(wall, hero.where);
     // Ray fish eye correction
-    const double wnormal = Geom_mag(wray) * cos(Precalc_sigmas[col]);
+    const double wnormal = Geom_mag(wray) * cos(sigmas[col]);
     // Wall height calculation
-    const double wheight = round(Display_focal * (double)Display_yres / wnormal);
-    const double wt = (double)Display_yres / 2.0 - wheight / 2.0;
+    const double wheight = round(focal * (double)yres / wnormal);
+    const double wt = (double)yres / 2.0 - wheight / 2.0;
     const double wb = wt + wheight;
     // Wall top clamping
     const int wtc = wt < 0.0 ? 0 : (int)wt;
     // Wall bottom clamping
-    const int wbc = wb > (double)Display_yres ? Display_yres : (int)wb;
+    const int wbc = wb > (double)yres ? yres : (int)wb;
     // Wall tile inspection
     const int wtile = Geom_etile(wall, Map_walling);
     // Wall tile BMP texture
@@ -58,17 +81,17 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen)
     {
         const uint32_t* const pixels = walling->pixels;
         const int wy = wh * (row - wt) / wheight;
-        screen[row * Display_xres + col] = pixels[wy * ww + wx];
+        screen[row * xres + col] = pixels[wy * ww + wx];
     }
     /* Floor Ray Casting */
-    struct point caches[Display_yres / 2];
+    struct point caches[yres / 2];
     // Floor bottom clamping
-    const int fbc = Display_yres;
+    const int fbc = yres;
     // Floor height calculation
     const int fheight = fbc - wbc;
     for(int i = 0, row = wbc; row < fbc; i++, row++)
     {
-        const double dis = Precalc_distances[row];
+        const double dis = distances[row];
         const double percent = dis / wnormal;
         const struct point fray = Geom_mul(wray, percent);
         const struct point floor = Geom_add(hero.where, fray);
@@ -84,7 +107,7 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen)
         const int fy = fh * Geom_mod(floor.y);
         // GPU buffering
         const uint32_t* const pixels = flooring->pixels;
-        screen[row * Display_xres + col] = pixels[fy * fw + fx];
+        screen[row * xres + col] = pixels[fy * fw + fx];
     }
     // Ceiling top clamp
     const int ctc = 0;
@@ -103,43 +126,40 @@ RenderColumn(const Hero hero, const int col, uint32_t* const screen)
         const int cy = ch * Geom_mod(ceil.y);
         // GPU buffering
         const uint32_t* const pixels = ceiling->pixels;
-        screen[row * Display_xres + col] = pixels[cy * cw + cx];
+        screen[row * xres + col] = pixels[cy * cw + cx];
     }
 }
 
-void
-Display_Shutdown()
-{
-    #define len(array) (int)(sizeof(array) / sizeof(*array))
-    for(int i = 0; i < len(tiles); i++) SDL_FreeSurface(tiles[i]);
-    for(int i = 0; i < len(sprts); i++) SDL_FreeSurface(sprts[i]);
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyTexture(gpu);
-    SDL_Quit();
-}
-
+// Renders all screem columns based on hero position
 void
 Display_RenderFrame(const Hero hero)
 {
+    const int t0 = SDL_GetTicks();
     // GPU readying
     void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
     uint32_t* const screen = (uint32_t*)bytes;
     // For all columns of the screen
-    for(int col = 0; col < Display_xres; col++) RenderColumn(hero, col, screen);
+    for(int col = 0; col < xres; col++) RenderColumn(hero, col, screen);
     // GPU release
     SDL_UnlockTexture(gpu);
     // GPU screen update
     SDL_RenderCopy(renderer, gpu, NULL, NULL);
     SDL_RenderPresent(renderer);
+    // FPS
+    const int t1 = SDL_GetTicks();
+    const int dt = t1 - t0;
+    const int fps = 60;
+    const int delay = 1000 / fps - dt;
+    SDL_Delay(delay < 0 ? 0 : delay);
 }
 
+// Sets up SDL
 void
 Display_Boot()
 {
     // Display initialization
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("water", 25, 120, Display_xres, Display_yres, estate);
+    window = SDL_CreateWindow("water", 0, 0, xres, yres, estate);
     renderer = SDL_CreateRenderer(window, -1, mode);
     // Texture and sprite loading
     #define T(n, tile) tiles[n] = LoadBMP("tiles/"tile);
@@ -157,6 +177,23 @@ Display_Boot()
     #undef LD_TILES
     #undef LD_SPRTS
     // GPU acquisition
-    gpu = SDL_CreateTexture(renderer, format, access, Display_xres, Display_yres);
+    gpu = SDL_CreateTexture(renderer, format, access, xres, yres);
+    // Precalc optimization
+    Optimize();
 }
 
+// Cleans up precalculated optimizations and SDL
+void
+Display_Shutdown()
+{
+    // Precalculated optimizations
+    free(distances), free(sigmas);
+    // SDL
+    #define len(array) (int)(sizeof(array) / sizeof(*array))
+    for(int i = 0; i < len(tiles); i++) SDL_FreeSurface(tiles[i]);
+    for(int i = 0; i < len(sprts); i++) SDL_FreeSurface(sprts[i]);
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyTexture(gpu);
+    SDL_Quit();
+}

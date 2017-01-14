@@ -2,10 +2,6 @@
 
 #include "Hero.h"
 
-const double Display_focal;
-const int Display_xres;
-const int Display_yres;
-
 void
 Display_Shutdown();
 
