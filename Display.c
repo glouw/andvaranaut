@@ -1,11 +1,12 @@
 #include "Display.h"
 
 #include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
 
-// Precalculations for optimization
+// Precalculations
 static double* distances;
 static double* sigmas;
-// Display constant definitions
+// Constant definitions and such
 static const double focal = 1.0;
 static const int xres = 800;
 static const int yres = 400;
@@ -13,7 +14,7 @@ static const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
 static const uint32_t mode = SDL_RENDERER_ACCELERATED;
 static const uint32_t estate = SDL_WINDOW_SHOWN;
 static const uint32_t access = SDL_TEXTUREACCESS_STREAMING;
-// SDL related
+// SDL related stuff
 static SDL_Window* window;
 static SDL_Texture* gpu;
 static SDL_Renderer* renderer;
@@ -35,11 +36,9 @@ LoadBMP(const char* const path)
 static void
 Optimize()
 {
-    // Rows
     distances = malloc(sizeof(double) * yres);
     for(int row = 0; row < yres; row++)
         distances[row] = focal * yres / (2 * (row + 1) - yres);
-    // Columns
     sigmas = malloc(sizeof(double) * xres);
     for(int col = 0; col < xres; col++)
     {
@@ -142,18 +141,54 @@ Display_RenderFrame(const Hero hero, const Map map)
     SDL_UnlockTexture(gpu);
     // GPU screen update
     SDL_RenderCopy(renderer, gpu, NULL, NULL);
+}
+
+// Displays a string
+void
+Display_String(const char* string, const int x, const int y)
+{
+    // TTF font loading and surface to texture conversion
+    TTF_Font* const font = TTF_OpenFont("fonts/deja.ttf", 18);
+    const SDL_Color color = { 0xFF, 0xFF, 0x00, 0 };
+    SDL_Surface* const surface = TTF_RenderText_Blended(font, string, color);
+    SDL_Texture* const message = SDL_CreateTextureFromSurface(renderer, surface);
+    int width, height;
+    TTF_SizeText(font, string, &width, &height);
+    SDL_Rect const rect = { x, y, width, height };
+    SDL_RenderCopy(renderer, message, NULL, &rect);
+    // Cleanup
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(message);
+    TTF_CloseFont(font);
+}
+
+// Shows FPS in the upper left corner of the screen
+void
+Display_ShowFPS(const int fps, const int x, const int y)
+{
+    #define MAX 10
+    char string[MAX];
+    snprintf(string, MAX, "%d", fps);
+    Display_String(string, x, y);
+    #undef MAX
+}
+
+// Updates display with render
+void
+Display_Update()
+{
     SDL_RenderPresent(renderer);
 }
 
-// Sets up SDL
+// Boots up SDL
 void
 Display_Boot()
 {
-    // Display initialization
+    TTF_Init();
     SDL_Init(SDL_INIT_VIDEO);
     window = SDL_CreateWindow("water", 0, 0, xres, yres, estate);
     renderer = SDL_CreateRenderer(window, -1, mode);
-    // Texture and sprite loading
+    // Loads textures and sprites
     #define T(n, tile) tiles[n] = LoadBMP("tiles/"tile);
     #define LD_TILES                                   \
         T(0, "error.bmp")                              \
@@ -168,22 +203,21 @@ Display_Boot()
     #undef S
     #undef LD_TILES
     #undef LD_SPRTS
-    // GPU acquisition
+    // Acquires GPU and does some preliminary optimization calculations
     gpu = SDL_CreateTexture(renderer, format, access, xres, yres);
-    // Precalc optimization
     Optimize();
 }
 
-// Cleans up precalculated optimizations and SDL
+// Cleans up optimizations and SDL
 void
 Display_Shutdown()
 {
-    // Precalculated optimizations
-    free(distances), free(sigmas);
+    // Optimizations
+    free(distances);
+    free(sigmas);
     // SDL
-    #define len(array) (int)(sizeof(array) / sizeof(*array))
-    for(int i = 0; i < len(tiles); i++) SDL_FreeSurface(tiles[i]);
-    for(int i = 0; i < len(sprts); i++) SDL_FreeSurface(sprts[i]);
+    for(int i = 0; i < SURFACES; i++) SDL_FreeSurface(tiles[i]);
+    for(int i = 0; i < SURFACES; i++) SDL_FreeSurface(sprts[i]);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(gpu);

@@ -6,7 +6,7 @@ OBJS = $(SRCS:.c=.o)
 CFLAGS = -Wall -Wextra -Wshadow -std=c99 -pedantic\
 		 -Ofast -flto -fwhole-program -fassociative-math -freciprocal-math\
 		 -fno-signed-zeros -fno-trapping-math -frename-registers -funroll-loops
-LDFLAGS = -lm -lSDL2
+LDFLAGS = -lm -lSDL2 -lSDL2_ttf
 TARGET_ARCH = -march=native
 DEPDIR := deps
 $(shell mkdir -p $(DEPDIR) >/dev/null)
