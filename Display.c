@@ -154,6 +154,7 @@ Display_String(const char* string, const int x, const int y)
     SDL_Texture* const message = SDL_CreateTextureFromSurface(renderer, surface);
     int width, height;
     TTF_SizeText(font, string, &width, &height);
+    TTF_SetFontHinting(font, TTF_HINTING_LIGHT);
     SDL_Rect const rect = { x, y, width, height };
     SDL_RenderCopy(renderer, message, NULL, &rect);
     // Cleanup
