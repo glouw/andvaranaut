@@ -24,10 +24,10 @@ main(const int argc, const char* const argv[])
         hero = Hero_Move(hero, map);
         // Display
         Display_RenderFrame(hero, map);
-        // FPS
+        // FPS logging
         const int t1 = SDL_GetTicks();
         const int dt = t1 - t0;
-        // FPS Correction
+        // FPS correction
         const int desiredFPS = 60;
         const int delay = 1000 / desiredFPS - dt;
         SDL_Delay(delay < 0 ? 0 : delay);

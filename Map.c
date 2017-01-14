@@ -101,8 +101,6 @@ Map_Load(const char* const path)
         .where = where,
         .theta = theta
     };
-    printf("Map = {\n\txsz = %d\n\tysz = %d\n}\n", map.xsz, map.ysz);
-    printf("Hero = {\n\tx = %f\n\ty = %f\n}\n", where.x, where.y);
     return map;
 }
 
