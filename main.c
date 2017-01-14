@@ -11,8 +11,8 @@ main(const int argc, const char* const argv[])
     Display_Boot();
     Map map = Map_Load(argv[1]);
     Hero hero = {
-        .where = { 2.5, 3.5 },
-        .theta = 0.0,
+        .where = map.where,
+        .theta = map.theta,
         .d0 = 0.10,
         .dy = 0.10,
         .dx = 0.10,

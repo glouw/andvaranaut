@@ -11,14 +11,13 @@ typedef struct map
     uint8_t** ceiling;
     uint8_t** walling;
     uint8_t** floring;
+    Point where;
+    double theta;
 }
 Map;
 
 Map
 Map_Load(const char* const path);
-
-void
-Map_Unload(Map map);
 
 Point
 Map_Cast(const Point where, const double radians, const Map map);
@@ -28,3 +27,6 @@ Map_In(const Point point, const Map map);
 
 bool
 Map_Out(const Point point, const Map map);
+
+void
+Map_Unload(const Map map);

@@ -49,37 +49,20 @@ GetParty(FILE* const fp, const int ysz, const int xsz)
     return array;
 }
 
-static void
-PrintParty(uint8_t** const array, const int ysz, const int xsz)
+static inline Point
+Step(const Point where, const double m, const double b, const int q, const Map map)
 {
-    for(int i = 0; i < ysz; i++) {
-    for(int j = 0; j < xsz; j++)
-        printf("%d ", array[i][j]);
-    putchar('\n');
-    }
-}
-
-static void
-Print(Map map)
-{
-    printf("Map size {\n\tx = %d\n\ty = %d\n}\n", map.xsz, map.ysz);
-    PrintParty(map.ceiling, map.ysz, map.xsz);
-    PrintParty(map.walling, map.ysz, map.xsz);
-    PrintParty(map.floring, map.ysz, map.xsz);
-}
-
-void
-Map_Unload(Map map)
-{
-    for(int i = 0; i < map.ysz; i++)
+    uint8_t** const party = map.walling;
+    Point point;
+    switch(q)
     {
-        free(map.ceiling[i]);
-        free(map.walling[i]);
-        free(map.floring[i]);
+        case 0: point = Point_Closest(where, Point_StepEast(where, m, b), Point_StepSouth(where, m, b)); break;
+        case 1: point = Point_Closest(where, Point_StepWest(where, m, b), Point_StepSouth(where, m, b)); break;
+        case 2: point = Point_Closest(where, Point_StepWest(where, m, b), Point_StepNorth(where, m, b)); break;
+        case 3: point = Point_Closest(where, Point_StepEast(where, m, b), Point_StepNorth(where, m, b)); break;
     }
-    free(map.ceiling);
-    free(map.walling);
-    free(map.floring);
+    if(Map_Out(point, map)) return point;
+    return Point_Enclosure(point, party) ? point : Step(point, m, b, q, map);
 }
 
 Map
@@ -93,6 +76,16 @@ Map_Load(const char* const path)
     line = GetLine(fp);
     sscanf(line, "%d %d", &ysz, &xsz);
     free(line);
+    // Hero location
+    Point where;
+    line = GetLine(fp);
+    sscanf(line, "%lf %lf", &where.x, &where.y);
+    free(line);
+    // Hero theta
+    double theta;
+    line = GetLine(fp);
+    sscanf(line, "%lf", &theta);
+    free(line);
     // Map
     uint8_t** ceiling = GetParty(fp, ysz, xsz);
     uint8_t** walling = GetParty(fp, ysz, xsz);
@@ -105,25 +98,12 @@ Map_Load(const char* const path)
         .ceiling = ceiling,
         .walling = walling,
         .floring = floring,
+        .where = where,
+        .theta = theta
     };
-    Print(map);
+    printf("Map = {\n\txsz = %d\n\tysz = %d\n}\n", map.xsz, map.ysz);
+    printf("Hero = {\n\tx = %f\n\ty = %f\n}\n", where.x, where.y);
     return map;
-}
-
-static inline Point
-Step(const Point where, const double m, const double b, const int q, const Map map)
-{
-    uint8_t** const party = map.walling;
-    Point point;
-    switch(q)
-    {
-        case 0: point = Point_Closest(where, Point_SE(where, m, b), Point_SS(where, m, b)); break;
-        case 1: point = Point_Closest(where, Point_SW(where, m, b), Point_SS(where, m, b)); break;
-        case 2: point = Point_Closest(where, Point_SW(where, m, b), Point_SN(where, m, b)); break;
-        case 3: point = Point_Closest(where, Point_SE(where, m, b), Point_SN(where, m, b)); break;
-    }
-    if(Map_Out(point, map)) return point;
-    return Point_Enclosure(point, party) ? point : Step(point, m, b, q, map);
 }
 
 Point
@@ -147,4 +127,18 @@ bool
 Map_Out(const Point point, const Map map)
 {
     return !Map_In(point, map);
+}
+
+void
+Map_Unload(const Map map)
+{
+    for(int i = 0; i < map.ysz; i++)
+    {
+        free(map.ceiling[i]);
+        free(map.walling[i]);
+        free(map.floring[i]);
+    }
+    free(map.ceiling);
+    free(map.walling);
+    free(map.floring);
 }

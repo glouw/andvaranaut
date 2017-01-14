@@ -9,8 +9,8 @@ Hero_Move(Hero hero, Map map)
     // Keyboard state update
     SDL_PumpEvents();
     // <CTRL+D> to exit
-    if(key[SDL_SCANCODE_LCTRL] && key[SDL_SCANCODE_D]) hero.health = -1;
-    if(key[SDL_SCANCODE_RCTRL] && key[SDL_SCANCODE_D]) hero.health = -1;
+    if(key[SDL_SCANCODE_LCTRL] && key[SDL_SCANCODE_D]) hero.health = -1.0;
+    if(key[SDL_SCANCODE_RCTRL] && key[SDL_SCANCODE_D]) hero.health = -1.0;
     // Hero rotation <h, l>
     if(key[SDL_SCANCODE_H]) hero.theta -= hero.d0;
     if(key[SDL_SCANCODE_L]) hero.theta += hero.d0;
