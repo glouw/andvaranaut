@@ -3,6 +3,8 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
 
+#include <assert.h>
+
 // Precalculations
 static double* distances;
 static double* sigmas;
@@ -26,10 +28,9 @@ static SDL_Surface* sprts[SURFACES];
 static SDL_Surface*
 LoadBMP(const char* const path)
 {
-    SDL_Surface* const surface = SDL_LoadBMP(path);
-    SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
-    SDL_Surface* const convert = SDL_ConvertSurface(surface, allocation, 0);
-    return convert;
+    SDL_Surface* const bmp = SDL_LoadBMP(path); assert(bmp);
+    SDL_PixelFormat* const allocation = SDL_AllocFormat(format); assert(allocation);
+    return SDL_ConvertSurface(bmp, allocation, 0);
 }
 
 // Optimizes row and column calculations
@@ -37,11 +38,11 @@ static void
 Optimize()
 {
     // Rows
-    distances = malloc(sizeof(double) * yres);
+    distances = malloc(sizeof(double) * yres); assert(distances);
     for(int row = 0; row < yres; row++)
         distances[row] = focal * yres / (2 * (row + 1) - yres);
     // Columns
-    sigmas = malloc(sizeof(double) * xres);
+    sigmas = malloc(sizeof(double) * xres); assert(sigmas);
     for(int col = 0; col < xres; col++)
     {
         const double pan = 2.0 * (double)col / xres - 1.0;
@@ -73,9 +74,8 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
 {
     /* Wall Ray Casting */
     const double radians = sigmas[col] + hero.theta;
-    const Point wall = Map_Cast(hero.where, radians, map);
+    const Point wall = Point_Cast(hero.where, radians, map.walling);
     // Renders an artifact column if the ray left the map
-    if(Map_Out(wall, map)) return;
     const Point wray = Point_Sub(wall, hero.where);
     // Ray fish eye correction
     const double wmag = Point_Magnitude(wray);
@@ -232,9 +232,9 @@ void
 Display_Boot()
 {
     TTF_Init();
-    SDL_Init(SDL_INIT_EVERYTHING);
-    window = SDL_CreateWindow("water", 0, 0, xres, yres, estate);
-    renderer = SDL_CreateRenderer(window, -1, mode);
+    SDL_Init(SDL_INIT_VIDEO);
+    window = SDL_CreateWindow("water", 0, 0, xres, yres, estate); assert(window);
+    renderer = SDL_CreateRenderer(window, -1, mode); assert(renderer);
     // Loads textures and sprites
     #define T(n, tile) tiles[n] = LoadBMP("tiles/"tile);
     #define LD_TILES                                   \
@@ -251,10 +251,7 @@ Display_Boot()
     #undef LD_TILES
     #undef LD_SPRTS
     // Acquires GPU and does some preliminary optimization calculations
-    gpu = SDL_CreateTexture(renderer, format, access, xres, yres);
-    SDL_RendererInfo info;
-    SDL_GetRendererInfo(renderer, &info);
-    puts(info.name);
+    gpu = SDL_CreateTexture(renderer, format, access, xres, yres); assert(gpu);
     Optimize();
 }
 
