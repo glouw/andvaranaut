@@ -29,6 +29,9 @@ $(DEPDIR)/%.d: ;
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
 
+profile:
+	startx valgrind ./$(PROJ) maps/test
+
 clean:
 	rm -f $(PROJ)
 	rm -f $(OBJS)
