@@ -1,15 +1,3 @@
-water engine
+Water Engine
 
-    raycasting engine inspired by Carmack's earliest work
-
-    move: w,a,s,d
-    turn: h, l
-
-    maps are stored like:
-        <y x>
-        <0: outside, 1: inside>
-        <roofing tiles>
-        <ceiling tiles>
-        <walling tiles>
-        <flooring tiles>
-
+    Raycasting engine for 3D-Roguelike development
