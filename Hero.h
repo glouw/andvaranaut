@@ -10,6 +10,7 @@ typedef struct hero
     double dy;
     double dx;
     double health;
+    double torch;
 }
 Hero;
 

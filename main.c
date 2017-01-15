@@ -15,7 +15,8 @@ main(const int argc, const char* const argv[])
         .d0 = 0.10,
         .dy = 0.10,
         .dx = 0.10,
-        .health = 100.0
+        .health = 100.0,
+        .torch = 1.5
     };
     while(hero.health > 0)
     {

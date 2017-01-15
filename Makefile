@@ -3,9 +3,9 @@ PROJ = water
 CPPFLAGS = -Iinclude
 SRCS = main.c Map.c Point.c Display.c Hero.c
 OBJS = $(SRCS:.c=.o)
-CFLAGS = -Wall -Wextra -Wshadow -std=c99 -pedantic\
-		 -Ofast -flto -fwhole-program -fassociative-math -freciprocal-math\
+OFLAGS = -Ofast -flto -fwhole-program -fassociative-math -freciprocal-math\
 		 -fno-signed-zeros -fno-trapping-math -frename-registers -funroll-loops
+CFLAGS = -Wall -Wextra -Wshadow -std=c99 -pedantic $(OFLAGS)
 LDFLAGS = -lm -lSDL2 -lSDL2_ttf
 TARGET_ARCH = -march=native
 DEPDIR := deps
