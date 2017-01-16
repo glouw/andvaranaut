@@ -4,13 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 
 static inline char*
 GetLine(FILE* const fp)
 {
     if(ungetc(getc(fp), fp) == EOF) return NULL;
     int sz = 8;
-    char* buffer = malloc(sz);
+    char* buffer = malloc(sz); assert(buffer);
     int i = 0;
     for(char c; (c = getc(fp)) != '\n'; buffer[i++] = c)
         if(i == sz - 1)
@@ -22,11 +23,14 @@ GetLine(FILE* const fp)
 static inline uint8_t**
 FreshParty(const int ysz, const int xsz)
 {
-    uint8_t** const array = malloc(ysz * sizeof(uint8_t*));
+    uint8_t** const array = malloc(ysz * sizeof(uint8_t*)); assert(array);
     for(int i = 0; i < ysz; i++)
         array[i] = NULL;
     for(int i = 0; i < ysz; i++)
+    {
         array[i] = malloc(xsz * sizeof(uint8_t));
+        assert(array[i]);
+    }
     for(int i = 0; i < ysz; i++)
     for(int j = 0; j < xsz; j++)
         array[i][j] = 0;
@@ -52,7 +56,7 @@ GetParty(FILE* const fp, const int ysz, const int xsz)
 Map
 Map_Load(const char* const path)
 {
-    FILE* fp = fopen(path, "r");
+    FILE* fp = fopen(path, "r"); assert(fp);
     char* line;
     // Map size
     int ysz;

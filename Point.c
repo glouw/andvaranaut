@@ -7,6 +7,7 @@ fn(const Point point, uint8_t** party)
 {
     const int x = point.x;
     const int y = point.y;
+    // Testing for floating 0.0 equality is okay since point was derived from float and ceil
     return Point_Decimal(point.y) == 0.0 && party[y + 0][x + 0] && party[y - 1][x + 0] == 0;
 }
 
@@ -15,6 +16,7 @@ fe(const Point point, uint8_t** party)
 {
     const int x = point.x;
     const int y = point.y;
+    // Testing for floating 0.0 equality is okay since point was derived from float and ceil
     return Point_Decimal(point.x) == 0.0 && party[y + 0][x + 0] == 0 && party[y + 0][x - 1];
 }
 
@@ -23,6 +25,7 @@ fs(const Point point, uint8_t** party)
 {
     const int x = point.x;
     const int y = point.y;
+    // Testing for floating 0.0 equality is okay since point was derived from float and ceil
     return Point_Decimal(point.y) == 0.0 && party[y + 0][x + 0] == 0 && party[y - 1][x + 0];
 }
 
@@ -31,6 +34,7 @@ fw(const Point point, uint8_t** party)
 {
     const int x = point.x;
     const int y = point.y;
+    // Testing for floating 0.0 equality is okay since point was derived from float and ceil
     return Point_Decimal(point.x) == 0.0 && party[y + 0][x + 0] && party[y + 0][x - 1] == 0;
 }
 
@@ -101,6 +105,9 @@ Step(const Point where, const double m, const double b, const int q, uint8_t** p
         case 2: point = Closest(where, StepWest(where, m, b), StepNorth(where, m, b)); break;
         case 3: point = Closest(where, StepEast(where, m, b), StepNorth(where, m, b)); break;
     }
+    // Out of bounds check (Caveat: requires a closed map)
+    if(Point_Collision(point, party)) return point;
+    // Not out of bounds? Step next if an enclosure is not found
     return Enclosure(point, party) ? point : Step(point, m, b, q, party);
 }
 

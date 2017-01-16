@@ -15,7 +15,7 @@ void
 Display_Update();
 
 void
-Display_Shutdown();
+Display_Boot();
 
 void
-Display_Boot();
+Display_Shutdown();

@@ -14,7 +14,7 @@ Current version of pixman: 0.34.0
 Markers: (--) probed, (**) from config file, (==) default setting,
 	(++) from command line, (!!) notice, (II) informational,
 	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
-(==) Log file: "/home/gl/.local/share/xorg/Xorg.0.log", Time: Sun Jan 15 23:11:19 2017
+(==) Log file: "/home/gl/.local/share/xorg/Xorg.0.log", Time: Mon Jan 16 00:24:39 2017
 (==) Using system config directory "/usr/share/X11/xorg.conf.d"
 xf86EnableIOPorts: failed to set IOPL for I/O (Operation not permitted)
 xinit: connection to X server lost

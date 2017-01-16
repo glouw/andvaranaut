@@ -91,7 +91,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     // Wall tile inspection
     const int wtile = Point_Tile(wall, map.walling, true);
     // Wall tile BMP texture
-    const SDL_Surface* const walling = tiles[wtile];
+    const SDL_Surface* const walling = tiles[wtile]; assert(walling);
     const int ww = walling->w;
     const int wh = walling->h;
     const int wx = ww * Point_Percent(wall, map.walling);
@@ -140,7 +140,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         // Floor tile inspection
         const int ftile = Point_Tile(flor, map.floring, false);
         // Floor tile BMP texture
-        const SDL_Surface* const floring = tiles[ftile];
+        const SDL_Surface* const floring = tiles[ftile]; assert(floring);
         const int fw = floring->w;
         const int fh = floring->h;
         const int fx = fw * Point_Decimal(flor.x);
@@ -161,7 +161,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         // Ceiling tile inspection
         const int ctile = Point_Tile(ceil, map.ceiling, false);
         // Ceiling tile BMP texture
-        const SDL_Surface* const ceiling = tiles[ctile];
+        const SDL_Surface* const ceiling = tiles[ctile]; assert(ceiling);
         const int cw = ceiling->w;
         const int ch = ceiling->h;
         const int cx = cw * Point_Decimal(ceil.x);
@@ -194,10 +194,10 @@ void
 Display_String(const char* string, const int x, const int y)
 {
     // TTF font loading and surface to texture conversion
-    TTF_Font* const font = TTF_OpenFont("fonts/deja.ttf", 18);
+    TTF_Font* const font = TTF_OpenFont("fonts/deja.ttf", 18); assert(font);
     const SDL_Color color = { 0xFF, 0xFF, 0x00, 0 };
-    SDL_Surface* const blended = TTF_RenderText_Blended(font, string, color);
-    SDL_Texture* const message = SDL_CreateTextureFromSurface(renderer, blended);
+    SDL_Surface* const blended = TTF_RenderText_Blended(font, string, color); assert(blended);
+    SDL_Texture* const message = SDL_CreateTextureFromSurface(renderer, blended); assert(message);
     int width, height;
     TTF_SizeText(font, string, &width, &height);
     TTF_SetFontHinting(font, TTF_HINTING_LIGHT);
