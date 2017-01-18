@@ -1,0 +1,264 @@
+==4039== Callgrind, a call-graph generating cache profiler
+==4039== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4039== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4039== Command: ./water maps/test
+==4039== 
+==4039== For interactive control, run 'callgrind_control -h'.
+==4039== 
+==4039== Events    : Ir
+==4039== Collected : 997185796
+==4039== 
+==4039== I   refs:      997,185,796
+==4041== Callgrind, a call-graph generating cache profiler
+==4041== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4041== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4041== Command: ./water maps/test
+==4041== 
+==4041== For interactive control, run 'callgrind_control -h'.
+==4041== 
+==4041== Events    : Ir
+==4041== Collected : 997171667
+==4041== 
+==4041== I   refs:      997,171,667
+==4073== Callgrind, a call-graph generating cache profiler
+==4073== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4073== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4073== Command: ./water maps/test
+==4073== 
+==4073== For interactive control, run 'callgrind_control -h'.
+==4073== 
+==4073== Events    : Ir
+==4073== Collected : 732027693
+==4073== 
+==4073== I   refs:      732,027,693 // Bypassed Pixel
+==4111== Callgrind, a call-graph generating cache profiler
+==4111== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4111== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4111== Command: ./water maps/test
+==4111== 
+==4111== For interactive control, run 'callgrind_control -h'.
+==4111== 
+==4111== Events    : Ir
+==4111== Collected : 1029379375
+==4111== 
+==4111== I   refs:      1,029,379,375 // Pixel added back in but with (a & 0xFF000000)
+==4148== Callgrind, a call-graph generating cache profiler
+==4148== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4148== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4148== Command: ./water maps/test
+==4148== 
+==4148== For interactive control, run 'callgrind_control -h'.
+==4148== 
+==4148== Events    : Ir
+==4148== Collected : 969872763 // Removed profile clamps
+==4148== 
+==4148== I   refs:      969,872,763
+==4181== Callgrind, a call-graph generating cache profiler
+==4181== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4181== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4181== Command: ./water maps/test
+==4181== 
+==4181== For interactive control, run 'callgrind_control -h'.
+==4181== 
+==4181== Events    : Ir
+==4181== Collected : 997173989 // back to normal
+==4181== 
+==4181== I   refs:      997,173,989
+==4212== Callgrind, a call-graph generating cache profiler
+==4212== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4212== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4212== Command: ./water maps/test
+==4212== 
+==4212== For interactive control, run 'callgrind_control -h'.
+==4212== 
+==4212== Events    : Ir
+==4212== Collected : 997125983
+==4212== 
+==4212== I   refs:      997,125,983 // Typecasting 0 compare to uint8_t
+==4261== Callgrind, a call-graph generating cache profiler
+==4261== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4261== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4261== Command: ./water maps/test
+==4261== 
+==4261== For interactive control, run 'callgrind_control -h'.
+==4261== 
+==4261== Events    : Ir
+==4261== Collected : 997181576
+==4261== 
+==4261== I   refs:      997,181,576 // double checking ... NOPE nothing changed
+==4615== Callgrind, a call-graph generating cache profiler
+==4615== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4615== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4615== Command: ./water maps/test
+==4615== 
+==4615== For interactive control, run 'callgrind_control -h'.
+==4615== 
+==4615== Events    : Ir
+==4615== Collected : 982514399
+==4615== 
+==4615== I   refs:      982,514,399 // Correctly alligned unsigned and ints for darkening clamps
+==4648== Callgrind, a call-graph generating cache profiler
+==4648== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4648== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4648== Command: ./water maps/test
+==4648== 
+==4648== For interactive control, run 'callgrind_control -h'.
+==4648== 
+==4648== Events    : Ir
+==4648== Collected : 982525703
+==4648== 
+==4648== I   refs:      982,525,703
+==4677== Callgrind, a call-graph generating cache profiler
+==4677== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4677== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4677== Command: ./water maps/test
+==4677== 
+==4677== For interactive control, run 'callgrind_control -h'.
+==4677== 
+==4677== Events    : Ir
+==4677== Collected : 952765736
+==4677== 
+==4677== I   refs:      952,765,736
+==4928== Callgrind, a call-graph generating cache profiler
+==4928== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==4928== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==4928== Command: ./water maps/test
+==4928== 
+==4928== For interactive control, run 'callgrind_control -h'.
+==4928== 
+==4928== Events    : Ir
+==4928== Collected : 952578154
+==4928== 
+==4928== I   refs:      952,578,154 // No change
+==5205== Callgrind, a call-graph generating cache profiler
+==5205== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==5205== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==5205== Command: ./water maps/test
+==5205== 
+==5205== For interactive control, run 'callgrind_control -h'.
+==5205== 
+==5205== Events    : Ir
+==5205== Collected : 905686137
+==5205== 
+==5205== I   refs:      905,686,137 // Anding instead >0 check for clamps... distorts color
+==5510== Callgrind, a call-graph generating cache profiler
+==5510== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==5510== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==5510== Command: ./water maps/test
+==5510== 
+==5510== For interactive control, run 'callgrind_control -h'.
+==5510== 
+==5510== Events    : Ir
+==5510== Collected : 952771661
+==5510== 
+==5510== I   refs:      952,771,661 // Back to normal
+==5544== Callgrind, a call-graph generating cache profiler
+==5544== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==5544== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==5544== Command: ./water maps/test
+==5544== 
+==5544== For interactive control, run 'callgrind_control -h'.
+==5544== 
+==5544== Events    : Ir
+==5544== Collected : 952791896
+==5544== 
+==5544== I   refs:      952,791,896 // Back to unsigned
+==5669== Callgrind, a call-graph generating cache profiler
+==5669== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==5669== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==5669== Command: ./water maps/test
+==5669== 
+==5669== For interactive control, run 'callgrind_control -h'.
+==5669== 
+==5669== Events    : Ir
+==5669== Collected : 1111157354
+==5669== 
+==5669== I   refs:      1,111,157,354 //ssub2
+==2462== Callgrind, a call-graph generating cache profiler
+==2462== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==2462== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==2462== Command: ./water maps/test
+==2462== 
+==2462== For interactive control, run 'callgrind_control -h'.
+==2462== 
+==2462== Events    : Ir
+==2462== Collected : 947721157
+==2462== 
+==2462== I   refs:      947,721,157 // unsigned and ints
+==2496== Callgrind, a call-graph generating cache profiler
+==2496== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==2496== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==2496== Command: ./water maps/test
+==2496== 
+==2496== For interactive control, run 'callgrind_control -h'.
+==2496== 
+==2496== Events    : Ir
+==2496== Collected : 947737451
+==2496== 
+==2496== I   refs:      947,737,451
+==2531== Callgrind, a call-graph generating cache profiler
+==2531== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==2531== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==2531== Command: ./water maps/test
+==2531== 
+==2531== For interactive control, run 'callgrind_control -h'.
+==2531== 
+==2531== Events    : Ir
+==2531== Collected : 938955765
+==2531== 
+==2531== I   refs:      938,955,765
+==2560== Callgrind, a call-graph generating cache profiler
+==2560== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==2560== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==2560== Command: ./water maps/test
+==2560== 
+==2560== For interactive control, run 'callgrind_control -h'.
+==2560== 
+==2560== Events    : Ir
+==2560== Collected : 938755350
+==2560== 
+==2560== I   refs:      938,755,350 // Removed darkening clamp
+==2972== Callgrind, a call-graph generating cache profiler
+==2972== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==2972== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==2972== Command: ./water maps/test
+==2972== 
+==2972== For interactive control, run 'callgrind_control -h'.
+==2972== 
+==2972== Events    : Ir
+==2972== Collected : 937286403
+==2972== 
+==2972== I   refs:      937,286,403 // Nothing new
+==3039== Callgrind, a call-graph generating cache profiler
+==3039== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==3039== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==3039== Command: ./water maps/test
+==3039== 
+==3039== For interactive control, run 'callgrind_control -h'.
+==3039== 
+==3039== Events    : Ir
+==3039== Collected : 1089120567
+==3039== 
+==3039== I   refs:      1,089,120,567 // decimal get via math.h
+==3113== Callgrind, a call-graph generating cache profiler
+==3113== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==3113== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==3113== Command: ./water maps/test
+==3113== 
+==3113== For interactive control, run 'callgrind_control -h'.
+==3113== 
+==3113== Events    : Ir
+==3113== Collected : 938303544
+==3113== 
+==3113== I   refs:      938,303,544 // Back to normal
+==3188== Callgrind, a call-graph generating cache profiler
+==3188== Copyright (C) 2002-2015, and GNU GPL'd, by Josef Weidendorfer et al.
+==3188== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==3188== Command: ./water maps/test
+==3188== 
+==3188== For interactive control, run 'callgrind_control -h'.
+==3188== 
+==3188== Events    : Ir
+==3188== Collected : 937317540
+==3188== 
+==3188== I   refs:      937,317,540 // Nothing new

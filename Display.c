@@ -5,9 +5,6 @@
 
 #include <assert.h>
 
-// Precalculations
-static double* distances;
-static double* sigmas;
 // Constant definitions and such
 static const double focal = 1.0;
 static const int xres = 600;
@@ -33,39 +30,23 @@ LoadBMP(const char* const path)
     return SDL_ConvertSurface(bmp, allocation, 0);
 }
 
-// Optimizes row and column calculations
-static void
-Optimize()
-{
-    // Rows
-    distances = malloc(sizeof(double) * yres); assert(distances);
-    for(int row = 0; row < yres; row++)
-        distances[row] = focal * yres / (2 * (row + 1) - yres);
-    // Columns
-    sigmas = malloc(sizeof(double) * xres); assert(sigmas);
-    for(int col = 0; col < xres; col++)
-    {
-        const double pan = 2.0 * (double)col / xres - 1.0;
-        sigmas[col] = atan2(pan, focal);
-    }
-}
-
 // Darkens a pixel by some amount and clamps
+// Discards the alpha
 static inline uint32_t
-Darken(const uint32_t pixel, const unsigned amount)
+Darken(const uint32_t pixel, const int amount)
 {
-    const uint8_t r = pixel >> 16;
-    const uint8_t g = pixel >> 8;
-    const uint8_t b = pixel;
+    const int r = 0xFF & (pixel >> 16);
+    const int g = 0xFF & (pixel >> 8);
+    const int b = 0xFF & (pixel);
     // Modified
     const int rm = r - amount;
     const int gm = g - amount;
     const int bm = b - amount;
     // Clamped
-    const uint8_t rc = rm < 0 ? 0 : rm;
-    const uint8_t gc = gm < 0 ? 0 : gm;
-    const uint8_t bc = bm < 0 ? 0 : bm;
-    return (pixel & 0xFF000000) | rc << 16 | gc << 8 | bc;
+    const int rc = rm < 0 ? 0 : rm;
+    const int gc = gm < 0 ? 0 : gm;
+    const int bc = bm < 0 ? 0 : bm;
+    return rc << 16 | gc << 8 | bc;
 }
 
 // Renders one screen column based on hero position
@@ -73,13 +54,15 @@ static void
 RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const screen)
 {
     /* Wall Ray Casting */
-    const double radians = sigmas[col] + hero.theta;
+    const double pan = 2.0 * (double)col / xres - 1.0;
+    const double sigma = atan2(pan, focal);
+    const double radians = sigma + hero.theta;
     const Point wall = Point_Cast(hero.where, radians, map.walling);
     // Renders an artifact column if the ray left the map
     const Point wray = Point_Sub(wall, hero.where);
     // Ray fish eye correction
     const double wmag = Point_Magnitude(wray);
-    const double wnormal = wmag * cos(sigmas[col]);
+    const double wnormal = wmag * cos(sigma);
     // Wall height calculation
     const double wheight = round(focal * (double)yres / wnormal);
     const double wt = (double)yres / 2.0 - wheight / 2.0;
@@ -96,16 +79,14 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     const int wh = walling->h;
     const int wx = ww * Point_Percent(wall, map.walling);
     // Wall darkening
-    const unsigned wd = wmag * wmag * hero.torch;
-    // Wall darkening clamped
-    const unsigned wdc = wd > 0xFF ? 0xFF: wd;
+    const int wd = wmag * wmag / hero.draw;
     // GPU buffering
+    const uint32_t* const wpixels = walling->pixels;
     for(int row = wtc; row < wbc; row++)
     {
-        const uint32_t* const pixels = walling->pixels;
         const int wy = wh * (row - wt) / wheight;
-        const uint32_t pixel = pixels[wy * ww + wx];
-        screen[row * xres + col] = Darken(pixel, wdc);
+        const uint32_t pixel = wpixels[wy * ww + wx];
+        screen[row * xres + col] = Darken(pixel, wd);
     }
     // Party bottom clamped
     const int pbc = yres;
@@ -113,22 +94,20 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     const int pheight = yres - wbc;
     // Party cache
     Point parts[yres];
-    // Darkening clamps
-    unsigned dcs[yres];
+    // Party darkenings
+    int pds[yres];
     /* Party Ray Casting */
     for(int i = 0, row = wbc; row < pbc; i++, row++)
     {
-        const double dis = distances[row];
+        const double dis = focal * yres / (2 * (row + 1) - yres);
         const double percent = dis / wnormal;
         const Point pray = Point_Mul(wray, percent);
         const Point part = Point_Add(hero.where, pray);
         parts[i] = part;
         // Party darkening
         const double pmag = Point_Magnitude(pray);
-        const unsigned pd = pmag * pmag * hero.torch;
-        // Party darkening clamped
-        const unsigned pdc = pd > 0xFF ? 0xFF: pd;
-        dcs[i] = pdc;
+        // Party darkening clamp
+        pds[i] = pmag * pmag / hero.draw;
     }
     // Floor bottom clamped
     const int fbc = pbc;
@@ -146,10 +125,10 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int fx = fw * Point_Decimal(flor.x);
         const int fy = fh * Point_Decimal(flor.y);
         // GPU buffering
-        const unsigned fdc = dcs[index];
+        const int fd = pds[index];
         const uint32_t* const pixels = floring->pixels;
         const uint32_t pixel = pixels[fy * fw + fx];
-        screen[row * xres + col] = Darken(pixel, fdc);
+        screen[row * xres + col] = Darken(pixel, fd);
     }
     // Ceiling top clamped
     const int ctc = 0;
@@ -167,10 +146,10 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int cx = cw * Point_Decimal(ceil.x);
         const int cy = ch * Point_Decimal(ceil.y);
         // GPU buffering
-        const unsigned cdc = dcs[index];
+        const int cd = pds[index];
         const uint32_t* const pixels = ceiling->pixels;
         const uint32_t pixel = pixels[cy * cw + cx];
-        screen[row * xres + col] = Darken(pixel, cdc);
+        screen[row * xres + col] = Darken(pixel, cd);
     }
 }
 
@@ -250,18 +229,14 @@ Display_Boot()
     #undef S
     #undef LD_TILES
     #undef LD_SPRTS
-    // Acquires GPU and does some preliminary optimization calculations
+    // Acquires GPU
     gpu = SDL_CreateTexture(renderer, format, access, xres, yres); assert(gpu);
-    Optimize();
 }
 
-// Cleans up optimizations and SDL
+// Cleans up SDL
 void
 Display_Shutdown()
 {
-    // Optimizations
-    free(distances);
-    free(sigmas);
     // SDL
     for(int i = 0; i < SURFACES; i++) SDL_FreeSurface(tiles[i]);
     for(int i = 0; i < SURFACES; i++) SDL_FreeSurface(sprts[i]);

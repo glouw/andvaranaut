@@ -16,9 +16,10 @@ main(const int argc, const char* const argv[])
         .dy = 0.10,
         .dx = 0.10,
         .health = 100.0,
-        .torch = 1.5
+        .draw = 3.5
     };
-    while(hero.health > 0)
+    //while(hero.health > 0)
+    for(int i = 0; i < 60; i++)
     {
         // Starts timer
         const int t0 = SDL_GetTicks();
