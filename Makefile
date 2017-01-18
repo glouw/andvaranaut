@@ -33,5 +33,6 @@ profile:
 	startx valgrind ./$(PROJ) maps/test
 
 clean:
+	rm -f callgrind.out.*
 	rm -f $(PROJ)
 	rm -f $(OBJS)
