@@ -18,8 +18,8 @@ main(const int argc, const char* const argv[])
         .health = 100.0,
         .draw = 3.5
     };
-    //while(hero.health > 0)
-    for(int i = 0; i < 60; i++)
+    while(hero.health > 0)
+    //for(int i = 0; i < 60; i++)
     {
         // Starts timer
         const int t0 = SDL_GetTicks();
