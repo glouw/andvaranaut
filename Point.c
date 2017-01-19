@@ -132,18 +132,42 @@ Point_Cast(const Point where, const double radians, uint8_t** const party)
     return Step(where, m, b, q, party);
 }
 
+Point
+Point_Sub(const Point i, const Point j)
+{
+    return (Point){ i.x - j.x, i.y - j.y };
+}
+
+Point
+Point_Add(const Point i, const Point j)
+{
+    return (Point){ i.x + j.x, i.y + j.y };
+}
+
+Point
+Point_Mul(const Point i, const double n)
+{
+    return (Point){ i.x * n, i.y * n };
+}
+
 uint8_t
-Point_Tile(const Point point, uint8_t** party, const bool enclosure)
+Point_TileEnclosure(const Point point, uint8_t** party)
 {
     const int x = point.x;
     const int y = point.y;
-    if(enclosure)
-    {
-        if(fn(point, party)) return party[y + 0][x + 0];
-        if(fe(point, party)) return party[y + 0][x - 1];
-        if(fw(point, party)) return party[y + 0][x + 0];
-        if(fs(point, party)) return party[y - 1][x + 0];
-    }
+    if(fn(point, party)) return party[y + 0][x + 0];
+    if(fe(point, party)) return party[y + 0][x - 1];
+    if(fw(point, party)) return party[y + 0][x + 0];
+    if(fs(point, party)) return party[y - 1][x + 0];
+    // Nothing there (eg. corner case floats can't handle): return default
+    return 1;
+}
+
+uint8_t
+Point_TileParty(const Point point, uint8_t** party)
+{
+    const int x = point.x;
+    const int y = point.y;
     return party[y][x];
 }
 
@@ -171,4 +195,10 @@ Point_Percent(const Point point, uint8_t** party)
     if(fs(point, party)) return 1.0 - Point_Decimal(point.x);
     if(fw(point, party)) return 0.0 + Point_Decimal(point.y);
     return 0.0;
+}
+
+double
+Point_Decimal(const double d)
+{
+    return d - (int)d;
 }

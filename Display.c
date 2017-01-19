@@ -27,7 +27,9 @@ LoadBMP(const char* const path)
 {
     SDL_Surface* const bmp = SDL_LoadBMP(path); assert(bmp);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format); assert(allocation);
-    return SDL_ConvertSurface(bmp, allocation, 0);
+    SDL_Surface* const cvt = SDL_ConvertSurface(bmp, allocation, 0);
+    SDL_FreeFormat(allocation);
+    return cvt;
 }
 
 // Darkens a pixel by some amount and clamps
@@ -37,7 +39,7 @@ Darken(const uint32_t pixel, const int amount)
 {
     const int r = 0xFF & (pixel >> 16);
     const int g = 0xFF & (pixel >> 8);
-    const int b = 0xFF & (pixel);
+    const int b = 0xFF & pixel;
     // Modified
     const int rm = r - amount;
     const int gm = g - amount;
@@ -46,7 +48,29 @@ Darken(const uint32_t pixel, const int amount)
     const int rc = rm < 0 ? 0 : rm;
     const int gc = gm < 0 ? 0 : gm;
     const int bc = bm < 0 ? 0 : bm;
+    // Pixel reconstruction
     return rc << 16 | gc << 8 | bc;
+}
+
+// Preoptimizs a bunch of static row and column calculations
+static double* diss; // Distances
+static double* sigs; // Sigmas
+static void
+PreOptimize(void)
+{
+    // Rows
+    diss = malloc(yres * sizeof(double));
+    for(int row = 0; row < yres; row++)
+    {
+        diss[row] = focal * yres / (2 * (row + 1) - yres);
+    }
+    // Cols
+    sigs = malloc(xres * sizeof(double));
+    for(int col = 0; col < xres; col++)
+    {
+        const double pan = 2.0 * (double)col / xres - 1.0;
+        sigs[col] = atan2(pan, focal);
+    }
 }
 
 // Renders one screen column based on hero position
@@ -54,8 +78,7 @@ static void
 RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const screen)
 {
     /* Wall Ray Casting */
-    const double pan = 2.0 * (double)col / xres - 1.0;
-    const double sigma = atan2(pan, focal);
+    const double sigma = sigs[col];
     const double radians = sigma + hero.theta;
     const Point wall = Point_Cast(hero.where, radians, map.walling);
     // Renders an artifact column if the ray left the map
@@ -72,7 +95,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     // Wall bottom clamped
     const int wbc = wb > (double)yres ? yres : (int)wb;
     // Wall tile inspection
-    const int wtile = Point_Tile(wall, map.walling, true);
+    const int wtile = Point_TileEnclosure(wall, map.walling);
     // Wall tile BMP texture
     const SDL_Surface* const walling = tiles[wtile]; assert(walling);
     const int ww = walling->w;
@@ -99,8 +122,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     /* Party Ray Casting */
     for(int i = 0, row = wbc; row < pbc; i++, row++)
     {
-        const double dis = focal * yres / (2 * (row + 1) - yres);
-        const double percent = dis / wnormal;
+        const double percent = diss[row] / wnormal;
         const Point pray = Point_Mul(wray, percent);
         const Point part = Point_Add(hero.where, pray);
         parts[i] = part;
@@ -117,7 +139,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int index = i;
         const Point flor = parts[index];
         // Floor tile inspection
-        const int ftile = Point_Tile(flor, map.floring, false);
+        const int ftile = Point_TileParty(flor, map.floring);
         // Floor tile BMP texture
         const SDL_Surface* const floring = tiles[ftile]; assert(floring);
         const int fw = floring->w;
@@ -138,7 +160,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int index = pheight - i - 1;
         const Point ceil = parts[index];
         // Ceiling tile inspection
-        const int ctile = Point_Tile(ceil, map.ceiling, false);
+        const int ctile = Point_TileParty(ceil, map.ceiling);
         // Ceiling tile BMP texture
         const SDL_Surface* const ceiling = tiles[ctile]; assert(ceiling);
         const int cw = ceiling->w;
@@ -210,6 +232,7 @@ Display_Update()
 void
 Display_Boot()
 {
+    PreOptimize();
     TTF_Init();
     SDL_Init(SDL_INIT_VIDEO);
     window = SDL_CreateWindow("water", 0, 0, xres, yres, estate); assert(window);
