@@ -159,8 +159,7 @@ Point_TileEnclosure(const Point point, uint8_t** party)
     if(fe(point, party)) return party[y + 0][x - 1];
     if(fw(point, party)) return party[y + 0][x + 0];
     if(fs(point, party)) return party[y - 1][x + 0];
-    // Nothing there (eg. corner case floats can't handle): return default
-    return 1;
+    return party[y][x];
 }
 
 uint8_t
