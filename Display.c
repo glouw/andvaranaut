@@ -228,9 +228,9 @@ Display_String(const char* string, const int x, const int y)
     TTF_CloseFont(font);
 }
 
-// Shows FPS in the upper left corner of the screen
+// Shows FPS at screen coordinates
 void
-Display_ShowFPS(const int fps, const int x, const int y)
+Display_FPS(const int fps, const int x, const int y)
 {
     #define MAX 10
     char string[MAX];

@@ -58,7 +58,7 @@ main(const int argc, const char* const argv[])
         SDL_Delay(cdelay);
         // Display corrected FPS
         const int correctedFPS = 1000 / (dt + cdelay);
-        Display_ShowFPS(correctedFPS, 0, 0);
+        Display_FPS(correctedFPS, 0, 0);
         // Update render to display
         Display_Update();
     }
