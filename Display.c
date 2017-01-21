@@ -1,3 +1,21 @@
+// Copyright (C) 2016-2017 Gustav Louw
+// 
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+// 
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+// 
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+
 #include "Display.h"
 
 #include "SDL2/SDL.h"
@@ -56,7 +74,7 @@ Darken(const uint32_t pixel, const int amount)
 static double* diss; // Distances
 static double* sigs; // Sigmas
 static void
-PreOptimize(void)
+PreOptimize()
 {
     // Rows
     diss = malloc(yres * sizeof(double));
@@ -256,7 +274,7 @@ Display_Boot()
     gpu = SDL_CreateTexture(renderer, format, access, xres, yres); assert(gpu);
 }
 
-// Cleans up SDL
+// Cleans up SDL and friends
 void
 Display_Shutdown()
 {
@@ -267,4 +285,7 @@ Display_Shutdown()
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(gpu);
     SDL_Quit();
+    // Optimizations
+    free(sigs);
+    free(diss);
 }
