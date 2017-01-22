@@ -1,7 +1,7 @@
 CC = gcc
 PROJ = water
 CPPFLAGS = -Iinclude
-SRCS = main.c Map.c Point.c Display.c Hero.c
+SRCS = main.c Map.c Point.c Display.c Hero.c Sprite.c
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -g -Ofast -flto -fwhole-program -fassociative-math\
 		 -freciprocal-math -fno-signed-zeros -fno-trapping-math\

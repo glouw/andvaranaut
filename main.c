@@ -24,7 +24,7 @@ main(const int argc, const char* const argv[])
 {
     // <bin map>
     if(argc != 2) return 1;
-    // Starts game
+    // Starts the game
     Display_Boot();
     Map map = Map_Load(argv[1]);
     Hero hero = {

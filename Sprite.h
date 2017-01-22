@@ -20,15 +20,15 @@
 
 #include "Map.h"
 
-typedef enum sprite_race
+typedef enum race
 {
-    Sprite_DWARF
+    DWARF
 }
-Sprite_Race;
+Race;
 
 typedef struct sprite
 {
-    Sprite_Race race;
+    Race race;
     Point where;
 }
 Sprite;
