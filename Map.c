@@ -71,6 +71,21 @@ GetParty(FILE* const fp, const int ysz, const int xsz)
     return array;
 }
 
+static inline Point*
+GetSprites(FILE* const fp, const int nsprites)
+{
+    Point* sprites = malloc(nsprites * sizeof(*sprites)); assert(sprites);
+    for(int i = 0; i < nsprites; i++)
+    {
+        char* const line = GetLine(fp);
+        Point where;
+        sscanf(line, "%lf %lf", &where.x, &where.y);
+        sprites[i] = where;
+        free(line);
+    }
+    return sprites;
+}
+
 Map
 Map_Load(const char* const path)
 {
@@ -96,8 +111,15 @@ Map_Load(const char* const path)
     uint8_t** ceiling = GetParty(fp, ysz, xsz);
     uint8_t** walling = GetParty(fp, ysz, xsz);
     uint8_t** floring = GetParty(fp, ysz, xsz);
-    fclose(fp);
+    // Number of sprites
+    int nsprites;
+    line = GetLine(fp);
+    sscanf(line, "%d", &nsprites);
+    free(line);
+    // Sprites
+    Point* const sprites = GetSprites(fp, nsprites);
     // Done
+    fclose(fp);
     const Map map = {
         .ysz = ysz,
         .xsz = xsz,
@@ -105,7 +127,9 @@ Map_Load(const char* const path)
         .walling = walling,
         .floring = floring,
         .where = where,
-        .theta = theta
+        .theta = theta,
+        .nsprites = nsprites,
+        .sprites = sprites
     };
     return map;
 }
@@ -122,4 +146,5 @@ Map_Unload(const Map map)
     free(map.ceiling);
     free(map.walling);
     free(map.floring);
+    free(map.sprites);
 }

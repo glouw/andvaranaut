@@ -18,24 +18,17 @@
 
 #pragma once
 
-#include "Point.h"
+#include "Map.h"
 
-typedef struct map
+typedef enum sprite_race
 {
-    int ysz;
-    int xsz;
-    uint8_t** ceiling;
-    uint8_t** walling;
-    uint8_t** floring;
-    Point where;
-    double theta;
-    int nsprites;
-    Point* sprites;
+    Sprite_DWARF
 }
-Map;
+Sprite_Race;
 
-Map
-Map_Load(const char* const path);
-
-void
-Map_Unload(const Map map);
+typedef struct sprite
+{
+    Sprite_Race race;
+    Point where;
+}
+Sprite;
