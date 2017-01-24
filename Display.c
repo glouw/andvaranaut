@@ -50,24 +50,21 @@ LoadBMP(const char* const path)
     return cvt;
 }
 
-// Darkens a pixel by some amount and clamps
+// Mods a pixel by some amount and clamps
 // Discards the alpha
 static inline uint32_t
-Darken(const uint32_t pixel, const int amount)
+FlatMod(const uint32_t pixel, const double amount)
 {
+    // Amount clamped
     const int r = 0xFF & (pixel >> 16);
     const int g = 0xFF & (pixel >> 8);
     const int b = 0xFF & pixel;
     // Modified
-    const int rm = r - amount;
-    const int gm = g - amount;
-    const int bm = b - amount;
-    // Clamped
-    const int rc = rm < 0 ? 0 : rm;
-    const int gc = gm < 0 ? 0 : gm;
-    const int bc = bm < 0 ? 0 : bm;
+    const int rm = r * amount / (double)0xFF;
+    const int gm = g * amount / (double)0xFF;
+    const int bm = b * amount / (double)0xFF;
     // Pixel reconstruction
-    return rc << 16 | gc << 8 | bc;
+    return rm << 16 | gm << 8 | bm;
 }
 
 // Preoptimizs a bunch of static row and column calculations
@@ -119,15 +116,17 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     const int ww = walling->w;
     const int wh = walling->h;
     const int wx = ww * Point_Percent(wall, map.walling);
-    // Wall darkening
-    const int wd = wmag * wmag / hero.draw;
+    // Wall mod
+    const double wm = (double)0xFF - wmag * wmag / hero.draw;
+    // Wall mod clamped
+    const double wmc = wm < 0.0 ? 0.0 : wm;
     // GPU buffering
     const uint32_t* const wpixels = walling->pixels;
     for(int row = wtc; row < wbc; row++)
     {
         const int wy = wh * (row - wt) / wheight;
         const uint32_t pixel = wpixels[wy * ww + wx];
-        screen[row * xres + col] = Darken(pixel, wd);
+        screen[row * xres + col] = FlatMod(pixel, wmc);
     }
     // Party bottom clamped
     const int pbc = yres;
@@ -135,8 +134,8 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     const int pheight = yres - wbc;
     // Party cache
     Point parts[yres];
-    // Party darkenings
-    int pds[yres];
+    // Party mod clamps
+    double pmcs[yres];
     /* Party Ray Casting */
     for(int i = 0, row = wbc; row < pbc; i++, row++)
     {
@@ -144,10 +143,13 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const Point pray = Point_Mul(wray, percent);
         const Point part = Point_Add(hero.where, pray);
         parts[i] = part;
-        // Party darkening
         const double pmag = Point_Magnitude(pray);
-        // Party darkening clamp
-        pds[i] = pmag * pmag / hero.draw;
+        // Party mod
+        const double pm = (double)0xFF - pmag * pmag / hero.draw;
+        // Part mod clamped
+        const double pmc = pm < 0.0 ? 0.0 : pm;
+        // Party mod clamps
+        pmcs[i] = pmc;
     }
     // Floor bottom clamped
     const int fbc = pbc;
@@ -165,10 +167,10 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int fx = fw * Point_Decimal(flor.x);
         const int fy = fh * Point_Decimal(flor.y);
         // GPU buffering
-        const int fd = pds[index];
+        const double fm = pmcs[index];
         const uint32_t* const pixels = floring->pixels;
         const uint32_t pixel = pixels[fy * fw + fx];
-        screen[row * xres + col] = Darken(pixel, fd);
+        screen[row * xres + col] = FlatMod(pixel, fm);
     }
     // Ceiling top clamped
     const int ctc = 0;
@@ -186,26 +188,68 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int cx = cw * Point_Decimal(ceil.x);
         const int cy = ch * Point_Decimal(ceil.y);
         // GPU buffering
-        const int cd = pds[index];
+        const double cm = pmcs[index];
         const uint32_t* const pixels = ceiling->pixels;
         const uint32_t pixel = pixels[cy * cw + cx];
-        screen[row * xres + col] = Darken(pixel, cd);
+        screen[row * xres + col] = FlatMod(pixel, cm);
     }
 }
 
-// Renders all screem columns based on hero position
-void
-Display_RenderFrame(const Hero hero, const Map map)
+// Renders sprites based on player location in map
+static void
+RenderS(const Hero hero, const Map map)
+{
+    // Currently not in use
+    (void)map;
+    // Hence the override
+    const Point sprite = { 24, 7.5 };
+    const Point sray = Point_Sub(sprite, hero.where);
+    // Sprite magniude
+    const double smag = Point_Magnitude(sray);
+    // Which sprite surface?
+    SDL_Surface* const sprt = sprts[0];
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, sprt);
+    // Sprite mod
+    const double sm = (double)0xFF - smag * smag / hero.draw;
+    // Sprite mod clamped
+    const int smc = sm < 0.0 ? 0 : (int)sm;
+    SDL_SetTextureColorMod(texture, smc, smc, smc);
+    // Percieved width and height
+    const double psw = yres / smag, psh = psw;
+    // Draw
+    SDL_Rect dest = {
+        // Sprite x
+        xres / 2 - psw / 2,
+        // Sprite y
+        yres / 2 - psh / 2,
+        // Percieved sized
+        psw, psh
+    };
+    SDL_RenderCopy(renderer, texture, NULL, &dest);
+    SDL_DestroyTexture(texture);
+}
+
+// Renders the wall, ceiling, and floor based on player location in map
+static void
+RenderWCF(const Hero hero, const Map map)
 {
     // GPU readying
     void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
     uint32_t* const screen = (uint32_t*)bytes;
-    // For all screen columns
+    // Renders all columns and returns player to wall magnitudes for each column
     for(int col = 0; col < xres; col++) RenderColumn(hero, map, col, screen);
     // GPU release
     SDL_UnlockTexture(gpu);
     // GPU screen update
     SDL_RenderCopy(renderer, gpu, NULL, NULL);
+}
+
+// Renders enire frame based on hero position
+void
+Display_RenderFrame(const Hero hero, const Map map)
+{
+    RenderWCF(hero, map);
+    RenderS(hero, map);
 }
 
 // Displays a string

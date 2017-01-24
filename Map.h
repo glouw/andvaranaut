@@ -24,13 +24,13 @@ typedef struct map
 {
     int ysz;
     int xsz;
-    uint8_t** ceiling;
-    uint8_t** walling;
-    uint8_t** floring;
     Point where;
     double theta;
     int nsprites;
-    Point* sprites;
+    uint8_t** ceiling;
+    uint8_t** walling;
+    uint8_t** floring;
+    uint8_t** sprites;
 }
 Map;
 

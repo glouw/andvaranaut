@@ -25,7 +25,6 @@ main(const int argc, const char* const argv[])
     // <bin map>
     if(argc != 2) return 1;
     // Starts the game
-    Display_Boot();
     Map map = Map_Load(argv[1]);
     Hero hero = {
         .where = map.where,
@@ -34,8 +33,9 @@ main(const int argc, const char* const argv[])
         .dy = 0.10,
         .dx = 0.10,
         .health = 100.0,
-        .draw = 3.5
+        .draw = 0.25
     };
+    Display_Boot();
     #ifdef PROFILE
     const int frames = 60;
     for(int frame = 0; frame < frames; frame++)
