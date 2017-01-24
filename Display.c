@@ -116,9 +116,9 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     const int wh = walling->h;
     const int wx = ww * Point_Percent(wall, map.walling);
     // Wall mod
-    const double wm = (double)0xFF - wmag * wmag / hero.draw;
+    const double wm = hero.torch / (wmag * wmag);
     // Wall mod clamped
-    const double wmc = wm < 0.0 ? 0.0 : wm / (double)0xFF;
+    const double wmc = wm > 1.0 ? 1.0 : wm;
     // wcf buffering
     const uint32_t* const wpixels = walling->pixels;
     for(int row = wtc; row < wbc; row++)
@@ -144,9 +144,9 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         parts[i] = part;
         const double pmag = Point_Magnitude(pray);
         // Party mod
-        const double pm = (double)0xFF - pmag * pmag / hero.draw;
+        const double pm = hero.torch / (pmag * pmag);
         // Part mod clamped
-        const double pmc = pm < 0.0 ? 0.0 : pm / (double)0xFF;
+        const double pmc = pm > 1.0 ? 1.0 : pm;
         // Party mod clamps
         pmcs[i] = pmc;
     }
@@ -206,13 +206,15 @@ RenderS(const Hero hero, const Map map)
     // Sprite magniude
     const double smag = Point_Magnitude(sray);
     // Which sprite surface?
-    SDL_Surface* const sprt = tiles[1];
+    SDL_Surface* const sprt = sprts[0];
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, sprt);
     // Sprite mod
-    const double sm = (double)0xFF - smag * smag / hero.draw;
+    const double sm = hero.torch / (smag * smag);
     // Sprite mod clamped
-    const int smc = sm < 0.0 ? 0 : (int)sm;
-    SDL_SetTextureColorMod(texture, smc, smc, smc);
+    const double smc = sm > 1.0 ? 1.0 : sm;
+    // Sprite mod clamped hex
+    const int smch = 0xFF * smc;
+    SDL_SetTextureColorMod(texture, smch, smch, smch);
     // Percieved width and height
     const double psw = yres / smag, psh = psw;
     // Draw

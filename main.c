@@ -33,7 +33,7 @@ main(const int argc, const char* const argv[])
         .dy = 0.10,
         .dx = 0.10,
         .health = 100.0,
-        .draw = 0.25
+        .torch = 6.0
     };
     Display_Boot();
     #ifdef PROFILE
