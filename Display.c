@@ -33,7 +33,7 @@ static const uint32_t estate = SDL_WINDOW_SHOWN;
 static const uint32_t access = SDL_TEXTUREACCESS_STREAMING;
 // SDL related stuff
 static SDL_Window* window;
-static SDL_Texture* gpu;
+static SDL_Texture* wcf;
 static SDL_Renderer* renderer;
 #define SURFACES 10
 static SDL_Surface* tiles[SURFACES];
@@ -50,19 +50,18 @@ LoadBMP(const char* const path)
     return cvt;
 }
 
-// Mods a pixel by some amount and clamps
+// Mods a pixel by some percentage and clamps
 // Discards the alpha
 static inline uint32_t
-FlatMod(const uint32_t pixel, const double amount)
+FlatMod(const uint32_t pixel, const double percent)
 {
-    // Amount clamped
     const int r = 0xFF & (pixel >> 16);
-    const int g = 0xFF & (pixel >> 8);
-    const int b = 0xFF & pixel;
+    const int g = 0xFF & (pixel >>  8);
+    const int b = 0xFF & (pixel >>  0);
     // Modified
-    const int rm = r * amount / (double)0xFF;
-    const int gm = g * amount / (double)0xFF;
-    const int bm = b * amount / (double)0xFF;
+    const int rm = r * percent;
+    const int gm = g * percent;
+    const int bm = b * percent;
     // Pixel reconstruction
     return rm << 16 | gm << 8 | bm;
 }
@@ -119,8 +118,8 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     // Wall mod
     const double wm = (double)0xFF - wmag * wmag / hero.draw;
     // Wall mod clamped
-    const double wmc = wm < 0.0 ? 0.0 : wm;
-    // GPU buffering
+    const double wmc = wm < 0.0 ? 0.0 : wm / (double)0xFF;
+    // wcf buffering
     const uint32_t* const wpixels = walling->pixels;
     for(int row = wtc; row < wbc; row++)
     {
@@ -147,7 +146,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         // Party mod
         const double pm = (double)0xFF - pmag * pmag / hero.draw;
         // Part mod clamped
-        const double pmc = pm < 0.0 ? 0.0 : pm;
+        const double pmc = pm < 0.0 ? 0.0 : pm / (double)0xFF;
         // Party mod clamps
         pmcs[i] = pmc;
     }
@@ -166,7 +165,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int fh = floring->h;
         const int fx = fw * Point_Decimal(flor.x);
         const int fy = fh * Point_Decimal(flor.y);
-        // GPU buffering
+        // wcf buffering
         const double fm = pmcs[index];
         const uint32_t* const pixels = floring->pixels;
         const uint32_t pixel = pixels[fy * fw + fx];
@@ -187,7 +186,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int ch = ceiling->h;
         const int cx = cw * Point_Decimal(ceil.x);
         const int cy = ch * Point_Decimal(ceil.y);
-        // GPU buffering
+        // wcf buffering
         const double cm = pmcs[index];
         const uint32_t* const pixels = ceiling->pixels;
         const uint32_t pixel = pixels[cy * cw + cx];
@@ -207,7 +206,7 @@ RenderS(const Hero hero, const Map map)
     // Sprite magniude
     const double smag = Point_Magnitude(sray);
     // Which sprite surface?
-    SDL_Surface* const sprt = sprts[0];
+    SDL_Surface* const sprt = tiles[1];
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, sprt);
     // Sprite mod
     const double sm = (double)0xFF - smag * smag / hero.draw;
@@ -222,7 +221,7 @@ RenderS(const Hero hero, const Map map)
         xres / 2 - psw / 2,
         // Sprite y
         yres / 2 - psh / 2,
-        // Percieved sized
+        // Percieved size
         psw, psh
     };
     SDL_RenderCopy(renderer, texture, NULL, &dest);
@@ -233,15 +232,15 @@ RenderS(const Hero hero, const Map map)
 static void
 RenderWCF(const Hero hero, const Map map)
 {
-    // GPU readying
-    void* bytes; int null; SDL_LockTexture(gpu, NULL, &bytes, &null);
+    // wcf readying
+    void* bytes; int null; SDL_LockTexture(wcf, NULL, &bytes, &null);
     uint32_t* const screen = (uint32_t*)bytes;
     // Renders all columns and returns player to wall magnitudes for each column
     for(int col = 0; col < xres; col++) RenderColumn(hero, map, col, screen);
-    // GPU release
-    SDL_UnlockTexture(gpu);
-    // GPU screen update
-    SDL_RenderCopy(renderer, gpu, NULL, NULL);
+    // wcf release
+    SDL_UnlockTexture(wcf);
+    // wcf screen update
+    SDL_RenderCopy(renderer, wcf, NULL, NULL);
 }
 
 // Renders enire frame based on hero position
@@ -314,8 +313,8 @@ Display_Boot()
     #undef S
     #undef LD_TILES
     #undef LD_SPRTS
-    // Acquires GPU
-    gpu = SDL_CreateTexture(renderer, format, access, xres, yres); assert(gpu);
+    // Acquires wcf
+    wcf = SDL_CreateTexture(renderer, format, access, xres, yres); assert(wcf);
 }
 
 // Cleans up SDL and friends
@@ -327,7 +326,7 @@ Display_Shutdown()
     for(int i = 0; i < SURFACES; i++) SDL_FreeSurface(sprts[i]);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
-    SDL_DestroyTexture(gpu);
+    SDL_DestroyTexture(wcf);
     SDL_Quit();
     // Optimizations
     free(sigs);
