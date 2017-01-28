@@ -21,7 +21,7 @@
 #include <math.h>
 
 static inline bool
-fn(const Point point, uint8_t** party)
+fn(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
@@ -30,7 +30,7 @@ fn(const Point point, uint8_t** party)
 }
 
 static inline bool
-fe(const Point point, uint8_t** party)
+fe(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
@@ -39,7 +39,7 @@ fe(const Point point, uint8_t** party)
 }
 
 static inline bool
-fs(const Point point, uint8_t** party)
+fs(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
@@ -48,7 +48,7 @@ fs(const Point point, uint8_t** party)
 }
 
 static inline bool
-fw(const Point point, uint8_t** party)
+fw(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
@@ -57,19 +57,19 @@ fw(const Point point, uint8_t** party)
 }
 
 static inline bool
-Hor(const Point point, uint8_t** party)
+Hor(const Point point, uint8_t** const party)
 {
     return fn(point, party) || fs(point, party);
 }
 
 static inline bool
-Ver(const Point point, uint8_t** party)
+Ver(const Point point, uint8_t** const party)
 {
     return fe(point, party) || fw(point, party);
 }
 
 static inline bool
-Enclosure(const Point point, uint8_t** party)
+Enclosure(const Point point, uint8_t** const party)
 {
     return Hor(point, party) || Ver(point, party);
 }
@@ -85,7 +85,7 @@ StepNorth(const Point where, const double m, const double b)
 static inline Point
 StepSouth(const Point where, const double m, const double b)
 {
-    const double y = floor(where.y + 1.0);
+    const double y = (int)(where.y + 1.0);
     const double x = (y - b) / m;
     return (Point){ x, y };
 }
@@ -93,7 +93,7 @@ StepSouth(const Point where, const double m, const double b)
 static inline Point
 StepEast(const Point where, const double m, const double b)
 {
-    const double x = floor(where.x + 1.0);
+    const double x = (int)(where.x + 1.0);
     const double y = m * x + b;
     return (Point){ x, y };
 }
@@ -113,7 +113,7 @@ Closest(const Point where, const Point i, const Point j)
 }
 
 static inline Point
-Step(const Point where, const double m, const double b, const int q, uint8_t** party)
+Step(const Point where, const double m, const double b, const int q, uint8_t** const party)
 {
     Point point;
     switch(q)
@@ -169,7 +169,7 @@ Point_Mul(const Point i, const double n)
 }
 
 uint8_t
-Point_TileEnclosure(const Point point, uint8_t** party)
+Point_TileEnclosure(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
@@ -181,7 +181,7 @@ Point_TileEnclosure(const Point point, uint8_t** party)
 }
 
 uint8_t
-Point_TileParty(const Point point, uint8_t** party)
+Point_TileParty(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
@@ -189,7 +189,7 @@ Point_TileParty(const Point point, uint8_t** party)
 }
 
 bool
-Point_Collision(const Point point, uint8_t** party)
+Point_Collision(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
@@ -205,7 +205,7 @@ Point_Magnitude(const Point point)
 }
 
 double
-Point_Percent(const Point point, uint8_t** party)
+Point_Percent(const Point point, uint8_t** const party)
 {
     if(fn(point, party)) return 0.0 + Point_Decimal(point.x);
     if(fe(point, party)) return 1.0 - Point_Decimal(point.y);
