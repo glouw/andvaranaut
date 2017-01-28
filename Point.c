@@ -25,8 +25,8 @@ fn(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
-    // Testing for floating 0.0 equality is okay since point was derived from floor and ceil
-    return Point_Decimal(point.y) == 0.0 && party[y + 0][x + 0] && party[y - 1][x + 0] == 0;
+    // Testing for floating 0.f equality is okay since point was derived from floor and ceil
+    return Point_Decimal(point.y) == 0.f && party[y + 0][x + 0] && party[y - 1][x + 0] == 0;
 }
 
 static inline bool
@@ -34,8 +34,8 @@ fe(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
-    // Testing for floating 0.0 equality is okay since point was derived from floor and ceil
-    return Point_Decimal(point.x) == 0.0 && party[y + 0][x + 0] == 0 && party[y + 0][x - 1];
+    // Testing for floating 0.f equality is okay since point was derived from floor and ceil
+    return Point_Decimal(point.x) == 0.f && party[y + 0][x + 0] == 0 && party[y + 0][x - 1];
 }
 
 static inline bool
@@ -43,8 +43,8 @@ fs(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
-    // Testing for floating 0.0 equality is okay since point was derived from floor and ceil
-    return Point_Decimal(point.y) == 0.0 && party[y + 0][x + 0] == 0 && party[y - 1][x + 0];
+    // Testing for floating 0.f equality is okay since point was derived from floor and ceil
+    return Point_Decimal(point.y) == 0.f && party[y + 0][x + 0] == 0 && party[y - 1][x + 0];
 }
 
 static inline bool
@@ -52,8 +52,8 @@ fw(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
-    // Testing for floating 0.0 equality is okay since point was derived from floor and ceil
-    return Point_Decimal(point.x) == 0.0 && party[y + 0][x + 0] && party[y + 0][x - 1] == 0;
+    // Testing for floating 0.f equality is okay since point was derived from floor and ceil
+    return Point_Decimal(point.x) == 0.f && party[y + 0][x + 0] && party[y + 0][x - 1] == 0;
 }
 
 static inline bool
@@ -75,61 +75,61 @@ Enclosure(const Point point, uint8_t** const party)
 }
 
 // Fast floor to replace math floor
-static inline double
-ffloor(const double a)
+static inline float
+ffloor(const float a)
 {
     return (int)a - (a < (int)a);
 }
 
 // Fast ceil to replace math ceil
-static inline double
-fceil(const double a)
+static inline float
+fceil(const float a)
 {
     return (int)a + (a > (int)a);
 }
 
 static inline Point
-StepNorth(const Point where, const double m, const double b)
+StepNorth(const Point where, const float m, const float b)
 {
-    const double y = fceil(where.y - 1.0);
-    const double x = (y - b) / m;
+    const float y = fceil(where.y - 1.f);
+    const float x = (y - b) / m;
     return (Point){ x, y };
 }
 
 static inline Point
-StepSouth(const Point where, const double m, const double b)
+StepSouth(const Point where, const float m, const float b)
 {
-    const double y = (int)(where.y + 1.0); // Faster than ffloor
-    const double x = (y - b) / m;
+    const float y = (int)(where.y + 1.f); // Faster than ffloor
+    const float x = (y - b) / m;
     return (Point){ x, y };
 }
 
 static inline Point
-StepEast(const Point where, const double m, const double b)
+StepEast(const Point where, const float m, const float b)
 {
-    const double x = (int)(where.x + 1.0); // Faster than fflor
-    const double y = m * x + b;
+    const float x = (int)(where.x + 1.f); // Faster than fflor
+    const float y = m * x + b;
     return (Point){ x, y };
 }
 
 static inline Point
-StepWest(const Point where, const double m, const double b)
+StepWest(const Point where, const float m, const float b)
 {
-    const double x = fceil(where.x - 1.0);
-    const double y = m * x + b;
+    const float x = fceil(where.x - 1.f);
+    const float y = m * x + b;
     return (Point){ x, y };
 }
 
 static inline Point
 Closest(const Point where, const Point i, const Point j)
 {
-    const double im = Point_Magnitude(Point_Sub(i, where));
-    const double jm = Point_Magnitude(Point_Sub(j, where));
+    const float im = Point_Magnitude(Point_Sub(i, where));
+    const float jm = Point_Magnitude(Point_Sub(j, where));
     return im < jm ? i : j;
 }
 
 static inline Point
-Step(const Point where, const double m, const double b, const int q, uint8_t** const party)
+Step(const Point where, const float m, const float b, const int q, uint8_t** const party)
 {
     Point point;
     switch(q)
@@ -146,24 +146,24 @@ Step(const Point where, const double m, const double b, const int q, uint8_t** c
 }
 
 static inline int
-Quadrant(const double radians)
+Quadrant(const float radians)
 {
 
-    const double x = cos(radians);
-    const double y = sin(radians);
-    if(x > 0.0 && y > 0.0) return 0; // PI / 2
-    if(x < 0.0 && y > 0.0) return 1; // PI
-    if(x < 0.0 && y < 0.0) return 2; // 3 PI / 2
-    if(x > 0.0 && y < 0.0) return 3; // 2 PI
+    const float x = cosf(radians);
+    const float y = sinf(radians);
+    if(x > 0.f && y > 0.f) return 0;
+    if(x < 0.f && y > 0.f) return 1;
+    if(x < 0.f && y < 0.f) return 2;
+    if(x > 0.f && y < 0.f) return 3;
     return -1;
 }
 
 Point
-Point_Cast(const Point where, const double radians, uint8_t** const party)
+Point_Cast(const Point where, const float radians, uint8_t** const party)
 {
-    const double m = tan(radians);
-    const double b = where.y - m * where.x;
-    const double q = Quadrant(radians);
+    const float m = tanf(radians);
+    const float b = where.y - m * where.x;
+    const float q = Quadrant(radians);
     return Step(where, m, b, q, party);
 }
 
@@ -180,7 +180,7 @@ Point_Add(const Point i, const Point j)
 }
 
 Point
-Point_Mul(const Point i, const double n)
+Point_Mul(const Point i, const float n)
 {
     return (Point){ i.x * n, i.y * n };
 }
@@ -211,26 +211,26 @@ Point_Collision(const Point point, uint8_t** const party)
     return party[y][x];
 }
 
-double
+float
 Point_Magnitude(const Point point)
 {
-    const double x = point.x * point.x;
-    const double y = point.y * point.y;
-    return sqrt(x + y);
+    const float x = point.x * point.x;
+    const float y = point.y * point.y;
+    return sqrtf(x + y);
 }
 
-double
+float
 Point_Percent(const Point point, uint8_t** const party)
 {
-    if(fe(point, party)) return 1.0 - Point_Decimal(point.y);
-    if(fs(point, party)) return 1.0 - Point_Decimal(point.x);
+    if(fe(point, party)) return 1.f - Point_Decimal(point.y);
+    if(fs(point, party)) return 1.f - Point_Decimal(point.x);
     return fn(point, party) ?
         Point_Decimal(point.x):
         Point_Decimal(point.y); // West
 }
 
-double
-Point_Decimal(const double d)
+float
+Point_Decimal(const float d)
 {
     return d - (int)d;
 }

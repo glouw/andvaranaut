@@ -85,12 +85,12 @@ Map_Load(const char* const path)
     // Hero where
     Point where;
     line = GetLine(fp);
-    sscanf(line, "%lf %lf", &where.x, &where.y);
+    sscanf(line, "%f %f", &where.x, &where.y);
     free(line);
     // Hero theta
-    double theta;
+    float theta;
     line = GetLine(fp);
-    sscanf(line, "%lf", &theta);
+    sscanf(line, "%f", &theta);
     free(line);
     // Number of sprites
     int nsprites;

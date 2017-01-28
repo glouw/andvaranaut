@@ -25,7 +25,7 @@ typedef struct map
     int ysz;
     int xsz;
     Point where;
-    double theta;
+    float theta;
     int nsprites;
     uint8_t** ceiling;
     uint8_t** walling;

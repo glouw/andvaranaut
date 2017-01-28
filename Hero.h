@@ -23,14 +23,14 @@
 typedef struct hero
 {
     Point where;
-    double theta;
-    double d0;
-    double dy;
-    double dx;
-    double health;
-    double torch;
+    float theta;
+    float d0;
+    float dy;
+    float dx;
+    float health;
+    float torch;
 }
 Hero;
 
 Hero
-Hero_Move(Hero hero, Map map);
+Hero_Move(Hero hero, const Map map);

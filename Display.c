@@ -24,7 +24,7 @@
 #include <assert.h>
 
 // Constant definitions and such
-static const double focal = 1.0;
+static const float focal = 1.f;
 static const int xres = 600;
 static const int yres = 300;
 static const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
@@ -50,8 +50,8 @@ LoadBMP(const char* const path)
 }
 
 // Preoptimizs a bunch of static row and column calculations
-static double* diss; // Distances
-static double* sigs; // Sigmas
+static float* diss; // Distances
+static float* sigs; // Sigmas
 #define CLRS 256
 #define MODS 256
 static uint8_t clut[CLRS][MODS];
@@ -59,15 +59,15 @@ static void
 PreOptimize()
 {
     // Rows
-    diss = malloc(yres * sizeof(double));
+    diss = malloc(yres * sizeof(float));
     for(int row = 0; row < yres; ++row)
         diss[row] = focal * yres / (2 * (row + 1) - yres);
     // Cols
-    sigs = malloc(xres * sizeof(double));
+    sigs = malloc(xres * sizeof(float));
     for(int col = 0; col < xres; ++col)
     {
-        const double pan = 2.0 * (double)col / xres - 1.0;
-        sigs[col] = atan2(pan, focal);
+        const float pan = 2.f * (float)col / xres - 1.f;
+        sigs[col] = atan2f(pan, focal);
     }
     // Color Look up table
     for(int i = 0xFF; i >= 0x00; i--)
@@ -92,10 +92,10 @@ FlatMod(const uint32_t pixel, const int mod)
 }
 
 // Clamps a value between min and max
-static inline double
-clamp(const double value, const double min, const double max)
+static inline float
+clamp(const float value, const float min, const float max)
 {
-    const double t = value < min ? min : value;
+    const float t = value < min ? min : value;
     return t > max ? max : t;
 }
 
@@ -104,22 +104,22 @@ static void
 RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const screen)
 {
     /* Wall Ray Casting */
-    const double sigma = sigs[col];
-    const double radians = sigma + hero.theta;
+    const float sigma = sigs[col];
+    const float radians = sigma + hero.theta;
     const Point wall = Point_Cast(hero.where, radians, map.walling);
     // Renders an artifact column if the ray left the map
     const Point wray = Point_Sub(wall, hero.where);
     // Ray fish eye correction
-    const double wmag = Point_Magnitude(wray);
-    const double wnormal = wmag * cos(sigma);
+    const float wmag = Point_Magnitude(wray);
+    const float wnormal = wmag * cosf(sigma);
     // Wall height calculation
-    const double wheight = round(focal * (double)yres / wnormal);
-    const double wt = (double)yres / 2.0 - wheight / 2.0;
-    const double wb = wt + wheight;
+    const float wheight = round(focal * (float)yres / wnormal);
+    const float wt = (float)yres / 2.f - wheight / 2.f;
+    const float wb = wt + wheight;
     // Wall top clamped
-    const int wtc = wt < 0.0 ? 0 : (int)wt;
+    const int wtc = wt < 0.f ? 0 : (int)wt;
     // Wall bottom clamped
-    const int wbc = wb > (double)yres ? yres : (int)wb;
+    const int wbc = wb > (float)yres ? yres : (int)wb;
     // Wall tile inspection
     const int wtile = Point_TileEnclosure(wall, map.walling);
     // Wall tile BMP texture
@@ -128,9 +128,9 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     const int wh = walling->h;
     const int wx = ww * Point_Percent(wall, map.walling);
     // Wall mod
-    const double wm = hero.torch / (wmag * wmag);
+    const float wm = hero.torch / (wmag * wmag);
     // Wall mod clamped
-    const int wmc = (double)0xFF * clamp(wm, 0.0, 1.0);
+    const int wmc = (float)0xFF * clamp(wm, 0.f, 1.f);
     // Wall buffering
     const uint32_t* const wpixels = walling->pixels;
     for(int row = wtc; row < wbc; ++row)
@@ -150,15 +150,15 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     /* Party Ray Casting */
     for(int i = 0, row = wbc; row < pbc; ++i, ++row)
     {
-        const double percent = diss[row] / wnormal;
+        const float percent = diss[row] / wnormal;
         const Point pray = Point_Mul(wray, percent);
         const Point part = Point_Add(hero.where, pray);
         parts[i] = part;
-        const double pmag = Point_Magnitude(pray);
+        const float pmag = Point_Magnitude(pray);
         // Party mod
-        const double pm = hero.torch / (pmag * pmag);
+        const float pm = hero.torch / (pmag * pmag);
         // Party mod clamped
-        const int pmc = (double)0xFF * clamp(pm, 0.0, 1.0); // Party mod clamps
+        const int pmc = (float)0xFF * clamp(pm, 0.f, 1.f); // Party mod clamps
         pmcs[i] = pmc;
     }
     // Floor bottom clamped
@@ -212,21 +212,21 @@ RenderS(const Hero hero, const Map map)
     // Currently not in use
     (void)map;
     // Hence the override
-    const Point sprite = { 24, 7.5 };
+    const Point sprite = { 24, 7.5f };
     const Point sray = Point_Sub(sprite, hero.where);
     // Sprite magniude
-    const double smag = Point_Magnitude(sray);
+    const float smag = Point_Magnitude(sray);
     // Which sprite surface?
     SDL_Surface* const sprt = sprts[0];
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, sprt);
     // Sprite mod
-    const double sm = hero.torch / (smag * smag);
+    const float sm = hero.torch / (smag * smag);
     // Sprite mod clamped
-    const int smc = (double)0xFF * clamp(sm, 0.0, 1.0);
+    const int smc = (float)0xFF * clamp(sm, 0.f, 1.f);
     // Darkening mod
     SDL_SetTextureColorMod(texture, smc, smc, smc);
     // Percieved width and height
-    const double psw = yres / smag, psh = psw;
+    const float psw = yres / smag, psh = psw;
     // Draw
     SDL_Rect dest = {
         // Sprite x

@@ -7,6 +7,7 @@ CFLAGS = -g -Ofast -flto -fwhole-program -fassociative-math\
 		 -mrecip -freciprocal-math -fno-signed-zeros -fno-trapping-math\
 		 -frename-registers -funroll-loops\
 		 -Wall -Wpedantic -Wextra -Wshadow -std=gnu99 -pedantic\
+		 -Wdouble-promotion -fsingle-precision-constant\
 		 -DNDEBUG\
 		 -DPROFILE
 LDFLAGS = -lm -lSDL2 -lSDL2_ttf

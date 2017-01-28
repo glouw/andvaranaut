@@ -29,18 +29,18 @@ main(const int argc, const char* const argv[])
     Hero hero = {
         .where = map.where,
         .theta = map.theta,
-        .d0 = 0.10,
-        .dy = 0.10,
-        .dx = 0.10,
-        .health = 100.0,
-        .torch = 6.0
+        .d0 = 0.1f,
+        .dy = 0.1f,
+        .dx = 0.1f,
+        .health = 100.f,
+        .torch = 6.f
     };
     Display_Boot();
     #ifdef PROFILE
     const int frames = 60;
     for(int frame = 0; frame < frames; frame++)
     #else
-    while(hero.health > 0.0)
+    while(hero.health > 0.f)
     #endif
     {
         // Starts timer

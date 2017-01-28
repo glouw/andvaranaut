@@ -23,12 +23,12 @@
 
 typedef struct point
 {
-    double x, y;
+    float x, y;
 }
 Point;
 
 Point
-Point_Cast(const Point where, const double radians, uint8_t** const party);
+Point_Cast(const Point where, const float radians, uint8_t** const party);
 
 Point
 Point_Sub(const Point i, const Point j);
@@ -37,7 +37,7 @@ Point
 Point_Add(const Point i, const Point j);
 
 Point
-Point_Mul(const Point i, const double n);
+Point_Mul(const Point i, const float n);
 
 uint8_t
 Point_TileEnclosure(const Point point, uint8_t** party);
@@ -48,11 +48,11 @@ Point_TileParty(const Point point, uint8_t** party);
 bool
 Point_Collision(const Point point, uint8_t** party);
 
-double
+float
 Point_Magnitude(const Point point);
 
-double
+float
 Point_Percent(const Point point, uint8_t** party);
 
-double
-Point_Decimal(const double d);
+float
+Point_Decimal(const float d);
