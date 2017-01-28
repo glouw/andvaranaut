@@ -75,7 +75,7 @@ PreOptimize()
         clut[i][j] = (i * j) / 0xFF;
 }
 
-// Mods a pixel by some percentage and clamps
+// Mods a pixel by some percentage
 // Discards the alpha
 static inline uint32_t
 FlatMod(const uint32_t pixel, const int mod)
@@ -89,6 +89,14 @@ FlatMod(const uint32_t pixel, const int mod)
     const int bm = clut[b][mod];
     // Pixel reconstruction
     return rm << 16 | gm << 8 | bm;
+}
+
+// Clamps a value between min and max
+static inline double
+clamp(const double value, const double min, const double max)
+{
+    const double t = value < min ? min : value;
+    return t > max ? max : t;
 }
 
 // Renders one screen column based on hero position
@@ -109,9 +117,9 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     const double wt = (double)yres / 2.0 - wheight / 2.0;
     const double wb = wt + wheight;
     // Wall top clamped
-    const int wtc = wt < 0.0 ? 0 : (int)wt;
+    const int wtc = clamp(wt, 0.0, yres);
     // Wall bottom clamped
-    const int wbc = wb > (double)yres ? yres : (int)wb;
+    const int wbc = clamp(wb, 0.0, yres);
     // Wall tile inspection
     const int wtile = Point_TileEnclosure(wall, map.walling);
     // Wall tile BMP texture
@@ -122,7 +130,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     // Wall mod
     const double wm = hero.torch / (wmag * wmag);
     // Wall mod clamped
-    const int wmc = wm > 1.0 ? 0xFF : (double)0xFF * wm;
+    const int wmc = (double)0xFF * clamp(wm, 0.0, 1.0);
     // Wall buffering
     const uint32_t* const wpixels = walling->pixels;
     for(int row = wtc; row < wbc; row++)
@@ -149,9 +157,8 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const double pmag = Point_Magnitude(pray);
         // Party mod
         const double pm = hero.torch / (pmag * pmag);
-        // Part mod clamped
-        const int pmc = pm > 1.0 ? 0xFF : (double)0xFF * pm;
-        // Party mod clamps
+        // Party mod clamped
+        const int pmc = (double)0xFF * clamp(pm, 0.0, 1.0); // Party mod clamps
         pmcs[i] = pmc;
     }
     // Floor bottom clamped
@@ -215,10 +222,9 @@ RenderS(const Hero hero, const Map map)
     // Sprite mod
     const double sm = hero.torch / (smag * smag);
     // Sprite mod clamped
-    const double smc = sm > 1.0 ? 1.0 : sm;
-    // Sprite mod clamped hex
-    const int smch = (double)0xFF * smc;
-    SDL_SetTextureColorMod(texture, smch, smch, smch);
+    const int smc = (double)0xFF * clamp(sm, 0.0, 1.0);
+    // Darkening mod
+    SDL_SetTextureColorMod(texture, smc, smc, smc);
     // Percieved width and height
     const double psw = yres / smag, psh = psw;
     // Draw
