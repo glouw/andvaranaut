@@ -1,13 +1,13 @@
 // Copyright (C) 2016-2017 Gustav Louw
-// 
+//
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
-// 
+//
 // Permission is granted to anyone to use this software for any purpose,
 // including commercial applications, and to alter it and redistribute it
 // freely, subject to the following restrictions:
-// 
+//
 // 1. The origin of this software must not be misrepresented; you must not
 //    claim that you wrote the original software. If you use this software
 //    in a product, an acknowledgment in the product documentation would be
@@ -25,7 +25,7 @@ fn(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
-    // Testing for floating 0.0 equality is okay since point was derived from float and ceil
+    // Testing for floating 0.0 equality is okay since point was derived from floor and ceil
     return Point_Decimal(point.y) == 0.0 && party[y + 0][x + 0] && party[y - 1][x + 0] == 0;
 }
 
@@ -34,7 +34,7 @@ fe(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
-    // Testing for floating 0.0 equality is okay since point was derived from float and ceil
+    // Testing for floating 0.0 equality is okay since point was derived from floor and ceil
     return Point_Decimal(point.x) == 0.0 && party[y + 0][x + 0] == 0 && party[y + 0][x - 1];
 }
 
@@ -43,7 +43,7 @@ fs(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
-    // Testing for floating 0.0 equality is okay since point was derived from float and ceil
+    // Testing for floating 0.0 equality is okay since point was derived from floor and ceil
     return Point_Decimal(point.y) == 0.0 && party[y + 0][x + 0] == 0 && party[y - 1][x + 0];
 }
 
@@ -52,7 +52,7 @@ fw(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
-    // Testing for floating 0.0 equality is okay since point was derived from float and ceil
+    // Testing for floating 0.0 equality is okay since point was derived from floor and ceil
     return Point_Decimal(point.x) == 0.0 && party[y + 0][x + 0] && party[y + 0][x - 1] == 0;
 }
 
@@ -74,10 +74,24 @@ Enclosure(const Point point, uint8_t** const party)
     return Hor(point, party) || Ver(point, party);
 }
 
+// Fast floor to replace math floor
+static inline double
+ffloor(const double a)
+{
+    return (int)a - (a < (int)a);
+}
+
+// Fast ceil to replace math ceil
+static inline double
+fceil(const double a)
+{
+    return (int)a + (a > (int)a);
+}
+
 static inline Point
 StepNorth(const Point where, const double m, const double b)
 {
-    const double y = ceil(where.y - 1.0);
+    const double y = fceil(where.y - 1.0);
     const double x = (y - b) / m;
     return (Point){ x, y };
 }
@@ -85,7 +99,7 @@ StepNorth(const Point where, const double m, const double b)
 static inline Point
 StepSouth(const Point where, const double m, const double b)
 {
-    const double y = (int)(where.y + 1.0);
+    const double y = ffloor(where.y + 1.0);
     const double x = (y - b) / m;
     return (Point){ x, y };
 }
@@ -93,7 +107,7 @@ StepSouth(const Point where, const double m, const double b)
 static inline Point
 StepEast(const Point where, const double m, const double b)
 {
-    const double x = (int)(where.x + 1.0);
+    const double x = ffloor(where.x + 1.0);
     const double y = m * x + b;
     return (Point){ x, y };
 }
@@ -101,7 +115,7 @@ StepEast(const Point where, const double m, const double b)
 static inline Point
 StepWest(const Point where, const double m, const double b)
 {
-    const double x = ceil(where.x - 1.0);
+    const double x = fceil(where.x - 1.0);
     const double y = m * x + b;
     return (Point){ x, y };
 }
