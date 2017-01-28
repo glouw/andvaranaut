@@ -60,11 +60,11 @@ PreOptimize()
 {
     // Rows
     diss = malloc(yres * sizeof(double));
-    for(int row = 0; row < yres; row++)
+    for(int row = 0; row < yres; ++row)
         diss[row] = focal * yres / (2 * (row + 1) - yres);
     // Cols
     sigs = malloc(xres * sizeof(double));
-    for(int col = 0; col < xres; col++)
+    for(int col = 0; col < xres; ++col)
     {
         const double pan = 2.0 * (double)col / xres - 1.0;
         sigs[col] = atan2(pan, focal);
@@ -117,9 +117,9 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     const double wt = (double)yres / 2.0 - wheight / 2.0;
     const double wb = wt + wheight;
     // Wall top clamped
-    const int wtc = clamp(wt, 0.0, yres);
+    const int wtc = wt < 0.0 ? 0 : (int)wt;
     // Wall bottom clamped
-    const int wbc = clamp(wb, 0.0, yres);
+    const int wbc = wb > (double)yres ? yres : (int)wb;
     // Wall tile inspection
     const int wtile = Point_TileEnclosure(wall, map.walling);
     // Wall tile BMP texture
@@ -133,7 +133,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     const int wmc = (double)0xFF * clamp(wm, 0.0, 1.0);
     // Wall buffering
     const uint32_t* const wpixels = walling->pixels;
-    for(int row = wtc; row < wbc; row++)
+    for(int row = wtc; row < wbc; ++row)
     {
         const int wy = wh * (row - wt) / wheight;
         const uint32_t pixel = wpixels[wy * ww + wx];
@@ -148,7 +148,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     // Party mod clamps
     int pmcs[yres];
     /* Party Ray Casting */
-    for(int i = 0, row = wbc; row < pbc; i++, row++)
+    for(int i = 0, row = wbc; row < pbc; ++i, ++row)
     {
         const double percent = diss[row] / wnormal;
         const Point pray = Point_Mul(wray, percent);
@@ -164,7 +164,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     // Floor bottom clamped
     const int fbc = pbc;
     /* Floor tile mapping */
-    for(int i = 0, row = wbc; row < fbc; i++, row++)
+    for(int i = 0, row = wbc; row < fbc; ++i, ++row)
     {
         const int index = i;
         const Point flor = parts[index];
@@ -185,7 +185,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     // Ceiling top clamped
     const int ctc = 0;
     /* Ceiling tile mapping */
-    for(int i = 0, row = ctc; row < wtc; i++, row++)
+    for(int i = 0, row = ctc; row < wtc; ++i, ++row)
     {
         const int index = pheight - i - 1;
         const Point ceil = parts[index];
@@ -247,7 +247,7 @@ RenderWCF(const Hero hero, const Map map)
     void* bytes; int null; SDL_LockTexture(wcf, NULL, &bytes, &null);
     uint32_t* const screen = (uint32_t*)bytes;
     // Renders all columns and returns player to wall magnitudes for each column
-    for(int col = 0; col < xres; col++) RenderColumn(hero, map, col, screen);
+    for(int col = 0; col < xres; ++col) RenderColumn(hero, map, col, screen);
     // Screen update
     SDL_UnlockTexture(wcf);
     SDL_RenderCopy(renderer, wcf, NULL, NULL);
@@ -332,8 +332,8 @@ void
 Display_Shutdown()
 {
     // SDL
-    for(int i = 0; tiles[i]; i++) SDL_FreeSurface(tiles[i]);
-    for(int i = 0; sprts[i]; i++) SDL_FreeSurface(sprts[i]);
+    for(int i = 0; tiles[i]; ++i) SDL_FreeSurface(tiles[i]);
+    for(int i = 0; sprts[i]; ++i) SDL_FreeSurface(sprts[i]);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(wcf);

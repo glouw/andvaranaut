@@ -99,7 +99,7 @@ StepNorth(const Point where, const double m, const double b)
 static inline Point
 StepSouth(const Point where, const double m, const double b)
 {
-    const double y = ffloor(where.y + 1.0);
+    const double y = (int)(where.y + 1.0); // Faster than ffloor
     const double x = (y - b) / m;
     return (Point){ x, y };
 }
@@ -107,7 +107,7 @@ StepSouth(const Point where, const double m, const double b)
 static inline Point
 StepEast(const Point where, const double m, const double b)
 {
-    const double x = ffloor(where.x + 1.0);
+    const double x = (int)(where.x + 1.0); // Faster than fflor
     const double y = m * x + b;
     return (Point){ x, y };
 }
@@ -123,7 +123,9 @@ StepWest(const Point where, const double m, const double b)
 static inline Point
 Closest(const Point where, const Point i, const Point j)
 {
-    return Point_Magnitude(Point_Sub(i, where)) < Point_Magnitude(Point_Sub(j, where)) ? i : j;
+    const double im = Point_Magnitude(Point_Sub(i, where));
+    const double jm = Point_Magnitude(Point_Sub(j, where));
+    return im < jm ? i : j;
 }
 
 static inline Point
@@ -146,12 +148,13 @@ Step(const Point where, const double m, const double b, const int q, uint8_t** c
 static inline int
 Quadrant(const double radians)
 {
+
     const double x = cos(radians);
     const double y = sin(radians);
-    if(x >= 0.0 && y >= 0.0) return 0;
-    if(x <= 0.0 && y >= 0.0) return 1;
-    if(x <= 0.0 && y <= 0.0) return 2;
-    if(x >= 0.0 && y <= 0.0) return 3;
+    if(x > 0.0 && y > 0.0) return 0; // PI / 2
+    if(x < 0.0 && y > 0.0) return 1; // PI
+    if(x < 0.0 && y < 0.0) return 2; // 3 PI / 2
+    if(x > 0.0 && y < 0.0) return 3; // 2 PI
     return -1;
 }
 
