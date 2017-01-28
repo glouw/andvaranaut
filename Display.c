@@ -61,7 +61,9 @@ PreOptimize()
     // Rows
     diss = malloc(yres * sizeof(float));
     for(int row = 0; row < yres; ++row)
+    {
         diss[row] = focal * yres / (2 * (row + 1) - yres);
+    }
     // Cols
     sigs = malloc(xres * sizeof(float));
     for(int col = 0; col < xres; ++col)
@@ -72,7 +74,9 @@ PreOptimize()
     // Color Look up table
     for(int i = 0xFF; i >= 0x00; i--)
     for(int j = 0xFF; j >= 0x00; j--)
+    {
         clut[i][j] = (i * j) / 0xFF;
+    }
 }
 
 // Mods a pixel by some percentage

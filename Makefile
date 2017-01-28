@@ -9,7 +9,7 @@ CFLAGS = -g -Ofast -flto -fwhole-program -fassociative-math\
 		 -Wall -Wpedantic -Wextra -Wshadow -std=gnu99 -pedantic\
 		 -Wdouble-promotion -fsingle-precision-constant\
 		 -DNDEBUG\
-		 -DPROFILE
+		 #-DPROFILE
 LDFLAGS = -lm -lSDL2 -lSDL2_ttf
 TARGET_ARCH = -march=native
 DEPDIR := deps
