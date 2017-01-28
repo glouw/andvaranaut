@@ -190,9 +190,7 @@ Point_TileEnclosure(const Point point, uint8_t** const party)
 {
     const int x = point.x;
     const int y = point.y;
-    if(fn(point, party)) return party[y + 0][x + 0];
     if(fe(point, party)) return party[y + 0][x - 1];
-    if(fw(point, party)) return party[y + 0][x + 0];
     if(fs(point, party)) return party[y - 1][x + 0];
     return party[y][x];
 }
@@ -224,11 +222,11 @@ Point_Magnitude(const Point point)
 double
 Point_Percent(const Point point, uint8_t** const party)
 {
-    if(fn(point, party)) return 0.0 + Point_Decimal(point.x);
     if(fe(point, party)) return 1.0 - Point_Decimal(point.y);
     if(fs(point, party)) return 1.0 - Point_Decimal(point.x);
-    if(fw(point, party)) return 0.0 + Point_Decimal(point.y);
-    return 0.0;
+    return fn(point, party) ?
+        Point_Decimal(point.x):
+        Point_Decimal(point.y); // West
 }
 
 double
