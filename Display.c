@@ -35,9 +35,8 @@ static const uint32_t access = SDL_TEXTUREACCESS_STREAMING;
 static SDL_Window* window;
 static SDL_Texture* wcf;
 static SDL_Renderer* renderer;
-#define SURFACES 10
-static SDL_Surface* tiles[SURFACES];
-static SDL_Surface* sprts[SURFACES];
+static SDL_Surface* tiles[10];
+static SDL_Surface* sprts[10];
 
 // Loads a BMP based on the pixel format and returns a surface tile
 static SDL_Surface*
@@ -50,34 +49,19 @@ LoadBMP(const char* const path)
     return cvt;
 }
 
-// Mods a pixel by some percentage and clamps
-// Discards the alpha
-static inline uint32_t
-FlatMod(const uint32_t pixel, const double percent)
-{
-    const int r = 0xFF & (pixel >> 16);
-    const int g = 0xFF & (pixel >>  8);
-    const int b = 0xFF & (pixel >>  0);
-    // Modified
-    const int rm = r * percent;
-    const int gm = g * percent;
-    const int bm = b * percent;
-    // Pixel reconstruction
-    return rm << 16 | gm << 8 | bm;
-}
-
 // Preoptimizs a bunch of static row and column calculations
 static double* diss; // Distances
 static double* sigs; // Sigmas
+#define CLRS 256
+#define MODS 256
+static uint8_t clut[CLRS][MODS];
 static void
 PreOptimize()
 {
     // Rows
     diss = malloc(yres * sizeof(double));
     for(int row = 0; row < yres; row++)
-    {
         diss[row] = focal * yres / (2 * (row + 1) - yres);
-    }
     // Cols
     sigs = malloc(xres * sizeof(double));
     for(int col = 0; col < xres; col++)
@@ -85,6 +69,26 @@ PreOptimize()
         const double pan = 2.0 * (double)col / xres - 1.0;
         sigs[col] = atan2(pan, focal);
     }
+    // Color Look up table
+    for(int i = 0xFF; i >= 0x00; i--)
+    for(int j = 0xFF; j >= 0x00; j--)
+        clut[i][j] = (i * j) / 0xFF;
+}
+
+// Mods a pixel by some percentage and clamps
+// Discards the alpha
+static inline uint32_t
+FlatMod(const uint32_t pixel, const int mod)
+{
+    const int r = 0xFF & (pixel >> 16);
+    const int g = 0xFF & (pixel >>  8);
+    const int b = 0xFF & (pixel >>  0);
+    // Modified
+    const int rm = clut[r][mod];
+    const int gm = clut[g][mod];
+    const int bm = clut[b][mod];
+    // Pixel reconstruction
+    return rm << 16 | gm << 8 | bm;
 }
 
 // Renders one screen column based on hero position
@@ -118,8 +122,8 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     // Wall mod
     const double wm = hero.torch / (wmag * wmag);
     // Wall mod clamped
-    const double wmc = wm > 1.0 ? 1.0 : wm;
-    // wcf buffering
+    const int wmc = wm > 1.0 ? 0xFF : (double)0xFF * wm;
+    // Wall buffering
     const uint32_t* const wpixels = walling->pixels;
     for(int row = wtc; row < wbc; row++)
     {
@@ -134,7 +138,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
     // Party cache
     Point parts[yres];
     // Party mod clamps
-    double pmcs[yres];
+    int pmcs[yres];
     /* Party Ray Casting */
     for(int i = 0, row = wbc; row < pbc; i++, row++)
     {
@@ -146,7 +150,7 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         // Party mod
         const double pm = hero.torch / (pmag * pmag);
         // Part mod clamped
-        const double pmc = pm > 1.0 ? 1.0 : pm;
+        const int pmc = pm > 1.0 ? 0xFF : (double)0xFF * pm;
         // Party mod clamps
         pmcs[i] = pmc;
     }
@@ -165,8 +169,8 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int fh = floring->h;
         const int fx = fw * Point_Decimal(flor.x);
         const int fy = fh * Point_Decimal(flor.y);
-        // wcf buffering
-        const double fm = pmcs[index];
+        // Floor buffering
+        const int fm = pmcs[index];
         const uint32_t* const pixels = floring->pixels;
         const uint32_t pixel = pixels[fy * fw + fx];
         screen[row * xres + col] = FlatMod(pixel, fm);
@@ -186,8 +190,8 @@ RenderColumn(const Hero hero, const Map map, const int col, uint32_t* const scre
         const int ch = ceiling->h;
         const int cx = cw * Point_Decimal(ceil.x);
         const int cy = ch * Point_Decimal(ceil.y);
-        // wcf buffering
-        const double cm = pmcs[index];
+        // Ceiling buffering
+        const int cm = pmcs[index];
         const uint32_t* const pixels = ceiling->pixels;
         const uint32_t pixel = pixels[cy * cw + cx];
         screen[row * xres + col] = FlatMod(pixel, cm);
@@ -213,7 +217,7 @@ RenderS(const Hero hero, const Map map)
     // Sprite mod clamped
     const double smc = sm > 1.0 ? 1.0 : sm;
     // Sprite mod clamped hex
-    const int smch = 0xFF * smc;
+    const int smch = (double)0xFF * smc;
     SDL_SetTextureColorMod(texture, smch, smch, smch);
     // Percieved width and height
     const double psw = yres / smag, psh = psw;
@@ -234,23 +238,21 @@ RenderS(const Hero hero, const Map map)
 static void
 RenderWCF(const Hero hero, const Map map)
 {
-    // wcf readying
     void* bytes; int null; SDL_LockTexture(wcf, NULL, &bytes, &null);
     uint32_t* const screen = (uint32_t*)bytes;
     // Renders all columns and returns player to wall magnitudes for each column
     for(int col = 0; col < xres; col++) RenderColumn(hero, map, col, screen);
-    // wcf release
+    // Screen update
     SDL_UnlockTexture(wcf);
-    // wcf screen update
     SDL_RenderCopy(renderer, wcf, NULL, NULL);
 }
 
-// Renders enire frame based on hero position
+// Renders entire frame based on hero position
 void
 Display_RenderFrame(const Hero hero, const Map map)
 {
     RenderWCF(hero, map);
-    RenderS(hero, map);
+    //RenderS(hero, map);
 }
 
 // Displays a string
@@ -324,8 +326,8 @@ void
 Display_Shutdown()
 {
     // SDL
-    for(int i = 0; i < SURFACES; i++) SDL_FreeSurface(tiles[i]);
-    for(int i = 0; i < SURFACES; i++) SDL_FreeSurface(sprts[i]);
+    for(int i = 0; tiles[i]; i++) SDL_FreeSurface(tiles[i]);
+    for(int i = 0; sprts[i]; i++) SDL_FreeSurface(sprts[i]);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(wcf);
