@@ -1,5 +1,3 @@
-// Gustav Louw (c) 2017 zlib
-
 #include <SDL2/SDL.h>
 
 typedef struct
@@ -14,7 +12,6 @@ static Point turn(const Point a, const double t)
     return (Point) { a.x * cos(t) - a.y * sin(t), a.x * sin(t) + a.y * cos(t) };
 }
 
-// Right angle rotation
 static Point rag(const Point a)
 {
     return (Point) { -a.y, a.x };
@@ -55,21 +52,18 @@ static double slope(const Point a)
     return a.y / a.x;
 }
 
-// Fast floor (math)
 static int fl(const double x)
 {
     const int i = x;
     return i - (x < i);
 }
 
-// Fast ceil (math)
 static int cl(const double x)
 {
     const int i = x;
     return i + (x > i);
 }
 
-// Steps horizontally along a grid
 static Point sh(const Point a, const Point b)
 {
     const double x = b.x > 0.0 ? fl(a.x + 1.0) : cl(a.x - 1.0);
@@ -77,7 +71,6 @@ static Point sh(const Point a, const Point b)
     return (Point) { x, y };
 }
 
-// Steps vertically along a grid
 static Point sv(const Point a, const Point b)
 {
     const double y = b.y > 0.0 ? fl(a.y + 1.0) : cl(a.y - 1.0);
@@ -105,7 +98,6 @@ typedef struct
 }
 Hit;
 
-// Returns the decimal portion of a double
 static double dec(const double x)
 {
     return x - (int) x;
@@ -140,7 +132,6 @@ static Line rotate(const Line l, const double t)
     return (Line) { turn(l.a, t), turn(l.b, t) };
 }
 
-// Linear interpolation
 static Point lerp(const Line l, const double n)
 {
     return add(l.a, mul(sub(l.b, l.a), n));
@@ -344,7 +335,6 @@ static double ccast(const Line fov, const int res, const int xx)
     return focal(fov) * res / (2 * xx - (res - 1));
 }
 
-// Wall renderer
 static void wrend(const Scanline sl, const Hit hit)
 {
     const SDL_Surface* const surface = sl.gpu.surfaces[hit.tile];
@@ -362,7 +352,6 @@ static double fcast(const Line fov, const int res, const int xx)
     return -ccast(fov, res, xx);
 }
 
-// Floor renderer
 static void frend(const Scanline sl, const Traceline tl, char** const flooring)
 {
     for(int xx = 0; xx < sl.wall.clamped.bot; xx++)
@@ -376,7 +365,6 @@ static void frend(const Scanline sl, const Traceline tl, char** const flooring)
     }
 }
 
-// Ceiling renderer
 static void crend(const Scanline sl, const Traceline tl, char** const ceiling)
 {
     for(int xx = sl.wall.clamped.top; xx < sl.res; xx++)
@@ -390,7 +378,6 @@ static void crend(const Scanline sl, const Traceline tl, char** const ceiling)
     }
 }
 
-// Batch renderer
 static void render(const Hero hero, const Map map, const int res, const Gpu gpu)
 {
     const int t0 = SDL_GetTicks();
@@ -412,7 +399,6 @@ static void render(const Hero hero, const Map map, const int res, const Gpu gpu)
     }
     unlock(gpu);
     present(gpu);
-    // Caps frame rate
     const int t1 = SDL_GetTicks();
     const int ms = 15 - (t1 - t0);
     SDL_Delay(ms < 0 ? 0 : ms);
