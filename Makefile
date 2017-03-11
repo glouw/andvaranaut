@@ -1,6 +1,5 @@
 CC = gcc
 PROJ = water
-CPPFLAGS =
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -std=c99 -g -Ofast -Wall -Wpedantic -Wextra -Wshadow
@@ -10,7 +9,7 @@ DEPDIR := dep
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
-COMP = $(CC) $(TARGET_ARCH) $(CFLAGS) $(WFLAGS) $(OFLAGS) $(DEPFLAGS) $(CPPFLAGS) -c
+COMP = $(CC) $(TARGET_ARCH) $(CFLAGS) $(DEPFLAGS) -c
 LINK = $(CC) $(TARGET_ARCH) $(OBJS) $(LDFLAGS) -o
 POST = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
 

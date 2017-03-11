@@ -173,18 +173,18 @@ static Gpu setup(const int res)
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     return (Gpu) {
         .surfaces = {
-    /* 0 */ load("surfaces/nothing.bmp", format), // Nothing empty texture
-    /* 1 */ load("surfaces/stone_w.bmp", format), // Stone wall
-    /* 2 */ load("surfaces/stone_f.bmp", format), // Stone floor
-    /* 3 */ load("surfaces/stone_c.bmp", format), // Stone ceiling
+    /* 0 */ load("surfaces/64/nothing.bmp", format), // Nothing empty texture
+    /* 1 */ load("surfaces/64/stone_w.bmp", format), // Stone wall
+    /* 2 */ load("surfaces/64/stone_f.bmp", format), // Stone floor
+    /* 3 */ load("surfaces/64/stone_c.bmp", format), // Stone ceiling
     /* 4 */ NULL,
     /* 5 */ NULL,
     /* 6 */ NULL,
     /* 7 */ NULL,
     /* 8 */ NULL,
     /* 9 */ NULL,
-    /* : */ load("surfaces/stone_d.bmp", format), // Stone door
-    /* ; */ load("surfaces/stone_j.bmp", format), // Stone jail
+    /* : */ load("surfaces/64/stone_d.bmp", format), // Stone door
+    /* ; */ load("surfaces/64/stone_j.bmp", format), // Stone jail
     /* < */ NULL,
     /* = */ NULL,
     /* > */ NULL,
@@ -422,7 +422,9 @@ static int finished()
 {
     SDL_Event event;
     SDL_PollEvent(&event);
-    if(event.type == SDL_QUIT || event.key.keysym.sym == SDLK_F1)
+    if(event.type == SDL_QUIT
+    || event.key.keysym.sym == SDLK_F1
+    || event.key.keysym.sym == SDLK_ESCAPE)
         return 1;
     return 0;
 }
