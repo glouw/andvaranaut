@@ -1,5 +1,22 @@
 #include <SDL2/SDL.h>
 
+static inline int fl(const double x)
+{
+    const int i = x;
+    return i - (x < i);
+}
+
+static inline int cl(const double x)
+{
+    const int i = x;
+    return i + (x > i);
+}
+
+static inline double dec(const double x)
+{
+    return x - (int) x;
+}
+
 typedef struct
 {
     double x;
@@ -52,18 +69,6 @@ static double slope(const Point a)
     return a.y / a.x;
 }
 
-static int fl(const double x)
-{
-    const int i = x;
-    return i - (x < i);
-}
-
-static int cl(const double x)
-{
-    const int i = x;
-    return i + (x > i);
-}
-
 static Point sh(const Point a, const Point b)
 {
     const double x = b.x > 0.0 ? fl(a.x + 1.0) : cl(a.x - 1.0);
@@ -87,7 +92,7 @@ static int tile(const Point a, char** const tiles)
 {
     const int x = a.x;
     const int y = a.y;
-    return tiles[y][x] - '0';
+    return tiles[y][x] - ' ';
 }
 
 typedef struct
@@ -97,11 +102,6 @@ typedef struct
     Point where;
 }
 Hit;
-
-static double dec(const double x)
-{
-    return x - (int) x;
-}
 
 static Hit collision(const Point hook, const Point direction, char** const walling)
 {
@@ -164,22 +164,22 @@ static Gpu setup(const int res)
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     return (Gpu) {
         .surfaces = {
-    /* 0 */ load("surfaces/64/nothing.bmp", format), // Nothing empty texture
-    /* 1 */ load("surfaces/64/stone_w.bmp", format), // Stone wall
-    /* 2 */ load("surfaces/64/stone_f.bmp", format), // Stone floor
-    /* 3 */ load("surfaces/64/stone_c.bmp", format), // Stone ceiling
-    /* 4 */ NULL,
-    /* 5 */ NULL,
-    /* 6 */ NULL,
-    /* 7 */ NULL,
-    /* 8 */ NULL,
-    /* 9 */ NULL,
-    /* : */ load("surfaces/64/stone_d.bmp", format), // Stone door
-    /* ; */ load("surfaces/64/stone_j.bmp", format), // Stone jail
-    /* < */ NULL,
-    /* = */ NULL,
-    /* > */ NULL,
-    /* ? */ NULL,
+    /*   */ NULL,
+    /* ! */ load("surfaces/64/nothing.bmp", format), // Texture not found
+    /* " */ load("surfaces/64/stone_f.bmp", format), // Stone floor
+    /* # */ load("surfaces/64/stone_w.bmp", format), // Stone wall
+    /* $ */ load("surfaces/64/stone_c.bmp", format), // Stone ceiling
+    /* % */ load("surfaces/64/stone_d.bmp", format), // Stone door
+    /* & */ load("surfaces/64/stone_j.bmp", format), // Stone jail
+    /* ' */ NULL,
+    /* ( */ NULL,
+    /* ) */ NULL,
+    /* * */ NULL,
+    /* + */ NULL,
+    /* , */ NULL,
+    /* - */ NULL,
+    /* . */ NULL,
+    /* / */ NULL,
         },
         window, renderer, texture
     };
@@ -308,71 +308,87 @@ static Hero move(const Hero hero, char** const walling)
 
 typedef struct
 {
+    char** ceiling;
+    char** walling;
+    char** floring;
+}
+Block;
+
+typedef struct
+{
     int inside;
     Point where;
     int rows;
-    char** ceiling;
-    char** walling;
-    char** flooring;
+}
+Meta;
+
+typedef struct
+{
+    Meta meta;
+    Block block;
 }
 Map;
 
-static Map open(const char* const path)
+static char** get(FILE* const fp, const int rows)
 {
-    FILE* fp = fopen(path, "r");
     char* line = NULL;
     unsigned reads = 0;
-    // Hero info (is the hero inside or outside? where is the hero?)
+    char** block = calloc(rows, sizeof(char*));
+    for(int row = 0; row < rows; row++)
+    {
+        getline(&line, &reads, fp);
+        block[row] = strdup(line);
+    }
+    free(line);
+    return block;
+}
+
+static Meta retrieve(FILE* const fp)
+{
+    char* line = NULL;
+    unsigned reads = 0;
+    // Hero meta
     int inside = 0;
     Point where = { 0.0, 0.0 };
     getline(&line, &reads, fp);
     sscanf(line, "%d %lf %lf", &inside, &where.x, &where.y);
-    // Map rows
+    // Map meta
     int rows = 0;
     getline(&line, &reads, fp);
     sscanf(line, "%d", &rows);
-    // Ceiling
-    char** ceiling = calloc(rows, sizeof(char*));
-    for(int row = 0; row < rows; row++)
-    {
-        getline(&line, &reads, fp);
-        ceiling[row] = strdup(line);
-    }
-    // Walling
-    char** walling = calloc(rows, sizeof(char*));
-    for(int row = 0; row < rows; row++)
-    {
-        getline(&line, &reads, fp);
-        walling[row] = strdup(line);
-    }
-    // Flooring
-    char** flooring = calloc(rows, sizeof(char*));
-    for(int row = 0; row < rows; row++)
-    {
-        getline(&line, &reads, fp);
-        flooring[row] = strdup(line);
-    }
     free(line);
-    fclose(fp);
-    return (Map) {
-        inside, where, rows, ceiling, walling, flooring
+    return (Meta) { inside, where, rows };
+}
+
+static Block build(FILE* const fp, const int rows)
+{
+    return (Block) {
+        .ceiling = get(fp, rows),
+        .walling = get(fp, rows),
+        .floring = get(fp, rows),
     };
+}
+
+static Map open(const char* const path)
+{
+    FILE* const fp = fopen(path, "r");
+    const Meta meta = retrieve(fp);
+    const Block block = build(fp, meta.rows);
+    fclose(fp);
+    return (Map) { meta, block };
 }
 
 static void close(const Map map)
 {
-    // Ceiling
-    for(int row = 0; row < map.rows; row++)
-        free(map.ceiling[row]);
-    free(map.ceiling);
-    // Walling
-    for(int row = 0; row < map.rows; row++)
-        free(map.walling[row]);
-    free(map.walling);
-    // Flooring
-    for(int row = 0; row < map.rows; row++)
-        free(map.flooring[row]);
-    free(map.flooring);
+    for(int row = 0; row < map.meta.rows; row++)
+        free(map.block.ceiling[row]);
+    for(int row = 0; row < map.meta.rows; row++)
+        free(map.block.walling[row]);
+    for(int row = 0; row < map.meta.rows; row++)
+        free(map.block.floring[row]);
+    free(map.block.ceiling);
+    free(map.block.walling);
+    free(map.block.floring);
 }
 
 typedef struct
@@ -415,12 +431,12 @@ static double fcast(const Line fov, const int res, const int xx)
     return -ccast(fov, res, xx);
 }
 
-static void frend(const Scanline sl, const Traceline tl, char** const flooring)
+static void frend(const Scanline sl, const Traceline tl, char** const floring)
 {
     for(int xx = 0; xx < sl.wall.clamped.bot; xx++)
     {
         const Point where = lerp(tl.trace, fcast(tl.fov, sl.res, xx) / tl.corrected.x);
-        const SDL_Surface* const surface = sl.gpu.surfaces[tile(where, flooring)];
+        const SDL_Surface* const surface = sl.gpu.surfaces[tile(where, floring)];
         const int col = surface->w * dec(where.x);
         const int row = surface->h * dec(where.y);
         const uint32_t* const pixels = surface->pixels;
@@ -441,7 +457,7 @@ static void crend(const Scanline sl, const Traceline tl, char** const ceiling)
     }
 }
 
-static void render(const Hero hero, const Map map, const int res, const Gpu gpu)
+static void render(const Hero hero, const Block block, const int res, const Gpu gpu)
 {
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.theta);
@@ -449,7 +465,7 @@ static void render(const Hero hero, const Map map, const int res, const Gpu gpu)
     for(int yy = 0; yy < res; yy++)
     {
         const Point column = lerp(camera, yy / (double) res);
-        const Hit hit = cast(hero.where, column, map.walling);
+        const Hit hit = cast(hero.where, column, block.walling);
         const Point ray = sub(hit.where, hero.where);
         const Point corrected = turn(ray, -hero.theta);
         const Wall wall = project(res, hero.fov, corrected);
@@ -457,8 +473,8 @@ static void render(const Hero hero, const Map map, const int res, const Gpu gpu)
         const Scanline sl = { display, gpu, wall, yy, res };
         wrend(sl, hit);
         const Traceline tl = { trace, corrected, hero.fov };
-        frend(sl, tl, map.flooring);
-        crend(sl, tl, map.ceiling);
+        frend(sl, tl, block.floring);
+        crend(sl, tl, block.ceiling);
     }
     unlock(gpu);
     present(gpu);
@@ -467,7 +483,7 @@ static void render(const Hero hero, const Map map, const int res, const Gpu gpu)
     SDL_Delay(ms < 0 ? 0 : ms);
 }
 
-static int finished()
+static int done()
 {
     SDL_Event event;
     SDL_PollEvent(&event);
@@ -478,12 +494,12 @@ static int finished()
     return 0;
 }
 
-int main(int argc, char** argv)
+int main(const int argc, const char* const* const argv)
 {
-    const Map map = open("test.map");
+    const Map map = open("maps/test.map");
     Hero hero = {
-        .inside = map.inside,
-        .where = { map.where.x, map.where.y },
+        .inside = map.meta.inside,
+        .where = map.meta.where,
         .velocity  = { 0.0, 0.0 },
         .acceleration = 0.01,
         .speed = 0.10,
@@ -499,11 +515,11 @@ int main(int argc, char** argv)
     #if 0
     for(int i = 0; i < 60; i++)
     #else
-    while(!finished())
+    while(!done())
     #endif
     {
-        hero = spin(move(hero, map.walling));
-        render(hero, map, res, gpu);
+        hero = spin(move(hero, map.block.walling));
+        render(hero, map.block, res, gpu);
     }
     release(gpu);
 end:close(map);
