@@ -106,9 +106,7 @@ Hit;
 static Hit collision(const Point hook, const Point direction, char** const walling)
 {
     const double epsilon = 1e-4;
-    return (Hit) {
-        tile(add(hook, mul(direction, epsilon)), walling), dec(hook.x) + dec(hook.y), hook
-    };
+    return (Hit) { tile(add(hook, mul(direction, epsilon)), walling), dec(hook.x) + dec(hook.y), hook };
 }
 
 static Hit cast(const Point ray, const Point direction, char** const walling)
@@ -262,10 +260,7 @@ static Wall project(const int res, const Line fov, const Point corrected)
     const int height = focal(fov) * res / corrected.x + 0.5;
     const int bot = (res - height) / 2;
     const int top = (res - bot);
-    return (Wall) {
-        bot, top, top - bot,
-        (Clamped) { bot < 0 ? 0 : bot, top > res ? res : top }
-    };
+    return (Wall) { bot, top, top - bot, (Clamped) { bot < 0 ? 0 : bot, top > res ? res : top } };
 }
 
 typedef struct
@@ -374,11 +369,7 @@ static Meta retrieve(FILE* const fp)
 
 static Blocks build(FILE* const fp, const int rows)
 {
-    return (Blocks) {
-        .ceiling = get(fp, rows),
-        .walling = get(fp, rows),
-        .floring = get(fp, rows),
-    };
+    return (Blocks) { get(fp, rows), get(fp, rows), get(fp, rows) };
 }
 
 static Map open(const char* const path)
