@@ -2,7 +2,7 @@ CC = gcc
 PROJ = water
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
-CFLAGS = -std=c99 -g -Ofast -Wall -Wpedantic -Wextra -Wshadow
+CFLAGS = -std=gnu99 -g -Ofast -Wall -Wpedantic -Wextra -Wshadow
 LDFLAGS = -lSDL2 -lm
 TARGET_ARCH = -march=native
 DEPDIR := dep

@@ -258,6 +258,7 @@ static Wall project(const int res, const Line fov, const Point corrected)
 
 typedef struct
 {
+    int inside;
     Line fov;
     Point where;
     Point velocity;
@@ -272,6 +273,7 @@ static Hero spin(const Hero hero)
     const uint8_t* key = SDL_GetKeyboardState(NULL);
     SDL_PumpEvents();
     Hero step = hero;
+    // Spins the hero if <JL>
     if(key[SDL_SCANCODE_H]) step.theta -= 0.1;
     if(key[SDL_SCANCODE_L]) step.theta += 0.1;
     return step;
@@ -282,7 +284,7 @@ static Hero move(const Hero hero, char** const walling)
     const uint8_t* key = SDL_GetKeyboardState(NULL);
     SDL_PumpEvents();
     Hero step = hero;
-    // Accelerates if <WASD>
+    // Accelerates the hero if <WASD>
     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
     {
         const Point reference = { 1.0, 0.0 };
@@ -306,6 +308,75 @@ static Hero move(const Hero hero, char** const walling)
 
 typedef struct
 {
+    int inside;
+    Point where;
+    int rows;
+    char** ceiling;
+    char** walling;
+    char** flooring;
+}
+Map;
+
+static Map open(const char* const path)
+{
+    FILE* fp = fopen(path, "r");
+    char* line = NULL;
+    unsigned reads = 0;
+    // Hero info (is the hero inside or outside? where is the hero?)
+    int inside = 0;
+    Point where = { 0.0, 0.0 };
+    getline(&line, &reads, fp);
+    sscanf(line, "%d %lf %lf", &inside, &where.x, &where.y);
+    // Map rows
+    int rows = 0;
+    getline(&line, &reads, fp);
+    sscanf(line, "%d", &rows);
+    // Ceiling
+    char** ceiling = calloc(rows, sizeof(char*));
+    for(int row = 0; row < rows; row++)
+    {
+        getline(&line, &reads, fp);
+        ceiling[row] = strdup(line);
+    }
+    // Walling
+    char** walling = calloc(rows, sizeof(char*));
+    for(int row = 0; row < rows; row++)
+    {
+        getline(&line, &reads, fp);
+        walling[row] = strdup(line);
+    }
+    // Flooring
+    char** flooring = calloc(rows, sizeof(char*));
+    for(int row = 0; row < rows; row++)
+    {
+        getline(&line, &reads, fp);
+        flooring[row] = strdup(line);
+    }
+    free(line);
+    fclose(fp);
+    return (Map) {
+        inside, where, rows, ceiling, walling, flooring
+    };
+}
+
+static void close(const Map map)
+{
+    // Ceiling
+    for(int row = 0; row < map.rows; row++)
+        free(map.ceiling[row]);
+    free(map.ceiling);
+    // Walling
+    for(int row = 0; row < map.rows; row++)
+        free(map.walling[row]);
+    free(map.walling);
+    // Flooring
+    for(int row = 0; row < map.rows; row++)
+        free(map.flooring[row]);
+    free(map.flooring);
+}
+
+typedef struct
+{
     Display display;
     Gpu gpu;
     Wall wall;
@@ -321,14 +392,6 @@ typedef struct
     Line fov;
 }
 Traceline;
-
-typedef struct
-{
-    char** ceiling;
-    char** walling;
-    char** flooring;
-}
-Map;
 
 static double ccast(const Line fov, const int res, const int xx)
 {
@@ -415,40 +478,12 @@ static int finished()
     return 0;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-    const int res = 600;
-    const Gpu gpu = setup(res);
-    char* ceiling[] = {
-        "3333333333333333",
-        "3333333333333333",
-        "3333333333333333",
-        "3333333333333333",
-        "3333333333333333",
-        "3333333333333333",
-        "3333333333333333",
-    };
-    char* walling[] = {
-        "1111111111111111",
-        "1000000111111111",
-        "100000011;111;11",
-        ":000000000000001",
-        "100000011;111;11",
-        "1000000111111111",
-        "1111111111111111",
-    };
-    char* flooring[] = {
-        "2222222222222222",
-        "2222222222222222",
-        "2222222222222222",
-        "2220222222222222",
-        "2222222222222222",
-        "2222222222222222",
-        "2222222222222222",
-    };
-    const Map map = { ceiling, walling, flooring };
+    const Map map = open("test.map");
     Hero hero = {
-        .where = { 3.5, 3.5 },
+        .inside = map.inside,
+        .where = { map.where.x, map.where.y },
         .velocity  = { 0.0, 0.0 },
         .acceleration = 0.01,
         .speed = 0.10,
@@ -458,14 +493,18 @@ int main()
             { +1.0, +1.0 }
         }
     };
+    if(argc != 2) goto end;
+    const int res = atoi(argv[1]);
+    const Gpu gpu = setup(res);
     #if 0
     for(int i = 0; i < 60; i++)
     #else
     while(!finished())
     #endif
     {
-        hero = spin(move(hero, walling));
+        hero = spin(move(hero, map.walling));
         render(hero, map, res, gpu);
     }
     release(gpu);
+end:close(map);
 }
