@@ -107,9 +107,7 @@ static Hit collision(const Point hook, const Point direction, char** const walli
 {
     const double epsilon = 1e-4;
     return (Hit) {
-        tile(add(hook, mul(direction, epsilon)), walling),
-        dec(hook.x) + dec(hook.y),
-        hook
+        tile(add(hook, mul(direction, epsilon)), walling), dec(hook.x) + dec(hook.y), hook
     };
 }
 
@@ -208,8 +206,7 @@ static void release(const Gpu gpu)
     SDL_Quit();
     SDL_DestroyWindow(gpu.window);
     SDL_DestroyRenderer(gpu.renderer);
-    for(int i = 0; i < gpu.superficial.count; i++)
-        SDL_FreeSurface(gpu.superficial.surfaces[i]);
+    for(int i = 0; i < gpu.superficial.count; i++) SDL_FreeSurface(gpu.superficial.surfaces[i]);
     free(gpu.superficial.surfaces);
 }
 
@@ -267,9 +264,7 @@ static Wall project(const int res, const Line fov, const Point corrected)
     const int top = (res - bot);
     return (Wall) {
         bot, top, top - bot,
-        (Clamped) {
-            bot < 0 ? 0 : bot, top > res ? res : top
-        }
+        (Clamped) { bot < 0 ? 0 : bot, top > res ? res : top }
     };
 }
 
@@ -397,12 +392,9 @@ static Map open(const char* const path)
 
 static void close(const Map map)
 {
-    for(int row = 0; row < map.meta.rows; row++)
-        free(map.blocks.ceiling[row]);
-    for(int row = 0; row < map.meta.rows; row++)
-        free(map.blocks.walling[row]);
-    for(int row = 0; row < map.meta.rows; row++)
-        free(map.blocks.floring[row]);
+    for(int row = 0; row < map.meta.rows; row++) free(map.blocks.ceiling[row]);
+    for(int row = 0; row < map.meta.rows; row++) free(map.blocks.walling[row]);
+    for(int row = 0; row < map.meta.rows; row++) free(map.blocks.floring[row]);
     free(map.blocks.ceiling);
     free(map.blocks.walling);
     free(map.blocks.floring);
