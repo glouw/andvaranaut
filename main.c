@@ -92,7 +92,7 @@ static int tile(const Point a, char** const tiles)
 {
     const int x = a.x;
     const int y = a.y;
-    return tiles[y][x] - ' ';
+    return tiles[y][x] - ' '; // Space
 }
 
 typedef struct
@@ -139,7 +139,14 @@ static Point lerp(const Line l, const double n)
 
 typedef struct
 {
-    SDL_Surface* surfaces[16];
+    SDL_Surface** surfaces;
+    int count;
+}
+Superficial;
+
+typedef struct
+{
+    Superficial superficial;
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
@@ -148,11 +155,43 @@ Gpu;
 
 static SDL_Surface* load(const char* const path, const uint32_t format)
 {
+    puts(path);
     SDL_Surface* const bmp = SDL_LoadBMP(path);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
     SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);
     SDL_FreeFormat(allocation);
+    SDL_FreeSurface(bmp);
     return converted;
+}
+
+static int newlines(const char* const path)
+{
+    FILE* const fp = fopen(path, "r");
+    char* line = NULL;
+    unsigned reads = 0;
+    int lines = 0;
+    while(getline(&line, &reads, fp) != -1) lines++;
+    fclose(fp);
+    free(line);
+    return lines;
+}
+
+static Superficial pull(const char* const path, const uint32_t format)
+{
+    char* line = NULL;
+    unsigned reads = 0;
+    const int count = newlines(path);
+    SDL_Surface** surfaces = calloc(count, sizeof(*surfaces));
+    FILE* const fp = fopen(path, "r");
+    for(int i = 0; i < count; i++)
+    {
+        getline(&line, &reads, fp);
+        line = strtok(line, "\n #");
+        surfaces[i] = (strcmp(line, "NULL") == 0) ? NULL : load(line, format);
+    }
+    fclose(fp);
+    free(line);
+    return (Superficial) { surfaces, count };
 }
 
 static Gpu setup(const int res)
@@ -162,38 +201,18 @@ static Gpu setup(const int res)
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
-    return (Gpu) {
-        .surfaces = {
-    /*   */ NULL,
-    /* ! */ load("surfaces/64/nothing.bmp", format), // Texture not found
-    /* " */ load("surfaces/64/stone_f.bmp", format), // Stone floor
-    /* # */ load("surfaces/64/stone_w.bmp", format), // Stone wall
-    /* $ */ load("surfaces/64/stone_c.bmp", format), // Stone ceiling
-    /* % */ load("surfaces/64/stone_d.bmp", format), // Stone door
-    /* & */ load("surfaces/64/stone_j.bmp", format), // Stone jail
-    /* ' */ NULL,
-    /* ( */ NULL,
-    /* ) */ NULL,
-    /* * */ NULL,
-    /* + */ NULL,
-    /* , */ NULL,
-    /* - */ NULL,
-    /* . */ NULL,
-    /* / */ NULL,
-        },
-        window, renderer, texture
-    };
+    return (Gpu) { pull("surfaces.cfg", format), window, renderer, texture };
 }
 
 static void release(const Gpu gpu)
 {
+    SDL_DestroyTexture(gpu.texture);
+    SDL_Quit();
     SDL_DestroyWindow(gpu.window);
     SDL_DestroyRenderer(gpu.renderer);
-    SDL_DestroyTexture(gpu.texture);
-    #define len(array) (sizeof(array) / sizeof(*array))
-    for(unsigned i = 0; i < len(gpu.surfaces); i++) SDL_FreeSurface(gpu.surfaces[i]);
-    #undef len
-    SDL_Quit();
+    for(int i = 0; i < gpu.superficial.count; i++)
+        SDL_FreeSurface(gpu.superficial.surfaces[i]);
+    free(gpu.superficial.surfaces);
 }
 
 static void present(const Gpu gpu)
@@ -416,7 +435,7 @@ static double ccast(const Line fov, const int res, const int xx)
 
 static void wrend(const Scanline sl, const Hit hit)
 {
-    const SDL_Surface* const surface = sl.gpu.surfaces[hit.tile];
+    const SDL_Surface* const surface = sl.gpu.superficial.surfaces[hit.tile];
     const int col = surface->w * hit.offset;
     const uint32_t* const pixels = surface->pixels;
     for(int xx = sl.wall.clamped.bot; xx < sl.wall.clamped.top; xx++)
@@ -436,7 +455,7 @@ static void frend(const Scanline sl, const Traceline tl, char** const floring)
     for(int xx = 0; xx < sl.wall.clamped.bot; xx++)
     {
         const Point where = lerp(tl.trace, fcast(tl.fov, sl.res, xx) / tl.corrected.x);
-        const SDL_Surface* const surface = sl.gpu.surfaces[tile(where, floring)];
+        const SDL_Surface* const surface = sl.gpu.superficial.surfaces[tile(where, floring)];
         const int col = surface->w * dec(where.x);
         const int row = surface->h * dec(where.y);
         const uint32_t* const pixels = surface->pixels;
@@ -449,7 +468,7 @@ static void crend(const Scanline sl, const Traceline tl, char** const ceiling)
     for(int xx = sl.wall.clamped.top; xx < sl.res; xx++)
     {
         const Point where = lerp(tl.trace, ccast(tl.fov, sl.res, xx) / tl.corrected.x);
-        const SDL_Surface* const surface = sl.gpu.surfaces[tile(where, ceiling)];
+        const SDL_Surface* const surface = sl.gpu.superficial.surfaces[tile(where, ceiling)];
         const int col = surface->w * dec(where.x);
         const int row = surface->h * dec(where.y);
         const uint32_t* const pixels = surface->pixels;
@@ -513,7 +532,7 @@ int main(const int argc, const char* const* const argv)
     const int res = atoi(argv[1]);
     const Gpu gpu = setup(res);
     #if 0
-    for(int i = 0; i < 60; i++)
+    for(int i = 0; i < 1; i++)
     #else
     while(!done())
     #endif
