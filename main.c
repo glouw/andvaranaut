@@ -2,14 +2,12 @@
 
 static inline int fl(const double x)
 {
-    const int i = x;
-    return i - (x < i);
+    return (int) x - (x < (int) x);
 }
 
 static inline int cl(const double x)
 {
-    const int i = x;
-    return i + (x > i);
+    return (int) x + (x > (int) x);
 }
 
 static inline double dec(const double x)
