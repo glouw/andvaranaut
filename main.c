@@ -92,7 +92,7 @@ static int tile(const Point a, char** const tiles)
 {
     const int x = a.x;
     const int y = a.y;
-    return tiles[y][x] - ' '; // Space
+    return tiles[y][x] - ' ';
 }
 
 typedef struct
@@ -155,7 +155,6 @@ Gpu;
 
 static SDL_Surface* load(const char* const path, const uint32_t format)
 {
-    puts(path);
     SDL_Surface* const bmp = SDL_LoadBMP(path);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
     SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);
@@ -164,33 +163,32 @@ static SDL_Surface* load(const char* const path, const uint32_t format)
     return converted;
 }
 
-static int newlines(const char* const path)
+static int newlines(FILE* const fp)
 {
-    FILE* const fp = fopen(path, "r");
     char* line = NULL;
     unsigned reads = 0;
     int lines = 0;
     while(getline(&line, &reads, fp) != -1) lines++;
-    fclose(fp);
     free(line);
+    rewind(fp);
     return lines;
 }
 
 static Superficial pull(const char* const path, const uint32_t format)
 {
+    FILE* const fp = fopen(path, "r");
     char* line = NULL;
     unsigned reads = 0;
-    const int count = newlines(path);
+    const int count = newlines(fp);
     SDL_Surface** surfaces = calloc(count, sizeof(*surfaces));
-    FILE* const fp = fopen(path, "r");
     for(int i = 0; i < count; i++)
     {
         getline(&line, &reads, fp);
         line = strtok(line, "\n #");
-        surfaces[i] = (strcmp(line, "NULL") == 0) ? NULL : load(line, format);
+        surfaces[i] = strcmp(line, "NULL") == 0 ? NULL : load(line, format);
     }
-    fclose(fp);
     free(line);
+    fclose(fp);
     return (Superficial) { surfaces, count };
 }
 
@@ -292,7 +290,7 @@ static Hero spin(const Hero hero)
     const uint8_t* key = SDL_GetKeyboardState(NULL);
     SDL_PumpEvents();
     Hero step = hero;
-    // Spins the hero if <JL>
+    // Spins the hero if <HL>
     if(key[SDL_SCANCODE_H]) step.theta -= 0.1;
     if(key[SDL_SCANCODE_L]) step.theta += 0.1;
     return step;
@@ -532,7 +530,7 @@ int main(const int argc, const char* const* const argv)
     const int res = atoi(argv[1]);
     const Gpu gpu = setup(res);
     #if 0
-    for(int i = 0; i < 1; i++)
+    for(int i = 0; i < 60; i++)
     #else
     while(!done())
     #endif
