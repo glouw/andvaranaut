@@ -312,7 +312,7 @@ typedef struct
     char** walling;
     char** floring;
 }
-Block;
+Blocks;
 
 typedef struct
 {
@@ -325,7 +325,7 @@ Meta;
 typedef struct
 {
     Meta meta;
-    Block block;
+    Blocks blocks;
 }
 Map;
 
@@ -360,9 +360,9 @@ static Meta retrieve(FILE* const fp)
     return (Meta) { inside, where, rows };
 }
 
-static Block build(FILE* const fp, const int rows)
+static Blocks build(FILE* const fp, const int rows)
 {
-    return (Block) {
+    return (Blocks) {
         .ceiling = get(fp, rows),
         .walling = get(fp, rows),
         .floring = get(fp, rows),
@@ -373,22 +373,22 @@ static Map open(const char* const path)
 {
     FILE* const fp = fopen(path, "r");
     const Meta meta = retrieve(fp);
-    const Block block = build(fp, meta.rows);
+    const Blocks blocks = build(fp, meta.rows);
     fclose(fp);
-    return (Map) { meta, block };
+    return (Map) { meta, blocks };
 }
 
 static void close(const Map map)
 {
     for(int row = 0; row < map.meta.rows; row++)
-        free(map.block.ceiling[row]);
+        free(map.blocks.ceiling[row]);
     for(int row = 0; row < map.meta.rows; row++)
-        free(map.block.walling[row]);
+        free(map.blocks.walling[row]);
     for(int row = 0; row < map.meta.rows; row++)
-        free(map.block.floring[row]);
-    free(map.block.ceiling);
-    free(map.block.walling);
-    free(map.block.floring);
+        free(map.blocks.floring[row]);
+    free(map.blocks.ceiling);
+    free(map.blocks.walling);
+    free(map.blocks.floring);
 }
 
 typedef struct
@@ -457,7 +457,7 @@ static void crend(const Scanline sl, const Traceline tl, char** const ceiling)
     }
 }
 
-static void render(const Hero hero, const Block block, const int res, const Gpu gpu)
+static void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
 {
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.theta);
@@ -465,7 +465,7 @@ static void render(const Hero hero, const Block block, const int res, const Gpu 
     for(int yy = 0; yy < res; yy++)
     {
         const Point column = lerp(camera, yy / (double) res);
-        const Hit hit = cast(hero.where, column, block.walling);
+        const Hit hit = cast(hero.where, column, blocks.walling);
         const Point ray = sub(hit.where, hero.where);
         const Point corrected = turn(ray, -hero.theta);
         const Wall wall = project(res, hero.fov, corrected);
@@ -473,8 +473,8 @@ static void render(const Hero hero, const Block block, const int res, const Gpu 
         const Scanline sl = { display, gpu, wall, yy, res };
         wrend(sl, hit);
         const Traceline tl = { trace, corrected, hero.fov };
-        frend(sl, tl, block.floring);
-        crend(sl, tl, block.ceiling);
+        frend(sl, tl, blocks.floring);
+        crend(sl, tl, blocks.ceiling);
     }
     unlock(gpu);
     present(gpu);
@@ -518,8 +518,8 @@ int main(const int argc, const char* const* const argv)
     while(!done())
     #endif
     {
-        hero = spin(move(hero, map.block.walling));
-        render(hero, map.block, res, gpu);
+        hero = spin(move(hero, map.blocks.walling));
+        render(hero, map.blocks, res, gpu);
     }
     release(gpu);
 end:close(map);
