@@ -531,14 +531,12 @@ static Portals populate(const char* const path)
     {
         char* line = NULL;
         unsigned reads = 0;
-        // Where
         double x = 0.0;
         double y = 0.0;
         getline(&line, &reads, fp);
         line = strtok(line, " ");
         sscanf(line, "%lf,%lf", &x, &y);
         portal[i].where = (Point) { x, y };
-        // Block
         line = strtok(NULL, " #");
         portal[i].blocks = strcmp(line, "NULL") == 0 ? NULL : strdup(line);
     }
