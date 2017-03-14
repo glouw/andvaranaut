@@ -93,6 +93,11 @@ static int tile(const Point a, char** const tiles)
     return tiles[y][x] - ' ';
 }
 
+static int ascii(const int tile)
+{
+    return tile + ' ';
+}
+
 typedef struct
 {
     int tile;
@@ -389,6 +394,12 @@ static void close(const Map map)
     free(map.blocks.floring);
 }
 
+static Map reopen(const Map map, const char* const path)
+{
+    close(map);
+    return open(path);
+}
+
 typedef struct
 {
     Display display;
@@ -492,9 +503,44 @@ static int done()
     return 0;
 }
 
+static Hit shoot(const Hero hero, char** const walling)
+{
+    const uint8_t* key = SDL_GetKeyboardState(NULL);
+    SDL_PumpEvents();
+    // Shoots a ray if <E>
+    if(key[SDL_SCANCODE_E])
+    {
+        const Point reference = { 1.0, 0.0 };
+        const Point direction = turn(reference, hero.theta);
+        return cast(hero.where, direction, walling);
+    }
+    return (Hit) { 0 };
+}
+
+static int portal(const int ascii)
+{
+    return ascii >= 'a' && ascii <= 'z';
+}
+
+static int handle(const Hero hero, char** const walling)
+{
+    const Hit hit = shoot(hero, walling);
+    const int ch = ascii(hit.tile);
+    const int near = mag(sub(hero.where, hit.where)) < 1.0;
+    return near && portal(ch) ? ch : 0;
+}
+
+Hero transfer(const Hero hero, const Map map)
+{
+    Hero temp = hero;
+    temp.inside = map.meta.inside;
+    temp.where = map.meta.where;
+    return temp;
+}
+
 int main(const int argc, const char* const* const argv)
 {
-    const Map map = open("maps/test.map");
+    Map map = open("maps/y.map");
     Hero hero = {
         .inside = map.meta.inside,
         .where = map.meta.where,
@@ -510,13 +556,18 @@ int main(const int argc, const char* const* const argv)
     if(argc != 2) goto end;
     const int res = atoi(argv[1]);
     const Gpu gpu = setup(res);
-    #if 0
-    for(int i = 0; i < 60; i++)
-    #else
     while(!done())
-    #endif
     {
-        hero = spin(move(hero, map.blocks.walling));
+        hero = move(hero, map.blocks.walling);
+        hero = spin(hero);
+        const int portal = handle(hero, map.blocks.walling);
+        if(portal)
+        {
+            char to[] = "maps/_.map";
+            to[5] = portal;
+            map = reopen(map, to);
+            hero = transfer(hero, map);
+        }
         render(hero, map.blocks, res, gpu);
     }
     release(gpu);
