@@ -93,11 +93,6 @@ static int tile(const Point a, char** const tiles)
     return tiles[y][x] - ' ';
 }
 
-static int ascii(const int tile)
-{
-    return tile + ' ';
-}
-
 typedef struct
 {
     int tile;
@@ -108,7 +103,7 @@ Hit;
 
 static Hit collision(const Point hook, const Point direction, char** const walling)
 {
-    const double epsilon = 1e-4;
+    const double epsilon = 1e-3;
     return (Hit) { tile(add(hook, mul(direction, epsilon)), walling), dec(hook.x) + dec(hook.y), hook };
 }
 
@@ -183,7 +178,7 @@ static Superficial pull(const char* const path, const uint32_t format)
     for(int i = 0; i < count; i++)
     {
         getline(&line, &reads, fp);
-        line = strtok(line, "\n #");
+        line = strtok(line, "# \n");
         surfaces[i] = strcmp(line, "NULL") == 0 ? NULL : load(line, format);
     }
     free(line);
@@ -283,7 +278,6 @@ static Hero spin(const Hero hero)
     const uint8_t* key = SDL_GetKeyboardState(NULL);
     SDL_PumpEvents();
     Hero step = hero;
-    // Spins the hero if <HL>
     if(key[SDL_SCANCODE_H]) step.theta -= 0.1;
     if(key[SDL_SCANCODE_L]) step.theta += 0.1;
     return step;
@@ -294,7 +288,6 @@ static Hero move(const Hero hero, char** const walling)
     const uint8_t* key = SDL_GetKeyboardState(NULL);
     SDL_PumpEvents();
     Hero step = hero;
-    // Accelerates the hero if <WASD>
     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
     {
         const Point reference = { 1.0, 0.0 };
@@ -305,13 +298,9 @@ static Hero move(const Hero hero, char** const walling)
         if(key[SDL_SCANCODE_D]) step.velocity = add(step.velocity, rag(acceleration));
         if(key[SDL_SCANCODE_A]) step.velocity = sub(step.velocity, rag(acceleration));
     }
-    // Otherwise, decelerates with an exponential decay time constant
     else step.velocity = mul(step.velocity, 1.0 - step.acceleration / step.speed);
-    // Caps velocity if top speed was exceeded
     if(mag(step.velocity) > step.speed) step.velocity = mul(unt(step.velocity), step.speed);
-    // Moves
     step.where = add(step.where, step.velocity);
-    // Sets velocity to zero if there is a collision and puts hero back in bounds
     if(tile(step.where, walling)) step.velocity = (Point) { 0, 0 }, step.where = hero.where;
     return step;
 }
@@ -326,9 +315,8 @@ Blocks;
 
 typedef struct
 {
-    int inside;
-    Point where;
     int rows;
+    int inside;
 }
 Meta;
 
@@ -357,17 +345,12 @@ static Meta retrieve(FILE* const fp)
 {
     char* line = NULL;
     unsigned reads = 0;
-    // Hero meta
-    int inside = 0;
-    Point where = { 0.0, 0.0 };
-    getline(&line, &reads, fp);
-    sscanf(line, "%d %lf %lf", &inside, &where.x, &where.y);
-    // Map meta
     int rows = 0;
+    int inside = 0;
     getline(&line, &reads, fp);
-    sscanf(line, "%d", &rows);
+    sscanf(line, "%d %d", &rows, &inside);
     free(line);
-    return (Meta) { inside, where, rows };
+    return (Meta) { rows, inside };
 }
 
 static Blocks build(FILE* const fp, const int rows)
@@ -507,52 +490,84 @@ static Hit shoot(const Hero hero, char** const walling)
 {
     const uint8_t* key = SDL_GetKeyboardState(NULL);
     SDL_PumpEvents();
-    // Shoots a ray if <E>
     if(key[SDL_SCANCODE_E])
     {
         const Point reference = { 1.0, 0.0 };
         const Point direction = turn(reference, hero.theta);
         return cast(hero.where, direction, walling);
     }
-    return (Hit) { 0 };
-}
-
-static int portal(const int ascii)
-{
-    return ascii >= 'a' && ascii <= 'z';
+    return (Hit) { 0, 0.0, (Point) { 0.0, 0.0 } };
 }
 
 static int handle(const Hero hero, char** const walling)
 {
     const Hit hit = shoot(hero, walling);
-    const int ch = ascii(hit.tile);
+    const int ch = hit.tile + ' ';
     const int near = mag(sub(hero.where, hit.where)) < 1.0;
-    return near && portal(ch) ? ch : 0;
+    const int stepable = ch >= 'a' && ch <= 'z';
+    return near && stepable ? ch : 0;
 }
 
-Hero transfer(const Hero hero, const Map map)
+typedef struct
 {
-    Hero temp = hero;
-    temp.inside = map.meta.inside;
-    temp.where = map.meta.where;
-    return temp;
+    Point where;
+    char* blocks;
+}
+Portal;
+
+typedef struct
+{
+    Portal* portal;
+    int count;
+}
+Portals;
+
+static Portals populate(const char* const path)
+{
+    FILE* const fp = fopen(path, "r");
+    const int count = newlines(fp);
+    Portal* portal = calloc(count, sizeof(*portal));
+    for(int i = 0; i < count; i++)
+    {
+        char* line = NULL;
+        unsigned reads = 0;
+        // Where
+        double x = 0.0;
+        double y = 0.0;
+        getline(&line, &reads, fp);
+        line = strtok(line, " ");
+        sscanf(line, "%lf,%lf", &x, &y);
+        portal[i].where = (Point) { x, y };
+        // Block
+        line = strtok(NULL, " #");
+        portal[i].blocks = strcmp(line, "NULL") == 0 ? NULL : strdup(line);
+    }
+    fclose(fp);
+    return (Portals) { portal, count };
+}
+
+static void destroy(const Portals portals)
+{
+    for(int i = 0; i < portals.count; i++) free(portals.portal[i].blocks);
+    free(portals.portal);
 }
 
 int main(const int argc, const char* const* const argv)
 {
-    Map map = open("maps/y.map");
+    Map map = open("maps/start.map");
     Hero hero = {
-        .inside = map.meta.inside,
-        .where = map.meta.where,
+        .inside = 1,
+        .where = { 2.5, 4.5 },
         .velocity  = { 0.0, 0.0 },
-        .acceleration = 0.01,
-        .speed = 0.10,
+        .acceleration = 0.015,
+        .speed = 0.12,
         .theta = 0.0,
         .fov = {
             { +1.0, -1.0 },
             { +1.0, +1.0 }
         }
     };
+    Portals portals = populate("maps.cfg");
     if(argc != 2) goto end;
     const int res = atoi(argv[1]);
     const Gpu gpu = setup(res);
@@ -560,16 +575,16 @@ int main(const int argc, const char* const* const argv)
     {
         hero = move(hero, map.blocks.walling);
         hero = spin(hero);
-        const int portal = handle(hero, map.blocks.walling);
-        if(portal)
+        const int ch = handle(hero, map.blocks.walling);
+        if(ch)
         {
-            char to[] = "maps/_.map";
-            to[5] = portal;
-            map = reopen(map, to);
-            hero = transfer(hero, map);
+            const Portal portal = portals.portal[ch - 'a'];
+            map = reopen(map, portal.blocks);
+            hero.where = portal.where;
         }
         render(hero, map.blocks, res, gpu);
     }
     release(gpu);
 end:close(map);
+    destroy(portals);
 }
