@@ -1,7 +1,9 @@
-A first person game engine for Roguelikes
+Water: A dungeon crawl game and graphics engine
 
 Controls:
-    w,a,s,d and h,l
+    move: w,a,s,d
+    turn: h,l
+    open: e
 
 Execution:
     The first command line argument selects the resolution

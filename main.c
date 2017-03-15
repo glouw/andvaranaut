@@ -133,14 +133,14 @@ static Point lerp(const Line l, const double n)
 
 typedef struct
 {
-    SDL_Surface** surfaces;
+    SDL_Surface** surface;
     int count;
 }
-Superficial;
+Surfaces;
 
 typedef struct
 {
-    Superficial superficial;
+    Surfaces surfaces;
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
@@ -168,22 +168,22 @@ static int newlines(FILE* const fp)
     return lines;
 }
 
-static Superficial pull(const char* const path, const uint32_t format)
+static Surfaces pull(const char* const path, const uint32_t format)
 {
     FILE* const fp = fopen(path, "r");
     char* line = NULL;
     unsigned reads = 0;
     const int count = newlines(fp);
-    SDL_Surface** surfaces = calloc(count, sizeof(*surfaces));
+    SDL_Surface** surface = calloc(count, sizeof(*surface));
     for(int i = 0; i < count; i++)
     {
         getline(&line, &reads, fp);
         line = strtok(line, "# \n");
-        surfaces[i] = strcmp(line, "NULL") == 0 ? NULL : load(line, format);
+        surface[i] = load(line, format);
     }
     free(line);
     fclose(fp);
-    return (Superficial) { surfaces, count };
+    return (Surfaces) { surface, count };
 }
 
 static Gpu setup(const int res)
@@ -202,8 +202,8 @@ static void release(const Gpu gpu)
     SDL_Quit();
     SDL_DestroyWindow(gpu.window);
     SDL_DestroyRenderer(gpu.renderer);
-    for(int i = 0; i < gpu.superficial.count; i++) SDL_FreeSurface(gpu.superficial.surfaces[i]);
-    free(gpu.superficial.surfaces);
+    for(int i = 0; i < gpu.surfaces.count; i++) SDL_FreeSurface(gpu.surfaces.surface[i]);
+    free(gpu.surfaces.surface);
 }
 
 static void present(const Gpu gpu)
@@ -408,7 +408,7 @@ static double ccast(const Line fov, const int res, const int xx)
 
 static void wrend(const Scanline sl, const Hit hit)
 {
-    const SDL_Surface* const surface = sl.gpu.superficial.surfaces[hit.tile];
+    const SDL_Surface* const surface = sl.gpu.surfaces.surface[hit.tile];
     const int col = surface->w * hit.offset;
     const uint32_t* const pixels = surface->pixels;
     for(int xx = sl.wall.clamped.bot; xx < sl.wall.clamped.top; xx++)
@@ -428,7 +428,7 @@ static void frend(const Scanline sl, const Traceline tl, char** const floring)
     for(int xx = 0; xx < sl.wall.clamped.bot; xx++)
     {
         const Point where = lerp(tl.trace, fcast(tl.fov, sl.res, xx) / tl.corrected.x);
-        const SDL_Surface* const surface = sl.gpu.superficial.surfaces[tile(where, floring)];
+        const SDL_Surface* const surface = sl.gpu.surfaces.surface[tile(where, floring)];
         const int col = surface->w * dec(where.x);
         const int row = surface->h * dec(where.y);
         const uint32_t* const pixels = surface->pixels;
@@ -441,7 +441,7 @@ static void crend(const Scanline sl, const Traceline tl, char** const ceiling)
     for(int xx = sl.wall.clamped.top; xx < sl.res; xx++)
     {
         const Point where = lerp(tl.trace, ccast(tl.fov, sl.res, xx) / tl.corrected.x);
-        const SDL_Surface* const surface = sl.gpu.superficial.surfaces[tile(where, ceiling)];
+        const SDL_Surface* const surface = sl.gpu.surfaces.surface[tile(where, ceiling)];
         const int col = surface->w * dec(where.x);
         const int row = surface->h * dec(where.y);
         const uint32_t* const pixels = surface->pixels;
@@ -531,14 +531,13 @@ static Portals populate(const char* const path)
     {
         char* line = NULL;
         unsigned reads = 0;
-        double x = 0.0;
-        double y = 0.0;
+        Point where = { 0.0, 0.0 };
         getline(&line, &reads, fp);
         line = strtok(line, " ");
-        sscanf(line, "%lf,%lf", &x, &y);
-        portal[i].where = (Point) { x, y };
+        sscanf(line, "%lf,%lf", &where.x, &where.y);
+        portal[i].where = where;
         line = strtok(NULL, " #");
-        portal[i].blocks = strcmp(line, "NULL") == 0 ? NULL : strdup(line);
+        portal[i].blocks = strdup(line);
     }
     fclose(fp);
     return (Portals) { portal, count };
@@ -555,7 +554,7 @@ int main(const int argc, const char* const* const argv)
     Map map = open("maps/start.map");
     Hero hero = {
         .inside = 1,
-        .where = { 2.5, 4.5 },
+        .where = { 2.5, 5.5 },
         .velocity  = { 0.0, 0.0 },
         .acceleration = 0.015,
         .speed = 0.12,
