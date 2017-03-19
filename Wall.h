@@ -1,14 +1,18 @@
 #pragma once
 
 #include "Line.h"
-#include "Clamped.h"
 
 typedef struct
 {
     int bot;
     int top;
     int height;
-    Clamped clamped;
+    struct Clamped
+    {
+        int bot;
+        int top;
+    }
+    clamped;
 }
 Wall;
 
