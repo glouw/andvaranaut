@@ -261,16 +261,6 @@ static Wall project(const int res, const Line fov, const Point corrected)
     return (Wall) { bot, top, height, (Clamped) { bot < 0 ? 0 : bot, top > res ? res : top } };
 }
 
-static Wall stack(const Wall a, const Wall b, const int res)
-{
-    Wall temp = b;
-    temp.top += a.height;
-    temp.bot += a.height;
-    temp.clamped.bot = temp.bot < 0 ? 0 : temp.bot;
-    temp.clamped.top = temp.top > res ? res : temp.top;
-    return temp;
-}
-
 typedef struct
 {
     int inside;
@@ -403,6 +393,16 @@ typedef struct
 }
 Scanline;
 
+static Scanline raise(const Scanline sl, const int res)
+{
+    Scanline raised = sl;
+    raised.wall.top += raised.wall.height;
+    raised.wall.bot += raised.wall.height;
+    raised.wall.clamped.bot = raised.wall.bot < 0 ? 0 : raised.wall.bot;
+    raised.wall.clamped.top = raised.wall.top > res ? res : raised.wall.top;
+    return raised;
+}
+
 typedef struct
 {
     Line trace;
@@ -465,6 +465,26 @@ static void srend(const Scanline sl)
         sl.display.pixels[xx + sl.yy * sl.display.width] = 0x0;
 }
 
+typedef struct
+{
+    Traceline tl;
+    Scanline sl;
+    Hit hit;
+}
+Impact;
+
+static Impact march(const Hero hero, char** const block, const Point column, const int res, const Display display, const Gpu gpu, const int yy)
+{
+    const Hit hit = cast(hero.where, column, block);
+    const Point ray = sub(hit.where, hero.where);
+    const Point corrected = turn(ray, -hero.theta);
+    const Line trace = { hero.where, hit.where };
+    const Wall wall = project(res, hero.fov, corrected);
+    const Traceline tl = { trace, corrected, hero.fov };
+    const Scanline sl = { display, gpu, wall, yy, res };
+    return (Impact) { tl, sl, hit };
+}
+
 static void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
 {
     const int t0 = SDL_GetTicks();
@@ -473,24 +493,17 @@ static void render(const Hero hero, const Blocks blocks, const int res, const Gp
     for(int yy = 0; yy < res; yy++)
     {
         const Point column = lerp(camera, yy / (double) res);
-        const Hit hit = cast(hero.where, column, blocks.walling);
-        const Point ray = sub(hit.where, hero.where);
-        const Point corrected = turn(ray, -hero.theta);
-        const Wall wall = project(res, hero.fov, corrected);
-        const Line trace = { hero.where, hit.where };
-        const Scanline sl = { display, gpu, wall, yy, res };
-        const Traceline tl = { trace, corrected, hero.fov };
-        frend(sl, tl, blocks.floring);
+        const Impact lower = march(hero, blocks.walling, column, res, display, gpu, yy);
+        frend(lower.sl, lower.tl, blocks.floring);
         if(hero.inside)
-            crend(sl, tl, blocks.ceiling);
+            crend(lower.sl, lower.tl, blocks.ceiling);
         else
         {
-            const Scanline sls = { display, gpu, stack(wall, wall, res), yy, res };
-            const Hit hits = cast(hero.where, column, blocks.ceiling);
-            wrend(sls, hits);
-            srend(sls);
+            const Impact upper = march(hero, blocks.ceiling, column, res, display, gpu, yy);
+            wrend(raise(upper.sl, res), upper.hit);
+            srend(raise(upper.sl, res));
         }
-        wrend(sl, hit);
+        wrend(lower.sl, lower.hit);
     }
     unlock(gpu);
     present(gpu);
