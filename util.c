@@ -28,7 +28,7 @@ int newlines(FILE* const fp)
     return lines;
 }
 
-int done()
+bool done()
 {
     SDL_Event event;
     SDL_PollEvent(&event);
