@@ -1,6 +1,6 @@
 #include "Point.h"
 
-#include "misc.h"
+#include "util.h"
 
 #include <math.h>
 

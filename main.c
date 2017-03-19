@@ -8,7 +8,7 @@
 #include "Hero.h"
 #include "Portals.h"
 #include "Frame.h"
-#include "misc.h"
+#include "util.h"
 
 #include <SDL2/SDL.h>
 

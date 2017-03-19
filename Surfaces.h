@@ -8,3 +8,5 @@ typedef struct
     int count;
 }
 Surfaces;
+
+Surfaces pull(const char* const path, const uint32_t format);

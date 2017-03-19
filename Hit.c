@@ -1,6 +1,6 @@
 #include "Hit.h"
 
-#include "misc.h"
+#include "util.h"
 
 Hit collision(const Point hook, const Point direction, char** const walling)
 {

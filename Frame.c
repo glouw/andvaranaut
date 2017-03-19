@@ -1,6 +1,6 @@
 #include "Frame.h"
 
-#include "misc.h"
+#include "util.h"
 
 void wrend(const Frame frame, const Wall wall, const Hit hit)
 {

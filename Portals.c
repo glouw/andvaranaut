@@ -1,8 +1,7 @@
 #include "Portals.h"
 
-#include "misc.h"
+#include "util.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
