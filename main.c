@@ -383,23 +383,13 @@ static Map reopen(const Map map, const char* const path)
     return open(path);
 }
 
-typedef struct
+static Wall raise(const Wall wall, const int res)
 {
-    Display display;
-    Gpu gpu;
-    Wall wall;
-    int yy;
-    int res;
-}
-Scanline;
-
-static Scanline raise(const Scanline sl, const int res)
-{
-    Scanline raised = sl;
-    raised.wall.top += raised.wall.height;
-    raised.wall.bot += raised.wall.height;
-    raised.wall.clamped.bot = raised.wall.bot < 0 ? 0 : raised.wall.bot;
-    raised.wall.clamped.top = raised.wall.top > res ? res : raised.wall.top;
+    Wall raised = wall;
+    raised.top += raised.height;
+    raised.bot += raised.height;
+    raised.clamped.bot = raised.bot < 0 ? 0 : raised.bot;
+    raised.clamped.top = raised.top > res ? res : raised.top;
     return raised;
 }
 
@@ -416,15 +406,24 @@ static double ccast(const Line fov, const int res, const int xx)
     return focal(fov) * res / (2 * xx - (res - 1));
 }
 
-static void wrend(const Scanline sl, const Hit hit)
+typedef struct
 {
-    const SDL_Surface* const surface = sl.gpu.surfaces.surface[hit.tile];
+    Gpu gpu;
+    Display display;
+    int yy;
+    int res;
+}
+Frame;
+
+static void wrend(const Frame frame, const Wall wall, const Hit hit)
+{
+    const SDL_Surface* const surface = frame.gpu.surfaces.surface[hit.tile];
     const int col = surface->w * hit.offset;
     const uint32_t* const pixels = surface->pixels;
-    for(int xx = sl.wall.clamped.bot; xx < sl.wall.clamped.top; xx++)
+    for(int xx = wall.clamped.bot; xx < wall.clamped.top; xx++)
     {
-        const int row = surface->h * (xx - sl.wall.bot) / (sl.wall.top - sl.wall.bot);
-        sl.display.pixels[xx + sl.yy * sl.display.width] = pixels[row + col * surface->w];
+        const int row = surface->h * (xx - wall.bot) / (wall.top - wall.bot);
+        frame.display.pixels[xx + frame.yy * frame.display.width] = pixels[row + col * surface->w];
     }
 }
 
@@ -433,56 +432,55 @@ static double fcast(const Line fov, const int res, const int xx)
     return -ccast(fov, res, xx);
 }
 
-static void frend(const Scanline sl, const Traceline tl, char** const floring)
+static void frend(const Frame frame, const Wall wall, const Traceline traceline, char** const floring)
 {
-    for(int xx = 0; xx < sl.wall.clamped.bot; xx++)
+    for(int xx = 0; xx < wall.clamped.bot; xx++)
     {
-        const Point where = lerp(tl.trace, fcast(tl.fov, sl.res, xx) / tl.corrected.x);
-        const SDL_Surface* const surface = sl.gpu.surfaces.surface[tile(where, floring)];
+        const Point where = lerp(traceline.trace, fcast(traceline.fov, frame.res, xx) / traceline.corrected.x);
+        const SDL_Surface* const surface = frame.gpu.surfaces.surface[tile(where, floring)];
         const int col = surface->w * dec(where.x);
         const int row = surface->h * dec(where.y);
         const uint32_t* const pixels = surface->pixels;
-        sl.display.pixels[xx + sl.yy * sl.display.width] = pixels[row + col * surface->w];
+        frame.display.pixels[xx + frame.yy * frame.display.width] = pixels[row + col * surface->w];
     }
 }
 
-static void crend(const Scanline sl, const Traceline tl, char** const ceiling)
+static void crend(const Frame frame, const Wall wall, const Traceline traceline, char** const ceiling)
 {
-    for(int xx = sl.wall.clamped.top; xx < sl.res; xx++)
+    for(int xx = wall.clamped.top; xx < frame.res; xx++)
     {
-        const Point where = lerp(tl.trace, ccast(tl.fov, sl.res, xx) / tl.corrected.x);
-        const SDL_Surface* const surface = sl.gpu.surfaces.surface[tile(where, ceiling)];
+        const Point where = lerp(traceline.trace, ccast(traceline.fov, frame.res, xx) / traceline.corrected.x);
+        const SDL_Surface* const surface = frame.gpu.surfaces.surface[tile(where, ceiling)];
         const int col = surface->w * dec(where.x);
         const int row = surface->h * dec(where.y);
         const uint32_t* const pixels = surface->pixels;
-        sl.display.pixels[xx + sl.yy * sl.display.width] = pixels[row + col * surface->w];
+        frame.display.pixels[xx + frame.yy * frame.display.width] = pixels[row + col * surface->w];
     }
 }
 
-static void srend(const Scanline sl)
+static void srend(const Frame frame, const Wall wall)
 {
-    for(int xx = sl.wall.clamped.top; xx < sl.res; xx++)
-        sl.display.pixels[xx + sl.yy * sl.display.width] = 0x0;
+    for(int xx = wall.clamped.top; xx < frame.res; xx++)
+        frame.display.pixels[xx + frame.yy * frame.display.width] = 0x0;
 }
 
 typedef struct
 {
-    Traceline tl;
-    Scanline sl;
+    Traceline traceline;
+    Wall wall;
     Hit hit;
 }
 Impact;
 
-static Impact march(const Hero hero, char** const block, const Point column, const int res, const Display display, const Gpu gpu, const int yy)
+static Impact march(const Hero hero, char** const block, const Point column, const int res)
 {
     const Hit hit = cast(hero.where, column, block);
     const Point ray = sub(hit.where, hero.where);
     const Point corrected = turn(ray, -hero.theta);
     const Line trace = { hero.where, hit.where };
     const Wall wall = project(res, hero.fov, corrected);
-    const Traceline tl = { trace, corrected, hero.fov };
-    const Scanline sl = { display, gpu, wall, yy, res };
-    return (Impact) { tl, sl, hit };
+    const Traceline traceline = { trace, corrected, hero.fov };
+    return (Impact) { traceline, wall, hit };
 }
 
 static void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
@@ -493,17 +491,18 @@ static void render(const Hero hero, const Blocks blocks, const int res, const Gp
     for(int yy = 0; yy < res; yy++)
     {
         const Point column = lerp(camera, yy / (double) res);
-        const Impact lower = march(hero, blocks.walling, column, res, display, gpu, yy);
-        frend(lower.sl, lower.tl, blocks.floring);
+        const Impact lower = march(hero, blocks.walling, column, res);
+        const Frame frame = { gpu, display, yy, res };
+        frend(frame, lower.wall, lower.traceline, blocks.floring);
         if(hero.inside)
-            crend(lower.sl, lower.tl, blocks.ceiling);
+            crend(frame, lower.wall, lower.traceline, blocks.ceiling);
         else
         {
-            const Impact upper = march(hero, blocks.ceiling, column, res, display, gpu, yy);
-            wrend(raise(upper.sl, res), upper.hit);
-            srend(raise(upper.sl, res));
+            const Impact upper = march(hero, blocks.ceiling, column, res);
+            wrend(frame, raise(upper.wall, res), upper.hit);
+            srend(frame, raise(upper.wall, res));
         }
-        wrend(lower.sl, lower.hit);
+        wrend(frame, lower.wall, lower.hit);
     }
     unlock(gpu);
     present(gpu);
