@@ -1,0 +1,35 @@
+#include "Portals.h"
+
+#include "misc.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+Portals populate(const char* const path)
+{
+    FILE* const fp = fopen(path, "r");
+    const int count = newlines(fp);
+    Portal* portal = calloc(count, sizeof(*portal));
+    for(int i = 0; i < count; i++)
+    {
+        char* line = NULL;
+        unsigned reads = 0;
+        Point where = { 0.0, 0.0 };
+        getline(&line, &reads, fp);
+        line = strtok(line, " ");
+        sscanf(line, "%lf,%lf", &where.x, &where.y);
+        portal[i].where = where;
+        line = strtok(NULL, " #");
+        portal[i].blocks = strdup(line);
+    }
+    fclose(fp);
+    return (Portals) { portal, count };
+}
+
+void destroy(const Portals portals)
+{
+    for(int i = 0; i < portals.count; i++)
+        free(portals.portal[i].blocks);
+    free(portals.portal);
+}

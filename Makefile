@@ -1,6 +1,6 @@
 CC = gcc
 PROJ = water
-SRCS = main.c misc.c Point.c
+SRCS = main.c misc.c Point.c Hit.c Line.c Map.c Gpu.c Display.c Wall.c Hero.c Portals.c Frame.c Blocks.c Meta.c
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -std=gnu99 -g -Ofast -flto -fwhole-program -Wall -Wpedantic -Wextra -Wshadow
 LDFLAGS = -lSDL2 -lm
