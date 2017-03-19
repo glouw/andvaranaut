@@ -10,19 +10,6 @@
 #include "Frame.h"
 #include "util.h"
 
-#include <SDL2/SDL.h>
-
-static int done()
-{
-    SDL_Event event;
-    SDL_PollEvent(&event);
-    if(event.type == SDL_QUIT
-    || event.key.keysym.sym == SDLK_F1
-    || event.key.keysym.sym == SDLK_ESCAPE)
-        return 1;
-    return 0;
-}
-
 int main(const int argc, const char* const* const argv)
 {
     Map map = open("maps/start.map");

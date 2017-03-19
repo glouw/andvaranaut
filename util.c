@@ -1,6 +1,6 @@
 #include "util.h"
 
-#include <stdlib.h>
+#include <SDL2/SDL.h>
 
 int fl(const double x)
 {
@@ -26,4 +26,15 @@ int newlines(FILE* const fp)
     free(line);
     rewind(fp);
     return lines;
+}
+
+int done()
+{
+    SDL_Event event;
+    SDL_PollEvent(&event);
+    if(event.type == SDL_QUIT
+    || event.key.keysym.sym == SDLK_F1
+    || event.key.keysym.sym == SDLK_ESCAPE)
+        return 1;
+    return 0;
 }
