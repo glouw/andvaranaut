@@ -26,6 +26,9 @@ $(DEPDIR)/%.d: ;
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
 
+love:
+	@echo "not war?"
+
 clean:
 	rm -f cachegrind.out.*
 	rm -f vgcore.*

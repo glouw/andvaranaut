@@ -255,10 +255,20 @@ static double focal(const Line l)
 
 static Wall project(const int res, const Line fov, const Point corrected)
 {
-    const int height = focal(fov) * res / corrected.x + 0.5;
+    const int height = focal(fov) * res / corrected.x;
     const int bot = (res - height) / 2;
     const int top = (res - bot);
-    return (Wall) { bot, top, top - bot, (Clamped) { bot < 0 ? 0 : bot, top > res ? res : top } };
+    return (Wall) { bot, top, height, (Clamped) { bot < 0 ? 0 : bot, top > res ? res : top } };
+}
+
+static Wall stack(const Wall a, const Wall b, const int res)
+{
+    Wall temp = b;
+    temp.top += a.height;
+    temp.bot += a.height;
+    temp.clamped.bot = temp.bot < 0 ? 0 : temp.bot;
+    temp.clamped.top = temp.top > res ? res : temp.top;
+    return temp;
 }
 
 typedef struct
@@ -413,7 +423,7 @@ static void wrend(const Scanline sl, const Hit hit)
     const uint32_t* const pixels = surface->pixels;
     for(int xx = sl.wall.clamped.bot; xx < sl.wall.clamped.top; xx++)
     {
-        const int row = surface->h * (xx - sl.wall.bot) / sl.wall.height;
+        const int row = surface->h * (xx - sl.wall.bot) / (sl.wall.top - sl.wall.bot);
         sl.display.pixels[xx + sl.yy * sl.display.width] = pixels[row + col * surface->w];
     }
 }
@@ -449,6 +459,12 @@ static void crend(const Scanline sl, const Traceline tl, char** const ceiling)
     }
 }
 
+static void srend(const Scanline sl)
+{
+    for(int xx = sl.wall.clamped.top; xx < sl.res; xx++)
+        sl.display.pixels[xx + sl.yy * sl.display.width] = 0x0;
+}
+
 static void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
 {
     const int t0 = SDL_GetTicks();
@@ -463,10 +479,18 @@ static void render(const Hero hero, const Blocks blocks, const int res, const Gp
         const Wall wall = project(res, hero.fov, corrected);
         const Line trace = { hero.where, hit.where };
         const Scanline sl = { display, gpu, wall, yy, res };
-        wrend(sl, hit);
         const Traceline tl = { trace, corrected, hero.fov };
         frend(sl, tl, blocks.floring);
-        crend(sl, tl, blocks.ceiling);
+        if(hero.inside)
+            crend(sl, tl, blocks.ceiling);
+        else
+        {
+            const Scanline sls = { display, gpu, stack(wall, wall, res), yy, res };
+            const Hit hits = cast(hero.where, column, blocks.ceiling);
+            wrend(sls, hits);
+            srend(sls);
+        }
+        wrend(sl, hit);
     }
     unlock(gpu);
     present(gpu);
@@ -554,7 +578,7 @@ int main(const int argc, const char* const* const argv)
     Map map = open("maps/start.map");
     Hero hero = {
         .inside = 1,
-        .where = { 2.5, 5.5 },
+        .where = { 1.5, 5.5 },
         .velocity  = { 0.0, 0.0 },
         .acceleration = 0.015,
         .speed = 0.12,
@@ -578,6 +602,7 @@ int main(const int argc, const char* const* const argv)
             const Portal portal = portals.portal[ch - 'a'];
             map = reopen(map, portal.blocks);
             hero.where = portal.where;
+            hero.inside = map.meta.inside;
         }
         render(hero, map.blocks, res, gpu);
     }
