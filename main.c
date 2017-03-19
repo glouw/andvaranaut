@@ -25,7 +25,7 @@ int main(const int argc, const char* const* const argv)
             { +1.0, +1.0 }
         }
     };
-    Portals portals = populate("maps.cfg");
+    Portals portals = populate("config/maps.cfg");
     if(argc != 2) goto end;
     const int res = atoi(argv[1]);
     const Gpu gpu = setup(res);

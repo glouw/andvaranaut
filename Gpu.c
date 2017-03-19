@@ -7,7 +7,7 @@ Gpu setup(const int res)
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
-    return (Gpu) { pull("surfaces.cfg", format), window, renderer, texture };
+    return (Gpu) { pull("config/surfaces.cfg", format), window, renderer, texture };
 }
 
 void release(const Gpu gpu)
