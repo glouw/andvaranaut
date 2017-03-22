@@ -1,26 +1,26 @@
 #include "Line.h"
 
-Line rotate(const Line l, const double t)
+Line rotate(const Line line, const float t)
 {
-    return (Line) { turn(l.a, t), turn(l.b, t) };
+    return (Line) { trn(line.a, t), trn(line.b, t) };
 }
 
-Point lerp(const Line l, const double n)
+Point lerp(const Line line, const float n)
 {
-    return add(l.a, mul(sub(l.b, l.a), n));
+    return add(line.a, mul(sub(line.b, line.a), n));
 }
 
-double focal(const Line l)
+float focal(const Line line)
 {
-    return l.a.x / (l.b.y - l.a.y);
+    return line.a.x / (line.b.y - line.a.y);
 }
 
-double ccast(const Line fov, const int res, const int xx)
+float ccast(const Line fov, const int res, const int x)
 {
-    return focal(fov) * res / (2 * xx - (res - 1));
+    return focal(fov) * res / (2 * x - (res - 1));
 }
 
-double fcast(const Line fov, const int res, const int xx)
+float fcast(const Line fov, const int res, const int x)
 {
-    return -ccast(fov, res, xx);
+    return -ccast(fov, res, x);
 }

@@ -4,9 +4,11 @@
 
 #include <math.h>
 
-Point turn(const Point a, const double t)
+Point trn(const Point a, const float t)
 {
-    return (Point) { a.x * cos(t) - a.y * sin(t), a.x * sin(t) + a.y * cos(t) };
+    return (Point) {
+        a.x * cosf(t) - a.y * sinf(t), a.x * sinf(t) + a.y * cosf(t)
+    };
 }
 
 Point rag(const Point a)
@@ -24,17 +26,17 @@ Point add(const Point a, const Point b)
     return (Point) { a.x + b.x, a.y + b.y };
 }
 
-Point mul(const Point a, const double n)
+Point mul(const Point a, const float n)
 {
     return (Point) { a.x * n, a.y * n };
 }
 
-double mag(const Point a)
+float mag(const Point a)
 {
-    return sqrt(a.x * a.x + a.y * a.y);
+    return sqrtf(a.x * a.x + a.y * a.y);
 }
 
-Point dvd(const Point a, const double n)
+Point dvd(const Point a, const float n)
 {
     return (Point) { a.x / n, a.y / n };
 }
@@ -44,22 +46,22 @@ Point unt(const Point a)
     return dvd(a, mag(a));
 }
 
-double slope(const Point a)
+float slp(const Point a)
 {
     return a.y / a.x;
 }
 
-Point sh(const Point a, const Point b)
+Point shr(const Point a, const Point b)
 {
-    const double x = b.x > 0.0 ? fl(a.x + 1.0) : cl(a.x - 1.0);
-    const double y = slope(b) * (x - a.x) + a.y;
+    const float x = b.x > 0.0 ? fl(a.x + 1.0) : cl(a.x - 1.0);
+    const float y = slp(b) * (x - a.x) + a.y;
     return (Point) { x, y };
 }
 
-Point sv(const Point a, const Point b)
+Point svr(const Point a, const Point b)
 {
-    const double y = b.y > 0.0 ? fl(a.y + 1.0) : cl(a.y - 1.0);
-    const double x = (y - a.y) / slope(b) + a.x;
+    const float y = b.y > 0.0 ? fl(a.y + 1.0) : cl(a.y - 1.0);
+    const float x = (y - a.y) / slp(b) + a.x;
     return (Point) { x, y };
 }
 

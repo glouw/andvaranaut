@@ -2,17 +2,17 @@
 
 #include <SDL2/SDL.h>
 
-int fl(const double x)
+int fl(const float x)
 {
     return (int) x - (x < (int) x);
 }
 
-int cl(const double x)
+int cl(const float x)
 {
     return (int) x + (x > (int) x);
 }
 
-double dec(const double x)
+float dec(const float x)
 {
     return x - (int) x;
 }
@@ -35,6 +35,6 @@ bool done()
     if(event.type == SDL_QUIT
     || event.key.keysym.sym == SDLK_F1
     || event.key.keysym.sym == SDLK_ESCAPE)
-        return 1;
-    return 0;
+        return true;
+    return false;
 }

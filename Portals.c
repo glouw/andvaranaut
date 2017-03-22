@@ -17,7 +17,7 @@ Portals populate(const char* const path)
         Point where = { 0.0, 0.0 };
         getline(&line, &reads, fp);
         line = strtok(line, " ");
-        sscanf(line, "%lf,%lf", &where.x, &where.y);
+        sscanf(line, "%f,%f", &where.x, &where.y);
         portal[i].where = where;
         line = strtok(NULL, " #");
         portal[i].blocks = strdup(line);

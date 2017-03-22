@@ -10,4 +10,4 @@ typedef struct
 }
 Blocks;
 
-Blocks build(FILE* const fp, const int rows);
+Blocks build(FILE* const file, const int rows);

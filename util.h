@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-int fl(const double x);
-int cl(const double x);
-double dec(const double x);
+int fl(const float x);
+int cl(const float x);
+float dec(const float x);
 int newlines(FILE* const fp);
 bool done();

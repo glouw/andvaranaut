@@ -1,34 +1,15 @@
-#include "Hit.h"
-#include "Line.h"
-#include "Point.h"
-#include "Map.h"
-#include "Gpu.h"
-#include "Display.h"
-#include "Wall.h"
 #include "Hero.h"
-#include "Portals.h"
-#include "Frame.h"
 #include "util.h"
 
 int main(const int argc, const char* const* const argv)
 {
     Map map = open("maps/start.map");
-    Hero hero = {
-        .inside = 1,
-        .where = { 1.5, 5.5 },
-        .velocity  = { 0.0, 0.0 },
-        .acceleration = 0.015,
-        .speed = 0.12,
-        .theta = 0.0,
-        .fov = {
-            { +1.0, -1.0 },
-            { +1.0, +1.0 }
-        }
-    };
-    Portals portals = populate("config/maps.cfg");
-    if(argc != 2) goto end;
-    const int res = atoi(argv[1]);
-    const Gpu gpu = setup(res);
+    Hero hero = spawn();
+    const Portals portals = populate("config/portals.cfg");
+    if(argc != 2)
+        goto end;
+    const int res = strtol(argv[1], NULL, 0);
+    const Gpu gpu = setup(res, "config/surfaces.cfg");
     while(!done())
     {
         hero = move(hero, map.blocks.walling);
@@ -38,8 +19,7 @@ int main(const int argc, const char* const* const argv)
         {
             const Portal portal = portals.portal[ch - 'a'];
             map = reopen(map, portal.blocks);
-            hero.where = portal.where;
-            hero.inside = map.meta.inside;
+            hero = teleport(hero, portal, map);
         }
         render(hero, map.blocks, res, gpu);
     }

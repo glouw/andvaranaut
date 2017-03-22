@@ -11,6 +11,6 @@ typedef struct
 }
 Gpu;
 
-Gpu setup(const int res);
+Gpu setup(const int res, const char* const path);
 void release(const Gpu gpu);
 void present(const Gpu gpu);

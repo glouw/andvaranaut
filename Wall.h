@@ -7,12 +7,7 @@ typedef struct
     int bot;
     int top;
     int height;
-    struct Clamped
-    {
-        int bot;
-        int top;
-    }
-    clamped;
+    struct { int bot, top; } clamped;
 }
 Wall;
 

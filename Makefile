@@ -1,9 +1,10 @@
 CC = gcc
 PROJ = water
 SRCS = main.c util.c Point.c Hit.c Line.c Map.c Gpu.c Display.c Wall.c Hero.c\
-	   Portals.c Frame.c Blocks.c Meta.c Surfaces.c
+	   Portals.c Scanline.c Blocks.c Meta.c Surfaces.c
 OBJS = $(SRCS:.c=.o)
-CFLAGS = -std=gnu99 -g -Ofast -flto -fwhole-program -Wall -Wpedantic -Wextra -Wshadow
+CFLAGS = -std=gnu99 -g -Ofast -flto -fwhole-program -Wall -Wpedantic -Wextra\
+		 -Wshadow -fsingle-precision-constant
 LDFLAGS = -lSDL2 -lm
 TARGET_ARCH = -march=native
 DEPDIR := dep

@@ -1,8 +1,21 @@
 #include "Hero.h"
 
-#include "Frame.h"
+#include "Scanline.h"
 
 #include <SDL2/SDL.h>
+
+Hero spawn()
+{
+    return (Hero) {
+        .inside = true,
+        .where = { 1.5, 5.5 },
+        .velocity  = { 0.0, 0.0 },
+        .acceleration = 0.015,
+        .speed = 0.12,
+        .theta = 0.0,
+        .fov = { { +1.0, -1.0 }, { +1.0, +1.0 } }
+    };
+}
 
 Hero spin(const Hero hero)
 {
@@ -22,7 +35,7 @@ Hero move(const Hero hero, char** const walling)
     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
     {
         const Point reference = { 1.0, 0.0 };
-        const Point direction = turn(reference, step.theta);
+        const Point direction = trn(reference, step.theta);
         const Point acceleration = mul(direction, step.acceleration);
         if(key[SDL_SCANCODE_W]) step.velocity = add(step.velocity, acceleration);
         if(key[SDL_SCANCODE_S]) step.velocity = sub(step.velocity, acceleration);
@@ -36,14 +49,14 @@ Hero move(const Hero hero, char** const walling)
     return step;
 }
 
-Hit shoot(const Hero hero, char** const walling)
+static Hit shoot(const Hero hero, char** const walling)
 {
     const uint8_t* key = SDL_GetKeyboardState(NULL);
     SDL_PumpEvents();
     if(key[SDL_SCANCODE_E])
     {
         const Point reference = { 1.0, 0.0 };
-        const Point direction = turn(reference, hero.theta);
+        const Point direction = trn(reference, hero.theta);
         return cast(hero.where, direction, walling);
     }
     return (Hit) { 0, 0.0, (Point) { 0.0, 0.0 } };
@@ -66,11 +79,11 @@ typedef struct
 }
 Impact;
 
-Impact march(const Hero hero, char** const block, const Point column, const int res)
+static Impact march(const Hero hero, char** const block, const Point column, const int res)
 {
     const Hit hit = cast(hero.where, column, block);
     const Point ray = sub(hit.where, hero.where);
-    const Point corrected = turn(ray, -hero.theta);
+    const Point corrected = trn(ray, -hero.theta);
     const Line trace = { hero.where, hit.where };
     const Wall wall = project(res, hero.fov, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
@@ -82,25 +95,33 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.theta);
     const Display display = lock(gpu);
-    for(int yy = 0; yy < res; yy++)
+    for(int y = 0; y < res; y++)
     {
-        const Point column = lerp(camera, yy / (double) res);
+        const Point column = lerp(camera, y / (float) res);
         const Impact lower = march(hero, blocks.walling, column, res);
-        const Frame frame = { gpu, display, yy, res };
-        frend(frame, lower.wall, lower.traceline, blocks.floring);
+        const Scanline scanline = { gpu, display, y, res };
+        frend(scanline, lower.wall, lower.traceline, blocks.floring);
         if(hero.inside)
-            crend(frame, lower.wall, lower.traceline, blocks.ceiling);
+            crend(scanline, lower.wall, lower.traceline, blocks.ceiling);
         else
         {
             const Impact upper = march(hero, blocks.ceiling, column, res);
-            wrend(frame, raise(upper.wall, res), upper.hit);
-            srend(frame, raise(upper.wall, res));
+            wrend(scanline, raise(upper.wall, res), upper.hit);
+            srend(scanline, raise(upper.wall, res));
         }
-        wrend(frame, lower.wall, lower.hit);
+        wrend(scanline, lower.wall, lower.hit);
     }
     unlock(gpu);
     present(gpu);
     const int t1 = SDL_GetTicks();
     const int ms = 15 - (t1 - t0);
     SDL_Delay(ms < 0 ? 0 : ms);
+}
+
+Hero teleport(const Hero hero, const Portal portal, const Map map)
+{
+    Hero temp = hero;
+    temp.where = portal.where;
+    temp.inside = map.meta.inside;
+    return temp;
 }
