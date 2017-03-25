@@ -7,8 +7,7 @@
 Hero spawn()
 {
     return (Hero) {
-        .inside = true,
-        .where = { 1.5, 5.5 },
+        .where = { 3.5, 7.5 },
         .velocity  = { 0.0, 0.0 },
         .acceleration = 0.015,
         .speed = 0.12,
@@ -79,9 +78,21 @@ typedef struct
 }
 Impact;
 
-static Impact march(const Hero hero, char** const block, const Point column, const int res)
+static Hit plow(const Hero hero, char** const block, const Point column, const int hits)
 {
-    const Hit hit = cast(hero.where, column, block);
+    Hit hit;
+    Point where = hero.where;
+    for(int i = 0; i < hits; i++)
+    {
+        hit = cast(where, column, block);
+        where = hit.where;
+    }
+    return hit;
+}
+
+static Impact march(const Hero hero, char** const block, const Point column, const int res, const int hits)
+{
+    const Hit hit = plow(hero, block, column, hits);
     const Point ray = sub(hit.where, hero.where);
     const Point corrected = trn(ray, -hero.theta);
     const Line trace = { hero.where, hit.where };
@@ -98,16 +109,18 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
     for(int y = 0; y < res; y++)
     {
         const Point column = lerp(camera, y / (float) res);
-        const Impact lower = march(hero, blocks.walling, column, res);
-        const Impact upper = march(hero, blocks.ceiling, column, res);
+        const Impact lower = march(hero, blocks.walling, column, res, 1);
         const Scanline scanline = { gpu, display, y, res };
-        const Wall first = lower.wall;
-        const Wall secnd = raise(upper.wall, res);
         srend(scanline);
-        frend(scanline, first, lower.traceline, blocks.floring);
-        crend(scanline, first, lower.traceline, blocks.ceiling);
-        wrend(scanline, secnd, upper.hit);
-        wrend(scanline, first, lower.hit);
+        const int uppers = 3;
+        for(int i = uppers; i > 0; i--)
+        {
+            const Impact upper = march(hero, blocks.ceiling, column, res, i);
+            wrend(scanline, raise(upper.wall, res), upper.hit);
+        }
+        wrend(scanline, lower.wall, lower.hit);
+        crend(scanline, lower.wall, lower.traceline, blocks.ceiling);
+        frend(scanline, lower.wall, lower.traceline, blocks.floring);
     }
     unlock(gpu);
     present(gpu);

@@ -9,7 +9,6 @@
 
 typedef struct
 {
-    bool inside;
     Line fov;
     Point where;
     Point velocity;
