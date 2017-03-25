@@ -7,7 +7,7 @@
 Hero spawn()
 {
     return (Hero) {
-        .where = { 3.5, 6.5 },
+        .where = { 5.5, 8.5 },
         .velocity  = { 0.0, 0.0 },
         .acceleration = 0.015,
         .speed = 0.12,
@@ -114,7 +114,7 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
         const Impact lower = march(hero, blocks.walling, column, res, 1);
         const Scanline scanline = { gpu, display, y, res };
         srend(scanline);
-        const int uppers = 3;
+        const int uppers = 5;
         for(int i = uppers; i > 0; i--)
         {
             const Impact upper = march(hero, blocks.ceiling, column, res, i);
