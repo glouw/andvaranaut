@@ -116,10 +116,9 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
     SDL_Delay(ms < 0 ? 0 : ms);
 }
 
-Hero teleport(const Hero hero, const Portal portal, const Map map)
+Hero teleport(const Hero hero, const Portal portal)
 {
     Hero temp = hero;
     temp.where = portal.where;
-    temp.inside = map.meta.inside;
     return temp;
 }

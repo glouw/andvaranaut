@@ -1,4 +1,5 @@
 #include "Hero.h"
+#include "Map.h"
 #include "util.h"
 
 int main(const int argc, const char* const* const argv)
@@ -19,7 +20,7 @@ int main(const int argc, const char* const* const argv)
         {
             const Portal portal = portals.portal[ch - 'a'];
             map = reopen(map, portal.blocks);
-            hero = teleport(hero, portal, map);
+            hero = teleport(hero, portal);
         }
         render(hero, map.blocks, res, gpu);
     }

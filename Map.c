@@ -1,19 +1,25 @@
 #include "Map.h"
 
+#include "util.h"
+
 #include <stdlib.h>
 
 Map open(const char* const path)
 {
     FILE* const fp = fopen(path, "r");
-    const Meta meta = retrieve(fp);
-    const Blocks blocks = build(fp, meta.rows);
+    // There are three blocks per map, one for the
+    // ceiling, one for the walling, and another for the
+    // flooring. Rows defines the number of rows per block,
+    // so the number of file newlines must be divided by three.
+    const int rows = newlines(fp) / 3;
+    const Blocks blocks = build(fp, rows);
     fclose(fp);
-    return (Map) { meta, blocks };
+    return (Map) { rows, blocks };
 }
 
 void close(const Map map)
 {
-    for(int row = 0; row < map.meta.rows; row++)
+    for(int row = 0; row < map.rows; row++)
     {
         free(map.blocks.ceiling[row]);
         free(map.blocks.walling[row]);

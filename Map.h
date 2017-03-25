@@ -2,12 +2,11 @@
 
 #include <stdio.h>
 
-#include "Meta.h"
 #include "Blocks.h"
 
 typedef struct
 {
-    Meta meta;
+    int rows;
     Blocks blocks;
 }
 Map;

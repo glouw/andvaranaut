@@ -2,8 +2,8 @@
 
 #include "Line.h"
 #include "Gpu.h"
-#include "Map.h"
 #include "Portals.h"
+#include "Blocks.h"
 
 #include <stdbool.h>
 
@@ -22,6 +22,6 @@ Hero;
 Hero spawn();
 Hero spin(const Hero hero);
 Hero move(const Hero hero, char** const walling);
-int handle(const Hero hero, char** const walling); // Returns a portal handle if near
+int handle(const Hero hero, char** const walling);
 void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu);
-Hero teleport(const Hero hero, const Portal portal, const Map map);
+Hero teleport(const Hero hero, const Portal portal);
