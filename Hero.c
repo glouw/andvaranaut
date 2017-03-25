@@ -80,9 +80,11 @@ Impact;
 
 static Hit plow(const Hero hero, char** const block, const Point column, const int hits)
 {
+    if(hits == 1)
+        return cast(hero.where, column, block);
     Hit hit;
     Point where = hero.where;
-    for(int i = 0; i < hits; i++)
+    for(int count = 0; count < hits; count++)
     {
         hit = cast(where, column, block);
         where = hit.where;
