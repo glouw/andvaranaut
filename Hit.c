@@ -5,10 +5,11 @@
 static Hit collision(const Point ray, const Point direction, char** const walling)
 {
     const float epsilon = 1e-3;
+    const Point where = add(ray, mul(direction, epsilon));
     return (Hit) {
-        tile(add(ray, mul(direction, epsilon)), walling),
+        tile(where, walling),
         dec(ray.x) + dec(ray.y),
-        ray
+        where
     };
 }
 
