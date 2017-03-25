@@ -7,7 +7,7 @@
 Hero spawn()
 {
     return (Hero) {
-        .where = { 3.5, 7.5 },
+        .where = { 3.5, 6.5 },
         .velocity  = { 0.0, 0.0 },
         .acceleration = 0.015,
         .speed = 0.12,
