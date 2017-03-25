@@ -99,17 +99,15 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
     {
         const Point column = lerp(camera, y / (float) res);
         const Impact lower = march(hero, blocks.walling, column, res);
+        const Impact upper = march(hero, blocks.ceiling, column, res);
         const Scanline scanline = { gpu, display, y, res };
-        frend(scanline, lower.wall, lower.traceline, blocks.floring);
-        if(hero.inside)
-            crend(scanline, lower.wall, lower.traceline, blocks.ceiling);
-        else
-        {
-            const Impact upper = march(hero, blocks.ceiling, column, res);
-            wrend(scanline, raise(upper.wall, res), upper.hit);
-            srend(scanline, raise(upper.wall, res));
-        }
-        wrend(scanline, lower.wall, lower.hit);
+        const Wall first = lower.wall;
+        const Wall secnd = raise(upper.wall, res);
+        srend(scanline);
+        frend(scanline, first, lower.traceline, blocks.floring);
+        crend(scanline, first, lower.traceline, blocks.ceiling);
+        wrend(scanline, secnd, upper.hit);
+        wrend(scanline, first, lower.hit);
     }
     unlock(gpu);
     present(gpu);
