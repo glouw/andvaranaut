@@ -59,15 +59,16 @@ void brend(const Scanline scanline)
         scanline.display.pixels[x + scanline.y * scanline.display.width] = 0x0;
 }
 
+// Resolution must be 516 for now
 void srend(const Scanline scanline, const float theta)
 {
     const SDL_Surface* const surface = scanline.gpu.surfaces.surface['~' - ' '];
-    const float percent = 0.5 * (1 - cosf(theta)); // Fix this
+    const float percent = theta / (2 * M_PI);
     const int row = (int) (scanline.y + surface->h * percent) % surface->h;
     const uint32_t* const pixels = surface->pixels;
     for(int x = scanline.res / 2; x < scanline.res; x++)
     {
-        const int col = (surface->w / (scanline.display.width / 2.0)) * (x - scanline.res / 2); // Fix this
+        const int col = x - scanline.res / 2;
         scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
     }
 }
