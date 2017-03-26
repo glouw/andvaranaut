@@ -1,4 +1,5 @@
-Water: A dungeon crawl game and graphics engine
+Water:
+    A dungeon crawl game and graphics engine
 
 Controls:
     move: w,a,s,d
@@ -6,5 +7,5 @@ Controls:
     open: e
 
 Execution:
-    The first command line argument selects the resolution
-    ./water 600
+    The first command line argument selects the resolution:
+        ./water 700

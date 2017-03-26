@@ -6,9 +6,7 @@
 
 Point trn(const Point a, const float t)
 {
-    return (Point) {
-        a.x * cosf(t) - a.y * sinf(t), a.x * sinf(t) + a.y * cosf(t)
-    };
+    return (Point) { a.x * cosf(t) - a.y * sinf(t), a.x * sinf(t) + a.y * cosf(t) };
 }
 
 Point rag(const Point a)

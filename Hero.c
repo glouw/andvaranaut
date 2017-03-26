@@ -4,10 +4,18 @@
 
 #include <SDL2/SDL.h>
 
-Hero spawn()
+Hero spawn(const char* const path)
 {
+    FILE* const fp = fopen(path, "r");
+    char* line = NULL;
+    unsigned reads = 0;
+    /* Hero where */
+    Point where = { 0.0, 0.0 };
+    getline(&line, &reads, fp);
+    sscanf(line, "%f,%f", &where.x, &where.y);
+    fclose(fp);
     return (Hero) {
-        .where = { 5.5, 8.5 },
+        .where = where,
         .velocity  = { 0.0, 0.0 },
         .acceleration = 0.015,
         .speed = 0.12,
@@ -70,14 +78,6 @@ int handle(const Hero hero, char** const walling)
     return near && stepable ? ch : 0;
 }
 
-typedef struct
-{
-    Traceline traceline;
-    Wall wall;
-    Hit hit;
-}
-Impact;
-
 static Hit plow(const Hero hero, char** const block, const Point column, const int hits)
 {
     if(hits == 1)
@@ -91,6 +91,14 @@ static Hit plow(const Hero hero, char** const block, const Point column, const i
     }
     return hit;
 }
+
+typedef struct
+{
+    Traceline traceline;
+    Wall wall;
+    Hit hit;
+}
+Impact;
 
 static Impact march(const Hero hero, char** const block, const Point column, const int res, const int hits)
 {
@@ -108,6 +116,12 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.theta);
     const Display display = lock(gpu);
+    /* Precomputes floor and ceiling casts */
+    float party[res];
+    for(int x = 0; x < res; x++)
+        party[x] = x < res / 2 ? fcast(hero.fov, res, x) : ccast(hero.fov, res, x);
+    /* Saves and reserves computations from floorcasting for ceiling casting */
+    Point wheres[res];
     for(int y = 0; y < res; y++)
     {
         const Point column = lerp(camera, y / (float) res);
@@ -115,14 +129,14 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
         const Scanline scanline = { gpu, display, y, res };
         srend(scanline);
         const int uppers = 5;
-        for(int i = uppers; i > 0; i--)
+        for(int hits = uppers; hits > 0; hits--)
         {
-            const Impact upper = march(hero, blocks.ceiling, column, res, i);
+            const Impact upper = march(hero, blocks.ceiling, column, res, hits);
             wrend(scanline, raise(upper.wall, res), upper.hit);
         }
         wrend(scanline, lower.wall, lower.hit);
-        crend(scanline, lower.wall, lower.traceline, blocks.ceiling);
-        frend(scanline, lower.wall, lower.traceline, blocks.floring);
+        frend(scanline, lower.wall, wheres, lower.traceline, blocks.floring, party);
+        crend(scanline, lower.wall, wheres, blocks.ceiling);
     }
     unlock(gpu);
     present(gpu);

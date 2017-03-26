@@ -5,7 +5,7 @@
 int main(const int argc, const char* const* const argv)
 {
     Map map = open("maps/start.map");
-    Hero hero = spawn();
+    Hero hero = spawn("config/hero.cfg");
     const Portals portals = populate("config/portals.cfg");
     if(argc != 2)
         goto end;
