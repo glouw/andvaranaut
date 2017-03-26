@@ -127,7 +127,7 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
         const Point column = lerp(camera, y / (float) res);
         const Impact lower = march(hero, blocks.walling, column, res, 1);
         const Scanline scanline = { gpu, display, y, res };
-        srend(scanline);
+        srend(scanline, hero.theta);
         const int uppers = 5;
         for(int hits = uppers; hits > 0; hits--)
         {
