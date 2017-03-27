@@ -19,8 +19,8 @@ Hero spawn(const char* const path)
         .velocity  = { 0.0, 0.0 },
         .acceleration = 0.015,
         .speed = 0.12,
-        .theta = 0.0,
-        .fov = { { +1.0, -1.0 }, { +1.0, +1.0 } }
+        .fov = { { +1.0, -1.0 }, { +1.0, +1.0 } },
+        .angle = { 0.0, 0.0 },
     };
 }
 
@@ -28,10 +28,12 @@ Hero spin(const Hero hero)
 {
     const uint8_t* key = SDL_GetKeyboardState(NULL);
     SDL_PumpEvents();
-    Hero step = hero;
-    if(key[SDL_SCANCODE_H]) step.theta -= 0.1;
-    if(key[SDL_SCANCODE_L]) step.theta += 0.1;
-    return step;
+    Hero temp = hero;
+    if(key[SDL_SCANCODE_H]) temp.angle.theta -= 0.1;
+    if(key[SDL_SCANCODE_L]) temp.angle.theta += 0.1;
+    /* Angle theta percentage [0..1] for [0..2*pi] calculated using a sawtooth */
+    temp.angle.percent = 0.5 - atanf(1.0 / tanf(temp.angle.theta / 2.0)) / M_PI;
+    return temp;
 }
 
 Hero move(const Hero hero, char** const walling)
@@ -42,7 +44,7 @@ Hero move(const Hero hero, char** const walling)
     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
     {
         const Point reference = { 1.0, 0.0 };
-        const Point direction = trn(reference, step.theta);
+        const Point direction = trn(reference, step.angle.theta);
         const Point acceleration = mul(direction, step.acceleration);
         if(key[SDL_SCANCODE_W]) step.velocity = add(step.velocity, acceleration);
         if(key[SDL_SCANCODE_S]) step.velocity = sub(step.velocity, acceleration);
@@ -63,7 +65,7 @@ static Hit shoot(const Hero hero, char** const walling)
     if(key[SDL_SCANCODE_E])
     {
         const Point reference = { 1.0, 0.0 };
-        const Point direction = trn(reference, hero.theta);
+        const Point direction = trn(reference, hero.angle.theta);
         return cast(hero.where, direction, walling);
     }
     return (Hit) { 0, 0.0, (Point) { 0.0, 0.0 } };
@@ -104,7 +106,7 @@ static Impact march(const Hero hero, char** const block, const Point column, con
 {
     const Hit hit = plow(hero, block, column, hits);
     const Point ray = sub(hit.where, hero.where);
-    const Point corrected = trn(ray, -hero.theta);
+    const Point corrected = trn(ray, -hero.angle.theta);
     const Line trace = { hero.where, hit.where };
     const Wall wall = project(res, hero.fov, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
@@ -114,7 +116,7 @@ static Impact march(const Hero hero, char** const block, const Point column, con
 void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
 {
     const int t0 = SDL_GetTicks();
-    const Line camera = rotate(hero.fov, hero.theta);
+    const Line camera = rotate(hero.fov, hero.angle.theta);
     const Display display = lock(gpu);
     /* Precomputes floor and ceiling casts */
     float party[res];
@@ -127,7 +129,7 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
         const Point column = lerp(camera, y / (float) res);
         const Impact lower = march(hero, blocks.walling, column, res, 1);
         const Scanline scanline = { gpu, display, y, res };
-        srend(scanline, hero.theta);
+        srend(scanline, hero.angle.percent);
         const int uppers = 5;
         for(int hits = uppers; hits > 0; hits--)
         {

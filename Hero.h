@@ -14,7 +14,7 @@ typedef struct
     Point velocity;
     float speed;
     float acceleration;
-    float theta;
+    struct { float theta, percent; } angle;
 }
 Hero;
 

@@ -32,6 +32,6 @@ void crend(
     const Point wheres[],
     char** const ceiling);
 /* Sky renderer */
-void srend(const Scanline scanline, const float theta);
+void srend(const Scanline scanline, const float percent);
 /* Blackness renderer */
 void brend(const Scanline scanline);
