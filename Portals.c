@@ -9,7 +9,7 @@ Portals populate(const char* const path)
 {
     FILE* const fp = fopen(path, "r");
     const int count = newlines(fp);
-    Portal* portal = calloc(count, sizeof(*portal));
+    Portal* const portal = (Portal*) calloc(count, sizeof(*portal));
     for(int i = 0; i < count; i++)
     {
         char* line = NULL;
@@ -23,7 +23,8 @@ Portals populate(const char* const path)
         portal[i].blocks = strdup(line);
     }
     fclose(fp);
-    return (Portals) { portal, count };
+    const Portals portals = { portal, count };
+    return portals;
 }
 
 void destroy(const Portals portals)

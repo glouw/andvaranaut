@@ -18,18 +18,17 @@ Scanline;
 /* Wall renderer */
 void wrend(const Scanline scanline, const Wall wall, const Hit hit);
 /* Floor renderer */
-void frend(
+Point* frend(
     const Scanline scanline,
     const Wall wall,
-    Point wheres[],
     const Traceline traceline,
     char** const floring,
-    const float party[]);
+    float* party);
 /* Ceiling renderer - requires floor renderer */
 void crend(
     const Scanline scanline,
     const Wall wall,
-    const Point wheres[],
+    const Point* const wheres,
     char** const ceiling);
 /* Sky renderer */
 void srend(const Scanline scanline, const float percent);

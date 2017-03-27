@@ -7,6 +7,8 @@ typedef struct
 }
 Point;
 
+/* The zero vector */
+Point zro();
 /* Turn */
 Point trn(const Point a, const float t);
 /* Right angle rotation */

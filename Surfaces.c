@@ -18,7 +18,7 @@ Surfaces pull(const char* const path, const uint32_t format)
     char* line = NULL;
     unsigned reads = 0;
     const int count = newlines(fp);
-    SDL_Surface** const surface = calloc(count, sizeof(*surface));
+    SDL_Surface** const surface = (SDL_Surface**) calloc(count, sizeof(*surface));
     for(int i = 0; i < count; i++)
     {
         getline(&line, &reads, fp);
@@ -27,5 +27,6 @@ Surfaces pull(const char* const path, const uint32_t format)
     }
     free(line);
     fclose(fp);
-    return (Surfaces) { surface, count };
+    const Surfaces surfaces = { surface, count };
+    return surfaces;
 }

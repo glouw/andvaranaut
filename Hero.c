@@ -14,14 +14,15 @@ Hero spawn(const char* const path)
     getline(&line, &reads, fp);
     sscanf(line, "%f,%f", &where.x, &where.y);
     fclose(fp);
-    return (Hero) {
-        .where = where,
-        .velocity  = { 0.0, 0.0 },
-        .acceleration = 0.015,
-        .speed = 0.12,
-        .fov = { { +1.0, -1.0 }, { +1.0, +1.0 } },
-        .angle = { 0.0, 0.0 },
+    const Hero hero = {
+        { { +1.0, -1.0 }, { +1.0, +1.0 } },
+        where,
+        { 0.0, 0.0 },
+        0.12,
+        0.0150,
+        { 0.0, 0.0 },
     };
+    return hero;
 }
 
 Hero spin(const Hero hero)
@@ -32,7 +33,8 @@ Hero spin(const Hero hero)
     if(key[SDL_SCANCODE_H]) temp.angle.theta -= 0.1;
     if(key[SDL_SCANCODE_L]) temp.angle.theta += 0.1;
     /* Angle theta percentage [0..1] for [0..2*pi] calculated using a sawtooth */
-    temp.angle.percent = 0.5 - atanf(1.0 / tanf(temp.angle.theta / 2.0)) / M_PI;
+    const float pi = acos(-1.0);
+    temp.angle.percent = 0.5 - atanf(1.0 / tanf(temp.angle.theta / 2.0)) / pi;
     return temp;
 }
 
@@ -54,7 +56,7 @@ Hero move(const Hero hero, char** const walling)
     else step.velocity = mul(step.velocity, 1.0 - step.acceleration / step.speed);
     if(mag(step.velocity) > step.speed) step.velocity = mul(unt(step.velocity), step.speed);
     step.where = add(step.where, step.velocity);
-    if(tile(step.where, walling)) step.velocity = (Point) { 0, 0 }, step.where = hero.where;
+    if(tile(step.where, walling)) step.velocity = zro(), step.where = hero.where;
     return step;
 }
 
@@ -68,7 +70,8 @@ static Hit shoot(const Hero hero, char** const walling)
         const Point direction = trn(reference, hero.angle.theta);
         return cast(hero.where, direction, walling);
     }
-    return (Hit) { 0, 0.0, (Point) { 0.0, 0.0 } };
+    const Hit hit = { 0, 0.0, zro() };
+    return hit;
 }
 
 int handle(const Hero hero, char** const walling)
@@ -110,7 +113,8 @@ static Impact march(const Hero hero, char** const block, const Point column, con
     const Line trace = { hero.where, hit.where };
     const Wall wall = project(res, hero.fov, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
-    return (Impact) { traceline, wall, hit };
+    const Impact impact = { traceline, wall, hit };
+    return impact;
 }
 
 void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
@@ -119,11 +123,10 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
     const Line camera = rotate(hero.fov, hero.angle.theta);
     const Display display = lock(gpu);
     /* Precomputes floor and ceiling casts */
-    float party[res];
+    float* const party = (float*) malloc(res * sizeof(*party));
     for(int x = 0; x < res; x++)
         party[x] = x < res / 2 ? fcast(hero.fov, res, x) : ccast(hero.fov, res, x);
     /* Saves and reserves computations from floorcasting for ceiling casting */
-    Point wheres[res];
     for(int y = 0; y < res; y++)
     {
         const Point column = lerp(camera, y / (float) res);
@@ -137,9 +140,11 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
             wrend(scanline, raise(upper.wall, res), upper.hit);
         }
         wrend(scanline, lower.wall, lower.hit);
-        frend(scanline, lower.wall, wheres, lower.traceline, blocks.floring, party);
+        Point* const wheres = frend(scanline, lower.wall, lower.traceline, blocks.floring, party);
         crend(scanline, lower.wall, wheres, blocks.ceiling);
+        free(wheres);
     }
+    free(party);
     unlock(gpu);
     present(gpu);
     const int t1 = SDL_GetTicks();

@@ -7,7 +7,7 @@ static char** get(FILE* const file, const int rows)
 {
     char* line = NULL;
     unsigned reads = 0;
-    char** block = calloc(rows, sizeof(char*));
+    char** block = (char**) calloc(rows, sizeof(char*));
     for(int row = 0; row < rows; row++)
     {
         getline(&line, &reads, file);
@@ -19,9 +19,10 @@ static char** get(FILE* const file, const int rows)
 
 Blocks build(FILE* const file, const int rows)
 {
-    return (Blocks) {
+    const Blocks blocks = {
         get(file, rows),
         get(file, rows),
         get(file, rows),
     };
+    return blocks;
 }

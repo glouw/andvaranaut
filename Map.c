@@ -15,7 +15,8 @@ Map open(const char* const path)
     const int rows = newlines(fp) / 3;
     const Blocks blocks = build(fp, rows);
     fclose(fp);
-    return (Map) { rows, blocks };
+    const Map map = { rows, blocks };
+    return map;
 }
 
 void close(const Map map)

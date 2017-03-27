@@ -7,9 +7,8 @@ Gpu setup(const int res, const char* const path)
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
-    return (Gpu) {
-        pull(path, format), window, renderer, texture
-    };
+    const Gpu gpu = { pull(path, format), window, renderer, texture };
+    return gpu;
 }
 
 void release(const Gpu gpu)
@@ -25,6 +24,6 @@ void release(const Gpu gpu)
 
 void present(const Gpu gpu)
 {
-    SDL_RenderCopyEx(gpu.renderer, gpu.texture, NULL, NULL, -90.0, NULL, 0);
+    SDL_RenderCopyEx(gpu.renderer, gpu.texture, NULL, NULL, -90.0, NULL, (SDL_RendererFlip) 0);
     SDL_RenderPresent(gpu.renderer);
 }

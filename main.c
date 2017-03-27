@@ -7,10 +7,10 @@ int main(const int argc, const char* const* const argv)
     Map map = open("maps/start.map");
     Hero hero = spawn("config/hero.cfg");
     const Portals portals = populate("config/portals.cfg");
-    if(argc != 2)
-        goto end;
     const int res = strtol(argv[1], NULL, 0);
     const Gpu gpu = setup(res, "config/surfaces.cfg");
+    if(argc != 2)
+        goto end;
     while(!done())
     {
         hero = move(hero, map.blocks.walling);
@@ -24,7 +24,7 @@ int main(const int argc, const char* const* const argv)
         }
         render(hero, map.blocks, res, gpu);
     }
-    release(gpu);
-end:close(map);
+end:release(gpu);
+    close(map);
     destroy(portals);
 }

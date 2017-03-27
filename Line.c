@@ -2,7 +2,8 @@
 
 Line rotate(const Line line, const float t)
 {
-    return (Line) { trn(line.a, t), trn(line.b, t) };
+    const Line rotated = { trn(line.a, t), trn(line.b, t) };
+    return rotated;
 }
 
 Point lerp(const Line line, const float n)
