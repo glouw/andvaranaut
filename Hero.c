@@ -2,8 +2,6 @@
 
 #include "Scanline.h"
 
-#include <SDL2/SDL.h>
-
 Hero spawn(const char* const path)
 {
     FILE* const fp = fopen(path, "r");
