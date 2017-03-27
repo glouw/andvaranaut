@@ -121,7 +121,7 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
     const Line camera = rotate(hero.fov, hero.angle.theta);
     const Display display = lock(gpu);
     /* Precomputes floor and ceiling casts */
-    float* const party = (float*) malloc(res * sizeof(*party));
+    float* const party = (float*) calloc(res, sizeof(*party));
     for(int x = 0; x < res; x++)
         party[x] = x < res / 2 ? fcast(hero.fov, res, x) : ccast(hero.fov, res, x);
     /* Saves and reserves computations from floorcasting for ceiling casting */

@@ -21,7 +21,7 @@ Point* frend(
     char** const floring,
     float* party)
     {
-        Point* const wheres = (Point*) malloc(scanline.res * sizeof(*wheres));
+        Point* const wheres = (Point*) calloc(scanline.res, sizeof(*wheres));
         for(int x = 0; x < wall.clamped.bot; x++)
         {
             const Point where = wheres[scanline.res - 1 - x] = lerp(traceline.trace, party[x] / traceline.corrected.x);
