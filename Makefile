@@ -1,4 +1,4 @@
-CC = gcc -std=gnu99
+CC = gcc -std=c99
 PROJ = water
 SRCS = main.c util.c Point.c Hit.c Line.c Map.c Gpu.c Display.c Wall.c Hero.c
 SRCS+= Portals.c Scanline.c Blocks.c Surfaces.c
