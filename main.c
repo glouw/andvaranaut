@@ -11,7 +11,11 @@ int main(const int argc, const char* const* const argv)
     const Gpu gpu = setup(res, "config/surfaces.cfg");
     if(argc != 2)
         goto end;
+    #if 1
+    for(int frame = 0; frame < 60; frame++)
+    #else
     while(!done())
+    #endif
     {
         hero = move(hero, map.blocks.walling);
         hero = spin(hero);

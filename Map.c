@@ -4,14 +4,15 @@
 
 #include <stdlib.h>
 
+// There are three blocks per map, one for the
+// ceiling, one for the walling, and another for the
+// flooring. Rows defines the number of rows per block,
+// so the number of rows is equal to the number of newlines
+// divided by three
+
 Map open(const char* const path)
 {
     FILE* const fp = fopen(path, "r");
-    /* There are three blocks per map, one for the
-     * ceiling, one for the walling, and another for the
-     * flooring. Rows defines the number of rows per block,
-     * so the number of rows is equal to the number of newlines
-     * divided by three */
     const int rows = newlines(fp) / 3;
     const Blocks blocks = build(fp, rows);
     fclose(fp);

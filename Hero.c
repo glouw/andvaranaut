@@ -7,7 +7,7 @@ Hero spawn(const char* const path)
     FILE* const fp = fopen(path, "r");
     char* line = NULL;
     unsigned reads = 0;
-    /* Hero where */
+    // Hero where
     Point where = { 0.0, 0.0 };
     getline(&line, &reads, fp);
     sscanf(line, "%f,%f", &where.x, &where.y);
@@ -30,7 +30,7 @@ Hero spin(const Hero hero)
     Hero temp = hero;
     if(key[SDL_SCANCODE_H]) temp.angle.theta -= 0.1;
     if(key[SDL_SCANCODE_L]) temp.angle.theta += 0.1;
-    /* Angle theta percentage [0..1] for [0..2*pi] calculated using a sawtooth */
+    // Angle theta percentage [0..1] for [0..2*pi] calculated using a sawtooth
     const float pi = acos(-1.0);
     temp.angle.percent = 0.5 - atanf(1.0 / tanf(temp.angle.theta / 2.0)) / pi;
     return temp;
@@ -120,11 +120,11 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.angle.theta);
     const Display display = lock(gpu);
-    /* Precomputes floor and ceiling casts */
+    // Precomputes floor and ceiling casts
     float* const party = (float*) calloc(res, sizeof(*party));
     for(int x = 0; x < res; x++)
         party[x] = x < res / 2 ? fcast(hero.fov, res, x) : ccast(hero.fov, res, x);
-    /* Saves and reserves computations from floorcasting for ceiling casting */
+    // Saves and reserves computations from floorcasting for ceiling casting
     for(int y = 0; y < res; y++)
     {
         const Point column = lerp(camera, y / (float) res);

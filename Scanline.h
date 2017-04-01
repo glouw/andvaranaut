@@ -15,22 +15,22 @@ typedef struct
 }
 Scanline;
 
-/* Wall renderer */
+// Wall renderer
 void wrend(const Scanline scanline, const Wall wall, const Hit hit);
-/* Floor renderer */
+// Floor renderer
 Point* frend(
     const Scanline scanline,
     const Wall wall,
     const Traceline traceline,
     char** const floring,
     float* party);
-/* Ceiling renderer - requires floor renderer */
+// Ceiling renderer - requires floor renderer
 void crend(
     const Scanline scanline,
     const Wall wall,
     const Point* const wheres,
     char** const ceiling);
-/* Sky renderer */
+// Sky renderer
 void srend(const Scanline scanline, const float percent);
-/* Blackness renderer */
+// Blackness renderer
 void brend(const Scanline scanline);
