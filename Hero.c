@@ -10,7 +10,7 @@ Hero spawn(const char* const path)
     char* line = readln(fp);
     sscanf(line, "%f,%f", &where.x, &where.y);
     const Hero hero = {
-        { { +1.0, -1.0 }, { +1.0, +1.0 } }, where, { 0.0, 0.0 }, 0.12, 0.0150, { 0.0, 0.0 },
+        { { 1.0, -1.0 }, { 1.0, 1.0 } }, where, { 0.0, 0.0 }, 0.12, 0.0150, { 0.0, 0.0 },
     };
     free(line);
     fclose(fp);

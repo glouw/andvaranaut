@@ -14,45 +14,36 @@ void wrend(const Scanline scanline, const Wall wall, const Hit hit)
     }
 }
 
-Point* frend(
-    const Scanline scanline,
-    const Wall wall,
-    const Traceline traceline,
-    char** const floring,
-    float* party)
+Point* frend(const Scanline scanline, const Wall wall, const Traceline traceline, char** const floring, float* party)
+{
+    Point* const wheres = (Point*) calloc(scanline.res, sizeof(*wheres));
+    for(int x = 0; x < wall.clamped.bot; x++)
     {
-        Point* const wheres = (Point*) calloc(scanline.res, sizeof(*wheres));
-        for(int x = 0; x < wall.clamped.bot; x++)
+        const Point where = wheres[scanline.res - 1 - x] = lerp(traceline.trace, party[x] / traceline.corrected.x);
+        const SDL_Surface* const surface = scanline.gpu.surfaces.surface[tile(where, floring)];
+        const int row = surface->h * dec(where.y);
+        const int col = surface->w * dec(where.x);
+        const uint32_t* const pixels = (uint32_t*) surface->pixels;
+        scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
+    }
+    return wheres;
+}
+
+void crend(const Scanline scanline, const Wall wall, const Point* const wheres, char** const ceiling)
+{
+    for(int x = wall.clamped.top; x < scanline.res; x++)
+    {
+        const Point where = wheres[x];
+        if(tile(where, ceiling))
         {
-            const Point where = wheres[scanline.res - 1 - x] = lerp(traceline.trace, party[x] / traceline.corrected.x);
-            const SDL_Surface* const surface = scanline.gpu.surfaces.surface[tile(where, floring)];
+            const SDL_Surface* const surface = scanline.gpu.surfaces.surface[tile(where, ceiling)];
             const int row = surface->h * dec(where.y);
             const int col = surface->w * dec(where.x);
             const uint32_t* const pixels = (uint32_t*) surface->pixels;
             scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
         }
-        return wheres;
     }
-
-void crend(
-    const Scanline scanline,
-    const Wall wall,
-    const Point* const wheres,
-    char** const ceiling)
-    {
-        for(int x = wall.clamped.top; x < scanline.res; x++)
-        {
-            const Point where = wheres[x];
-            if(tile(where, ceiling))
-            {
-                const SDL_Surface* const surface = scanline.gpu.surfaces.surface[tile(where, ceiling)];
-                const int row = surface->h * dec(where.y);
-                const int col = surface->w * dec(where.x);
-                const uint32_t* const pixels = (uint32_t*) surface->pixels;
-                scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
-            }
-        }
-    }
+}
 
 void brend(const Scanline scanline)
 {
