@@ -1,25 +1,19 @@
 #include "Hero.h"
 
 #include "Scanline.h"
+#include "util.h"
 
 Hero spawn(const char* const path)
 {
     FILE* const fp = fopen(path, "r");
-    char* line = NULL;
-    unsigned reads = 0;
-    // Hero where
     Point where = { 0.0, 0.0 };
-    getline(&line, &reads, fp);
+    char* line = readln(fp);
     sscanf(line, "%f,%f", &where.x, &where.y);
-    fclose(fp);
     const Hero hero = {
-        { { +1.0, -1.0 }, { +1.0, +1.0 } },
-        where,
-        { 0.0, 0.0 },
-        0.12,
-        0.0150,
-        { 0.0, 0.0 },
+        { { +1.0, -1.0 }, { +1.0, +1.0 } }, where, { 0.0, 0.0 }, 0.12, 0.0150, { 0.0, 0.0 },
     };
+    free(line);
+    fclose(fp);
     return hero;
 }
 

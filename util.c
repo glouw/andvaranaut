@@ -17,10 +17,10 @@ float dec(const float x)
     return x - (int) x;
 }
 
-int newlines(FILE* const fp)
+int lns(FILE* const file)
 {
-    int lines = 0, pc = '\n', ch;
-    while((ch = getc(fp)) != EOF)
+    int ch, lines = 0, pc = '\n';
+    while((ch = getc(file)) != EOF)
     {
         if(ch == '\n')
             lines++;
@@ -28,7 +28,7 @@ int newlines(FILE* const fp)
     }
     if(pc != '\n')
         lines++;
-    rewind(fp);
+    rewind(file);
     return lines;
 }
 
@@ -36,28 +36,28 @@ bool done()
 {
     SDL_Event event;
     SDL_PollEvent(&event);
-    if(event.type == SDL_QUIT
-    || event.key.keysym.sym == SDLK_F1
-    || event.key.keysym.sym == SDLK_ESCAPE)
-        return true;
-    return false;
+    return event.type == SDL_QUIT
+        || event.key.keysym.sym == SDLK_F1
+        || event.key.keysym.sym == SDLK_ESCAPE;
 }
 
-// Requires unit testing
-static char* readln(FILE* const fp)
+char* readln(FILE* const file)
 {
-    int size = 2;
-    char* line = malloc(size * sizeof(char));
-    int reads = 0;
-    char ch;
-    do
+    int ch, reads = 0, size = 2;
+    char* line = (char*) malloc(size * sizeof(char));
+    while((ch = getc(file)) != '\n' && ch != EOF)
     {
-        ch = getc(fp);
         line[reads++] = ch;
         if(reads + 1 == size)
-            line = realloc(line, size *= 2);
+            line = (char*) realloc(line, size *= 2);
     }
-    while(ch != '\n' || ch != EOF);
     line[reads] = '\0';
     return line;
+}
+
+char* strnew(const char* const str)
+{
+    char* copy = (char*) malloc(strlen(str) + 1);
+    strcpy(copy, str);
+    return copy;
 }

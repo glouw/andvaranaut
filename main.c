@@ -1,21 +1,16 @@
 #include "Hero.h"
 #include "Map.h"
 #include "util.h"
+#include "test.h"
 
-int main(const int argc, const char* const* const argv)
+static void play(const char* argv[])
 {
     Map map = open("maps/start.map");
     Hero hero = spawn("config/hero.cfg");
     const Portals portals = populate("config/portals.cfg");
     const int res = strtol(argv[1], NULL, 0);
     const Gpu gpu = setup(res, "config/surfaces.cfg");
-    if(argc != 2)
-        goto end;
-    #if 0
-    for(int frame = 0; frame < 60; frame++)
-    #else
     while(!done())
-    #endif
     {
         hero = move(hero, map.blocks.walling);
         hero = spin(hero);
@@ -28,7 +23,12 @@ int main(const int argc, const char* const* const argv)
         }
         render(hero, map.blocks, res, gpu);
     }
-end:release(gpu);
+    release(gpu);
     close(map);
     destroy(portals);
+}
+
+int main(const int argc, const char* argv[])
+{
+    argc == 2 ? play(argv) : test();
 }

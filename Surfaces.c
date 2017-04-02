@@ -14,19 +14,16 @@ static SDL_Surface* load(const char* const path, const uint32_t format)
 
 Surfaces pull(const char* const path, const uint32_t format)
 {
-    FILE* const fp = fopen(path, "r");
-    char* line = NULL;
-    unsigned reads = 0;
-    const int count = newlines(fp);
-    SDL_Surface** const surface = (SDL_Surface**) calloc(count, sizeof(*surface));
-    for(int i = 0; i < count; i++)
+    FILE* const file = fopen(path, "r");
+    const int lines = lns(file);
+    SDL_Surface** const surface = (SDL_Surface**) calloc(lines, sizeof(*surface));
+    for(int i = 0; i < lines; i++)
     {
-        getline(&line, &reads, fp);
-        line = strtok(line, "# \n");
-        surface[i] = load(line, format);
+        char* const line = readln(file);
+        char* const trim = strtok(line, "# \n");
+        surface[i] = load(trim, format);
     }
-    free(line);
-    fclose(fp);
-    const Surfaces surfaces = { surface, count };
+    fclose(file);
+    const Surfaces surfaces = { surface, lines };
     return surfaces;
 }

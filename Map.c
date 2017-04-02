@@ -12,10 +12,10 @@
 
 Map open(const char* const path)
 {
-    FILE* const fp = fopen(path, "r");
-    const int rows = newlines(fp) / 3;
-    const Blocks blocks = build(fp, rows);
-    fclose(fp);
+    FILE* const file = fopen(path, "r");
+    const int rows = lns(file) / 3;
+    const Blocks blocks = build(file, rows);
+    fclose(file);
     const Map map = { rows, blocks };
     return map;
 }

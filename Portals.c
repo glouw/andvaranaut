@@ -7,22 +7,20 @@
 
 Portals populate(const char* const path)
 {
-    FILE* const fp = fopen(path, "r");
-    const int count = newlines(fp);
+    FILE* const file = fopen(path, "r");
+    const int count = lns(file);
     Portal* const portal = (Portal*) calloc(count, sizeof(*portal));
     for(int i = 0; i < count; i++)
     {
-        char* line = NULL;
-        unsigned reads = 0;
         Point where = { 0.0, 0.0 };
-        getline(&line, &reads, fp);
-        line = strtok(line, " ");
-        sscanf(line, "%f,%f", &where.x, &where.y);
+        char* const line = readln(file);
+        char* const location = strtok(line, " ");
+        sscanf(location, "%f,%f", &where.x, &where.y);
         portal[i].where = where;
-        line = strtok(NULL, " #");
-        portal[i].blocks = strdup(line);
+        char* const name = strtok(NULL, " #");
+        portal[i].blocks = name;
     }
-    fclose(fp);
+    fclose(file);
     const Portals portals = { portal, count };
     return portals;
 }
