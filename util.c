@@ -43,7 +43,7 @@ bool done()
 
 char* readln(FILE* const file)
 {
-    int ch, reads = 0, size = 2;
+    int ch, reads = 0, size = 64;
     char* line = (char*) malloc(size * sizeof(char));
     while((ch = getc(file)) != '\n' && ch != EOF)
     {
@@ -53,11 +53,4 @@ char* readln(FILE* const file)
     }
     line[reads] = '\0';
     return line;
-}
-
-char* strnew(const char* const str)
-{
-    char* copy = (char*) malloc(strlen(str) + 1);
-    strcpy(copy, str);
-    return copy;
 }
