@@ -10,7 +10,8 @@ static void play(const char* argv[])
     const Portals portals = populate("config/portals.cfg");
     const int res = strtol(argv[1], NULL, 0);
     const Gpu gpu = setup(res, "config/surfaces.cfg");
-    while(!done())
+    for(int i = 0; i < 60; i++)
+    //while(!done())
     {
         hero = move(hero, map.blocks.walling);
         hero = spin(hero);

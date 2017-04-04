@@ -18,7 +18,8 @@ Portals populate(const char* const path)
         sscanf(location, "%f,%f", &where.x, &where.y);
         portal[i].where = where;
         char* const name = strtok(NULL, " #");
-        portal[i].blocks = name;
+        portal[i].blocks = strnew(name);
+        free(line);
     }
     fclose(file);
     const Portals portals = { portal, count };

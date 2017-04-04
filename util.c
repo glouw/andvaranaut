@@ -54,3 +54,10 @@ char* readln(FILE* const file)
     line[reads] = '\0';
     return line;
 }
+
+char* strnew(const char* const str)
+{
+    char* copy = (char*) malloc(strlen(str) + 1);
+    strcpy(copy, str);
+    return copy;
+}
