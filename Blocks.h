@@ -4,10 +4,11 @@
 
 typedef struct
 {
+    int rows;
     char** ceiling;
     char** walling;
     char** floring;
 }
 Blocks;
 
-Blocks build(FILE* const file, const int rows);
+Blocks build(const char* const name);

@@ -1,28 +1,16 @@
 #include "Map.h"
 
-#include "util.h"
-
 #include <stdlib.h>
 
-// There are three blocks per map, one for the
-// ceiling, one for the walling, and another for the
-// flooring. Rows defines the number of rows per block,
-// so the number of rows is equal to the number of newlines
-// divided by three
-
-Map open(const char* const path)
+Map open(const char* const name)
 {
-    FILE* const file = fopen(path, "r");
-    const int rows = lns(file) / 3;
-    const Blocks blocks = build(file, rows);
-    fclose(file);
-    const Map map = { rows, blocks };
+    const Map map = { build(name), wake(name) };
     return map;
 }
 
 void close(const Map map)
 {
-    for(int row = 0; row < map.rows; row++)
+    for(int row = 0; row < map.blocks.rows; row++)
     {
         free(map.blocks.ceiling[row]);
         free(map.blocks.walling[row]);
@@ -33,8 +21,8 @@ void close(const Map map)
     free(map.blocks.floring);
 }
 
-Map reopen(const Map map, const char* const path)
+Map reopen(const Map map, const char* const name)
 {
     close(map);
-    return open(path);
+    return open(name);
 }

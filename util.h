@@ -12,4 +12,6 @@ float dec(const float x);
 int lns(FILE* const file);
 bool done();
 char* readln(FILE* const file);
+// Strings
 char* strnew(const char* const str);
+char* strcon(const char* const a, const char* const b);

@@ -4,10 +4,11 @@
 
 void play(const char* argv[])
 {
-    Map map = open("maps/start.map");
+    const int res = strtol(argv[1], NULL, 0);
+    Map map = open("maps/start");
+    // Configuration files
     Hero hero = spawn("config/hero.cfg");
     const Portals portals = populate("config/portals.cfg");
-    const int res = strtol(argv[1], NULL, 0);
     const Gpu gpu = setup(res, "config/surfaces.cfg");
     #if 0
     for(int i = 0; i < 60; i++)
