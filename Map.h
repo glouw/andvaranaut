@@ -1,17 +1,14 @@
 #pragma once
 
-#include <stdio.h>
-
-#include "Blocks.h"
-#include "Sprites.h"
-
 typedef struct
 {
-    Blocks blocks;
-    Sprites sprites;
+    int rows;
+    char** ceiling;
+    char** walling;
+    char** floring;
 }
 Map;
 
-Map open(const char* const name);
+Map open(const char* const path);
 void close(const Map map);
-Map reopen(const Map map, const char* const name);
+Map reopen(const Map map, const char* const path);

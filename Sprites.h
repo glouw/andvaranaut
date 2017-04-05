@@ -6,4 +6,4 @@ typedef struct
 }
 Sprites;
 
-Sprites wake(const char* const name);
+Sprites wake(const char* const path);

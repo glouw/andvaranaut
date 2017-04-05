@@ -5,7 +5,7 @@
 void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
-    Map map = open("maps/start");
+    Map map = open("maps/start.map");
     // Configuration files
     Hero hero = spawn("config/hero.cfg");
     const Portals portals = populate("config/portals.cfg");
@@ -16,16 +16,16 @@ void play(const char* argv[])
     while(!done())
     #endif
     {
-        hero = move(hero, map.blocks.walling);
+        hero = move(hero, map.walling);
         hero = spin(hero);
-        const int ch = handle(hero, map.blocks.walling);
+        const int ch = handle(hero, map.walling);
         if(ch)
         {
             const Portal portal = portals.portal[ch - 'a'];
             map = reopen(map, portal.blocks);
             hero = teleport(hero, portal);
         }
-        render(hero, map.blocks, res, gpu);
+        render(hero, map, res, gpu);
     }
     release(gpu);
     close(map);

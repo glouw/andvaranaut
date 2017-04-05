@@ -109,7 +109,7 @@ static Impact march(const Hero hero, char** const block, const Point column, con
     return impact;
 }
 
-void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
+void render(const Hero hero, const Map map, const int res, const Gpu gpu)
 {
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.angle.theta);
@@ -122,18 +122,18 @@ void render(const Hero hero, const Blocks blocks, const int res, const Gpu gpu)
     for(int y = 0; y < res; y++)
     {
         const Point column = lerp(camera, y / (float) res);
-        const Impact lower = march(hero, blocks.walling, column, res, 1);
+        const Impact lower = march(hero, map.walling, column, res, 1);
         const Scanline scanline = { gpu, display, y, res };
         srend(scanline, hero.angle.percent);
         const int uppers = 5;
         for(int hits = uppers; hits > 0; hits--)
         {
-            const Impact upper = march(hero, blocks.ceiling, column, res, hits);
+            const Impact upper = march(hero, map.ceiling, column, res, hits);
             wrend(scanline, raise(upper.wall, res), upper.hit);
         }
         wrend(scanline, lower.wall, lower.hit);
-        Point* const wheres = frend(scanline, lower.wall, lower.traceline, blocks.floring, party);
-        crend(scanline, lower.wall, wheres, blocks.ceiling);
+        Point* const wheres = frend(scanline, lower.wall, lower.traceline, map.floring, party);
+        crend(scanline, lower.wall, wheres, map.ceiling);
         free(wheres);
     }
     free(party);
