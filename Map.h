@@ -9,6 +9,6 @@ typedef struct
 }
 Map;
 
-Map open(const char* const path);
+Map open(const char* const name);
 void close(const Map map);
-Map reopen(const Map map, const char* const path);
+Map reopen(const Map map, const char* const name);

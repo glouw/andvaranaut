@@ -20,8 +20,9 @@ static char** get(FILE* const file, const int rows)
     return block;
 }
 
-Map open(const char* const path)
+Map open(const char* const name)
 {
+    char* const path = strcon("maps/", name);
     FILE* const file = fopen(path, "r");
     const int rows = lns(file) / 3;
     char** const ceiling = get(file, rows);
@@ -30,6 +31,7 @@ Map open(const char* const path)
     const Map map = { rows, ceiling, walling, floring };
     fclose(file);
     print(map);
+    free(path);
     return map;
 }
 
@@ -46,8 +48,8 @@ void close(const Map map)
     free(map.floring);
 }
 
-Map reopen(const Map map, const char* const path)
+Map reopen(const Map map, const char* const name)
 {
     close(map);
-    return open(path);
+    return open(name);
 }

@@ -3,8 +3,9 @@
 #include "Scanline.h"
 #include "util.h"
 
-Hero spawn(const char* const path)
+Hero spawn(const char* const name)
 {
+    char* const path = strcon("config/", name);
     FILE* const fp = fopen(path, "r");
     Point where = { 0.0, 0.0 };
     char* line = readln(fp);
@@ -12,6 +13,7 @@ Hero spawn(const char* const path)
     const Hero hero = {
         { { 1.0, -1.0 }, { 1.0, 1.0 } }, where, { 0.0, 0.0 }, 0.12, 0.0150, { 0.0, 0.0 },
     };
+    free(path);
     free(line);
     fclose(fp);
     return hero;
@@ -109,7 +111,7 @@ static Impact march(const Hero hero, char** const block, const Point column, con
     return impact;
 }
 
-void render(const Hero hero, const Map map, const int res, const Gpu gpu)
+void render(const Hero hero, const Sprites sprites, const Map map, const int res, const Gpu gpu)
 {
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.angle.theta);

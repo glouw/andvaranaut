@@ -1,15 +1,16 @@
 #include "Hero.h"
 #include "Map.h"
+#include "Sprites.h"
 #include "util.h"
 
 void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
-    Map map = open("maps/start.map");
-    // Configuration files
-    Hero hero = spawn("config/hero.cfg");
-    const Portals portals = populate("config/portals.cfg");
-    const Gpu gpu = setup(res, "config/surfaces.cfg");
+    Map map = open("start");
+    Sprites sprites = wake("start");
+    Hero hero = spawn("hero.cfg");
+    const Portals portals = populate("portals.cfg");
+    const Gpu gpu = setup(res, "surfaces.cfg");
     #if 0
     for(int i = 0; i < 60; i++)
     #else
@@ -22,12 +23,14 @@ void play(const char* argv[])
         if(ch)
         {
             const Portal portal = portals.portal[ch - 'a'];
-            map = reopen(map, portal.blocks);
+            map = reopen(map, portal.name);
             hero = teleport(hero, portal);
+            sprites = swap(sprites, portal.name);
         }
-        render(hero, map, res, gpu);
+        render(hero, sprites, map, res, gpu);
     }
-    release(gpu);
     close(map);
+    sleep(sprites);
     destroy(portals);
+    release(gpu);
 }

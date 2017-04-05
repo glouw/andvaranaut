@@ -5,16 +5,16 @@
 typedef struct
 {
     Point where;
-    char* blocks;
+    char* name;
 }
 Portal;
 
 typedef struct
 {
-    Portal* portal;
     int count;
+    Portal* portal;
 }
 Portals;
 
-Portals populate(const char* const path);
+Portals populate(const char* const name);
 void destroy(const Portals portals);

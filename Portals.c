@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-Portals populate(const char* const path)
+Portals populate(const char* const name)
 {
+    char* const path = strcon("config/", name);
     FILE* const file = fopen(path, "r");
     const int count = lns(file);
     Portal* const portal = (Portal*) calloc(count, sizeof(*portal));
@@ -17,18 +18,18 @@ Portals populate(const char* const path)
         char* const location = strtok(line, " ");
         sscanf(location, "%f,%f", &where.x, &where.y);
         portal[i].where = where;
-        char* const name = strtok(NULL, " #");
-        portal[i].blocks = strnew(name);
+        portal[i].name = strnew(strtok(NULL, " #"));
         free(line);
     }
+    free(path);
     fclose(file);
-    const Portals portals = { portal, count };
+    const Portals portals = { count, portal };
     return portals;
 }
 
 void destroy(const Portals portals)
 {
     for(int i = 0; i < portals.count; i++)
-        free(portals.portal[i].blocks);
+        free(portals.portal[i].name);
     free(portals.portal);
 }
