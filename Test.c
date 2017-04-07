@@ -1,5 +1,4 @@
 #include "Util.h"
-
 #include <stdlib.h>
 
 static void _strcon()

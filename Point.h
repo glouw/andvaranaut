@@ -1,11 +1,6 @@
 #pragma once
 
-typedef struct
-{
-    float x;
-    float y;
-}
-Point;
+#include "Types.h"
 
 // The zero vector
 Point zro();

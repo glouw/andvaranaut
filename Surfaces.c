@@ -1,5 +1,4 @@
 #include "Surfaces.h"
-
 #include "Util.h"
 
 static SDL_Surface* load(const char* const path, const uint32_t format)

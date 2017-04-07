@@ -1,19 +1,6 @@
 #pragma once
 
-#include "Hit.h"
-#include "Wall.h"
-#include "Gpu.h"
-#include "Display.h"
-#include "Traceline.h"
-
-typedef struct
-{
-    Gpu gpu;
-    Display display;
-    int y;
-    int res;
-}
-Scanline;
+#include "Types.h"
 
 // Wall renderer
 void wrend(const Scanline scanline, const Wall wall, const Hit hit);

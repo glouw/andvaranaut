@@ -1,5 +1,103 @@
 #pragma once
 
+#include <SDL2/SDL.h>
+
+typedef struct
+{
+    int rows;
+    char** ceiling;
+    char** walling;
+    char** floring;
+}
+Map;
+
+typedef struct
+{
+    SDL_Surface** surface;
+    int count;
+}
+Surfaces;
+
+typedef struct
+{
+    int bot;
+    int top;
+    int height;
+    struct
+    {
+        int bot;
+        int top;
+    }
+    clamped;
+}
+Wall;
+
+typedef struct
+{
+    float x;
+    float y;
+}
+Point;
+
+typedef struct
+{
+    Point where;
+    char* name;
+}
+Portal;
+
+typedef struct
+{
+    int count;
+    Portal* portal;
+}
+Portals;
+
+typedef struct
+{
+    int tile;
+    float offset;
+    Point where;
+}
+Hit;
+
+typedef struct
+{
+    Point where;
+    int ascii;
+}
+Sprite;
+
+typedef struct
+{
+    int count;
+    Sprite* sprite;
+}
+Sprites;
+
+typedef struct
+{
+    Point a;
+    Point b;
+}
+Line;
+
+typedef struct
+{
+    Line fov;
+    Point where;
+    Point velocity;
+    float speed;
+    float acceleration;
+    struct
+    {
+        float theta;
+        float percent;
+    }
+    angle;
+}
+Hero;
+
 typedef struct
 {
     Line trace;
@@ -7,3 +105,28 @@ typedef struct
     Line fov;
 }
 Traceline;
+
+typedef struct
+{
+    Surfaces surfaces;
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    SDL_Texture* texture;
+}
+Gpu;
+
+typedef struct
+{
+    uint32_t* pixels;
+    int width;
+}
+Display;
+
+typedef struct
+{
+    Gpu gpu;
+    Display display;
+    int y;
+    int res;
+}
+Scanline;

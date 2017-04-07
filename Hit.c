@@ -1,5 +1,5 @@
 #include "Hit.h"
-
+#include "Point.h"
 #include "Util.h"
 
 static Hit collision(const Point ray, const Point direction, char** const walling)

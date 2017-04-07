@@ -1,3 +1,4 @@
+#include "Point.h"
 #include "Line.h"
 
 Line rotate(const Line line, const float t)

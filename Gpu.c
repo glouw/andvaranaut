@@ -1,5 +1,5 @@
 #include "Gpu.h"
-
+#include "Surfaces.h"
 #include "Util.h"
 
 Gpu setup(const int res, const char* const name)

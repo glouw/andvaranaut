@@ -1,23 +1,6 @@
 #pragma once
 
-#include "Line.h"
-#include "Gpu.h"
-#include "Portals.h"
-#include "Map.h"
-#include "Sprites.h"
-
-#include <stdbool.h>
-
-typedef struct
-{
-    Line fov;
-    Point where;
-    Point velocity;
-    float speed;
-    float acceleration;
-    struct { float theta, percent; } angle;
-}
-Hero;
+#include "Types.h"
 
 Hero spawn(const char* const name);
 Hero spin(const Hero hero);

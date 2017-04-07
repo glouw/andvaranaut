@@ -1,20 +1,6 @@
 #pragma once
 
-#include "Point.h"
-
-typedef struct
-{
-    Point where;
-    int ascii;
-}
-Sprite;
-
-typedef struct
-{
-    int count;
-    Sprite* sprite;
-}
-Sprites;
+#include "Types.h"
 
 Sprites wake(const char* const name);
 void sleep(const Sprites sprites);

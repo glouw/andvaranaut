@@ -1,4 +1,6 @@
 #include "Hero.h"
+#include "Portals.h"
+#include "Gpu.h"
 #include "Map.h"
 #include "Sprites.h"
 #include "Util.h"

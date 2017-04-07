@@ -1,13 +1,6 @@
 #pragma once
 
-#include "Gpu.h"
-
-typedef struct
-{
-    uint32_t* pixels;
-    int width;
-}
-Display;
+#include "Types.h"
 
 Display lock(const Gpu gpu);
 void unlock(const Gpu gpu);

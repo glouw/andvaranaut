@@ -1,5 +1,10 @@
+#include "Point.h"
+#include "Wall.h"
+#include "Hit.h"
 #include "Hero.h"
-
+#include "Line.h"
+#include "Display.h"
+#include "Gpu.h"
 #include "Scanline.h"
 #include "Util.h"
 

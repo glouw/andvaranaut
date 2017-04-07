@@ -1,13 +1,6 @@
 #pragma once
 
-#include "Point.h"
-
-typedef struct
-{
-    Point a;
-    Point b;
-}
-Line;
+#include "Types.h"
 
 Line rotate(const Line line, const float t);
 // Linear interpolation
