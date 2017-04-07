@@ -129,7 +129,6 @@ void render(const Hero hero, const Sprites sprites, const Map map, const int res
     for(int y = 0; y < res; y++)
     {
         const Point column = lerp(camera, y / (float) res);
-        const Impact lower = march(hero, map.walling, column, res, 1);
         const Scanline scanline = { gpu, display, y, res };
         srend(scanline, hero.angle.percent);
         const int uppers = 5;
@@ -138,6 +137,7 @@ void render(const Hero hero, const Sprites sprites, const Map map, const int res
             const Impact upper = march(hero, map.ceiling, column, res, hits);
             wrend(scanline, raise(upper.wall, res), upper.hit);
         }
+        const Impact lower = march(hero, map.walling, column, res, 1);
         wrend(scanline, lower.wall, lower.hit);
         Point* const wheres = frend(scanline, lower.wall, lower.traceline, map.floring, party);
         crend(scanline, lower.wall, wheres, map.ceiling);
