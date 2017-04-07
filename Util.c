@@ -63,8 +63,8 @@ char* strnew(const char* const str)
 
 char* strcon(const char* const a, const char* const b)
 {
-    char* out = (char*) malloc(strlen(a) + strlen(b) + 1);
-    strcpy(out, a);
-    strcat(out, b);
-    return out;
+    char* c = (char*) malloc(strlen(a) + strlen(b) + 1);
+    strcpy(c, a);
+    strcat(c, b);
+    return c;
 }
