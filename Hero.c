@@ -1,7 +1,7 @@
 #include "Hero.h"
 
 #include "Scanline.h"
-#include "util.h"
+#include "Util.h"
 
 Hero spawn(const char* const name)
 {

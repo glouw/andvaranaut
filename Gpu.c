@@ -1,6 +1,6 @@
 #include "Gpu.h"
 
-#include "util.h"
+#include "Util.h"
 
 Gpu setup(const int res, const char* const name)
 {

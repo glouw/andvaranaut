@@ -1,6 +1,6 @@
 #include "Scanline.h"
 
-#include "util.h"
+#include "Util.h"
 
 void wrend(const Scanline scanline, const Wall wall, const Hit hit)
 {

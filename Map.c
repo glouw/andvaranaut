@@ -1,6 +1,6 @@
 #include "Map.h"
 
-#include "util.h"
+#include "Util.h"
 
 #include <stdlib.h>
 #include <stdio.h>

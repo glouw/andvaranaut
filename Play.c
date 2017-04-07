@@ -1,7 +1,7 @@
 #include "Hero.h"
 #include "Map.h"
 #include "Sprites.h"
-#include "util.h"
+#include "Util.h"
 
 void play(const char* argv[])
 {
