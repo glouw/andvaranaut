@@ -32,7 +32,7 @@ Hero spin(const Hero hero)
     if(key[SDL_SCANCODE_H]) temp.angle.theta -= 0.1;
     if(key[SDL_SCANCODE_L]) temp.angle.theta += 0.1;
     // Angle theta percentage [0..1] for [0..2*pi] calculated using a sawtooth
-    const float pi = acos(-1.0);
+    const float pi = acosf(-1.0);
     temp.angle.percent = 0.5 - atanf(1.0 / tanf(temp.angle.theta / 2.0)) / pi;
     return temp;
 }

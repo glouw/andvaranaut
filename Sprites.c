@@ -1,15 +1,18 @@
 #include "Sprites.h"
+#include "Point.h"
+#include "Hero.h"
 #include "Util.h"
 #include <stdlib.h>
 #include <string.h>
 
-static void print(const Sprites sprites)
+void prints(const Sprites sprites)
 {
     for(int i = 0; i < sprites.count; i++)
-        printf("%f,%f: %c\n",
-            sprites.sprite[i].where.x,
-            sprites.sprite[i].where.y,
-            sprites.sprite[i].ascii);
+    {
+        const Point where = sprites.sprite[i].where;
+        const int ascii = sprites.sprite[i].ascii;
+        printf("%f,%f: %c\n", where.x, where.y, ascii);
+    }
 }
 
 Sprites wake(const char* const name)
@@ -30,7 +33,6 @@ Sprites wake(const char* const name)
         free(line);
     }
     const Sprites sprites = { count, sprite };
-    print(sprites);
     fclose(file);
     free(path);
     return sprites;
@@ -45,4 +47,43 @@ Sprites swap(const Sprites sprites, const char* const name)
 {
     sleep(sprites);
     return wake(name);
+}
+
+static Sprites copy(const Sprites sprites)
+{
+    const int count = sprites.count;
+    Sprite* const temp = (Sprite*) calloc(sprites.count, sizeof(*sprites.sprite));
+    const Sprites temps = { count, temp };
+    memcpy(temps.sprite, sprites.sprite, sprites.count * sizeof(*sprites.sprite));
+    return temps;
+}
+
+static void turn(const Sprites copied, const Hero hero)
+{
+    for(int i = 0; i < copied.count; i++)
+    {
+        const Point basing = sub(copied.sprite[i].where, hero.where);
+        const Point turned = trn(basing, hero.angle.theta);
+        const Point backed = add(turned, hero.where);
+        copied.sprite[i].where = backed;
+    }
+}
+
+static void sort(const Sprites copied, const Hero hero)
+{
+    (void) copied, (void) hero;
+}
+
+Sprites update(const Sprites sprites, const Hero hero)
+{
+    const Sprites copied = copy(sprites);
+    turn(copied, hero);
+    sort(copied, hero);
+    return copied;
+}
+
+SDL_Surface* paste(const Sprites sprites)
+{
+    (void) sprites;
+    return NULL;
 }

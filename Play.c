@@ -29,7 +29,9 @@ void play(const char* argv[])
             hero = teleport(hero, portal);
             sprites = swap(sprites, portal.name);
         }
-        render(hero, sprites, map, res, gpu);
+        const Sprites updated = update(sprites, hero);
+        render(hero, updated, map, res, gpu);
+        free(updated.sprite);
     }
     close(map);
     sleep(sprites);
