@@ -28,7 +28,6 @@ Map open(const char* const name)
     char** const floring = get(file, rows);
     const Map map = { rows, ceiling, walling, floring };
     fclose(file);
-    print(map);
     free(path);
     return map;
 }

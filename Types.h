@@ -108,6 +108,14 @@ Traceline;
 
 typedef struct
 {
+    Traceline traceline;
+    Wall wall;
+    Hit hit;
+}
+Impact;
+
+typedef struct
+{
     Surfaces surfaces;
     SDL_Window* window;
     SDL_Renderer* renderer;

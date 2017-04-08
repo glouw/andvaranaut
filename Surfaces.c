@@ -19,7 +19,7 @@ Surfaces pull(const char* const path, const uint32_t format)
     for(int i = 0; i < lines; i++)
     {
         char* const line = readln(file);
-        char* const trim = strtok(line, "# \n");
+        char* const trim = strtok(line, "# \n"); // Comments allowed
         surface[i] = load(trim, format);
     }
     fclose(file);

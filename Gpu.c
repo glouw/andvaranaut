@@ -1,6 +1,7 @@
 #include "Gpu.h"
 #include "Surfaces.h"
 #include "Util.h"
+#include <assert.h>
 
 Gpu setup(const int res, const char* const name)
 {
@@ -26,8 +27,12 @@ void release(const Gpu gpu)
     free(gpu.surfaces.surface);
 }
 
-void present(const Gpu gpu)
+void churn(const Gpu gpu)
 {
     SDL_RenderCopyEx(gpu.renderer, gpu.texture, NULL, NULL, -90.0, NULL, (SDL_RendererFlip) 0);
+}
+
+void present(const Gpu gpu)
+{
     SDL_RenderPresent(gpu.renderer);
 }

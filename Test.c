@@ -1,5 +1,6 @@
 #include "Util.h"
 #include "Sprites.h"
+#include "Line.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -51,16 +52,14 @@ static void _Sprites()
     sprites = swap(sprites, "start");
     prints(sprites);
     // Pasted surface sprites
-    Hero hero = { 0 };
-    hero.where.x = 0.0;
-    hero.where.y = 0.0;
-    hero.angle.theta = acosf(-1.0) / 2.0; // PI / 2
+    Hero hero;
+    hero.where.x = 2.0;
+    hero.where.y = 3.0;
+    hero.angle.theta = 1.0 * acosf(-1.0) / 2.0; // PI / 2
     hero.angle.percent = 0.25;
     const Sprites temp = update(sprites, hero);
     prints(temp);
-    SDL_Surface* const surface = paste(temp);
     // Cleanup
-    free(surface);
     sleep(temp);
     sleep(sprites);
 }

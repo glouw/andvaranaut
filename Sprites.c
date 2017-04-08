@@ -1,5 +1,6 @@
 #include "Sprites.h"
 #include "Point.h"
+#include "Line.h"
 #include "Hero.h"
 #include "Util.h"
 #include <stdlib.h>
@@ -28,7 +29,7 @@ Sprites wake(const char* const name)
         char* const location = strtok(line, " ");
         sscanf(location, "%f,%f", &where.x, &where.y);
         sprite[i].where = where;
-        char* const ascii = strtok(NULL, " #");
+        char* const ascii = strtok(NULL, " "); // No comments allowed after
         sprite[i].ascii = ascii[0];
         free(line);
     }
@@ -58,32 +59,61 @@ static Sprites copy(const Sprites sprites)
     return temps;
 }
 
+static void push(const Sprites copied, const Hero hero)
+{
+    for(int i = 0; i < copied.count; i++)
+        copied.sprite[i].where = sub(copied.sprite[i].where, hero.where);
+}
+
 static void turn(const Sprites copied, const Hero hero)
 {
     for(int i = 0; i < copied.count; i++)
-    {
-        const Point basing = sub(copied.sprite[i].where, hero.where);
-        const Point turned = trn(basing, hero.angle.theta);
-        const Point backed = add(turned, hero.where);
-        copied.sprite[i].where = backed;
-    }
+        copied.sprite[i].where = trn(copied.sprite[i].where, -hero.angle.theta);
 }
 
-static void sort(const Sprites copied, const Hero hero)
+static int comparator(const void *a, const void* b)
 {
-    (void) copied, (void) hero;
+    const Point pa = *(const Point *) a;
+    const Point pb = *(const Point *) b;
+    if(mag(pa) < mag(pb))
+        return 1;
+    else
+    if(mag(pa) > mag(pb))
+        return -1;
+    return 0;
+}
+
+static void sort(const Sprites copied)
+{
+    qsort(copied.sprite, copied.count, sizeof(*copied.sprite), comparator);
 }
 
 Sprites update(const Sprites sprites, const Hero hero)
 {
     const Sprites copied = copy(sprites);
+    push(copied, hero);
     turn(copied, hero);
-    sort(copied, hero);
+    sort(copied);
     return copied;
 }
 
-SDL_Surface* paste(const Sprites sprites)
+void paste(const Sprites sprites, const Gpu gpu, Impact* const impacts, const Hero hero, const int res)
 {
-    (void) sprites;
-    return NULL;
+    for(int i = 0; i < sprites.count; i++)
+    {
+        const Sprite sprite = sprites.sprite[i];
+        if(sprite.where.x > 0)
+        {
+            const int index = sprite.ascii - ' ';
+            SDL_Surface* const surface = gpu.surfaces.surface[index];
+            SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
+            const int height = focal(hero.fov) * res / sprite.where.x;
+            const int mid = res / 2 - height / 2;
+            const int offset = res / 2 * sprite.where.y / (float) sprite.where.x;
+            SDL_Rect dst = { mid + offset, mid, height, height };
+            SDL_Rect src = { 0, 0, surface->w, surface->h };
+            SDL_RenderCopy(gpu.renderer, texture, &src, &dst);
+            SDL_DestroyTexture(texture);
+        }
+    }
 }
