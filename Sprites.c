@@ -102,18 +102,15 @@ void paste(const Sprites sprites, const Gpu gpu, Impact* const impacts, const He
     for(int i = 0; i < sprites.count; i++)
     {
         const Sprite sprite = sprites.sprite[i];
-        if(sprite.where.x > 0)
-        {
-            const int index = sprite.ascii - ' ';
-            SDL_Surface* const surface = gpu.surfaces.surface[index];
-            SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
-            const int height = focal(hero.fov) * res / sprite.where.x;
-            const int mid = res / 2 - height / 2;
-            const int offset = res / 2 * sprite.where.y / (float) sprite.where.x;
-            SDL_Rect dst = { mid + offset, mid, height, height };
-            SDL_Rect src = { 0, 0, surface->w, surface->h };
-            SDL_RenderCopy(gpu.renderer, texture, &src, &dst);
-            SDL_DestroyTexture(texture);
-        }
+        const int index = sprite.ascii - ' ';
+        SDL_Surface* const surface = gpu.surfaces.surface[index];
+        SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
+        const int height = focal(hero.fov) * res / sprite.where.x;
+        const int mid = res / 2 - height / 2;
+        const int offset = res / 2 * sprite.where.y / (float) sprite.where.x;
+        SDL_Rect dst = { mid + offset, mid, height, height };
+        SDL_Rect src = { 0, 0, surface->w, surface->h };
+        SDL_RenderCopy(gpu.renderer, texture, &src, &dst);
+        SDL_DestroyTexture(texture);
     }
 }

@@ -6,6 +6,8 @@ static SDL_Surface* load(const char* const path, const uint32_t format)
     SDL_Surface* const bmp = SDL_LoadBMP(path);
     SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
     SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);
+    SDL_SetColorKey(converted, SDL_TRUE, 0xFFFFFF);
+    SDL_SetSurfaceRLE(converted, SDL_TRUE);
     SDL_FreeFormat(allocation);
     SDL_FreeSurface(bmp);
     return converted;
