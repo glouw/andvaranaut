@@ -1,41 +1,40 @@
 #include "Point.h"
 #include "Util.h"
-#include <math.h>
 
 Point zro()
 {
-    const Point c = { 0.0, 0.0 };
-    return c;
+    const Point out = { 0.0, 0.0 };
+    return out;
 }
 
 Point trn(const Point a, const float t)
 {
-    const Point c = { a.x * cosf(t) - a.y * sinf(t), a.x * sinf(t) + a.y * cosf(t) };
-    return c;
+    const Point out = { a.x * cosf(t) - a.y * sinf(t), a.x * sinf(t) + a.y * cosf(t) };
+    return out;
 }
 
 Point rag(const Point a)
 {
-    const Point c = { -a.y, a.x };
-    return c;
+    const Point out = { -a.y, a.x };
+    return out;
 }
 
 Point sub(const Point a, const Point b)
 {
-    const Point c = { a.x - b.x, a.y - b.y };
-    return c;
+    const Point out = { a.x - b.x, a.y - b.y };
+    return out;
 }
 
 Point add(const Point a, const Point b)
 {
-    const Point c = { a.x + b.x, a.y + b.y };
-    return c;
+    const Point out = { a.x + b.x, a.y + b.y };
+    return out;
 }
 
 Point mul(const Point a, const float n)
 {
-    const Point c = { a.x * n, a.y * n };
-    return c;
+    const Point out = { a.x * n, a.y * n };
+    return out;
 }
 
 float mag(const Point a)
@@ -45,8 +44,8 @@ float mag(const Point a)
 
 Point dvd(const Point a, const float n)
 {
-    const Point c = { a.x / n, a.y / n };
-    return c;
+    const Point out = { a.x / n, a.y / n };
+    return out;
 }
 
 Point unt(const Point a)
@@ -63,16 +62,16 @@ Point shr(const Point a, const Point b)
 {
     const float x = b.x > 0.0 ? fl(a.x + 1.0) : cl(a.x - 1.0);
     const float y = slp(b) * (x - a.x) + a.y;
-    const Point c = { x, y };
-    return c;
+    const Point out = { x, y };
+    return out;
 }
 
 Point svr(const Point a, const Point b)
 {
     const float y = b.y > 0.0 ? fl(a.y + 1.0) : cl(a.y - 1.0);
     const float x = (y - a.y) / slp(b) + a.x;
-    const Point c = { x, y };
-    return c;
+    const Point out = { x, y };
+    return out;
 }
 
 Point cmp(const Point a, const Point b, const Point c)

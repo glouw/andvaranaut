@@ -2,7 +2,6 @@
 #include "Line.h"
 #include "Point.h"
 #include "Util.h"
-#include <assert.h>
 
 void wrend(const Scanline scanline, const Wall wall, const Hit hit)
 {

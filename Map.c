@@ -1,14 +1,5 @@
 #include "Map.h"
 #include "Util.h"
-#include <stdlib.h>
-#include <stdio.h>
-
-static void print(const Map map)
-{
-    for(int row = 0; row < map.rows; row++) puts(map.ceiling[row]);
-    for(int row = 0; row < map.rows; row++) puts(map.walling[row]);
-    for(int row = 0; row < map.rows; row++) puts(map.floring[row]);
-}
 
 static char** get(FILE* const file, const int rows)
 {

@@ -1,5 +1,4 @@
 #include "Util.h"
-#include <SDL2/SDL.h>
 
 int fl(const float x)
 {

@@ -6,3 +6,4 @@ Gpu setup(const int res, const char* const name);
 void release(const Gpu gpu);
 void churn(const Gpu gpu);
 void present(const Gpu gpu);
+void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map, const int res);

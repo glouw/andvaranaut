@@ -1,8 +1,6 @@
-#include "Util.h"
+#include "Types.h"
 #include "Sprites.h"
-#include "Line.h"
-#include <stdlib.h>
-#include <math.h>
+#include "Util.h"
 
 // ----------------------------------------------------------------------------
 // Util

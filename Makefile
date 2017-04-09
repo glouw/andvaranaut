@@ -9,7 +9,7 @@ CFLAGS+= -g
 CFLAGS+= -Ofast -flto -fwhole-program -fsingle-precision-constant
 CFLAGS+= -fassociative-math -freciprocal-math -fno-signed-zeros
 CFLAGS+= -fno-trapping-math -frename-registers -funroll-loops
-LDFLAGS = -lSDL2 -lm
+LDFLAGS = -lSDL2 -lSDL2_image -lm
 TARGET_ARCH = -march=native
 DEPDIR := dep
 $(shell mkdir -p $(DEPDIR) >/dev/null)

@@ -1,12 +1,7 @@
-#include "Point.h"
-#include "Wall.h"
-#include "Hit.h"
 #include "Hero.h"
-#include "Line.h"
-#include "Sprites.h"
-#include "Display.h"
-#include "Gpu.h"
-#include "Scanline.h"
+#include "Point.h"
+#include "Hit.h"
+#include "Wall.h"
 #include "Util.h"
 
 Hero spawn(const char* const name)
@@ -97,7 +92,7 @@ static Hit plow(const Hero hero, char** const block, const Point column, const i
     return hit;
 }
 
-static Impact march(const Hero hero, char** const block, const Point column, const int res, const int hits)
+Impact march(const Hero hero, char** const block, const Point column, const int res, const int hits)
 {
     const Hit hit = plow(hero, block, column, hits);
     const Point ray = sub(hit.where, hero.where);
@@ -107,46 +102,6 @@ static Impact march(const Hero hero, char** const block, const Point column, con
     const Traceline traceline = { trace, corrected, hero.fov };
     const Impact impact = { traceline, wall, hit };
     return impact;
-}
-
-void render(const Hero hero, const Sprites sprites, const Map map, const int res, const Gpu gpu)
-{
-    const int t0 = SDL_GetTicks();
-    const Line camera = rotate(hero.fov, hero.angle.theta);
-    const Display display = lock(gpu);
-    // Precomputes floor and ceiling casts
-    float* const party = (float*) calloc(res, sizeof(*party));
-    for(int x = 0; x < res; x++)
-        party[x] = x < res / 2 ? fcast(hero.fov, res, x) : ccast(hero.fov, res, x);
-    // Lower wall impacts
-    Impact* const impacts = (Impact*) calloc(res, sizeof(*impacts));
-    // Saves and reserves computations from floorcasting for ceiling casting
-    for(int y = 0; y < res; y++)
-    {
-        const Point column = lerp(camera, y / (float) res);
-        const Scanline scanline = { gpu, display, y, res };
-        srend(scanline, hero.angle.percent);
-        const int uppers = 5;
-        for(int hits = uppers; hits > 0; hits--)
-        {
-            const Impact upper = march(hero, map.ceiling, column, res, hits);
-            wrend(scanline, raise(upper.wall, res), upper.hit);
-        }
-        const Impact lower = impacts[y] = march(hero, map.walling, column, res, 1);
-        wrend(scanline, lower.wall, lower.hit);
-        Point* const wheres = frend(scanline, lower.wall, lower.traceline, map.floring, party);
-        crend(scanline, lower.wall, wheres, map.ceiling);
-        free(wheres);
-    }
-    unlock(gpu);
-    churn(gpu);
-    paste(sprites, gpu, impacts, hero, res);
-    present(gpu);
-    free(impacts);
-    free(party);
-    const int t1 = SDL_GetTicks();
-    const int ms = 15 - (t1 - t0);
-    SDL_Delay(ms < 0 ? 0 : ms);
 }
 
 Hero teleport(const Hero hero, const Portal portal)
