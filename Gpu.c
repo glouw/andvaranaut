@@ -1,6 +1,10 @@
 #include "Gpu.h"
+#include "Display.h"
+#include "Scanline.h"
 #include "Surfaces.h"
 #include "Line.h"
+#include "Hero.h"
+#include "Wall.h"
 #include "Util.h"
 
 Gpu setup(const int res, const char* const name)
@@ -37,7 +41,55 @@ void present(const Gpu gpu)
     SDL_RenderPresent(gpu.renderer);
 }
 
-void paste(const Gpu gpu, const Sprites sprites, const Impact* const impacts, const Hero hero, const int res)
+typedef struct
+{
+    int lb;
+    int rb;
+    SDL_Rect rect;
+}
+Frame;
+
+typedef struct
+{
+    int offset;
+    int res;
+    int size;
+}
+Dimensions;
+
+static Frame hang(const Point where, const Impact* const impact, const Dimensions dim)
+{
+    SDL_Rect rect = { 0, (dim.res - dim.size) / 2, 0, dim.size };
+    // Trim destination sprite from the left
+    int lb = 0;
+    int rb = dim.size;
+    for(; lb < rb; lb++)
+    {
+        rect.x = (dim.res - dim.size) / 2 + lb + dim.offset;
+        rect.w = rb - lb;
+        const int index = rect.x;
+        if(index < 0 || index > dim.res)
+            break;
+        // Stop trimming of the sprite is seen
+        if(where.x < impact[index].traceline.corrected.x)
+            break;
+    }
+    // Trim destination sprite from the right
+    for(; rb > lb; rb--)
+    {
+        rect.w = rb - lb;
+        const int index = rect.x + rect.w;
+        if(index < 0 || index > dim.res)
+            break;
+        // Stop trimming of the sprite is seen
+        if(where.x < impact[index].traceline.corrected.x)
+            break;
+    }
+    const Frame frame = { lb, rb, rect };
+    return frame;
+}
+
+static void paste(const Gpu gpu, const Sprites sprites, const Impact* const impact, const Hero hero, const int res)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -48,49 +100,63 @@ void paste(const Gpu gpu, const Sprites sprites, const Impact* const impacts, co
         // Move onto the next sprite if this sprite is behind the player
         const int offset = (res / 2) * hero.fov.a.x * sprite.where.y / (float) sprite.where.x;
         const int size = focal(hero.fov) * res / sprite.where.x;
-        const int locate = offset + res / 2;
+        const int location = offset + res / 2;
         const struct { int min, max; } boundry = { -size / 2, res + size / 2 };
-        if(locate < boundry.min || locate > boundry.max)
+        if(location < boundry.min || location > boundry.max)
             continue;
-        /* Destination sprite trimming */
-        SDL_Rect dst;
-        dst.y = (res - size) / 2;
-        dst.h = size;
-        // Trim destination sprite from the left
-        int lb = 0;
-        int rb = size;
-        for(; lb < rb; lb++)
-        {
-            dst.x = (res - size) / 2 + lb + offset;
-            dst.w = rb - lb;
-            const int index = dst.x;
-            if(index < 0 || index > res)
-                break;
-            // Stop trimming of the sprite is seen
-            if(sprite.where.x < impacts[index].traceline.corrected.x)
-                break;
-        }
-        // Trim destination sprite from the right
-        for(; rb > lb; rb--)
-        {
-            dst.w = rb - lb;
-            const int index = dst.x + dst.w;
-            if(index < 0 || index > res)
-                break;
-            // Stop trimming of the sprite is seen
-            if(sprite.where.x < impacts[index].traceline.corrected.x)
-                break;
-        }
+        // Calculate the sprite perimeter frame for the screen
+        const Dimensions dimensions = { offset, res, size };
+        const Frame frame = hang(sprite.where, impact, dimensions);
         // Move onto the next sprite if this sprite is not seen
-        if(rb <= lb)
+        if(frame.rb <= frame.lb)
             continue;
-        /* Source sprite trimming */
+        // Calculate the sprite source dimensions to fit the sprite frame
         SDL_Surface* const surface = gpu.surfaces.surface[sprite.ascii - ' '];
         const float scale = (float) surface->w / size;
-        const SDL_Rect src = { scale * lb, 0, scale * dst.w, surface->h };
+        const SDL_Rect rect = { scale * frame.lb, 0, scale * frame.rect.w, surface->h };
         // Paste to renderer
-        SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
-        SDL_RenderCopy(gpu.renderer, texture, &src, &dst);
+        SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);;
+        SDL_RenderCopy(gpu.renderer, texture, &rect, &frame.rect);
         SDL_DestroyTexture(texture);
     }
+}
+
+void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map, const int res)
+{
+    const int t0 = SDL_GetTicks();
+    const Line camera = rotate(hero.fov, hero.angle.theta);
+    const Display display = lock(gpu);
+    // Precomputes floor and ceiling casts
+    float* const party = (float*) calloc(res, sizeof(*party));
+    for(int x = 0; x < res; x++)
+        party[x] = x < res / 2 ? fcast(hero.fov, res, x) : ccast(hero.fov, res, x);
+    // Lower wall impacts
+    Impact* const impact = (Impact*) calloc(res, sizeof(*impact));
+    // Saves and reserves computations from floorcasting for ceiling casting
+    for(int y = 0; y < res; y++)
+    {
+        const Point column = lerp(camera, y / (float) res);
+        const Scanline scanline = { gpu, display, y, res };
+        srend(scanline, hero.angle.percent);
+        const int uppers = 5;
+        for(int hits = uppers; hits > 0; hits--)
+        {
+            const Impact upper = march(hero, map.ceiling, column, res, hits);
+            wrend(scanline, raise(upper.wall, res), upper.hit);
+        }
+        const Impact lower = impact[y] = march(hero, map.walling, column, res, 1);
+        wrend(scanline, lower.wall, lower.hit);
+        Point* const wheres = frend(scanline, lower.wall, lower.traceline, map.floring, party);
+        crend(scanline, lower.wall, wheres, map.ceiling);
+        free(wheres);
+    }
+    unlock(gpu);
+    churn(gpu);
+    paste(gpu, sprites, impact, hero, res);
+    present(gpu);
+    free(impact);
+    free(party);
+    const int t1 = SDL_GetTicks();
+    const int ms = 15 - (t1 - t0);
+    SDL_Delay(ms < 0 ? 0 : ms);
 }
