@@ -1,17 +1,12 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdbool.h>
+#include "Types.h"
 
-// Fast math floor
 int fl(const float x);
-// Fast math ceil
 int cl(const float x);
-// Fast math float decimal
 float dec(const float x);
 int lns(FILE* const file);
 bool done();
 char* readln(FILE* const file);
-// Strings
 char* strnew(const char* const str);
 char* strcon(const char* const a, const char* const b);

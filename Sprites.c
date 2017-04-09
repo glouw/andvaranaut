@@ -1,7 +1,6 @@
 #include "Sprites.h"
 #include "Point.h"
 #include "Util.h"
-#include <string.h>
 
 void prints(const Sprites sprites)
 {

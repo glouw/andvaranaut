@@ -2,13 +2,8 @@
 
 #include "Types.h"
 
-// Wall renderer
 void wrend(const Scanline scanline, const Wall wall, const Hit hit);
-// Floor renderer
 Point* frend(const Scanline scanline, const Wall wall, const Traceline traceline, char** const floring, float* party);
-// Ceiling renderer - requires floor renderer to complete first
 void crend(const Scanline scanline, const Wall wall, const Point* const wheres, char** const ceiling);
-// Sky renderer
-void srend(const Scanline scanline, const float percent);
-// Blackness renderer
 void brend(const Scanline scanline);
+void srend(const Scanline scanline, const float percent);

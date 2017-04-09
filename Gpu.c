@@ -138,6 +138,7 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
         const Point column = lerp(camera, y / (float) res);
         const Scanline scanline = { gpu, display, y, res };
         srend(scanline, hero.angle.percent);
+        // Five upper walls are rendered for seamless indoor/outdoor transistions
         const int uppers = 5;
         for(int hits = uppers; hits > 0; hits--)
         {

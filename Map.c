@@ -1,7 +1,5 @@
 #include "Map.h"
 #include "Util.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 static char** get(FILE* const file, const int rows)
 {

@@ -1,7 +1,5 @@
 #include "Portals.h"
 #include "Util.h"
-#include <stdlib.h>
-#include <string.h>
 
 Portals populate(const char* const name)
 {
