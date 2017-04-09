@@ -15,6 +15,11 @@ float dec(const float x)
     return x - (int) x;
 }
 
+int rnd(const float x)
+{
+    return x + 0.5;
+}
+
 int lns(FILE* const file)
 {
     int ch, lines = 0, pc = '\n';

@@ -11,6 +11,7 @@ Gpu setup(const int res, const char* const name)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* const window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
+    if(window == NULL) puts("Why are you in the console? Start X11 or something...");
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
@@ -91,14 +92,14 @@ static Frame hang(const Point where, const Impact* const impact, const Dimension
 
 static void paste(const Gpu gpu, const Sprites sprites, const Impact* const impact, const Hero hero, const int res)
 {
-    for(int i = 0; i < sprites.count; i++)
+    for(int which = 0; which < sprites.count; which++)
     {
-        const Sprite sprite = sprites.sprite[i];
+        const Sprite sprite = sprites.sprite[which];
         // Move onto the next sprite if this sprite is behind the player
         if(sprite.where.x < 0)
             continue;
         // Move onto the next sprite if this sprite is behind the player
-        const int offset = (res / 2) * hero.fov.a.x * sprite.where.y / (float) sprite.where.x;
+        const int offset = (res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
         const int size = focal(hero.fov) * res / sprite.where.x;
         const int location = offset + res / 2;
         const struct { int min, max; } boundry = { -size / 2, res + size / 2 };
@@ -112,8 +113,10 @@ static void paste(const Gpu gpu, const Sprites sprites, const Impact* const impa
             continue;
         // Calculate the sprite source dimensions to fit the sprite frame
         SDL_Surface* const surface = gpu.surfaces.surface[sprite.ascii - ' '];
-        const float scale = (float) surface->w / size;
-        const SDL_Rect rect = { scale * frame.lb, 0, scale * frame.rect.w, surface->h };
+        const float scale = surface->w / (float) size;
+        const SDL_Rect rect = {
+            rnd(scale * frame.lb), 0, rnd(scale * frame.rect.w), surface->h
+        };
         // Paste to renderer
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);;
         SDL_RenderCopy(gpu.renderer, texture, &rect, &frame.rect);
@@ -138,7 +141,7 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
         const Point column = lerp(camera, y / (float) res);
         const Scanline scanline = { gpu, display, y, res };
         srend(scanline, hero.angle.percent);
-        // Five upper walls are rendered for seamless indoor/outdoor transistions
+        // Five upper walls are rendered for seamless indoor/outdoor transitions
         const int uppers = 5;
         for(int hits = uppers; hits > 0; hits--)
         {
