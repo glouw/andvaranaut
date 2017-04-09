@@ -1,9 +1,6 @@
 #include "Sprites.h"
 #include "Point.h"
-#include "Line.h"
-#include "Hero.h"
 #include "Util.h"
-#include <stdlib.h>
 #include <string.h>
 
 void prints(const Sprites sprites)
@@ -95,46 +92,4 @@ Sprites update(const Sprites sprites, const Hero hero)
     turn(copied, hero);
     sort(copied);
     return copied;
-}
-
-void paste(const Sprites sprites, const Gpu gpu, Impact* const impacts, const Hero hero, const int res)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        const Sprite sprite = sprites.sprite[i];
-        SDL_Surface* const surface = gpu.surfaces.surface[sprite.ascii - ' '];
-        const int size = focal(hero.fov) * res / sprite.where.x;
-        const int offset = (res / 2) * hero.fov.a.x * sprite.where.y / (float) sprite.where.x;
-        // Wrap me up
-        SDL_Rect dst;
-        dst.y = (res - size) / 2;
-        dst.h = size;
-        int lb = 0;
-        int rb = size;
-        while(lb < rb)
-        {
-            dst.x = (res - size) / 2 + lb + offset;
-            dst.w = rb - lb;
-            if(sprite.where.x < impacts[dst.x].traceline.corrected.x)
-                break;
-            lb = lb + 1;
-        }
-        while(rb > lb)
-        {
-            dst.w = rb - lb;
-            if(sprite.where.x < impacts[dst.x + dst.w].traceline.corrected.x)
-                break;
-            rb = rb - 1;
-        }
-        const float scale = (float) surface->w / size;
-        const SDL_Rect src = {
-            /* x */ scale * lb,
-            /* y */ 0,
-            /* w */ scale * dst.w,
-            /* h */ surface->h
-        };
-        SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
-        SDL_RenderCopy(gpu.renderer, texture, &src, &dst);
-        SDL_DestroyTexture(texture);
-    }
 }

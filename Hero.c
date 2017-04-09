@@ -140,7 +140,7 @@ void render(const Hero hero, const Sprites sprites, const Map map, const int res
     }
     unlock(gpu);
     churn(gpu);
-    paste(sprites, gpu, impacts, hero, res);
+    paste(gpu, sprites, impacts, hero, res);
     present(gpu);
     free(impacts);
     free(party);
