@@ -25,7 +25,8 @@ Sprites wake(const char* const name)
         char* const location = strtok(line, " ");
         sscanf(location, "%f,%f", &where.x, &where.y);
         sprite[i].where = where;
-        char* const ascii = strtok(NULL, " "); // No comments allowed after
+        // No comments allowed at end of line
+        char* const ascii = strtok(NULL, " ");
         sprite[i].ascii = ascii[0];
         free(line);
     }
