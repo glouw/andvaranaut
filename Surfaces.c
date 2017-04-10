@@ -34,6 +34,6 @@ Surfaces pull(const char* const path, const uint32_t format)
         surface[i] = load(trim, format);
     }
     fclose(file);
-    const Surfaces surfaces = { surface, lines };
+    const Surfaces surfaces = { lines, surface };
     return surfaces;
 }

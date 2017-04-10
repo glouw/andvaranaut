@@ -14,8 +14,8 @@ Map;
 
 typedef struct
 {
-    SDL_Surface** surface;
     int count;
+    SDL_Surface** surface;
 }
 Surfaces;
 
