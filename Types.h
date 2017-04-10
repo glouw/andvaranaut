@@ -117,6 +117,7 @@ Impact;
 
 typedef struct
 {
+    const int res;
     Surfaces surfaces;
     SDL_Window* window;
     SDL_Renderer* renderer;
@@ -136,6 +137,5 @@ typedef struct
     Gpu gpu;
     Display display;
     int y;
-    int res;
 }
 Scanline;

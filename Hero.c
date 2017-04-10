@@ -1,4 +1,5 @@
 #include "Hero.h"
+#include "Portals.h"
 #include "Point.h"
 #include "Hit.h"
 #include "Wall.h"
@@ -73,15 +74,12 @@ int handle(const Hero hero, char** const walling)
 {
     const Hit hit = shoot(hero, walling);
     const int ch = hit.tile + ' ';
-    const int near = mag(sub(hero.where, hit.where)) < 1.0;
-    const int stepable = ch >= 'a' && ch <= 'z';
-    return near && stepable ? ch : 0;
+    const int nearby = mag(sub(hero.where, hit.where)) < 1.0;
+    return nearby && isportal(ch) ? ch : 0;
 }
 
 static Hit plow(const Hero hero, char** const block, const Point column, const int hits)
 {
-    if(hits == 1)
-        return cast(hero.where, column, block);
     Hit hit;
     Point where = hero.where;
     for(int count = 0; count < hits; count++)

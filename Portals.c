@@ -29,3 +29,8 @@ void destroy(const Portals portals)
         free(portals.portal[i].name);
     free(portals.portal);
 }
+
+bool isportal(const int ascii)
+{
+    return ascii >= 'a' && ascii <= 'z';
+}

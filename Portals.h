@@ -4,3 +4,4 @@
 
 Portals populate(const char* const name);
 void destroy(const Portals portals);
+bool isportal(const int ascii);

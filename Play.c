@@ -30,8 +30,8 @@ void play(const char* argv[])
             sprites = swap(sprites, portal.name);
         }
         const Sprites updated = update(sprites, hero);
-        render(gpu, hero, updated, map, res);
-        free(updated.sprite);
+        render(gpu, hero, updated, map);
+        sleep(updated);
     }
     close(map);
     sleep(sprites);
