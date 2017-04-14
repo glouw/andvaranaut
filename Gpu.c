@@ -96,19 +96,21 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
     const Line camera = rotate(hero.fov, hero.angle.theta);
     const Display display = lock(gpu);
     // Precomputes floor and ceiling casts
-    float* const party = (float*) calloc(gpu.res, sizeof(*party));
-    for(int x = 0; x < gpu.res; x++)
-        party[x] = x < gpu.res / 2 ? fcast(hero.fov, gpu.res, x) : ccast(hero.fov, gpu.res, x);
+    float* const party = (float*) malloc(gpu.res * sizeof(*party));
+    const int m = gpu.res / 2, l = gpu.res;
+    for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, gpu.res, x);
+    for(int x = m; x < l; x++) party[x] = ccast(hero.fov, gpu.res, x);
     // Saves corrected ray casts for sprite renderer
-    Point* const corrects = (Point*) calloc(gpu.res, sizeof(*corrects));
+    Point* const corrects = (Point*) malloc(gpu.res * sizeof(*corrects));
+    Point* const wheres = (Point*) malloc(gpu.res * sizeof(*wheres));
     for(int y = 0; y < gpu.res; y++)
     {
         const Point column = lerp(camera, y / (float) gpu.res);
         const Scanline scanline = { gpu, display, y };
         srend(scanline, hero.angle.percent);
-        // Five upper walls are rendered for seamless indoor/outdoor transitions
-        const int uppers = 5;
-        for(int hits = uppers; hits > 0; hits--)
+        // Several upper walls are rendered for seamless indoor/outdoor transitions.
+        // Maps are required to have the outer most wall thickness _as many_ chars wide
+        for(int hits = 5; hits > 0; hits--)
         {
             const Impact upper = march(hero, map.ceiling, column, gpu.res, hits);
             wrend(scanline, raise(upper.wall, gpu.res), upper.hit);
@@ -116,15 +118,14 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
         const Impact lower = march(hero, map.walling, column, gpu.res, 1);
         corrects[y] = lower.traceline.corrected;
         wrend(scanline, lower.wall, lower.hit);
-        // Saves computations from floorcasting for ceiling casting
-        Point* const wheres = frend(scanline, lower.wall, lower.traceline, map.floring, party);
+        frend(scanline, lower.wall, wheres, lower.traceline, map.floring, party);
         crend(scanline, lower.wall, wheres, map.ceiling);
-        free(wheres);
     }
     unlock(gpu);
     churn(gpu);
     paste(gpu, sprites, corrects, hero);
     present(gpu);
+    free(wheres);
     free(corrects);
     free(party);
     const int t1 = SDL_GetTicks();

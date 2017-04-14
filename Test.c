@@ -62,8 +62,16 @@ static void _Sprites()
     sleep(sprites);
 }
 
+void _Arrow()
+{
+    int i = 6;
+    while(i --> 1)
+        printf("%d\n", i);
+}
+
 void test()
 {
+    _Arrow();
     _Util();
     _Sprites();
 }

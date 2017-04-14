@@ -15,9 +15,8 @@ void wrend(const Scanline scanline, const Wall wall, const Hit hit)
     }
 }
 
-Point* frend(const Scanline scanline, const Wall wall, const Traceline traceline, char** const floring, float* party)
+void frend(const Scanline scanline, const Wall wall, Point* const wheres, const Traceline traceline, char** const floring, float* party)
 {
-    Point* const wheres = (Point*) calloc(scanline.gpu.res, sizeof(*wheres));
     for(int x = 0; x < wall.clamped.bot; x++)
     {
         const Point where = wheres[scanline.gpu.res - 1 - x] = lerp(traceline.trace, party[x] / traceline.corrected.x);
@@ -27,10 +26,9 @@ Point* frend(const Scanline scanline, const Wall wall, const Traceline traceline
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
     }
-    return wheres;
 }
 
-void crend(const Scanline scanline, const Wall wall, const Point* const wheres, char** const ceiling)
+void crend(const Scanline scanline, const Wall wall, Point* const wheres, char** const ceiling)
 {
     for(int x = wall.clamped.top; x < scanline.gpu.res; x++)
     {
