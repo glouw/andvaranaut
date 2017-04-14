@@ -54,7 +54,7 @@ static void paste(const Gpu gpu, const Sprites sprites, const Point* const corre
         // Calculate sprite size
         const float size = focal(hero.fov) * gpu.res / sprite.where.x;
         const float corner = (gpu.res - size) / 2.0;
-        const float slide = (gpu.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
+        const int slide = (gpu.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
         const SDL_Rect frame = { fl(corner) + slide, fl(corner), cl(size), cl(size) };
         // Trim from the left
         SDL_Rect scope = frame;
