@@ -7,7 +7,7 @@
 
 Hero spawn(const char* const name)
 {
-    char* const path = strcon("config/", name);
+    char* const path = concat("config/", name);
     FILE* const fp = fopen(path, "r");
     Point where = { 0.0, 0.0 };
     char* line = readln(fp);

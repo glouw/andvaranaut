@@ -11,12 +11,11 @@ Gpu setup(const int res, const char* const name)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* const window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
-    if(window == NULL)
-        puts("Why are you in the console? Start X11 or something...");
+    if(window == NULL) puts("Why are you in the console? Start X11 or something...");
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
-    char* const path = strcon("config/", name);
+    char* const path = concat("config/", name);
     const Surfaces surfaces = pull(path, format);
     const Gpu gpu = { res, surfaces, window, renderer, texture };
     free(path);
@@ -44,84 +43,49 @@ void present(const Gpu gpu)
     SDL_RenderPresent(gpu.renderer);
 }
 
-typedef struct
-{
-    int lb;
-    int rb;
-    SDL_Rect rect;
-}
-Frame;
-
-typedef struct
-{
-    int offset;
-    int res;
-    int size;
-}
-Dimensions;
-
-static Frame hang(const Point where, const Point* const corrects, const Dimensions dim)
-{
-    SDL_Rect rect = { 0, (dim.res - dim.size) / 2, 0, dim.size };
-    // Trim destination sprite from the left
-    int lb = 0;
-    int rb = dim.size;
-    for(; lb < rb; lb++)
-    {
-        rect.x = (dim.res - dim.size) / 2 + lb + dim.offset;
-        rect.w = rb - lb;
-        const int index = rect.x;
-        if(index < 0 || index > dim.res)
-            break;
-        // Stop trimming of the sprite is seen
-        if(where.x < corrects[index].x)
-            break;
-    }
-    // Trim destination sprite from the right
-    for(; rb > lb; rb--)
-    {
-        rect.w = rb - lb;
-        const int index = rect.x + rect.w;
-        if(index < 0 || index > dim.res)
-            break;
-        // Stop trimming of the sprite is seen
-        if(where.x < corrects[index].x)
-            break;
-    }
-    const Frame frame = { lb, rb, rect };
-    return frame;
-}
-
 static void paste(const Gpu gpu, const Sprites sprites, const Point* const corrects, const Hero hero)
 {
     for(int which = 0; which < sprites.count; which++)
     {
         const Sprite sprite = sprites.sprite[which];
-        // Move onto the next sprite if this sprite is behind the player
-        if(sprite.where.x < 0)
-            continue;
-        // Move onto the next sprite if this sprite is behind the player
-        const int offset = (gpu.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
-        const int size = focal(hero.fov) * gpu.res / sprite.where.x;
-        const int location = offset + gpu.res / 2;
-        const struct { int min, max; } boundry = { -size / 2, gpu.res + size / 2 };
-        if(location < boundry.min || location > boundry.max)
-            continue;
-        // Calculate the sprite perimeter frame for the screen
-        const Dimensions dimensions = { offset, gpu.res, size };
-        const Frame frame = hang(sprite.where, corrects, dimensions);
-        // Move onto the next sprite if this sprite is not seen
-        if(frame.rb <= frame.lb)
-            continue;
-        // Calculate the sprite source dimensions to fit the sprite frame
+        // Move onto next sprite if this sprite is behind player
+        if(sprite.where.x < 0) continue;
+        // Calculate sprite size
+        const float size = focal(hero.fov) * gpu.res / sprite.where.x;
+        const float corner = (gpu.res - size) / 2.0;
+        const float slide = (gpu.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
+        const SDL_Rect frame = { fl(corner) + slide, fl(corner), cl(size), cl(size) };
+        // Trim from the left
+        SDL_Rect scope = frame;
+        for(; scope.x < scope.x + scope.w; scope.x++, scope.w--)
+        {
+            const int index = scope.x;
+            if(index < 0 || index >= gpu.res) break;
+            // Stop trimming if the sprite is seen
+            if(sprite.where.x < corrects[index].x) break;
+        }
+        // Trim from the right
+        for(; scope.x > scope.x - scope.w; scope.w--)
+        {
+            const int index = scope.x + scope.w;
+            if(index < 0 || index >= gpu.res) break;
+            // Stop trimming if the sprite is seen
+            if(sprite.where.x < corrects[index].x) break;
+        }
+        // Move onto next sprite if this sprite is totally behind a wall
+        if(scope.w <= 0) continue;
+        // Move onto the next sprite if this sprite is off screen
+        if(scope.x > gpu.res || scope.x + scope.w < 0) continue;
+        // Trim source sprite
+        const float dx = (scope.x - frame.x) / (float) frame.w;
+        const float dw = (frame.w - scope.w) / (float) frame.w;
         SDL_Surface* const surface = gpu.surfaces.surface[sprite.ascii - ' '];
-        const float scale = surface->w / (float) size;
-        const SDL_Rect rect = {
-            rnd(scale * frame.lb), 0, rnd(scale * frame.rect.w), surface->h
-        };
-        // Paste to renderer
-        SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);;
-        SDL_RenderCopy(gpu.renderer, texture, &rect, &frame.rect);
+        const int x = dx == 0.0 ? 0.0 : rnd(dx * surface->w);
+        const int w = rnd(surface->w * (1.0 - dw));
+        const SDL_Rect image = { x, 0, w, surface->h };
+        // Get sprite on screen
+        SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
+        SDL_RenderCopy(gpu.renderer, texture, &image, &scope);
         SDL_DestroyTexture(texture);
     }
 }

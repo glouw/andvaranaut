@@ -57,7 +57,7 @@ void srend(const Scanline scanline, const float percent)
     const SDL_Surface* const surface = scanline.gpu.surfaces.surface['~' - ' '];
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     const int mid = scanline.gpu.res / 2;
-    const float ratio = (float) (surface->w - 1) / (float) mid;
+    const float ratio = (surface->w - 1) / (float) mid;
     const int offset = surface->h * percent;
     const int corrected = ratio * scanline.y;
     const int row = (corrected + offset) % surface->h;

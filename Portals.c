@@ -3,7 +3,7 @@
 
 Portals populate(const char* const name)
 {
-    char* const path = strcon("config/", name);
+    char* const path = concat("config/", name);
     FILE* const file = fopen(path, "r");
     const int count = lns(file);
     Portal* const portal = (Portal*) calloc(count, sizeof(*portal));
@@ -14,7 +14,7 @@ Portals populate(const char* const name)
         char* const location = strtok(line, " ");
         sscanf(location, "%f,%f", &where.x, &where.y);
         portal[i].where = where;
-        portal[i].name = strnew(strtok(NULL, " #"));
+        portal[i].name = string(strtok(NULL, " #"));
         free(line);
     }
     free(path);

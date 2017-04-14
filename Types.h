@@ -14,7 +14,7 @@ Map;
 
 typedef struct
 {
-    int count;
+    const int count;
     SDL_Surface** surface;
 }
 Surfaces;
@@ -49,7 +49,7 @@ Portal;
 
 typedef struct
 {
-    int count;
+    const int count;
     Portal* portal;
 }
 Portals;

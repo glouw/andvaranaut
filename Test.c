@@ -5,16 +5,16 @@
 // ----------------------------------------------------------------------------
 // Util
 // ----------------------------------------------------------------------------
-static void _strnew()
+static void _string()
 {
-    char* const str = strnew("testing a new string ok");
+    char* const str = string("testing a new string ok");
     puts(str);
     free(str);
 }
 
-static void _strcon()
+static void _concat()
 {
-    char* const str = strcon("hi there", ", my friend");
+    char* const str = concat("hi there", ", my friend");
     puts(str);
     free(str);
 }
@@ -35,8 +35,8 @@ static void _readln()
 static void _Util()
 {
     _readln();
-    _strcon();
-    _strnew();
+    _concat();
+    _string();
 }
 
 // ----------------------------------------------------------------------------

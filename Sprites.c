@@ -14,7 +14,7 @@ void prints(const Sprites sprites)
 
 Sprites wake(const char* const name)
 {
-    char* const path = strcon("sprites/", name);
+    char* const path = concat("sprites/", name);
     FILE* const file = fopen(path, "r");
     const int count = lns(file);
     Sprite* const sprite = (Sprite*) calloc(count, sizeof(*sprite));

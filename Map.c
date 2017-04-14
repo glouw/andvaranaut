@@ -11,8 +11,9 @@ static char** get(FILE* const file, const int rows)
 
 Map open(const char* const name)
 {
-    char* const path = strcon("maps/", name);
+    char* const path = concat("maps/", name);
     FILE* const file = fopen(path, "r");
+    // Three blocks per map: a ceiling block, a wall block, and a floor block
     const int rows = lns(file) / 3;
     char** const ceiling = get(file, rows);
     char** const walling = get(file, rows);
