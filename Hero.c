@@ -66,7 +66,7 @@ static Hit shoot(const Hero hero, char** const walling)
         const Point direction = trn(reference, hero.angle.theta);
         return cast(hero.where, direction, walling);
     }
-    const Hit hit = { 0, 0.0, zro() };
+    const Hit hit = { 0, 0, 0.0, zro() };
     return hit;
 }
 

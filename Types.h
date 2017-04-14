@@ -57,6 +57,7 @@ Portals;
 typedef struct
 {
     int tile;
+    int neighbor;
     float offset;
     Point where;
 }

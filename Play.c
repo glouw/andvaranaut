@@ -13,7 +13,7 @@ void play(const char* argv[])
     Hero hero = spawn("hero.cfg");
     const Portals portals = populate("portals.cfg");
     const Gpu gpu = setup(res, "surfaces.cfg");
-    #if 1
+    #if 0
     for(int i = 0; i < 60; i++)
     #else
     while(!done())

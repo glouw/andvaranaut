@@ -5,13 +5,16 @@
 
 void wrend(const Scanline scanline, const Wall wall, const Hit hit)
 {
-    const SDL_Surface* const surface = scanline.gpu.surfaces.surface[hit.tile];
-    const int row = (surface->h - 1) * hit.offset;
-    const uint32_t* const pixels = (uint32_t*) surface->pixels;
-    for(int x = wall.clamped.bot; x < wall.clamped.top; x++)
+    if(hit.tile && !hit.neighbor)
     {
-        const int col = (surface->w - 1) * (x - wall.bot) / (wall.top - wall.bot);
-        scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
+        const SDL_Surface* const surface = scanline.gpu.surfaces.surface[hit.tile];
+        const int row = (surface->h - 1) * hit.offset;
+        const uint32_t* const pixels = (uint32_t*) surface->pixels;
+        for(int x = wall.clamped.bot; x < wall.clamped.top; x++)
+        {
+            const int col = (surface->w - 1) * (x - wall.bot) / (wall.top - wall.bot);
+            scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
+        }
     }
 }
 
