@@ -80,9 +80,9 @@ static void paste(const Gpu gpu, const Sprites sprites, const Point* const corre
         const float dx = (scope.x - frame.x) / (float) frame.w;
         const float dw = (frame.w - scope.w) / (float) frame.w;
         SDL_Surface* const surface = gpu.surfaces.surface[sprite.ascii - ' '];
-        const int x = dx == 0.0 ? 0.0 : rnd(dx * surface->w);
-        const int w = rnd(surface->w * (1.0 - dw));
-        const SDL_Rect image = { x, 0, w, surface->h };
+        const float x = dx == 0.0 ? 0.0 : dx * surface->w;
+        const float w = surface->w * (1.0 - dw);
+        const SDL_Rect image = { fl(x), 0, cl(w), surface->h };
         // Get sprite on screen
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
         SDL_RenderCopy(gpu.renderer, texture, &image, &scope);
