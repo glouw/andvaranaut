@@ -90,14 +90,18 @@ static void paste(const Gpu gpu, const Sprites sprites, const Point* const corre
         const float dx = (scope.x - frame.x) / (float) frame.w;
         const float dw = (frame.w - scope.w) / (float) frame.w;
         SDL_Surface* const surface = gpu.surfaces.surface[sprite.ascii - ' '];
+        // Select state
+        const int states = 1;
+        const int height = surface->h / states;
+        const int state = height * sprite.state;
+        // Select framing
         const int frames = 2;
         const int width = surface->w / frames;
-        const int height = surface->h;
-        const int select = width * (gpu.ticks % frames);
+        const int framing = width * (gpu.ticks % frames);
+        // Get sprite on screen
         const float x = dx == 0.0 ? 0.0 : dx * width;
         const float w = width * (1.0 - dw);
-        const SDL_Rect image = { fl(x + select), 0, cl(w), height };
-        // Get sprite on screen
+        const SDL_Rect image = { fl(x) + framing, state, cl(w), height };
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
         SDL_RenderCopy(gpu.renderer, texture, &image, &scope);
         SDL_DestroyTexture(texture);

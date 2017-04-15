@@ -63,10 +63,17 @@ typedef struct
 }
 Hit;
 
+typedef enum
+{
+    IDLE,
+}
+State;
+
 typedef struct
 {
     Point where;
     int ascii;
+    State state;
 }
 Sprite;
 

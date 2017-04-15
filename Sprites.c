@@ -27,6 +27,7 @@ Sprites wake(const char* const name)
         sprite[i].where = where;
         char* const ascii = strtok(NULL, " ");
         sprite[i].ascii = ascii[0];
+        sprite[i].state = IDLE;
         free(line);
     }
     const Sprites sprites = { count, sprite };
