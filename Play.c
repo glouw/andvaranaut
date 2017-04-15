@@ -21,7 +21,6 @@ void play(const char* argv[])
     #endif
     {
         const unsigned long long ticks = renders / fps;
-        printf("%llu\n", ticks);
         hero = move(hero, map.walling);
         hero = spin(hero);
         const int ch = handle(hero, map.walling);

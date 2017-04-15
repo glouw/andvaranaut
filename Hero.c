@@ -9,12 +9,24 @@ Hero spawn(const char* const name)
 {
     char* const path = concat("config/", name);
     FILE* const fp = fopen(path, "r");
-    Point where = { 0.0, 0.0 };
     char* line = readln(fp);
-    sscanf(line, "%f,%f", &where.x, &where.y);
-    const Hero hero = {
-        { { 1.0, -1.0 }, { 1.0, 1.0 } }, where, { 0.0, 0.0 }, 0.12, 0.0150, { 0.0, 0.0 },
-    };
+    Hero hero;
+    sscanf(line,
+        "$%f,%f,%f,%f" // Field of view
+        "$%f,%f" // Where
+        "$%f,%f" // Velocity
+        "$%f" // Speed
+        "$%f" // Acceleratoin
+        "$%f" // Angle theta
+        "$%f" // Angle percent
+        ,
+        &hero.fov.a.x, &hero.fov.a.y, &hero.fov.b.x, &hero.fov.b.y,
+        &hero.where.x, &hero.where.y,
+        &hero.velocity.x, &hero.velocity.y,
+        &hero.speed,
+        &hero.acceleration,
+        &hero.angle.theta,
+        &hero.angle.percent);
     free(path);
     free(line);
     fclose(fp);
