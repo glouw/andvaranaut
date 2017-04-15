@@ -58,8 +58,8 @@ static void _Sprites()
     const Sprites temp = update(sprites, hero);
     prints(temp);
     // Cleanup
-    sleep(temp);
-    sleep(sprites);
+    kill(temp);
+    kill(sprites);
 }
 
 void _Arrow()
@@ -74,4 +74,5 @@ void test()
     _Arrow();
     _Util();
     _Sprites();
+    puts("You found my unit tests. Congrats!");
 }

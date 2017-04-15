@@ -8,17 +8,20 @@
 void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
+    const int fps = 60;
     Map map = open("start");
     Sprites sprites = wake("start");
     Hero hero = spawn("hero.cfg");
     const Portals portals = populate("portals.cfg");
-    const Gpu gpu = setup(res, "surfaces.cfg");
+    const Gpu gpu = setup(res, fps, "surfaces.cfg");
     #if 0
-    for(int i = 0; i < 60; i++)
+    for(unsigned long long renders = 0; renders < 60; renders++)
     #else
-    while(!done())
+    for(unsigned long long renders = 0; !done(); renders++)
     #endif
     {
+        const unsigned long long ticks = renders / fps;
+        printf("%llu\n", ticks);
         hero = move(hero, map.walling);
         hero = spin(hero);
         const int ch = handle(hero, map.walling);
@@ -31,10 +34,10 @@ void play(const char* argv[])
         }
         const Sprites updated = update(sprites, hero);
         render(gpu, hero, updated, map);
-        sleep(updated);
+        kill(updated);
     }
     close(map);
-    sleep(sprites);
+    kill(sprites);
     destroy(portals);
     release(gpu);
 }

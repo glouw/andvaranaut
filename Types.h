@@ -119,6 +119,7 @@ Impact;
 typedef struct
 {
     const int res;
+    const int fps;
     Surfaces surfaces;
     SDL_Window* window;
     SDL_Renderer* renderer;

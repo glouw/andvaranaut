@@ -7,18 +7,18 @@
 #include "Wall.h"
 #include "Util.h"
 
-Gpu setup(const int res, const char* const name)
+Gpu setup(const int res, const int fps, const char* const name)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* const window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
     if(window == NULL)
-        puts("Why are you in the console? Start X11 or something...");
+        puts("Could not open window");
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     char* const path = concat("config/", name);
     const Surfaces surfaces = pull(path, format);
-    const Gpu gpu = { res, surfaces, window, renderer, texture };
+    const Gpu gpu = { res, fps, surfaces, window, renderer, texture };
     free(path);
     return gpu;
 }
@@ -130,6 +130,6 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
     free(corrects);
     free(party);
     const int t1 = SDL_GetTicks();
-    const int ms = 15 - (t1 - t0);
+    const int ms = 1000.0 / gpu.fps - (t1 - t0);
     SDL_Delay(ms < 0 ? 0 : ms);
 }

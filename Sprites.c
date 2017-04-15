@@ -35,14 +35,14 @@ Sprites wake(const char* const name)
     return sprites;
 }
 
-void sleep(const Sprites sprites)
+void kill(const Sprites sprites)
 {
     free(sprites.sprite);
 }
 
 Sprites swap(const Sprites sprites, const char* const name)
 {
-    sleep(sprites);
+    kill(sprites);
     return wake(name);
 }
 
