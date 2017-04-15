@@ -39,7 +39,7 @@ Gpu tick(const Gpu gpu, const unsigned long long renders)
 {
     Gpu temp = gpu;
     temp.renders = renders;
-    temp.ticks = renders / gpu.fps;
+    temp.ticks = renders / (gpu.fps / 4);
     return temp;
 }
 
