@@ -13,14 +13,13 @@ void play(const char* argv[])
     Sprites sprites = wake("start");
     Hero hero = spawn("hero.cfg");
     const Portals portals = populate("portals.cfg");
-    const Gpu gpu = setup(res, fps, "surfaces.cfg");
-    #if 0
+    Gpu gpu = setup(res, fps, "surfaces.cfg");
+    #ifdef PROFILE
     for(unsigned long long renders = 0; renders < 60; renders++)
     #else
     for(unsigned long long renders = 0; !done(); renders++)
     #endif
     {
-        const unsigned long long ticks = renders / fps;
         hero = move(hero, map.walling);
         hero = spin(hero);
         const int ch = handle(hero, map.walling);
@@ -34,6 +33,7 @@ void play(const char* argv[])
         const Sprites updated = update(sprites, hero);
         render(gpu, hero, updated, map);
         kill(updated);
+        gpu = tick(gpu, renders);
     }
     close(map);
     kill(sprites);

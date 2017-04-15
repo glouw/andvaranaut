@@ -14,7 +14,7 @@ Map;
 
 typedef struct
 {
-    const int count;
+    int count;
     SDL_Surface** surface;
 }
 Surfaces;
@@ -49,7 +49,7 @@ Portal;
 
 typedef struct
 {
-    const int count;
+    int count;
     Portal* portal;
 }
 Portals;
@@ -118,12 +118,14 @@ Impact;
 
 typedef struct
 {
-    const int res;
-    const int fps;
+    int res;
+    int fps;
     Surfaces surfaces;
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
+    unsigned long long renders;
+    unsigned long long ticks;
 }
 Gpu;
 

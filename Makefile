@@ -15,8 +15,8 @@ DEPDIR := dep
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
-COMP = $(CC) $(TARGET_ARCH) $(CFLAGS) $(DEPFLAGS) -c
-LINK = $(CC) $(TARGET_ARCH) $(CFLAGS) $(OBJS) $(LDFLAGS) -o
+COMP = $(CC) $(AUX) $(TARGET_ARCH) $(CFLAGS) $(DEPFLAGS) -c
+LINK = $(CC) $(AUX) $(TARGET_ARCH) $(CFLAGS) $(OBJS) $(LDFLAGS) -o
 POST = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
 
 $(PROJ): $(OBJS)

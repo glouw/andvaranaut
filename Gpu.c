@@ -17,7 +17,9 @@ Gpu setup(const int res, const int fps, const char* const name)
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     char* const path = concat("config/", name);
     const Surfaces surfaces = pull(path, format);
-    const Gpu gpu = { res, fps, surfaces, window, renderer, texture };
+    const unsigned long long renders = 0ull;
+    const unsigned long long ticks = 0ull;
+    const Gpu gpu = { res, fps, surfaces, window, renderer, texture, renders, ticks };
     free(path);
     return gpu;
 }
@@ -31,6 +33,14 @@ void release(const Gpu gpu)
     for(int i = 0; i < gpu.surfaces.count; i++)
         SDL_FreeSurface(gpu.surfaces.surface[i]);
     free(gpu.surfaces.surface);
+}
+
+Gpu tick(const Gpu gpu, const unsigned long long renders)
+{
+    Gpu temp = gpu;
+    temp.renders = renders;
+    temp.ticks = renders / gpu.fps;
+    return temp;
 }
 
 void churn(const Gpu gpu)
@@ -80,9 +90,13 @@ static void paste(const Gpu gpu, const Sprites sprites, const Point* const corre
         const float dx = (scope.x - frame.x) / (float) frame.w;
         const float dw = (frame.w - scope.w) / (float) frame.w;
         SDL_Surface* const surface = gpu.surfaces.surface[sprite.ascii - ' '];
-        const float x = dx == 0.0 ? 0.0 : dx * surface->w;
-        const float w = surface->w * (1.0 - dw);
-        const SDL_Rect image = { fl(x), 0, cl(w), surface->h };
+        const int frames = 2;
+        const int width = surface->w / frames;
+        const int height = surface->h;
+        const int select = width * (gpu.ticks % frames);
+        const float x = dx == 0.0 ? 0.0 : dx * width;
+        const float w = width * (1.0 - dw);
+        const SDL_Rect image = { fl(x + select), 0, cl(w), height };
         // Get sprite on screen
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
         SDL_RenderCopy(gpu.renderer, texture, &image, &scope);
