@@ -131,13 +131,16 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
         for(int hits = 5; hits > 0; hits--)
         {
             const Impact upper = march(hero, map.ceiling, column, gpu.res, hits);
-            wrend(scanline, raise(upper.wall, gpu.res), upper.hit);
+            const Boundry boundry = { scanline, raise(upper.wall, gpu.res) };
+            wrend(boundry, upper.hit);
         }
         const Impact lower = march(hero, map.walling, column, gpu.res, 1);
+        const Boundry boundry = { scanline, lower.wall };
+        const Tracery tracery = { lower.traceline, party };
         corrects[y] = lower.traceline.corrected;
-        wrend(scanline, lower.wall, lower.hit);
-        frend(scanline, lower.wall, wheres, lower.traceline, map.floring, party);
-        crend(scanline, lower.wall, wheres, map.ceiling);
+        wrend(boundry, lower.hit);
+        frend(boundry, wheres, map.floring, tracery);
+        crend(boundry, wheres, map.ceiling);
     }
     unlock(gpu);
     churn(gpu);

@@ -117,6 +117,13 @@ Traceline;
 
 typedef struct
 {
+    const Traceline traceline;
+    const float* const party;
+}
+Tracery;
+
+typedef struct
+{
     Traceline traceline;
     Wall wall;
     Hit hit;
@@ -150,3 +157,10 @@ typedef struct
     int y;
 }
 Scanline;
+
+typedef struct
+{
+    Scanline scanline;
+    Wall wall;
+}
+Boundry;
