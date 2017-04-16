@@ -51,19 +51,10 @@ void crend(const Boundry boundry, Point* const wheres, char** const ceiling)
     }
 }
 
-// Probably make this sky renderer a very high ceiling renderer
-void srend(const Scanline scanline, const float percent)
+void srend(const Boundry boundry)
 {
-    const SDL_Surface* const surface = scanline.gpu.surfaces.surface['~' - ' '];
-    const uint32_t* const pixels = (uint32_t*) surface->pixels;
-    const int mid = scanline.gpu.res / 2;
-    const float ratio = (surface->w - 1) / (float) mid;
-    const int offset = surface->h * percent;
-    const int corrected = ratio * scanline.y;
-    const int row = (corrected + offset) % surface->h;
-    for(int x = mid; x < scanline.gpu.res; x++)
+    for(int x = boundry.wall.top; x < boundry.scanline.gpu.res; x++)
     {
-        const int col = ratio * (x - mid);
-        scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
+        boundry.scanline.display.pixels[x + boundry.scanline.y * boundry.scanline.display.width] = 0x0;
     }
 }

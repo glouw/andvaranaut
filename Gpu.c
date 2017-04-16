@@ -125,22 +125,25 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
     {
         const Point column = lerp(camera, y / (float) gpu.res);
         const Scanline scanline = { gpu, display, y };
-        srend(scanline, hero.angle.percent);
         // Several upper walls are rendered for seamless indoor/outdoor transitions.
         // Maps are required to have the outer most wall thickness _as many_ chars wide
-        for(int hits = 5; hits > 0; hits--)
+        const int uppers = 5;
+        for(int hits = uppers; hits > 0; hits--)
         {
             const Impact upper = march(hero, map.ceiling, column, gpu.res, hits);
             const Boundry boundry = { scanline, raise(upper.wall, gpu.res) };
+            if(hits == uppers)
+                srend(boundry);
             wrend(boundry, upper.hit);
         }
         const Impact lower = march(hero, map.walling, column, gpu.res, 1);
         const Boundry boundry = { scanline, lower.wall };
         const Tracery tracery = { lower.traceline, party };
-        corrects[y] = lower.traceline.corrected;
         wrend(boundry, lower.hit);
         frend(boundry, wheres, map.floring, tracery);
         crend(boundry, wheres, map.ceiling);
+        // Save lower wall hits for the sprite renderer
+        corrects[y] = lower.traceline.corrected;
     }
     unlock(gpu);
     churn(gpu);
