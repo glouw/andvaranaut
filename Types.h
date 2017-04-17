@@ -163,4 +163,4 @@ typedef struct
     Scanline scanline;
     Wall wall;
 }
-Boundry;
+Boundary;

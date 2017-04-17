@@ -1,6 +1,6 @@
 #include "Gpu.h"
 #include "Display.h"
-#include "Scanline.h"
+#include "Boundary.h"
 #include "Surfaces.h"
 #include "Line.h"
 #include "Hero.h"
@@ -127,21 +127,19 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
         const Scanline scanline = { gpu, display, y };
         // Several upper walls are rendered for seamless indoor/outdoor transitions.
         // Maps are required to have the outer most wall thickness _as many_ chars wide
-        const int uppers = 5;
-        for(int hits = uppers; hits > 0; hits--)
+        for(int uppers = 5, hits = uppers; hits > 0; hits--)
         {
             const Impact upper = march(hero, map.ceiling, column, gpu.res, hits);
-            const Boundry boundry = { scanline, raise(upper.wall, gpu.res) };
-            if(hits == uppers)
-                srend(boundry);
-            wrend(boundry, upper.hit);
+            const Boundary boundary = { scanline, raise(upper.wall, gpu.res) };
+            if(hits == uppers) srend(boundary, hero);
+            wrend(boundary, upper.hit);
         }
         const Impact lower = march(hero, map.walling, column, gpu.res, 1);
-        const Boundry boundry = { scanline, lower.wall };
+        const Boundary boundary = { scanline, lower.wall };
         const Tracery tracery = { lower.traceline, party };
-        wrend(boundry, lower.hit);
-        frend(boundry, wheres, map.floring, tracery);
-        crend(boundry, wheres, map.ceiling);
+        wrend(boundary, lower.hit);
+        frend(boundary, wheres, map.floring, tracery);
+        crend(boundary, wheres, map.ceiling);
         // Save lower wall hits for the sprite renderer
         corrects[y] = lower.traceline.corrected;
     }
