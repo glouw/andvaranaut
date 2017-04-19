@@ -53,7 +53,7 @@ void present(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
-static void paste(const Sdl sdl, const Sprites sprites, const Point* const corrects, const Hero hero)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, Point* const uppers, const Hero hero)
 {
     for(int which = 0; which < sprites.count; which++)
     {
@@ -64,23 +64,23 @@ static void paste(const Sdl sdl, const Sprites sprites, const Point* const corre
         const float size = focal(hero.fov) * sdl.res / sprite.where.x;
         const float corner = (sdl.res - size) / 2.0;
         const int slide = (sdl.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
-        const SDL_Rect frame = { fl(corner) + slide, fl(corner), cl(size), cl(size) };
+        const SDL_Rect frame = { fl(corner) + slide, corner, size, size };
         // Trim from the left
         SDL_Rect scope = frame;
         for(; scope.x < scope.x + scope.w; scope.x++, scope.w--)
         {
             const int index = scope.x;
-            if(index < 0 || index >= sdl.res) break;
+            if(index < 0 || index >= sdl.res) continue;
             // Stop trimming if the sprite is seen
-            if(sprite.where.x < corrects[index].x) break;
+            if(sprite.where.x < lowers[index].x) break;
         }
         // Trim from the right
         for(; scope.x > scope.x - scope.w; scope.w--)
         {
             const int index = scope.x + scope.w;
-            if(index < 0 || index >= sdl.res) break;
-            // Stop trimming if the sprite is seen
-            if(sprite.where.x < corrects[index].x) break;
+            if(index < 0 || index >= sdl.res) continue;
+            // Stop trimming if the sprite is seen - Increment scope to avoid occasional clippings
+            if(sprite.where.x < lowers[index].x) { scope.w++; break; }
         }
         // Move onto next sprite if this sprite is totally behind a wall
         if(scope.w <= 0) continue;
@@ -101,7 +101,7 @@ static void paste(const Sdl sdl, const Sprites sprites, const Point* const corre
         // Get sprite on screen
         const float x = dx == 0.0 ? 0.0 : dx * width;
         const float w = width * (1.0 - dw);
-        const SDL_Rect image = { fl(x) + framing, state, cl(w), height };
+        const SDL_Rect image = { fl(x) + framing, state, w, height };
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
         SDL_RenderCopy(sdl.renderer, texture, &image, &scope);
         SDL_DestroyTexture(texture);
@@ -118,8 +118,9 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     const int m = sdl.res / 2, l = sdl.res;
     for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, sdl.res, x);
     for(int x = m; x < l; x++) party[x] = ccast(hero.fov, sdl.res, x);
-    // Saves corrected ray casts for sprite renderer
-    Point* const corrects = (Point*) malloc(sdl.res * sizeof(*corrects));
+    // Saves lower ray casts for sprite renderer
+    Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
+    Point* const uppers = (Point*) malloc(sdl.res * sizeof(*uppers));
     Point* const wheres = (Point*) malloc(sdl.res * sizeof(*wheres));
     for(int y = 0; y < sdl.res; y++)
     {
@@ -127,11 +128,12 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         const Scanline scanline = { sdl, display, y };
         // Several upper walls are rendered for seamless indoor/outdoor transitions.
         // Maps are required to have the outer most wall thickness _as many_ chars wide
-        for(int uppers = 5, hits = uppers; hits > 0; hits--)
+        for(int max = 5, min = 1, hits = max; hits >= min; hits--)
         {
             const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
-            if(hits == uppers) srend(boundary, hero.angle.percent);
+            if(hits == max) srend(boundary, hero.angle.percent);
+            if(hits == min) uppers[y] = upper.traceline.corrected;
             wrend(boundary, upper.hit);
         }
         const Impact lower = march(hero, map.walling, column, sdl.res, 1);
@@ -140,16 +142,20 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         wrend(boundary, lower.hit);
         frend(boundary, wheres, map.floring, tracery);
         crend(boundary, wheres, map.ceiling);
-        // Save lower wall hits for the sprite renderer
-        corrects[y] = lower.traceline.corrected;
+        // Save lower and upper wall hits for the sprite renderer
+        lowers[y] = lower.traceline.corrected;
     }
+    // Update screen
     unlock(sdl);
     churn(sdl);
-    paste(sdl, sprites, corrects, hero);
+    paste(sdl, sprites, lowers, uppers, hero);
     present(sdl);
+    // Memory deallocation
     free(wheres);
-    free(corrects);
+    free(lowers);
+    free(uppers);
     free(party);
+    // 60 frames per second lock
     const int t1 = SDL_GetTicks();
     const int ms = 1000.0 / sdl.fps - (t1 - t0);
     SDL_Delay(ms < 0 ? 0 : ms);
