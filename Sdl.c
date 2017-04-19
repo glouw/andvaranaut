@@ -113,12 +113,12 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.angle.theta);
     const Display display = lock(sdl);
-    // Precomputes floor and ceiling casts
+    // Precomputations
     float* const party = (float*) malloc(sdl.res * sizeof(*party));
     const int m = sdl.res / 2, l = sdl.res;
     for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, sdl.res, x);
     for(int x = m; x < l; x++) party[x] = ccast(hero.fov, sdl.res, x);
-    // Saves lower ray casts for sprite renderer
+    // Preallocations
     Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
     Point* const uppers = (Point*) malloc(sdl.res * sizeof(*uppers));
     Point* const wheres = (Point*) malloc(sdl.res * sizeof(*wheres));
@@ -126,15 +126,15 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     {
         const Point column = lerp(camera, y / (float) sdl.res);
         const Scanline scanline = { sdl, display, y };
-        // Several upper walls are rendered for seamless indoor/outdoor transitions.
-        // Maps are required to have the outer most wall thickness _as many_ chars wide
+        // Samples several upper walls for seamless indoor/outdoor transitions
         for(int max = 5, min = 1, hits = max; hits >= min; hits--)
         {
             const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
             if(hits == max) srend(boundary, hero.angle.percent);
-            if(hits == min) uppers[y] = upper.traceline.corrected;
             wrend(boundary, upper.hit);
+            // Saves closest upper wall hit for the sprite renderer
+            if(hits == min) uppers[y] = upper.traceline.corrected;
         }
         const Impact lower = march(hero, map.walling, column, sdl.res, 1);
         const Boundary boundary = { scanline, lower.wall };
@@ -142,12 +142,13 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         wrend(boundary, lower.hit);
         frend(boundary, wheres, map.floring, tracery);
         crend(boundary, wheres, map.ceiling);
-        // Save lower and upper wall hits for the sprite renderer
+        // Saves lower wall hit for the sprite renderer
         lowers[y] = lower.traceline.corrected;
     }
-    // Update screen
+    // Buffer screen with wall/ceiling/flooring casts
     unlock(sdl);
     churn(sdl);
+    // Buffer sprites using lower and upper wall hits
     paste(sdl, sprites, lowers, uppers, hero);
     present(sdl);
     // Memory deallocation
