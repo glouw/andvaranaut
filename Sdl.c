@@ -58,47 +58,47 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, Poi
     for(int which = 0; which < sprites.count; which++)
     {
         const Sprite sprite = sprites.sprite[which];
-        // Move onto next sprite if this sprite is behind player
+        // Moves onto next sprite if this sprite is behind player
         if(sprite.where.x < 0) continue;
-        // Calculate sprite size
+        // Calculates sprite size
         const float size = focal(hero.fov) * sdl.res / sprite.where.x;
         const float corner = (sdl.res - size) / 2.0;
         const int slide = (sdl.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
         const SDL_Rect frame = { fl(corner) + slide, corner, size, size };
-        // Trim from the left
+        // Trims sprite from the left
         SDL_Rect scope = frame;
         for(; scope.x < scope.x + scope.w; scope.x++, scope.w--)
         {
             const int index = scope.x;
             if(index < 0 || index >= sdl.res) continue;
-            // Stop trimming if the sprite is seen
+            // Stops trimming if the sprite is seen
             if(sprite.where.x < lowers[index].x) break;
         }
-        // Trim from the right
+        // Trims sprite from the right
         for(; scope.x > scope.x - scope.w; scope.w--)
         {
             const int index = scope.x + scope.w;
             if(index < 0 || index >= sdl.res) continue;
-            // Stop trimming if the sprite is seen - Increment scope to avoid occasional clippings
+            // Stops trimming if the sprite is seen - Increments scope to avoid occasional clippings
             if(sprite.where.x < lowers[index].x) { scope.w++; break; }
         }
-        // Move onto next sprite if this sprite is totally behind a wall
+        // Moves onto next sprite if this sprite is totally behind a wall
         if(scope.w <= 0) continue;
-        // Move onto the next sprite if this sprite is off screen
+        // Moves onto the next sprite if this sprite is off screen
         if(scope.x > sdl.res || scope.x + scope.w < 0) continue;
-        // Trim source sprite
+        // Trims source sprite
         const float dx = (scope.x - frame.x) / (float) frame.w;
         const float dw = (frame.w - scope.w) / (float) frame.w;
         SDL_Surface* const surface = sdl.surfaces.surface[sprite.ascii - ' '];
-        // Select state
+        // Selects state
         const int states = 1;
         const int height = surface->h / states;
         const int state = height * sprite.state;
-        // Select framing
+        // Selects framing
         const int frames = 2;
         const int width = surface->w / frames;
         const int framing = width * (sdl.ticks % frames);
-        // Get sprite on screen
+        // Gets sprite on screen
         const float x = dx == 0.0 ? 0.0 : dx * width;
         const float w = width * (1.0 - dw);
         const SDL_Rect image = { fl(x) + framing, state, w, height };
@@ -145,18 +145,18 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         // Saves lower wall hit for the sprite renderer
         lowers[y] = lower.traceline.corrected;
     }
-    // Buffer screen with wall/ceiling/flooring casts
+    // Buffers screen with wall/ceiling/flooring casts
     unlock(sdl);
     churn(sdl);
-    // Buffer sprites using lower and upper wall hits
+    // Buffers sprites using lower and upper wall hits
     paste(sdl, sprites, lowers, uppers, hero);
     present(sdl);
-    // Memory deallocation
+    // Deallocations
     free(wheres);
     free(lowers);
     free(uppers);
     free(party);
-    // 60 frames per second lock
+    // Locks refresh to 60 frames per second
     const int t1 = SDL_GetTicks();
     const int ms = 1000.0 / sdl.fps - (t1 - t0);
     SDL_Delay(ms < 0 ? 0 : ms);
