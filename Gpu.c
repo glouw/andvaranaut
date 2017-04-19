@@ -131,7 +131,7 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
         {
             const Impact upper = march(hero, map.ceiling, column, gpu.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, gpu.res) };
-            if(hits == uppers) srend(boundary, hero);
+            if(hits == uppers) srend(boundary, hero.angle.percent);
             wrend(boundary, upper.hit);
         }
         const Impact lower = march(hero, map.walling, column, gpu.res, 1);
