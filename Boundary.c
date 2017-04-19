@@ -10,7 +10,7 @@ void wrend(const Boundary boundary, const Hit hit)
     if(hit.neighbor) return;
     // Note that lower walls will never have a neighboring block, making this wall renderer
     // useful for both upper and lower walls.
-    const SDL_Surface* const surface = boundary.scanline.gpu.surfaces.surface[hit.tile];
+    const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[hit.tile];
     const int row = (surface->h - 1) * hit.offset;
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     for(int x = boundary.wall.clamped.bot; x < boundary.wall.clamped.top; x++)
@@ -26,9 +26,9 @@ void frend(const Boundary boundary, Point* const wheres, char** const floring, c
 {
     for(int x = 0; x < boundary.wall.clamped.bot; x++)
     {
-        const Point where = wheres[boundary.scanline.gpu.res - 1 - x] =
+        const Point where = wheres[boundary.scanline.sdl.res - 1 - x] =
             lerp(tracery.traceline.trace, tracery.party[x] / tracery.traceline.corrected.x);
-        const SDL_Surface* const surface = boundary.scanline.gpu.surfaces.surface[tile(where, floring)];
+        const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[tile(where, floring)];
         const int row = (surface->h - 1) * dec(where.y);
         const int col = (surface->w - 1) * dec(where.x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
@@ -40,13 +40,13 @@ void frend(const Boundary boundary, Point* const wheres, char** const floring, c
 
 void crend(const Boundary boundary, Point* const wheres, char** const ceiling)
 {
-    for(int x = boundary.wall.clamped.top; x < boundary.scanline.gpu.res; x++)
+    for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
         // The ceiling must only be drawn if present.
         const Point where = wheres[x];
         if(tile(where, ceiling))
         {
-            const SDL_Surface* const surface = boundary.scanline.gpu.surfaces.surface[tile(where, ceiling)];
+            const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[tile(where, ceiling)];
             const int row = (surface->h - 1) * dec(where.y);
             const int col = (surface->w - 1) * dec(where.x);
             const uint32_t* const pixels = (uint32_t*) surface->pixels;
@@ -59,14 +59,14 @@ void crend(const Boundary boundary, Point* const wheres, char** const ceiling)
 
 void srend(const Boundary boundary, const float percent)
 {
-    const SDL_Surface* const surface = boundary.scanline.gpu.surfaces.surface['~' - ' '];
+    const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface['~' - ' '];
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
-    const int mid = boundary.scanline.gpu.res / 2;
+    const int mid = boundary.scanline.sdl.res / 2;
     const float ratio = (surface->w - 1) / (float) mid;
     const int offset = surface->h * percent;
     const int corrected = ratio * boundary.scanline.y;
     const int row = (corrected + offset) % surface->h;
-    for(int x = boundary.wall.clamped.top; x < boundary.scanline.gpu.res; x++)
+    for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
         const int col = ratio * (x - mid);
         const int y = boundary.scanline.y;

@@ -2,5 +2,5 @@
 
 #include "Types.h"
 
-Display lock(const Gpu gpu);
-void unlock(const Gpu gpu);
+Display lock(const Sdl sdl);
+void unlock(const Sdl sdl);

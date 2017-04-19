@@ -1,4 +1,4 @@
-#include "Gpu.h"
+#include "Sdl.h"
 #include "Display.h"
 #include "Boundary.h"
 #include "Surfaces.h"
@@ -7,7 +7,7 @@
 #include "Wall.h"
 #include "Util.h"
 
-Gpu setup(const int res, const int fps, const char* const name)
+Sdl setup(const int res, const int fps, const char* const name)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* const window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
@@ -19,41 +19,41 @@ Gpu setup(const int res, const int fps, const char* const name)
     const Surfaces surfaces = pull(path, format);
     const unsigned long long renders = 0ull;
     const unsigned long long ticks = 0ull;
-    const Gpu gpu = { res, fps, surfaces, window, renderer, texture, renders, ticks };
+    const Sdl sdl = { res, fps, surfaces, window, renderer, texture, renders, ticks };
     free(path);
-    return gpu;
+    return sdl;
 }
 
-void release(const Gpu gpu)
+void release(const Sdl sdl)
 {
-    SDL_DestroyTexture(gpu.texture);
+    SDL_DestroyTexture(sdl.texture);
     SDL_Quit();
-    SDL_DestroyWindow(gpu.window);
-    SDL_DestroyRenderer(gpu.renderer);
-    for(int i = 0; i < gpu.surfaces.count; i++)
-        SDL_FreeSurface(gpu.surfaces.surface[i]);
-    free(gpu.surfaces.surface);
+    SDL_DestroyWindow(sdl.window);
+    SDL_DestroyRenderer(sdl.renderer);
+    for(int i = 0; i < sdl.surfaces.count; i++)
+        SDL_FreeSurface(sdl.surfaces.surface[i]);
+    free(sdl.surfaces.surface);
 }
 
-Gpu tick(const Gpu gpu, const unsigned long long renders)
+Sdl tick(const Sdl sdl, const unsigned long long renders)
 {
-    Gpu temp = gpu;
+    Sdl temp = sdl;
     temp.renders = renders;
-    temp.ticks = renders / (gpu.fps / 4);
+    temp.ticks = renders / (sdl.fps / 4);
     return temp;
 }
 
-void churn(const Gpu gpu)
+void churn(const Sdl sdl)
 {
-    SDL_RenderCopyEx(gpu.renderer, gpu.texture, NULL, NULL, -90.0, NULL, (SDL_RendererFlip) 0);
+    SDL_RenderCopyEx(sdl.renderer, sdl.texture, NULL, NULL, -90.0, NULL, (SDL_RendererFlip) 0);
 }
 
-void present(const Gpu gpu)
+void present(const Sdl sdl)
 {
-    SDL_RenderPresent(gpu.renderer);
+    SDL_RenderPresent(sdl.renderer);
 }
 
-static void paste(const Gpu gpu, const Sprites sprites, const Point* const corrects, const Hero hero)
+static void paste(const Sdl sdl, const Sprites sprites, const Point* const corrects, const Hero hero)
 {
     for(int which = 0; which < sprites.count; which++)
     {
@@ -61,16 +61,16 @@ static void paste(const Gpu gpu, const Sprites sprites, const Point* const corre
         // Move onto next sprite if this sprite is behind player
         if(sprite.where.x < 0) continue;
         // Calculate sprite size
-        const float size = focal(hero.fov) * gpu.res / sprite.where.x;
-        const float corner = (gpu.res - size) / 2.0;
-        const int slide = (gpu.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
+        const float size = focal(hero.fov) * sdl.res / sprite.where.x;
+        const float corner = (sdl.res - size) / 2.0;
+        const int slide = (sdl.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
         const SDL_Rect frame = { fl(corner) + slide, fl(corner), cl(size), cl(size) };
         // Trim from the left
         SDL_Rect scope = frame;
         for(; scope.x < scope.x + scope.w; scope.x++, scope.w--)
         {
             const int index = scope.x;
-            if(index < 0 || index >= gpu.res) break;
+            if(index < 0 || index >= sdl.res) break;
             // Stop trimming if the sprite is seen
             if(sprite.where.x < corrects[index].x) break;
         }
@@ -78,18 +78,18 @@ static void paste(const Gpu gpu, const Sprites sprites, const Point* const corre
         for(; scope.x > scope.x - scope.w; scope.w--)
         {
             const int index = scope.x + scope.w;
-            if(index < 0 || index >= gpu.res) break;
+            if(index < 0 || index >= sdl.res) break;
             // Stop trimming if the sprite is seen
             if(sprite.where.x < corrects[index].x) break;
         }
         // Move onto next sprite if this sprite is totally behind a wall
         if(scope.w <= 0) continue;
         // Move onto the next sprite if this sprite is off screen
-        if(scope.x > gpu.res || scope.x + scope.w < 0) continue;
+        if(scope.x > sdl.res || scope.x + scope.w < 0) continue;
         // Trim source sprite
         const float dx = (scope.x - frame.x) / (float) frame.w;
         const float dw = (frame.w - scope.w) / (float) frame.w;
-        SDL_Surface* const surface = gpu.surfaces.surface[sprite.ascii - ' '];
+        SDL_Surface* const surface = sdl.surfaces.surface[sprite.ascii - ' '];
         // Select state
         const int states = 1;
         const int height = surface->h / states;
@@ -97,44 +97,44 @@ static void paste(const Gpu gpu, const Sprites sprites, const Point* const corre
         // Select framing
         const int frames = 2;
         const int width = surface->w / frames;
-        const int framing = width * (gpu.ticks % frames);
+        const int framing = width * (sdl.ticks % frames);
         // Get sprite on screen
         const float x = dx == 0.0 ? 0.0 : dx * width;
         const float w = width * (1.0 - dw);
         const SDL_Rect image = { fl(x) + framing, state, cl(w), height };
-        SDL_Texture* const texture = SDL_CreateTextureFromSurface(gpu.renderer, surface);
-        SDL_RenderCopy(gpu.renderer, texture, &image, &scope);
+        SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
+        SDL_RenderCopy(sdl.renderer, texture, &image, &scope);
         SDL_DestroyTexture(texture);
     }
 }
 
-void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map)
+void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
 {
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.angle.theta);
-    const Display display = lock(gpu);
+    const Display display = lock(sdl);
     // Precomputes floor and ceiling casts
-    float* const party = (float*) malloc(gpu.res * sizeof(*party));
-    const int m = gpu.res / 2, l = gpu.res;
-    for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, gpu.res, x);
-    for(int x = m; x < l; x++) party[x] = ccast(hero.fov, gpu.res, x);
+    float* const party = (float*) malloc(sdl.res * sizeof(*party));
+    const int m = sdl.res / 2, l = sdl.res;
+    for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, sdl.res, x);
+    for(int x = m; x < l; x++) party[x] = ccast(hero.fov, sdl.res, x);
     // Saves corrected ray casts for sprite renderer
-    Point* const corrects = (Point*) malloc(gpu.res * sizeof(*corrects));
-    Point* const wheres = (Point*) malloc(gpu.res * sizeof(*wheres));
-    for(int y = 0; y < gpu.res; y++)
+    Point* const corrects = (Point*) malloc(sdl.res * sizeof(*corrects));
+    Point* const wheres = (Point*) malloc(sdl.res * sizeof(*wheres));
+    for(int y = 0; y < sdl.res; y++)
     {
-        const Point column = lerp(camera, y / (float) gpu.res);
-        const Scanline scanline = { gpu, display, y };
+        const Point column = lerp(camera, y / (float) sdl.res);
+        const Scanline scanline = { sdl, display, y };
         // Several upper walls are rendered for seamless indoor/outdoor transitions.
         // Maps are required to have the outer most wall thickness _as many_ chars wide
         for(int uppers = 5, hits = uppers; hits > 0; hits--)
         {
-            const Impact upper = march(hero, map.ceiling, column, gpu.res, hits);
-            const Boundary boundary = { scanline, raise(upper.wall, gpu.res) };
+            const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
+            const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
             if(hits == uppers) srend(boundary, hero.angle.percent);
             wrend(boundary, upper.hit);
         }
-        const Impact lower = march(hero, map.walling, column, gpu.res, 1);
+        const Impact lower = march(hero, map.walling, column, sdl.res, 1);
         const Boundary boundary = { scanline, lower.wall };
         const Tracery tracery = { lower.traceline, party };
         wrend(boundary, lower.hit);
@@ -143,14 +143,14 @@ void render(const Gpu gpu, const Hero hero, const Sprites sprites, const Map map
         // Save lower wall hits for the sprite renderer
         corrects[y] = lower.traceline.corrected;
     }
-    unlock(gpu);
-    churn(gpu);
-    paste(gpu, sprites, corrects, hero);
-    present(gpu);
+    unlock(sdl);
+    churn(sdl);
+    paste(sdl, sprites, corrects, hero);
+    present(sdl);
     free(wheres);
     free(corrects);
     free(party);
     const int t1 = SDL_GetTicks();
-    const int ms = 1000.0 / gpu.fps - (t1 - t0);
+    const int ms = 1000.0 / sdl.fps - (t1 - t0);
     SDL_Delay(ms < 0 ? 0 : ms);
 }

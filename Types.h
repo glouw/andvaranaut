@@ -141,7 +141,7 @@ typedef struct
     unsigned long long renders;
     unsigned long long ticks;
 }
-Gpu;
+Sdl;
 
 typedef struct
 {
@@ -152,7 +152,7 @@ Display;
 
 typedef struct
 {
-    Gpu gpu;
+    Sdl sdl;
     Display display;
     int y;
 }

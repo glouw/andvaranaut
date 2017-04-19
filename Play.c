@@ -1,6 +1,6 @@
 #include "Hero.h"
 #include "Portals.h"
-#include "Gpu.h"
+#include "Sdl.h"
 #include "Map.h"
 #include "Sprites.h"
 #include "Util.h"
@@ -13,7 +13,7 @@ void play(const char* argv[])
     Sprites sprites = wake("start");
     Hero hero = spawn("hero.cfg");
     const Portals portals = populate("portals.cfg");
-    Gpu gpu = setup(res, fps, "surfaces.cfg");
+    Sdl sdl = setup(res, fps, "surfaces.cfg");
     #ifdef PROFILE
     for(unsigned long long renders = 0; renders < 60; renders++)
     #else
@@ -31,12 +31,12 @@ void play(const char* argv[])
             sprites = swap(sprites, portal.name);
         }
         const Sprites updated = update(sprites, hero);
-        render(gpu, hero, updated, map);
+        render(sdl, hero, updated, map);
         kill(updated);
-        gpu = tick(gpu, renders);
+        sdl = tick(sdl, renders);
     }
     close(map);
     kill(sprites);
     destroy(portals);
-    release(gpu);
+    release(sdl);
 }
