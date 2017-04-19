@@ -64,10 +64,10 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, Poi
         const float size = focal(hero.fov) * sdl.res / sprite.where.x;
         const float corner = (sdl.res - size) / 2.0;
         const int slide = (sdl.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
-        const SDL_Rect frame = { fl(corner) + slide, corner, size, size };
+        const SDL_Rect frame = { corner + slide, corner, size, size };
         // Trims sprite from the left
         SDL_Rect scope = frame;
-        for(; scope.x < scope.x + scope.w; scope.x++, scope.w--)
+        for(; scope.w > 0; scope.w--, scope.x++)
         {
             const int index = scope.x;
             if(index < 0 || index >= sdl.res) continue;
@@ -75,7 +75,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, Poi
             if(sprite.where.x < lowers[index].x) break;
         }
         // Trims sprite from the right
-        for(; scope.x > scope.x - scope.w; scope.w--)
+        for(; scope.w > 0; scope.w--)
         {
             const int index = scope.x + scope.w;
             if(index < 0 || index >= sdl.res) continue;
@@ -101,7 +101,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, Poi
         // Gets sprite on screen
         const float x = dx == 0.0 ? 0.0 : dx * width;
         const float w = width * (1.0 - dw);
-        const SDL_Rect image = { fl(x) + framing, state, w, height };
+        const SDL_Rect image = { x + framing, state, w, height };
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
         SDL_RenderCopy(sdl.renderer, texture, &image, &scope);
         SDL_DestroyTexture(texture);
