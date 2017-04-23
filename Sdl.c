@@ -61,8 +61,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         // Moves onto next sprite if this sprite is behind player
         if(sprite.where.x < 0) continue;
         // Calculates sprite size
-        const float size = focal(hero.fov) * sdl.res / sprite.where.x;
-        const float corner = (sdl.res - size) / 2.0;
+        const int size = focal(hero.fov) * sdl.res / sprite.where.x;
+        const int corner = (sdl.res - size) / 2;
         const int slide = (sdl.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
         const SDL_Rect frame = { corner + slide, corner, size, size };
         // Trims sprite from the left
@@ -80,7 +80,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
             const int index = scope.x + scope.w;
             if(index < 0 || index >= sdl.res) continue;
             // Stops trimming if the sprite is seen - Increments scope to avoid occasional clippings
-            if(sprite.where.x < lowers[index].x) { scope.w++; break; }
+            if(sprite.where.x < lowers[index].x) break;
         }
         // Moves onto next sprite if this sprite is totally behind a wall
         if(scope.w <= 0) continue;
@@ -91,16 +91,15 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         const float dw = (frame.w - scope.w) / (float) frame.w;
         SDL_Surface* const surface = sdl.surfaces.surface[sprite.ascii - ' '];
         // Selects state
-        const int states = 1;
-        const int height = surface->h / states;
+        const int height = surface->h / STATES;
         const int state = height * sprite.state;
         // Selects framing
         const int frames = 2;
         const int width = surface->w / frames;
         const int framing = width * (sdl.ticks % frames);
         // Gets sprite on screen
-        const float x = dx == 0.0 ? 0.0 : dx * width;
-        const float w = width * (1.0 - dw);
+        const int x = dx == 0 ? 0 : dx * width;
+        const int w = width * (1 - dw);
         const SDL_Rect image = { x + framing, state, w, height };
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
         SDL_RenderCopy(sdl.renderer, texture, &image, &scope);

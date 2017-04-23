@@ -66,6 +66,7 @@ Hit;
 typedef enum
 {
     IDLE,
+    STATES
 }
 State;
 
