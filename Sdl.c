@@ -124,7 +124,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         const Point column = lerp(camera, y / (float) sdl.res);
         const Scanline scanline = { sdl, display, y };
         // Samples several upper walls for seamless indoor/outdoor transitions
-        for(int max = 5, min = 1, hits = max; hits >= min; hits--)
+        for(int max = 5, hits = max; hits > 0; hits--)
         {
             const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
