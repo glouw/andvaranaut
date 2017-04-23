@@ -53,7 +53,7 @@ void present(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
-static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, Point* const uppers, const Hero hero)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, const Hero hero)
 {
     for(int which = 0; which < sprites.count; which++)
     {
@@ -120,7 +120,6 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     for(int x = m; x < l; x++) party[x] = ccast(hero.fov, sdl.res, x);
     // Preallocations
     Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
-    Point* const uppers = (Point*) malloc(sdl.res * sizeof(*uppers));
     Point* const wheres = (Point*) malloc(sdl.res * sizeof(*wheres));
     for(int y = 0; y < sdl.res; y++)
     {
@@ -133,8 +132,6 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
             if(hits == max) srend(boundary, hero.angle.percent);
             wrend(boundary, upper.hit);
-            // Saves closest upper wall hit for the sprite renderer
-            if(hits == min) uppers[y] = upper.traceline.corrected;
         }
         const Impact lower = march(hero, map.walling, column, sdl.res, 1);
         const Boundary boundary = { scanline, lower.wall };
@@ -149,12 +146,11 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     unlock(sdl);
     churn(sdl);
     // Buffers sprites using lower and upper wall hits
-    paste(sdl, sprites, lowers, uppers, hero);
+    paste(sdl, sprites, lowers, hero);
     present(sdl);
     // Deallocations
     free(wheres);
     free(lowers);
-    free(uppers);
     free(party);
     // Locks refresh to 60 frames per second
     const int t1 = SDL_GetTicks();
