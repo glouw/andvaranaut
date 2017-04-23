@@ -15,9 +15,9 @@ void play(const char* argv[])
     const Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
     #ifdef PROFILE
-    for(unsigned long long renders = 0; renders < 60; renders++)
+    for(int renders = 0; renders < 60; renders++)
     #else
-    for(unsigned long long renders = 0; !done(); renders++)
+    for(int renders = 0; !done(); renders++)
     #endif
     {
         hero = move(hero, map.walling);

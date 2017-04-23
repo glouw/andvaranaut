@@ -139,8 +139,8 @@ typedef struct
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
-    unsigned long long renders;
-    unsigned long long ticks;
+    int renders;
+    int ticks;
 }
 Sdl;
 

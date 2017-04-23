@@ -17,8 +17,8 @@ Sdl setup(const int res, const int fps, const char* const name)
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     char* const path = concat("config/", name);
     const Surfaces surfaces = pull(path, format);
-    const unsigned long long renders = 0ull;
-    const unsigned long long ticks = 0ull;
+    const int renders = 0;
+    const int ticks = 0;
     const Sdl sdl = { res, fps, surfaces, window, renderer, texture, renders, ticks };
     free(path);
     return sdl;
@@ -35,7 +35,7 @@ void release(const Sdl sdl)
     free(sdl.surfaces.surface);
 }
 
-Sdl tick(const Sdl sdl, const unsigned long long renders)
+Sdl tick(const Sdl sdl, const int renders)
 {
     Sdl temp = sdl;
     temp.renders = renders;
@@ -53,56 +53,55 @@ void present(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
+static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const lowers)
+{
+    SDL_Rect seen = frame;
+    // Clip from the left
+    for(; seen.w > 0; seen.w--, seen.x++)
+    {
+        const int x = seen.x;
+        if(x < 0 || x >= res) continue;
+        // Stop clipping if the sprite is seen
+        if(where.x < lowers[x].x) break;
+    }
+    // Clip from the right
+    for(; seen.w > 0; seen.w--)
+    {
+        const int x = seen.x + seen.w;
+        if(x < 0 || x >= res) continue;
+        // Stop clipping if the sprite is seen - Increments width to avoid blank vertical line
+        if(where.x < lowers[x].x) { seen.w++; break; }
+    }
+    return seen;
+}
+
 static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, const Hero hero)
 {
     for(int which = 0; which < sprites.count; which++)
     {
         const Sprite sprite = sprites.sprite[which];
-        // Moves onto next sprite if this sprite is behind player
+        // Moves onto the next sprite if this sprite is behind the player
         if(sprite.where.x < 0) continue;
         // Calculates sprite size
         const int size = focal(hero.fov) * sdl.res / sprite.where.x;
         const int corner = (sdl.res - size) / 2;
         const int slide = (sdl.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
         const SDL_Rect frame = { corner + slide, corner, size, size };
-        // Trims sprite from the left
-        SDL_Rect scope = frame;
-        for(; scope.w > 0; scope.w--, scope.x++)
-        {
-            const int index = scope.x;
-            if(index < 0 || index >= sdl.res) continue;
-            // Stops trimming if the sprite is seen
-            if(sprite.where.x < lowers[index].x) break;
-        }
-        // Trims sprite from the right
-        for(; scope.w > 0; scope.w--)
-        {
-            const int index = scope.x + scope.w;
-            if(index < 0 || index >= sdl.res) continue;
-            // Stops trimming if the sprite is seen - Increments scope to avoid occasional clippings
-            if(sprite.where.x < lowers[index].x) break;
-        }
-        // Moves onto next sprite if this sprite is totally behind a wall
-        if(scope.w <= 0) continue;
-        // Moves onto the next sprite if this sprite is off screen
-        if(scope.x > sdl.res || scope.x + scope.w < 0) continue;
-        // Trims source sprite
-        const float dx = (scope.x - frame.x) / (float) frame.w;
-        const float dw = (frame.w - scope.w) / (float) frame.w;
+        // Selects sprite
         SDL_Surface* const surface = sdl.surfaces.surface[sprite.ascii - ' '];
-        // Selects state
-        const int height = surface->h / STATES;
-        const int state = height * sprite.state;
-        // Selects framing
-        const int frames = 2;
-        const int width = surface->w / frames;
-        const int framing = width * (sdl.ticks % frames);
-        // Gets sprite on screen
-        const int x = dx == 0 ? 0 : dx * width;
-        const int w = width * (1 - dw);
-        const SDL_Rect image = { x + framing, state, w, height };
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
-        SDL_RenderCopy(sdl.renderer, texture, &image, &scope);
+        const int frames = 2;
+        const int w = surface->w / frames;
+        const int h = surface->h / STATES;
+        const SDL_Rect image = { w * (sdl.ticks % frames), h * sprite.state, w, h };
+        // GCC loves to optimize away this SDL_Rect for some reason
+        const volatile SDL_Rect seen = clip(frame, sprite.where, sdl.res, lowers);
+        // Moves onto the next sprite if this sprite totally behind a wall
+        if(seen.w <= 0) continue;
+        // Renders the sprite
+        SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
+        SDL_RenderCopy(sdl.renderer, texture, &image, &frame);
+        SDL_RenderSetClipRect(sdl.renderer, NULL);
         SDL_DestroyTexture(texture);
     }
 }

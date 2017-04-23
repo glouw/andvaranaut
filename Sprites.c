@@ -29,7 +29,7 @@ Sprites wake(const char* const name)
         sscanf(location, "%c,%d,%f,%f", &ascii, &state, &where.x, &where.y);
         sprite[i].where = where;
         sprite[i].ascii = ascii;
-        sprite[i].state = state;
+        sprite[i].state = (State) state;
         free(line);
     }
     const Sprites sprites = { count, sprite };
