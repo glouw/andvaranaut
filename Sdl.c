@@ -39,7 +39,7 @@ Sdl tick(const Sdl sdl, const int renders)
 {
     Sdl temp = sdl;
     temp.renders = renders;
-    temp.ticks = renders / (sdl.fps / 4);
+    temp.ticks = renders / (sdl.fps / 6);
     return temp;
 }
 
