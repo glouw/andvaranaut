@@ -65,6 +65,13 @@ Hit;
 
 typedef enum
 {
+    A, B,
+    FRAMES
+}
+Frame;
+
+typedef enum
+{
     IDLE,
     STATES
 }
@@ -105,6 +112,7 @@ typedef struct
         float percent;
     }
     angle;
+    float torch;
 }
 Hero;
 

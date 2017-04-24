@@ -15,10 +15,10 @@ Hero spawn(const char* const name)
         "$%f,%f,%f,%f" // Field of view
         "$%f,%f" // Where
         "$%f,%f" // Velocity
-        "$%f" // Speed
-        "$%f" // Acceleratoin
-        "$%f" // Angle theta
-        "$%f" // Angle percent
+        "$%f"    // Speed
+        "$%f"    // Acceleratoin
+        "$%f,%f" // Angle percent
+        "$%f"    // Torch
         ,
         &hero.fov.a.x, &hero.fov.a.y, &hero.fov.b.x, &hero.fov.b.y,
         &hero.where.x, &hero.where.y,
@@ -26,7 +26,8 @@ Hero spawn(const char* const name)
         &hero.speed,
         &hero.acceleration,
         &hero.angle.theta,
-        &hero.angle.percent);
+        &hero.angle.percent,
+        &hero.torch);
     free(path);
     free(line);
     fclose(fp);

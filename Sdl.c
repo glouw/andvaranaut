@@ -87,17 +87,22 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         const int corner = (sdl.res - size) / 2;
         const int slide = (sdl.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
         const SDL_Rect target = { corner + slide, corner, size, size };
+        // Moves onto the next sprite if this sprite is off screen
+        if(target.x + target.w < 0 || target.x >= sdl.res) continue;
         // Selects sprite
         SDL_Surface* const surface = sdl.surfaces.surface[sprite.ascii - ' '];
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
-        const int frames = 2;
-        const int w = surface->w / frames;
+        const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
-        const SDL_Rect image = { w * (sdl.ticks % frames), h * sprite.state, w, h };
+        const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * sprite.state, w, h };
         // GCC loves to optimize away this SDL_Rect for some reason
         const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, lowers);
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0) continue;
+        // Applies sprite lighting
+        const int mod = hero.torch / (sprite.where.x * sprite.where.x);
+        const int clamp = mod > 0xFF ? 0xFF : mod;
+        SDL_SetTextureColorMod(texture, clamp, clamp, clamp);
         // Renders the sprite
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
