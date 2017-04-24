@@ -133,7 +133,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         {
             const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
-            if(hits == max) srend(boundary, hero.angle.percent);
+            if(hits == max) srend(boundary, hero.angle.percent, sdl.ticks);
             wrend(boundary, upper.hit);
         }
         const Impact lower = march(hero, map.walling, column, sdl.res, 1);

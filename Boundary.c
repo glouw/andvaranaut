@@ -57,20 +57,22 @@ void crend(const Boundary boundary, Point* const wheres, char** const ceiling)
     }
 }
 
-void srend(const Boundary boundary, const float percent)
+void srend(const Boundary boundary, const float percent, const int ticks)
 {
     const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface['~' - ' '];
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     const int mid = boundary.scanline.sdl.res / 2;
-    const float ratio = (surface->w - 1) / (float) mid;
-    const int offset = surface->h * percent;
+    const int w = surface->w; // 512
+    const int h = surface->h; // 1024
+    const float ratio = (w / FRAMES) / (float) mid;
+    const int offset = h * percent;
     const int corrected = ratio * boundary.scanline.y;
-    const int row = (corrected + offset) % surface->h;
+    const int row = (corrected + offset) % h;
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
-        const int col = ratio * (x - mid);
+        const int col = ratio * (x - mid) + (ticks % FRAMES) * (w / FRAMES);
         const int y = boundary.scanline.y;
         const int width = boundary.scanline.display.width;
-        boundary.scanline.display.pixels[x + y * width] = pixels[col + row * surface->w];
+        boundary.scanline.display.pixels[x + y * width] = pixels[col + row * w];
     }
 }
