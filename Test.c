@@ -21,15 +21,6 @@ static void _concat()
 
 static void _readln()
 {
-    FILE* file = fopen("test/longline.test", "r");
-    const int lines = lns(file);
-    for(int i = 0; i < lines; i++)
-    {
-        char* const line = readln(file);
-        puts(line);
-        free(line);
-    }
-    fclose(file);
 }
 
 static void _Util()
