@@ -30,7 +30,6 @@ void play(const char* argv[])
     for(int renders = 0; !done(); renders++)
     #endif
     {
-        SDL_PumpEvents();
         hero = move(hero, map.walling);
         hero = spin(hero);
         hero = burn(hero);
