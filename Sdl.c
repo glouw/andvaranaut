@@ -135,7 +135,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         {
             const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
-            if(hits == max) srend(boundary, hero.angle.percent, sdl.ticks);
+            if(hits == max) srend(boundary);
             const int modding = illuminate(hero.torch, upper.traceline.corrected.x);
             wrend(boundary, upper.hit, modding);
         }
