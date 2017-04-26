@@ -1,69 +1,6 @@
 #include "Types.h"
-#include "Sprites.h"
-#include "Util.h"
-
-// ----------------------------------------------------------------------------
-// Util
-// ----------------------------------------------------------------------------
-static void _string()
-{
-    char* const str = string("testing a new string ok");
-    puts(str);
-    free(str);
-}
-
-static void _concat()
-{
-    char* const str = concat("hi there", ", my friend");
-    puts(str);
-    free(str);
-}
-
-static void _readln()
-{
-}
-
-static void _Util()
-{
-    _readln();
-    _concat();
-    _string();
-}
-
-// ----------------------------------------------------------------------------
-// Sprites
-// ----------------------------------------------------------------------------
-static void _Sprites()
-{
-    Sprites sprites = wake("outside");
-    prints(sprites);
-    // Swapped
-    sprites = swap(sprites, "start");
-    prints(sprites);
-    // Pasted surface sprites
-    Hero hero;
-    hero.where.x = 2.0;
-    hero.where.y = 3.0;
-    hero.angle.theta = 1.0 * acosf(-1.0) / 2.0; // PI / 2
-    hero.angle.percent = 0.25;
-    const Sprites temp = update(sprites, hero);
-    prints(temp);
-    // Cleanup
-    kill(temp);
-    kill(sprites);
-}
-
-void _Arrow()
-{
-    int i = 6;
-    while(i --> 1)
-        printf("%d\n", i);
-}
 
 void test()
 {
-    _Arrow();
-    _Util();
-    _Sprites();
     puts("You found my unit tests. Congrats!");
 }

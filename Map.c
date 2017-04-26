@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "Util.h"
+#include "String.h"
 
 static char** get(FILE* const file, const int rows)
 {

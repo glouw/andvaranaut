@@ -35,15 +35,6 @@ int lns(FILE* const file)
     return lines;
 }
 
-bool done()
-{
-    SDL_Event event;
-    SDL_PollEvent(&event);
-    return event.type == SDL_QUIT
-        || event.key.keysym.sym == SDLK_F1
-        || event.key.keysym.sym == SDLK_ESCAPE;
-}
-
 char* readln(FILE* const file)
 {
     int ch, reads = 0, size = 64;
@@ -58,17 +49,8 @@ char* readln(FILE* const file)
     return line;
 }
 
-char* string(const char* const str)
+int illuminate(const float torch, const float distance)
 {
-    char* copy = (char*) malloc(strlen(str) + 1);
-    strcpy(copy, str);
-    return copy;
-}
-
-char* concat(const char* const a, const char* const b)
-{
-    char* c = (char*) malloc(strlen(a) + strlen(b) + 1);
-    strcpy(c, a);
-    strcat(c, b);
-    return c;
+    const int mod = torch / (distance * distance);
+    return mod > 0xFF ? 0xFF : mod;
 }

@@ -5,6 +5,15 @@
 #include "Sprites.h"
 #include "Util.h"
 
+static bool done()
+{
+    SDL_Event event;
+    SDL_PollEvent(&event);
+    return event.type == SDL_QUIT
+        || event.key.keysym.sym == SDLK_F1
+        || event.key.keysym.sym == SDLK_ESCAPE;
+}
+
 void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);

@@ -1,5 +1,6 @@
 #include "Portals.h"
 #include "Util.h"
+#include "String.h"
 
 Portals populate(const char* const name)
 {
@@ -14,7 +15,7 @@ Portals populate(const char* const name)
         char* const location = strtok(line, " ");
         sscanf(location, "%f,%f", &where.x, &where.y);
         portal[i].where = where;
-        portal[i].name = string(strtok(NULL, " #"));
+        portal[i].name = build(strtok(NULL, " #"));
         free(line);
     }
     free(path);

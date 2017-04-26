@@ -6,6 +6,7 @@
 #include "Hero.h"
 #include "Wall.h"
 #include "Util.h"
+#include "String.h"
 
 Sdl setup(const int res, const int fps, const char* const name)
 {
@@ -100,9 +101,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0) continue;
         // Applies sprite lighting
-        const int mod = hero.torch / (sprite.where.x * sprite.where.x);
-        const int clamp = mod > 0xFF ? 0xFF : mod;
-        SDL_SetTextureColorMod(texture, clamp, clamp, clamp);
+        const int mod = illuminate(hero.torch, sprite.where.x);
+        SDL_SetTextureColorMod(texture, mod, mod, mod);
         // Renders the sprite
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);

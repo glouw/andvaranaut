@@ -4,6 +4,7 @@
 #include "Hit.h"
 #include "Wall.h"
 #include "Util.h"
+#include "String.h"
 
 Hero spawn(const char* const name)
 {
