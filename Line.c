@@ -17,6 +17,11 @@ float focal(const Line line)
     return line.a.x / (line.b.y - line.a.y);
 }
 
+float ratio(const Line line)
+{
+    return line.a.x / line.b.y;
+}
+
 float ccast(const Line fov, const int res, const int x)
 {
     return focal(fov) * res / (2 * x - (res - 1));

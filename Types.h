@@ -126,8 +126,9 @@ Traceline;
 
 typedef struct
 {
-    const Traceline traceline;
-    const float* const party;
+    Traceline traceline;
+    float* party;
+    float torch;
 }
 Tracery;
 

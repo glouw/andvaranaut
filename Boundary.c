@@ -3,13 +3,19 @@
 #include "Point.h"
 #include "Util.h"
 
-void wrend(const Boundary boundary, const Hit hit)
+// Software implementation of the SDL2 Texture Color Mod function - Discards alpha
+static uint32_t mod(const uint32_t pixel, const int r, const int g, const int b)
 {
-    // The ceiling wall renderer will cover up any rendered upper walls so there is no need
-    // to render the upper wall if a neighboring ceiling block is present.
+    const int rm = r / (float) 0xFF * (pixel >> 0x10 & 0xFF);
+    const int gm = g / (float) 0xFF * (pixel >> 0x08 & 0xFF);
+    const int bm = b / (float) 0xFF * (pixel >> 0x00 & 0xFF);
+    return rm << 0x10 | gm << 0x08 | bm << 0x00;
+}
+
+// Wall renderer
+void wrend(const Boundary boundary, const Hit hit, const int modding)
+{
     if(hit.neighbor) return;
-    // Note that lower walls will never have a neighboring block, making this wall renderer
-    // useful for both upper and lower walls.
     const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[hit.tile];
     const int row = (surface->h - 1) * hit.offset;
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
@@ -18,31 +24,35 @@ void wrend(const Boundary boundary, const Hit hit)
         const int col = (surface->w - 1) * (x - boundary.wall.bot) / (boundary.wall.top - boundary.wall.bot);
         const int y = boundary.scanline.y;
         const int width = boundary.scanline.display.width;
-        boundary.scanline.display.pixels[x + y * width] = pixels[col + row * surface->w];
+        const uint32_t pixel = pixels[col + row * surface->w];
+        boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
     }
 }
 
-void frend(const Boundary boundary, Point* const wheres, char** const floring, const Tracery tracery)
+// Floor renderer
+void frend(const Boundary boundary, Point* const wheres, char** const floring, int* const moddings, const Tracery tracery)
 {
     for(int x = 0; x < boundary.wall.clamped.bot; x++)
     {
-        const Point where = wheres[boundary.scanline.sdl.res - 1 - x] =
-            lerp(tracery.traceline.trace, tracery.party[x] / tracery.traceline.corrected.x);
+        const int log = boundary.scanline.sdl.res - 1 - x;
+        const Point where = wheres[log] = lerp(tracery.traceline.trace, tracery.party[x] / tracery.traceline.corrected.x);
         const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[tile(where, floring)];
         const int row = (surface->h - 1) * dec(where.y);
         const int col = (surface->w - 1) * dec(where.x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const int y = boundary.scanline.y;
         const int width = boundary.scanline.display.width;
-        boundary.scanline.display.pixels[x + y * width] = pixels[col + row * surface->w];
+        const uint32_t pixel = pixels[col + row * surface->w];
+        const int modding = moddings[log] = illuminate(tracery.torch, mag(sub(where, tracery.traceline.trace.a)));
+        boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
     }
 }
 
-void crend(const Boundary boundary, Point* const wheres, char** const ceiling)
+// Ceiling renderer
+void crend(const Boundary boundary, Point* const wheres, char** const ceiling, int* const moddings)
 {
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
-        // The ceiling must only be drawn if present.
         const Point where = wheres[x];
         if(tile(where, ceiling))
         {
@@ -52,18 +62,21 @@ void crend(const Boundary boundary, Point* const wheres, char** const ceiling)
             const uint32_t* const pixels = (uint32_t*) surface->pixels;
             const int y = boundary.scanline.y;
             const int width = boundary.scanline.display.width;
-            boundary.scanline.display.pixels[x + y * width] = pixels[col + row * surface->w];
+            const uint32_t pixel = pixels[col + row * surface->w];
+            const int modding = moddings[x];
+            boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
         }
     }
 }
 
+// Sky renderer
 void srend(const Boundary boundary, const float percent, const int ticks)
 {
     const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface['~' - ' '];
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     const int mid = boundary.scanline.sdl.res / 2;
-    const int w = surface->w; // 512
-    const int h = surface->h; // 1024
+    const int w = surface->w;
+    const int h = surface->h;
     const float ratio = (w / FRAMES) / (float) mid;
     const int offset = h * percent;
     const int corrected = ratio * boundary.scanline.y;

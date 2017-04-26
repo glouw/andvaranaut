@@ -5,6 +5,7 @@
 #include "Wall.h"
 #include "Util.h"
 #include "String.h"
+#include "Line.h"
 
 Hero spawn(const char* const name)
 {
@@ -38,7 +39,6 @@ Hero spawn(const char* const name)
 Hero spin(const Hero hero)
 {
     const uint8_t* key = SDL_GetKeyboardState(NULL);
-    SDL_PumpEvents();
     Hero temp = hero;
     if(key[SDL_SCANCODE_H]) temp.angle.theta -= 0.1;
     if(key[SDL_SCANCODE_L]) temp.angle.theta += 0.1;
@@ -51,7 +51,6 @@ Hero spin(const Hero hero)
 Hero move(const Hero hero, char** const walling)
 {
     const uint8_t* key = SDL_GetKeyboardState(NULL);
-    SDL_PumpEvents();
     Hero step = hero;
     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
     {
@@ -73,7 +72,6 @@ Hero move(const Hero hero, char** const walling)
 static Hit shoot(const Hero hero, char** const walling)
 {
     const uint8_t* key = SDL_GetKeyboardState(NULL);
-    SDL_PumpEvents();
     if(key[SDL_SCANCODE_E])
     {
         const Point reference = { 1.0, 0.0 };
@@ -121,4 +119,23 @@ Hero teleport(const Hero hero, const Portal portal)
     Hero temp = hero;
     temp.where = portal.where;
     return temp;
+}
+
+Hero burn(const Hero hero)
+{
+    const uint8_t* key = SDL_GetKeyboardState(NULL);
+    Hero temp = hero;
+    if(key[SDL_SCANCODE_K]) temp.torch += 5.0;
+    if(key[SDL_SCANCODE_J]) temp.torch -= 5.0;
+    temp.torch = temp.torch < 0.0 ? 0.0 : temp.torch;
+    return temp;
+}
+
+Hero zoom(const Hero hero)
+{
+    const uint8_t* key = SDL_GetKeyboardState(NULL);
+    Hero temp = hero;
+    if(key[SDL_SCANCODE_U]) temp.fov.a.y += 0.01, temp.fov.b.y -= 0.01;
+    if(key[SDL_SCANCODE_I]) temp.fov.a.y -= 0.01, temp.fov.b.y += 0.01;
+    return ratio(temp.fov) > 9.0 ? hero : temp;
 }

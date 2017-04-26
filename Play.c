@@ -24,13 +24,17 @@ void play(const char* argv[])
     const Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
     #ifdef PROFILE
+    (void) done;
     for(int renders = 0; renders < 60; renders++)
     #else
     for(int renders = 0; !done(); renders++)
     #endif
     {
+        SDL_PumpEvents();
         hero = move(hero, map.walling);
         hero = spin(hero);
+        hero = burn(hero);
+        hero = zoom(hero);
         const int ch = handle(hero, map.walling);
         if(ch)
         {

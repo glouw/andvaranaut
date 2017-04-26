@@ -86,7 +86,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         // Calculates sprite size
         const int size = focal(hero.fov) * sdl.res / sprite.where.x;
         const int corner = (sdl.res - size) / 2;
-        const int slide = (sdl.res / 2) * hero.fov.a.x * sprite.where.y / sprite.where.x;
+        const int slide = (sdl.res / 2) * ratio(hero.fov) * sprite.where.y / sprite.where.x;
+        printf("%f\n", ratio(hero.fov));
         const SDL_Rect target = { corner + slide, corner, size, size };
         // Moves onto the next sprite if this sprite is off screen
         if(target.x + target.w < 0 || target.x >= sdl.res) continue;
@@ -101,8 +102,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0) continue;
         // Applies sprite lighting
-        const int mod = illuminate(hero.torch, sprite.where.x);
-        SDL_SetTextureColorMod(texture, mod, mod, mod);
+        const int modding = illuminate(hero.torch, sprite.where.x);
+        SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Renders the sprite
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
@@ -124,6 +125,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     // Preallocations
     Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
     Point* const wheres = (Point*) malloc(sdl.res * sizeof(*wheres));
+    int* const moddings = (int*) malloc(sdl.res * sizeof(*moddings));
     for(int y = 0; y < sdl.res; y++)
     {
         const Point column = lerp(camera, y / (float) sdl.res);
@@ -134,14 +136,16 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
             const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
             if(hits == max) srend(boundary, hero.angle.percent, sdl.ticks);
-            wrend(boundary, upper.hit);
+            const int modding = illuminate(hero.torch, upper.traceline.corrected.x);
+            wrend(boundary, upper.hit, modding);
         }
         const Impact lower = march(hero, map.walling, column, sdl.res, 1);
         const Boundary boundary = { scanline, lower.wall };
-        const Tracery tracery = { lower.traceline, party };
-        wrend(boundary, lower.hit);
-        frend(boundary, wheres, map.floring, tracery);
-        crend(boundary, wheres, map.ceiling);
+        const Tracery tracery = { lower.traceline, party, hero.torch };
+        const int modding = illuminate(hero.torch, lower.traceline.corrected.x);
+        wrend(boundary, lower.hit, modding);
+        frend(boundary, wheres, map.floring, moddings, tracery);
+        crend(boundary, wheres, map.ceiling, moddings);
         // Saves lower wall hit for the sprite renderer
         lowers[y] = lower.traceline.corrected;
     }
@@ -155,6 +159,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     free(wheres);
     free(lowers);
     free(party);
+    free(moddings);
     // Locks refresh to 60 frames per second
     const int t1 = SDL_GetTicks();
     const int ms = 1000.0 / sdl.fps - (t1 - t0);
