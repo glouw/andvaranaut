@@ -2,9 +2,11 @@ Water:
     A dungeon crawl game and graphics engine
 
 Controls:
-    move: w,a,s,d
-    turn: h,l
-    open: e
+    move:  w,a,s,d
+    turn:  h,l
+    open:  e
+    fov:   u,i
+    light: j,k
 
 Execution:
     The first command line argument selects the resolution:
