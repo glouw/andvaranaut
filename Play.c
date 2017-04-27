@@ -20,7 +20,7 @@ void play(const char* argv[])
     const int fps = 60;
     Map map = open("start");
     Sprites sprites = wake("start");
-    Hero hero = spawn("hero.cfg");
+    Hero hero = spawn();
     const Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
     #ifdef PROFILE
@@ -32,8 +32,9 @@ void play(const char* argv[])
     {
         hero = move(hero, map.walling);
         hero = spin(hero);
-        hero = burn(hero);
         hero = zoom(hero);
+        hero = brighten(hero);
+        hero = burn(hero);
         const int ch = handle(hero, map.walling);
         if(ch)
         {

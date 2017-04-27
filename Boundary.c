@@ -74,8 +74,10 @@ void srend(const Boundary boundary)
 {
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
+        const float percentage = 1.0 - x / (float) boundary.scanline.sdl.res;
+        const int shade = 0xFF * percentage / 4;
         const int y = boundary.scanline.y;
         const int width = boundary.scanline.display.width;
-        boundary.scanline.display.pixels[x + y * width] = 0x11111111;
+        boundary.scanline.display.pixels[x + y * width] = shade << 0x10 | shade << 0x08 | shade;
     }
 }

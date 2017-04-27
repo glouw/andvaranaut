@@ -113,6 +113,7 @@ typedef struct
     }
     angle;
     float torch;
+    float brightness;
 }
 Hero;
 
