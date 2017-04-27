@@ -16,7 +16,7 @@ Light;
 
 static Light reset()
 {
-    const Light light = { 0.0, 100.0 };
+    const Light light = { 0.0, 200.0 };
     return light;
 }
 
