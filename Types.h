@@ -101,6 +101,14 @@ Line;
 
 typedef struct
 {
+    float torch;
+    float brightness;
+    float dtorch;
+}
+Light;
+
+typedef struct
+{
     Line fov;
     Point where;
     Point velocity;
@@ -112,8 +120,7 @@ typedef struct
         float percent;
     }
     angle;
-    float torch;
-    float brightness;
+    Light light;
 }
 Hero;
 
@@ -129,7 +136,7 @@ typedef struct
 {
     Traceline traceline;
     float* party;
-    float torch;
+    Light light;
 }
 Tracery;
 

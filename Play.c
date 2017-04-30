@@ -1,3 +1,5 @@
+#include "Play.h"
+
 #include "Hero.h"
 #include "Portals.h"
 #include "Sdl.h"

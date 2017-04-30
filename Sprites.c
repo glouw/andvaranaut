@@ -1,4 +1,5 @@
 #include "Sprites.h"
+
 #include "Point.h"
 #include "Util.h"
 #include "String.h"

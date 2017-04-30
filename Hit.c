@@ -1,4 +1,5 @@
 #include "Hit.h"
+
 #include "Point.h"
 #include "Util.h"
 

@@ -1,4 +1,5 @@
 #include "Hero.h"
+
 #include "Portals.h"
 #include "Point.h"
 #include "Hit.h"
@@ -6,33 +7,16 @@
 #include "Util.h"
 #include "String.h"
 #include "Line.h"
-
-typedef struct
-{
-    float torch;
-    float brightness;
-}
-Light;
-
-static Light reset()
-{
-    const Light light = { 0.0, 200.0 };
-    return light;
-}
+#include "Light.h"
 
 Hero spawn()
 {
     const Line fov = { { 1.0, -1.0 }, { 1.0, 1.0 } };
-    const Point where = { 5.5, 9.5 };
-    const Point velocity = { 0.0, 0.0 };
-    const float speed = 0.12;
-    const float acceleration = 0.0150;
-    const float theta = 0.0;
-    const float percent = 0.0;
+    const Point where = { 5.5, 9.5 }, velocity = { 0.0, 0.0 };
+    const float speed = 0.12, acceleration = 0.0150, theta = 0.0, percent = 0.0;
     const Light light = reset();
     const Hero hero = {
-        fov, where, velocity, speed, acceleration, { theta, percent },
-        light.torch, light.brightness
+        fov, where, velocity, speed, acceleration, { theta, percent }, light
     };
     return hero;
 }
@@ -123,9 +107,7 @@ Impact march(const Hero hero, char** const block, const Point column, const int 
 Hero teleport(const Hero hero, const Portal portal)
 {
     Hero temp = hero;
-    const Light light = reset();
-    temp.torch = light.torch;
-    temp.brightness = light.brightness;
+    temp.light = reset();
     temp.where = portal.where;
     return temp;
 }
@@ -135,19 +117,17 @@ Hero burn(const Hero hero)
     const uint8_t* key = SDL_GetKeyboardState(NULL);
     SDL_PumpEvents();
     Hero temp = hero;
-    const float dtorch = 5.0;
-    if(key[SDL_SCANCODE_K]) temp.brightness = temp.torch += dtorch;
-    if(key[SDL_SCANCODE_J]) temp.brightness = temp.torch -= dtorch;
-    temp.torch = temp.torch < 0.0 ? 0.0 : temp.torch;
+    if(key[SDL_SCANCODE_K]) temp.light.brightness = temp.light.torch += hero.light.dtorch;
+    if(key[SDL_SCANCODE_J]) temp.light.brightness = temp.light.torch -= hero.light.dtorch;
+    temp.light.torch = temp.light.torch < 0.0 ? 0.0 : temp.light.torch;
     return temp;
 }
 
 Hero brighten(const Hero hero)
 {
     Hero temp = hero;
-    const float dtorch = 5.0;
-    temp.torch += dtorch;
-    return temp.torch > hero.brightness ? hero : temp;
+    temp.light.torch += hero.light.dtorch;
+    return temp.light.torch > hero.light.brightness ? hero : temp;
 }
 
 Hero zoom(const Hero hero)

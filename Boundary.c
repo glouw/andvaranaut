@@ -1,7 +1,9 @@
 #include "Boundary.h"
+
 #include "Line.h"
 #include "Point.h"
 #include "Util.h"
+#include "Light.h"
 
 // Software implementation of the SDL2 Texture Color Mod function - Discards alpha
 static uint32_t mod(const uint32_t pixel, const int r, const int g, const int b)
@@ -22,8 +24,8 @@ void wrend(const Boundary boundary, const Hit hit, const int modding)
     for(int x = boundary.wall.clamped.bot; x < boundary.wall.clamped.top; x++)
     {
         const int col = (surface->w - 1) * (x - boundary.wall.bot) / (boundary.wall.top - boundary.wall.bot);
-        const int y = boundary.scanline.y;
-        const int width = boundary.scanline.display.width;
+        const int y = boundary.scanline.y; // Alias (to save horizontal screen space)
+        const int width = boundary.scanline.display.width; // Alias
         const uint32_t pixel = pixels[col + row * surface->w];
         boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
     }
@@ -40,19 +42,20 @@ void frend(const Boundary boundary, Point* const wheres, char** const floring, i
         const int row = (surface->h - 1) * dec(where.y);
         const int col = (surface->w - 1) * dec(where.x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
-        const int y = boundary.scanline.y;
-        const int width = boundary.scanline.display.width;
+        const int y = boundary.scanline.y; // Alias
+        const int width = boundary.scanline.display.width; // Alias
         const uint32_t pixel = pixels[col + row * surface->w];
-        const int modding = moddings[log] = illuminate(tracery.torch, mag(sub(where, tracery.traceline.trace.a)));
+        const int modding = moddings[log] = illuminate(tracery.light, mag(sub(where, tracery.traceline.trace.a)));
         boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
     }
 }
 
-// Ceiling renderer
+// Ceiling renderer - (Saves time by using some of frend()'s calculations)
 void crend(const Boundary boundary, Point* const wheres, char** const ceiling, int* const moddings)
 {
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
+        // Only bother rendering what can be seen
         const Point where = wheres[x];
         if(tile(where, ceiling))
         {
@@ -60,8 +63,8 @@ void crend(const Boundary boundary, Point* const wheres, char** const ceiling, i
             const int row = (surface->h - 1) * dec(where.y);
             const int col = (surface->w - 1) * dec(where.x);
             const uint32_t* const pixels = (uint32_t*) surface->pixels;
-            const int y = boundary.scanline.y;
-            const int width = boundary.scanline.display.width;
+            const int y = boundary.scanline.y; // Alias
+            const int width = boundary.scanline.display.width; // Alias
             const uint32_t pixel = pixels[col + row * surface->w];
             const int modding = moddings[x];
             boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
@@ -75,9 +78,10 @@ void srend(const Boundary boundary)
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
         const float percentage = 1.0 - x / (float) boundary.scanline.sdl.res;
-        const int shade = 0xFF * percentage / 4;
-        const int y = boundary.scanline.y;
-        const int width = boundary.scanline.display.width;
+        const int darkness = 4;
+        const int shade = (0xFF / darkness) * percentage;
+        const int y = boundary.scanline.y; // Alias
+        const int width = boundary.scanline.display.width; // Alias
         boundary.scanline.display.pixels[x + y * width] = shade << 0x10 | shade << 0x08 | shade;
     }
 }

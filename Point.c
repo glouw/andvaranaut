@@ -1,4 +1,5 @@
 #include "Point.h"
+
 #include "Util.h"
 
 Point zro()

@@ -1,4 +1,5 @@
 #include "Sdl.h"
+
 #include "Display.h"
 #include "Boundary.h"
 #include "Surfaces.h"
@@ -7,6 +8,7 @@
 #include "Wall.h"
 #include "Util.h"
 #include "String.h"
+#include "Light.h"
 
 Sdl setup(const int res, const int fps, const char* const name)
 {
@@ -87,7 +89,6 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         const int size = focal(hero.fov) * sdl.res / sprite.where.x;
         const int corner = (sdl.res - size) / 2;
         const int slide = (sdl.res / 2) * ratio(hero.fov) * sprite.where.y / sprite.where.x;
-        printf("%f\n", ratio(hero.fov));
         const SDL_Rect target = { corner + slide, corner, size, size };
         // Moves onto the next sprite if this sprite is off screen
         if(target.x + target.w < 0 || target.x >= sdl.res) continue;
@@ -102,7 +103,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0) continue;
         // Applies sprite lighting
-        const int modding = illuminate(hero.torch, sprite.where.x);
+        const int modding = illuminate(hero.light, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Renders the sprite
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
@@ -136,13 +137,13 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
             const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
             if(hits == max) srend(boundary);
-            const int modding = illuminate(hero.torch, upper.traceline.corrected.x);
+            const int modding = illuminate(hero.light, upper.traceline.corrected.x);
             wrend(boundary, upper.hit, modding);
         }
         const Impact lower = march(hero, map.walling, column, sdl.res, 1);
         const Boundary boundary = { scanline, lower.wall };
-        const Tracery tracery = { lower.traceline, party, hero.torch };
-        const int modding = illuminate(hero.torch, lower.traceline.corrected.x);
+        const Tracery tracery = { lower.traceline, party, hero.light };
+        const int modding = illuminate(hero.light, lower.traceline.corrected.x);
         wrend(boundary, lower.hit, modding);
         frend(boundary, wheres, map.floring, moddings, tracery);
         crend(boundary, wheres, map.ceiling, moddings);
