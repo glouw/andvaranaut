@@ -33,8 +33,7 @@ void release(const Sdl sdl)
     SDL_Quit();
     SDL_DestroyWindow(sdl.window);
     SDL_DestroyRenderer(sdl.renderer);
-    for(int i = 0; i < sdl.surfaces.count; i++)
-        SDL_FreeSurface(sdl.surfaces.surface[i]);
+    for(int i = 0; i < sdl.surfaces.count; i++) SDL_FreeSurface(sdl.surfaces.surface[i]);
     free(sdl.surfaces.surface);
 }
 
@@ -59,7 +58,7 @@ void present(const Sdl sdl)
 static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const lowers)
 {
     SDL_Rect seen = frame;
-    // Clip from the left
+    // Clips sprite from the left
     for(; seen.w > 0; seen.w--, seen.x++)
     {
         const int x = seen.x;
@@ -67,12 +66,12 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
         // Stop clipping if the sprite is seen
         if(where.x < lowers[x].x) break;
     }
-    // Clip from the right
+    // Clips sprite from the right
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
         if(x < 0 || x >= res) continue;
-        // Stop clipping if the sprite is seen - Increments width to avoid blank vertical line
+        // Stops clipping if the sprite is seen - Increments width to avoid blank vertical line
         if(where.x < lowers[x].x) { seen.w++; break; }
     }
     return seen;
@@ -98,16 +97,16 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
         const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * sprite.state, w, h };
-        // GCC loves to optimize away this SDL_Rect for some reason
+        // Clips sprites and prevents dangerous gcc optimizations
         const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, lowers);
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0) continue;
-        // Applies sprite lighting
+        // Applies lighting to the sprite
         const int modding = illuminate(hero.light, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
-        // Applies transperancy
+        // Applies transperancy to the sprite
         if(sprite.transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
-        // Renders the sprite
+        // Buffers the sprite
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
@@ -115,55 +114,52 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
     }
 }
 
-void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Day day)
+void render(const Sdl sdl, const World world)
 {
     const int t0 = SDL_GetTicks();
-    const Line camera = rotate(hero.fov, hero.angle.theta);
-    const Display display = lock(sdl);
-    // Render Precomputations
+    // Precomputations
     float* const party = (float*) malloc(sdl.res * sizeof(*party));
     const int m = sdl.res / 2, l = sdl.res;
-    for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, sdl.res, x);
-    for(int x = m; x < l; x++) party[x] = ccast(hero.fov, sdl.res, x);
-    // Render Preallocations
+    for(int x = 0; x < m; x++) party[x] = fcast(world.hero.fov, sdl.res, x);
+    for(int x = m; x < l; x++) party[x] = ccast(world.hero.fov, sdl.res, x);
+    // Preallocations
     Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
     Point* const wheres = (Point*) malloc(sdl.res * sizeof(*wheres));
     int* const moddings = (int*) malloc(sdl.res * sizeof(*moddings));
+    // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
+    const Line camera = rotate(world.hero.fov, world.hero.angle.theta);
+    const Display display = lock(sdl);
     for(int y = 0; y < sdl.res; y++)
     {
         const Point column = lerp(camera, y / (float) sdl.res);
         const Scanline scanline = { sdl, display, y };
-        // Samples several upper walls for seamless indoor/outdoor transitions
         for(int max = 5, hits = max; hits > 0; hits--)
         {
-            const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
+            const Impact upper = march(world.hero, world.map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
-            if(hits == max) srend(boundary, day);
-            const int modding = illuminate(hero.light, upper.traceline.corrected.x);
+            if(hits == max) srend(boundary, world.day);
+            const int modding = illuminate(world.hero.light, upper.traceline.corrected.x);
             wrend(boundary, upper.hit, modding);
         }
-        const Impact lower = march(hero, map.walling, column, sdl.res, 1);
+        const Impact lower = march(world.hero, world.map.walling, column, sdl.res, 1);
         const Boundary boundary = { scanline, lower.wall };
-        const Tracery tracery = { lower.traceline, party, hero.light };
-        const int modding = illuminate(hero.light, lower.traceline.corrected.x);
+        const Tracery tracery = { lower.traceline, party, world.hero.light };
+        const int modding = illuminate(world.hero.light, lower.traceline.corrected.x);
         wrend(boundary, lower.hit, modding);
-        frend(boundary, wheres, map.floring, moddings, tracery);
-        crend(boundary, wheres, map.ceiling, moddings);
-        // Saves lower wall hit for the sprite renderer
+        frend(boundary, wheres, world.map.floring, moddings, tracery);
+        crend(boundary, wheres, world.map.ceiling, moddings);
         lowers[y] = lower.traceline.corrected;
     }
-    // Buffers screen with wall/ceiling/flooring casts
     unlock(sdl);
     churn(sdl);
-    // Buffers sprites using lower and upper wall hits
-    paste(sdl, sprites, lowers, hero);
+    paste(sdl, world.sprites, lowers, world.hero);
+    // Presents buffer and cleans up
     present(sdl);
-    // Deallocations
     free(wheres);
     free(lowers);
     free(party);
     free(moddings);
-    // Locks refresh to 60 frames per second
+    // Locks refresh rate
     const int t1 = SDL_GetTicks();
     const int ms = 1000.0 / sdl.fps - (t1 - t0);
     SDL_Delay(ms < 0 ? 0 : ms);

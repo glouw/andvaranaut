@@ -12,9 +12,8 @@ static int done()
 {
     SDL_Event event;
     SDL_PollEvent(&event);
-    return event.type == SDL_QUIT
-        || event.key.keysym.sym == SDLK_F1
-        || event.key.keysym.sym == SDLK_ESCAPE;
+    const int type = event.type, sym = event.key.keysym.sym;
+    return type == SDL_QUIT || sym == SDLK_F1 || sym == SDLK_ESCAPE;
 }
 
 void play(const char* argv[])
@@ -34,8 +33,7 @@ void play(const char* argv[])
     for(int renders = 0; !done(); renders++)
     #endif
     {
-        hero = move(hero, map.walling);
-        hero = spin(hero);
+        hero = move(spin(hero), map.walling);
         hero = zoom(hero);
         hero = brighten(hero);
         hero = burn(hero);
@@ -48,7 +46,8 @@ void play(const char* argv[])
             sprites = swap(sprites, portal.name);
         }
         const Sprites relative = arrange(sprites, hero);
-        render(sdl, hero, relative, map, day);
+        const World world = { hero, relative, map, day };
+        render(sdl, world);
         kill(relative);
         sdl = tick(sdl, renders);
         day = progress(day, sdl.ticks);

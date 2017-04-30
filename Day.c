@@ -3,7 +3,7 @@
 Day begin()
 {
     const int ticks = 2048;
-    const float time = 0.0, brightest = 128.0, light = 0.0;
+    const float time = 0.0, brightest = 64.0, light = 0.0;
     const Day day = { time, ticks, brightest, light };
     return day;
 }
