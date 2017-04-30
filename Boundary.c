@@ -50,7 +50,7 @@ void frend(const Boundary boundary, Point* const wheres, char** const floring, i
     }
 }
 
-// Ceiling renderer - (Saves time by using some of frend()'s calculations)
+// Ceiling renderer - Saves time by using some of frend()'s calculations
 void crend(const Boundary boundary, Point* const wheres, char** const ceiling, int* const moddings)
 {
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
@@ -73,13 +73,12 @@ void crend(const Boundary boundary, Point* const wheres, char** const ceiling, i
 }
 
 // Sky renderer
-void srend(const Boundary boundary)
+void srend(const Boundary boundary, const Day day)
 {
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
         const float percentage = 1.0 - x / (float) boundary.scanline.sdl.res;
-        const int darkness = 4;
-        const int shade = (0xFF / darkness) * percentage;
+        const int shade = percentage * day.light;
         const int y = boundary.scanline.y; // Alias
         const int width = boundary.scanline.display.width; // Alias
         boundary.scanline.display.pixels[x + y * width] = shade << 0x10 | shade << 0x08 | shade;

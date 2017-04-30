@@ -32,7 +32,7 @@ void destroy(const Portals portals)
     free(portals.portal);
 }
 
-bool isportal(const int ascii)
+int isportal(const int ascii)
 {
     return ascii >= 'a' && ascii <= 'z';
 }

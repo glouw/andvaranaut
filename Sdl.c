@@ -105,6 +105,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         // Applies sprite lighting
         const int modding = illuminate(hero.light, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
+        // Applies transperancy
+        if(sprite.transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
         // Renders the sprite
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
@@ -113,17 +115,17 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
     }
 }
 
-void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
+void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Day day)
 {
     const int t0 = SDL_GetTicks();
     const Line camera = rotate(hero.fov, hero.angle.theta);
     const Display display = lock(sdl);
-    // Precomputations
+    // Render Precomputations
     float* const party = (float*) malloc(sdl.res * sizeof(*party));
     const int m = sdl.res / 2, l = sdl.res;
     for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, sdl.res, x);
     for(int x = m; x < l; x++) party[x] = ccast(hero.fov, sdl.res, x);
-    // Preallocations
+    // Render Preallocations
     Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
     Point* const wheres = (Point*) malloc(sdl.res * sizeof(*wheres));
     int* const moddings = (int*) malloc(sdl.res * sizeof(*moddings));
@@ -136,7 +138,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         {
             const Impact upper = march(hero, map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
-            if(hits == max) srend(boundary);
+            if(hits == max) srend(boundary, day);
             const int modding = illuminate(hero.light, upper.traceline.corrected.x);
             wrend(boundary, upper.hit, modding);
         }

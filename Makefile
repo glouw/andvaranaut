@@ -2,7 +2,7 @@ CC = gcc -std=c99
 PROJ = water
 SRCS = main.c Play.c Test.c Util.c Point.c Hit.c Line.c Map.c
 SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c String.c
-SRCS+= Portals.c Boundary.c Surfaces.c Light.c
+SRCS+= Portals.c Boundary.c Surfaces.c Light.c Day.c
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Werror
 CFLAGS+= -g

@@ -5,9 +5,10 @@
 #include "Sdl.h"
 #include "Map.h"
 #include "Sprites.h"
+#include "Day.h"
 #include "Util.h"
 
-static bool done()
+static int done()
 {
     SDL_Event event;
     SDL_PollEvent(&event);
@@ -25,6 +26,7 @@ void play(const char* argv[])
     Hero hero = spawn();
     const Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
+    Day day = begin();
     #ifdef PROFILE
     (void) done;
     for(int renders = 0; renders < 60; renders++)
@@ -45,10 +47,11 @@ void play(const char* argv[])
             hero = teleport(hero, portal);
             sprites = swap(sprites, portal.name);
         }
-        const Sprites updated = update(sprites, hero);
-        render(sdl, hero, updated, map);
-        kill(updated);
+        const Sprites relative = arrange(sprites, hero);
+        render(sdl, hero, relative, map, day);
+        kill(relative);
         sdl = tick(sdl, renders);
+        day = progress(day, sdl.ticks);
     }
     close(map);
     kill(sprites);

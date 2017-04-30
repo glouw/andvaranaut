@@ -1,7 +1,15 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-#include <stdbool.h>
+
+typedef struct
+{
+    float time;
+    int ticks;
+    float brightest;
+    float light;
+}
+Day;
 
 typedef struct
 {
@@ -82,6 +90,7 @@ typedef struct
     Point where;
     int ascii;
     State state;
+    int transparent;
 }
 Sprite;
 
