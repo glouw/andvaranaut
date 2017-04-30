@@ -19,11 +19,12 @@ void wrend(const Boundary boundary, const Hit hit, const int modding)
 {
     if(hit.neighbor) return;
     const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[hit.tile];
-    const int row = (surface->h - 1) * hit.offset;
+    const int row = surface->h * hit.offset;
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     for(int x = boundary.wall.clamped.bot; x < boundary.wall.clamped.top; x++)
     {
-        const int col = (surface->w - 1) * (x - boundary.wall.bot) / (boundary.wall.top - boundary.wall.bot);
+        const float offset = (x - boundary.wall.bot) / (float) (boundary.wall.top - boundary.wall.bot);
+        const int col = surface->w * offset;
         const int y = boundary.scanline.y; // Alias (to save horizontal screen space)
         const int width = boundary.scanline.display.width; // Alias
         const uint32_t pixel = pixels[col + row * surface->w];
@@ -39,8 +40,8 @@ void frend(const Boundary boundary, Point* const wheres, char** const floring, i
         const int log = boundary.scanline.sdl.res - 1 - x;
         const Point where = wheres[log] = lerp(tracery.traceline.trace, tracery.party[x] / tracery.traceline.corrected.x);
         const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[tile(where, floring)];
-        const int row = (surface->h - 1) * dec(where.y);
-        const int col = (surface->w - 1) * dec(where.x);
+        const int row = surface->h * dec(where.y);
+        const int col = surface->w * dec(where.x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const int y = boundary.scanline.y; // Alias
         const int width = boundary.scanline.display.width; // Alias
@@ -60,8 +61,8 @@ void crend(const Boundary boundary, Point* const wheres, char** const ceiling, i
         if(tile(where, ceiling))
         {
             const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[tile(where, ceiling)];
-            const int row = (surface->h - 1) * dec(where.y);
-            const int col = (surface->w - 1) * dec(where.x);
+            const int row = surface->h * dec(where.y);
+            const int col = surface->w * dec(where.x);
             const uint32_t* const pixels = (uint32_t*) surface->pixels;
             const int y = boundary.scanline.y; // Alias
             const int width = boundary.scanline.display.width; // Alias

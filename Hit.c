@@ -9,7 +9,7 @@ static Hit collision(const Point ray, const Point direction, char** const wallin
     const Hit hit = {
         tile(add(ray, mul(direction, epsilon)), walling),
         tile(sub(ray, mul(direction, epsilon)), walling),
-        dec(ray.x) + dec(ray.y),
+        dec(ray.x + ray.y),
         ray
     };
     return hit;

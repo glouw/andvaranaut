@@ -93,7 +93,6 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         if(target.x + target.w < 0 || target.x >= sdl.res) continue;
         // Selects sprite
         SDL_Surface* const surface = sdl.surfaces.surface[sprite.ascii - ' '];
-        SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
         const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
         const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * sprite.state, w, h };
@@ -102,6 +101,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0) continue;
         // Applies lighting to the sprite
+        SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
         const int modding = illuminate(hero.light, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Applies transperancy to the sprite
