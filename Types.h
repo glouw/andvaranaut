@@ -53,12 +53,19 @@ typedef struct
 }
 Portals;
 
+typedef enum
+{
+    N, E, S, W
+}
+Compass;
+
 typedef struct
 {
     int tile;
     int neighbor;
     float offset;
     Point where;
+    Compass facing;
 }
 Hit;
 

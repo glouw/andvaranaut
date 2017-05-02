@@ -76,11 +76,9 @@ void crend(const Boundary boundary, Point* const wheres, char** const ceiling, i
 // Sky renderer
 void srend(const Boundary boundary)
 {
+    const int shade = 16;
+    const int y = boundary.scanline.y; // Alias
+    const int width = boundary.scanline.display.width; // Alias
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
-    {
-        const int shade = 16;
-        const int y = boundary.scanline.y; // Alias
-        const int width = boundary.scanline.display.width; // Alias
         boundary.scanline.display.pixels[x + y * width] = shade << 0x10 | shade << 0x08 | shade;
-    }
 }
