@@ -74,12 +74,11 @@ void crend(const Boundary boundary, Point* const wheres, char** const ceiling, i
 }
 
 // Sky renderer
-void srend(const Boundary boundary, const Day day)
+void srend(const Boundary boundary)
 {
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
-        const float percentage = 1.0 - x / (float) boundary.scanline.sdl.res;
-        const int shade = percentage * day.light;
+        const int shade = 16;
         const int y = boundary.scanline.y; // Alias
         const int width = boundary.scanline.display.width; // Alias
         boundary.scanline.display.pixels[x + y * width] = shade << 0x10 | shade << 0x08 | shade;

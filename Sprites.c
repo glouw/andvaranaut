@@ -70,7 +70,7 @@ static void push(const Sprites copied, const Hero hero)
 static void turn(const Sprites copied, const Hero hero)
 {
     for(int i = 0; i < copied.count; i++)
-        copied.sprite[i].where = trn(copied.sprite[i].where, -hero.angle.theta);
+        copied.sprite[i].where = trn(copied.sprite[i].where, -hero.theta);
 }
 
 static int comparator(const void *a, const void* b)

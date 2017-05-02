@@ -12,38 +12,32 @@
 Hero spawn()
 {
     const Line fov = { { 1.0, -1.0 }, { 1.0, 1.0 } };
-    const Point where = { 5.5, 9.5 }, velocity = { 0.0, 0.0 };
-    const float speed = 0.12, acceleration = 0.0150, theta = 0.0, percent = 0.0;
+    const Point where = { 5.5, 9.5 };
+    const Point velocity = { 0.0, 0.0 };
+    const float speed = 0.12;
+    const float acceleration = 0.0150;
+    const float theta = 0.0;
     const Light light = reset();
-    const Hero hero = {
-        fov, where, velocity, speed, acceleration, { theta, percent }, light
-    };
+    const Hero hero = { fov, where, velocity, speed, acceleration, theta, light };
     return hero;
 }
 
-Hero spin(const Hero hero)
+Hero spin(const Hero hero, const uint8_t* key)
 {
-    const uint8_t* key = SDL_GetKeyboardState(NULL);
-    SDL_PumpEvents();
     Hero temp = hero;
     const float dtheta = 0.1;
-    if(key[SDL_SCANCODE_H]) temp.angle.theta -= dtheta;
-    if(key[SDL_SCANCODE_L]) temp.angle.theta += dtheta;
-    // Angle theta percentage calculated using a sawtooth
-    const float pi = acosf(-1.0);
-    temp.angle.percent = 0.5 - atanf(1.0 / tanf(temp.angle.theta / 2.0)) / pi;
+    if(key[SDL_SCANCODE_H]) temp.theta -= dtheta;
+    if(key[SDL_SCANCODE_L]) temp.theta += dtheta;
     return temp;
 }
 
-Hero move(const Hero hero, char** const walling)
+Hero move(const Hero hero, char** const walling, const uint8_t* key)
 {
-    const uint8_t* key = SDL_GetKeyboardState(NULL);
-    SDL_PumpEvents();
     Hero step = hero;
     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
     {
         const Point reference = { 1.0, 0.0 };
-        const Point direction = trn(reference, step.angle.theta);
+        const Point direction = trn(reference, step.theta);
         const Point acceleration = mul(direction, step.acceleration);
         if(key[SDL_SCANCODE_W]) step.velocity = add(step.velocity, acceleration);
         if(key[SDL_SCANCODE_S]) step.velocity = sub(step.velocity, acceleration);
@@ -57,23 +51,21 @@ Hero move(const Hero hero, char** const walling)
     return step;
 }
 
-static Hit shoot(const Hero hero, char** const walling)
+static Hit shoot(const Hero hero, char** const walling, const uint8_t* key)
 {
-    const uint8_t* key = SDL_GetKeyboardState(NULL);
-    SDL_PumpEvents();
     if(key[SDL_SCANCODE_E])
     {
         const Point reference = { 1.0, 0.0 };
-        const Point direction = trn(reference, hero.angle.theta);
+        const Point direction = trn(reference, hero.theta);
         return cast(hero.where, direction, walling);
     }
     const Hit hit = { 0, 0, 0.0, zro() };
     return hit;
 }
 
-int handle(const Hero hero, char** const walling)
+int handle(const Hero hero, char** const walling, const uint8_t* key)
 {
-    const Hit hit = shoot(hero, walling);
+    const Hit hit = shoot(hero, walling, key);
     const int ch = hit.tile + ' ';
     const float reach = 1.0;
     const int nearby = mag(sub(hero.where, hit.where)) < reach;
@@ -96,7 +88,7 @@ Impact march(const Hero hero, char** const block, const Point column, const int 
 {
     const Hit hit = plow(hero, block, column, hits);
     const Point ray = sub(hit.where, hero.where);
-    const Point corrected = trn(ray, -hero.angle.theta);
+    const Point corrected = trn(ray, -hero.theta);
     const Line trace = { hero.where, hit.where };
     const Wall wall = project(res, hero.fov, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
@@ -112,10 +104,8 @@ Hero teleport(const Hero hero, const Portal portal)
     return temp;
 }
 
-Hero burn(const Hero hero)
+Hero burn(const Hero hero, const uint8_t* key)
 {
-    const uint8_t* key = SDL_GetKeyboardState(NULL);
-    SDL_PumpEvents();
     Hero temp = hero;
     if(key[SDL_SCANCODE_K]) temp.light.brightness = temp.light.torch += hero.light.dtorch;
     if(key[SDL_SCANCODE_J]) temp.light.brightness = temp.light.torch -= hero.light.dtorch;
@@ -130,10 +120,8 @@ Hero brighten(const Hero hero)
     return temp.light.torch > hero.light.brightness ? hero : temp;
 }
 
-Hero zoom(const Hero hero)
+Hero zoom(const Hero hero, const uint8_t* key)
 {
-    const uint8_t* key = SDL_GetKeyboardState(NULL);
-    SDL_PumpEvents();
     Hero temp = hero;
     if(key[SDL_SCANCODE_U]) temp.fov.a.y += 0.01, temp.fov.b.y -= 0.01;
     if(key[SDL_SCANCODE_I]) temp.fov.a.y -= 0.01, temp.fov.b.y += 0.01;

@@ -127,7 +127,7 @@ void render(const Sdl sdl, const World world)
     Point* const wheres = (Point*) malloc(sdl.res * sizeof(*wheres));
     int* const moddings = (int*) malloc(sdl.res * sizeof(*moddings));
     // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
-    const Line camera = rotate(world.hero.fov, world.hero.angle.theta);
+    const Line camera = rotate(world.hero.fov, world.hero.theta);
     const Display display = lock(sdl);
     for(int y = 0; y < sdl.res; y++)
     {
@@ -137,7 +137,7 @@ void render(const Sdl sdl, const World world)
         {
             const Impact upper = march(world.hero, world.map.ceiling, column, sdl.res, hits);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
-            if(hits == max) srend(boundary, world.day);
+            if(hits == max) srend(boundary);
             const int modding = illuminate(world.hero.light, upper.traceline.corrected.x);
             wrend(boundary, upper.hit, modding);
         }

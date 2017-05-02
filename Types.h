@@ -4,15 +4,6 @@
 
 typedef struct
 {
-    float time;
-    int ticks;
-    float brightest;
-    float light;
-}
-Day;
-
-typedef struct
-{
     int rows;
     char** ceiling;
     char** walling;
@@ -123,12 +114,7 @@ typedef struct
     Point velocity;
     float speed;
     float acceleration;
-    struct
-    {
-        float theta;
-        float percent;
-    }
-    angle;
+    float theta;
     Light light;
 }
 Hero;
@@ -175,7 +161,6 @@ typedef struct
     Hero hero;
     Sprites sprites;
     Map map;
-    Day day;
 }
 World;
 

@@ -5,7 +5,6 @@
 #include "Sdl.h"
 #include "Map.h"
 #include "Sprites.h"
-#include "Day.h"
 #include "Util.h"
 
 static int done()
@@ -25,7 +24,6 @@ void play(const char* argv[])
     Hero hero = spawn();
     const Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
-    Day day = begin();
     #ifdef PROFILE
     (void) done;
     for(int renders = 0; renders < 60; renders++)
@@ -33,11 +31,14 @@ void play(const char* argv[])
     for(int renders = 0; !done(); renders++)
     #endif
     {
-        hero = move(spin(hero), map.walling);
-        hero = zoom(hero);
+        const uint8_t* key = SDL_GetKeyboardState(NULL);
+        SDL_PumpEvents();
+        hero = spin(hero, key);
+        hero = move(hero, map.walling, key);
+        hero = zoom(hero, key);
         hero = brighten(hero);
-        hero = burn(hero);
-        const int ch = handle(hero, map.walling);
+        hero = burn(hero, key);
+        const int ch = handle(hero, map.walling, key);
         if(ch)
         {
             const Portal portal = portals.portal[ch - 'a'];
@@ -46,11 +47,10 @@ void play(const char* argv[])
             sprites = swap(sprites, portal.name);
         }
         const Sprites relative = arrange(sprites, hero);
-        const World world = { hero, relative, map, day };
+        const World world = { hero, relative, map };
         render(sdl, world);
         kill(relative);
         sdl = tick(sdl, renders);
-        day = progress(day, sdl.ticks);
     }
     close(map);
     kill(sprites);
