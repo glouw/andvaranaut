@@ -6,7 +6,7 @@
 #include "Light.h"
 
 // Software implementation of the SDL2 Texture Color Mod function - Discards alpha
-static uint32_t mod(const uint32_t pixel, const int r, const int g, const int b)
+static int mod(const uint32_t pixel, const int r, const int g, const int b)
 {
     const int rm = r / (float) 0xFF * (pixel >> 0x10 & 0xFF);
     const int gm = g / (float) 0xFF * (pixel >> 0x08 & 0xFF);
@@ -77,7 +77,7 @@ void crend(const Boundary boundary, char** const ceiling, const Calc calc)
 // Sky renderer
 void srend(const Boundary boundary)
 {
-    const int shade = 16;
+    const int shade = 0x0F;
     const int y = boundary.scanline.y; // Alias
     const int width = boundary.scanline.display.width; // Alias
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)

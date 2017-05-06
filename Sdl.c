@@ -15,7 +15,7 @@ Sdl setup(const int res, const int fps, const char* const name)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* const window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
-    if(window == NULL) puts("Could not open window");
+    if(window == NULL) bomb("Could not open window\nAre you in the console by chance?");
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
@@ -142,7 +142,8 @@ void render(const Sdl sdl, const World world)
             const int modding = illuminate(world.hero.light, upper.traceline.corrected.x);
             wrend(boundary, upper.hit, modding);
         }
-        const Range range =  { world.map.walling, column, 1 }; // Just a single hit
+        // Just a single hit for the lower walls
+        const Range range =  { world.map.walling, column, 1 };
         const Impact lower = march(world.hero, range, sdl.res);
         const Boundary boundary = { scanline, lower.wall };
         const Tracery tracery = { lower.traceline, party, world.hero.light };
@@ -159,8 +160,8 @@ void render(const Sdl sdl, const World world)
     present(sdl);
     // Clean up all computations
     free(party);
-    abandon(calc);
     free(lowers);
+    abandon(calc);
     // Locks refresh rate
     const int t1 = SDL_GetTicks();
     const int ms = 1000.0 / sdl.fps - (t1 - t0);
