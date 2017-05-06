@@ -9,16 +9,37 @@
 #include "Line.h"
 #include "Light.h"
 
+static Line normal()
+{
+    const Line fov = {
+        { 1.0, -1.0 },
+        { 1.0, +1.0 }
+    };
+    return fov;
+}
+
+static Line zoomed()
+{
+    const Line nrm = normal();
+    const Line fov = {
+        { nrm.a.x, nrm.a.y / 4.0 },
+        { nrm.b.x, nrm.b.y / 4.0 }
+    };
+    return fov;
+}
+
 Hero spawn()
 {
-    const Line fov = { { 1.0, -1.0 }, { 1.0, 1.0 } };
+    const Line fov = normal();
     const Point where = { 5.5, 9.5 };
     const Point velocity = { 0.0, 0.0 };
     const float speed = 0.12;
     const float acceleration = 0.0150;
     const float theta = 0.0;
     const Light light = reset();
-    const Hero hero = { fov, where, velocity, speed, acceleration, theta, light };
+    const Hero hero = {
+        fov, where, velocity, speed, acceleration, theta, light
+    };
     return hero;
 }
 
@@ -69,24 +90,24 @@ int handle(const Hero hero, char** const walling, const uint8_t* key)
     const int ch = hit.tile + ' ';
     const float reach = 1.0;
     const int nearby = mag(sub(hero.where, hit.where)) < reach;
-    return nearby && isportal(ch) ? ch : 0;
+    return nearby && isportal(ch) ? ch : false;
 }
 
-static Hit plow(const Hero hero, char** const block, const Point column, const int hits)
+static Hit plow(const Hero hero, const Range range)
 {
     Hit hit;
     Point where = hero.where;
-    for(int count = 0; count < hits; count++)
+    for(int count = 0; count < range.hits; count++)
     {
-        hit = cast(where, column, block);
+        hit = cast(where, range.column, range.block);
         where = hit.where;
     }
     return hit;
 }
 
-Impact march(const Hero hero, char** const block, const Point column, const int res, const int hits)
+Impact march(const Hero hero, const Range range, const int res)
 {
-    const Hit hit = plow(hero, block, column, hits);
+    const Hit hit = plow(hero, range);
     const Point ray = sub(hit.where, hero.where);
     const Point corrected = trn(ray, -hero.theta);
     const Line trace = { hero.where, hit.where };
@@ -114,10 +135,9 @@ static Hero fade(const Hero hero)
 static Hero zoom(const Hero hero, const uint8_t* key)
 {
     Hero temp = hero;
-    if(key[SDL_SCANCODE_U]) temp.fov.a.y += 0.01, temp.fov.b.y -= 0.01;
-    if(key[SDL_SCANCODE_I]) temp.fov.a.y -= 0.01, temp.fov.b.y += 0.01;
-    const float max = 4.0; // Arbitrary
-    return ratio(temp.fov) > max ? hero : temp;
+    if(key[SDL_SCANCODE_I]) temp.fov = zoomed();
+    if(key[SDL_SCANCODE_U]) temp.fov = normal();
+    return temp;
 }
 
 Hero touch(const Hero hero, const Map map, const uint8_t* key)

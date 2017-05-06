@@ -123,9 +123,9 @@ void render(const Sdl sdl, const World world)
     const int m = sdl.res / 2, l = sdl.res;
     for(int x = 0; x < m; x++) party[x] = fcast(world.hero.fov, sdl.res, x);
     for(int x = m; x < l; x++) party[x] = ccast(world.hero.fov, sdl.res, x);
-    // Preallocations
-    Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
+    // Preallocations for render computations
     const Calc calc = prealloc(sdl.res);
+    Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
     // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
     const Line camera = rotate(world.hero.fov, world.hero.theta);
     const Display display = lock(sdl);
@@ -135,13 +135,15 @@ void render(const Sdl sdl, const World world)
         const Scanline scanline = { sdl, display, y };
         for(int max = 5, hits = max; hits > 0; hits--)
         {
-            const Impact upper = march(world.hero, world.map.ceiling, column, sdl.res, hits);
+            const Range range =  { world.map.ceiling, column, hits };
+            const Impact upper = march(world.hero, range, sdl.res);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
             if(hits == max) srend(boundary);
             const int modding = illuminate(world.hero.light, upper.traceline.corrected.x);
             wrend(boundary, upper.hit, modding);
         }
-        const Impact lower = march(world.hero, world.map.walling, column, sdl.res, 1);
+        const Range range =  { world.map.walling, column, 1 }; // Just a single hit
+        const Impact lower = march(world.hero, range, sdl.res);
         const Boundary boundary = { scanline, lower.wall };
         const Tracery tracery = { lower.traceline, party, world.hero.light };
         const int modding = illuminate(world.hero.light, lower.traceline.corrected.x);
@@ -155,9 +157,10 @@ void render(const Sdl sdl, const World world)
     paste(sdl, world.sprites, lowers, world.hero);
     // Presents buffer
     present(sdl);
-    // Cleans up
-    abandon(calc);
+    // Clean up all computations
     free(party);
+    abandon(calc);
+    free(lowers);
     // Locks refresh rate
     const int t1 = SDL_GetTicks();
     const int ms = 1000.0 / sdl.fps - (t1 - t0);

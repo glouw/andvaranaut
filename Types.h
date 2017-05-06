@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 
 typedef struct
 {
@@ -38,6 +39,14 @@ typedef struct
     float y;
 }
 Point;
+
+typedef struct
+{
+    char** block;
+    Point column;
+    int hits;
+}
+Range;
 
 typedef struct
 {
