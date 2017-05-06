@@ -22,7 +22,7 @@ Hero spawn()
     return hero;
 }
 
-Hero spin(const Hero hero, const uint8_t* key)
+static Hero spin(const Hero hero, const uint8_t* key)
 {
     Hero temp = hero;
     const float dtheta = 0.1;
@@ -31,7 +31,7 @@ Hero spin(const Hero hero, const uint8_t* key)
     return temp;
 }
 
-Hero move(const Hero hero, char** const walling, const uint8_t* key)
+static Hero move(const Hero hero, char** const walling, const uint8_t* key)
 {
     Hero step = hero;
     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
@@ -104,27 +104,28 @@ Hero teleport(const Hero hero, const Portal portal)
     return temp;
 }
 
-Hero burn(const Hero hero, const uint8_t* key)
-{
-    Hero temp = hero;
-    if(key[SDL_SCANCODE_K]) temp.light.brightness = temp.light.torch += hero.light.dtorch;
-    if(key[SDL_SCANCODE_J]) temp.light.brightness = temp.light.torch -= hero.light.dtorch;
-    temp.light.torch = temp.light.torch < 0.0 ? 0.0 : temp.light.torch;
-    return temp;
-}
-
-Hero brighten(const Hero hero)
+static Hero fade(const Hero hero)
 {
     Hero temp = hero;
     temp.light.torch += hero.light.dtorch;
     return temp.light.torch > hero.light.brightness ? hero : temp;
 }
 
-Hero zoom(const Hero hero, const uint8_t* key)
+static Hero zoom(const Hero hero, const uint8_t* key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_U]) temp.fov.a.y += 0.01, temp.fov.b.y -= 0.01;
     if(key[SDL_SCANCODE_I]) temp.fov.a.y -= 0.01, temp.fov.b.y += 0.01;
     const float max = 4.0; // Arbitrary
     return ratio(temp.fov) > max ? hero : temp;
+}
+
+Hero touch(const Hero hero, const Map map, const uint8_t* key)
+{
+    Hero temp = hero;
+    temp = spin(temp, key);
+    temp = move(temp, map.walling, key);
+    temp = zoom(temp, key);
+    temp = fade(temp);
+    return temp;
 }

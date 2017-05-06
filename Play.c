@@ -33,11 +33,7 @@ void play(const char* argv[])
     {
         const uint8_t* key = SDL_GetKeyboardState(NULL);
         SDL_PumpEvents();
-        hero = spin(hero, key);
-        hero = move(hero, map.walling, key);
-        hero = zoom(hero, key);
-        hero = brighten(hero);
-        hero = burn(hero, key);
+        hero = touch(hero, map, key);
         const int ch = handle(hero, map.walling, key);
         if(ch)
         {

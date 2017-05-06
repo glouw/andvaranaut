@@ -8,7 +8,9 @@ int illuminate(const Light light, const float distance)
 
 Light reset()
 {
-    const float torch = 0.0, brightness = 1000.0, dtorch = 40.0;
+    const float torch = 0.0;
+    const float brightness = 1250.0;
+    const float dtorch = 40.0;
     const Light light = { torch, brightness, dtorch };
     return light;
 }

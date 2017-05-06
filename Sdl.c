@@ -9,6 +9,7 @@
 #include "Util.h"
 #include "String.h"
 #include "Light.h"
+#include "Calc.h"
 
 Sdl setup(const int res, const int fps, const char* const name)
 {
@@ -124,8 +125,7 @@ void render(const Sdl sdl, const World world)
     for(int x = m; x < l; x++) party[x] = ccast(world.hero.fov, sdl.res, x);
     // Preallocations
     Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
-    Point* const wheres = (Point*) malloc(sdl.res * sizeof(*wheres));
-    int* const moddings = (int*) malloc(sdl.res * sizeof(*moddings));
+    const Calc calc = prealloc(sdl.res);
     // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
     const Line camera = rotate(world.hero.fov, world.hero.theta);
     const Display display = lock(sdl);
@@ -146,7 +146,6 @@ void render(const Sdl sdl, const World world)
         const Tracery tracery = { lower.traceline, party, world.hero.light };
         const int modding = illuminate(world.hero.light, lower.traceline.corrected.x);
         wrend(boundary, lower.hit, modding);
-        const Calc calc = { wheres, moddings };
         frend(boundary, world.map.floring, calc, tracery);
         crend(boundary, world.map.ceiling, calc);
         lowers[y] = lower.traceline.corrected;
@@ -154,11 +153,10 @@ void render(const Sdl sdl, const World world)
     unlock(sdl);
     churn(sdl);
     paste(sdl, world.sprites, lowers, world.hero);
-    // Presents buffer and cleans up
+    // Presents buffer
     present(sdl);
-    free(wheres);
-    free(lowers);
-    free(moddings);
+    // Cleans up
+    abandon(calc);
     free(party);
     // Locks refresh rate
     const int t1 = SDL_GetTicks();
