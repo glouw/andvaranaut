@@ -33,12 +33,13 @@ void wrend(const Boundary boundary, const Hit hit, const int modding)
 }
 
 // Floor renderer
-void frend(const Boundary boundary, Point* const wheres, char** const floring, int* const moddings, const Tracery tracery)
+void frend(const Boundary boundary, char** const floring, const Calc calc, const Tracery tracery)
 {
     for(int x = 0; x < boundary.wall.clamped.bot; x++)
     {
         const int log = boundary.scanline.sdl.res - 1 - x;
-        const Point where = wheres[log] = lerp(tracery.traceline.trace, tracery.party[x] / tracery.traceline.corrected.x);
+        const Point where = calc.wheres[log] =
+            lerp(tracery.traceline.trace, tracery.party[x] / tracery.traceline.corrected.x);
         const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[tile(where, floring)];
         const int row = surface->h * dec(where.y);
         const int col = surface->w * dec(where.x);
@@ -46,18 +47,18 @@ void frend(const Boundary boundary, Point* const wheres, char** const floring, i
         const int y = boundary.scanline.y; // Alias
         const int width = boundary.scanline.display.width; // Alias
         const uint32_t pixel = pixels[col + row * surface->w];
-        const int modding = moddings[log] = illuminate(tracery.light, mag(sub(where, tracery.traceline.trace.a)));
+        const int modding = calc.moddings[log] = illuminate(tracery.light, mag(sub(where, tracery.traceline.trace.a)));
         boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
     }
 }
 
 // Ceiling renderer - Saves time by using some of frend()'s calculations
-void crend(const Boundary boundary, Point* const wheres, char** const ceiling, int* const moddings)
+void crend(const Boundary boundary, char** const ceiling, const Calc calc)
 {
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
         // Only bother rendering what can be seen
-        const Point where = wheres[x];
+        const Point where = calc.wheres[x];
         if(tile(where, ceiling))
         {
             const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[tile(where, ceiling)];
@@ -67,7 +68,7 @@ void crend(const Boundary boundary, Point* const wheres, char** const ceiling, i
             const int y = boundary.scanline.y; // Alias
             const int width = boundary.scanline.display.width; // Alias
             const uint32_t pixel = pixels[col + row * surface->w];
-            const int modding = moddings[x];
+            const int modding = calc.moddings[x];
             boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
         }
     }

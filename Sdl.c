@@ -146,8 +146,9 @@ void render(const Sdl sdl, const World world)
         const Tracery tracery = { lower.traceline, party, world.hero.light };
         const int modding = illuminate(world.hero.light, lower.traceline.corrected.x);
         wrend(boundary, lower.hit, modding);
-        frend(boundary, wheres, world.map.floring, moddings, tracery);
-        crend(boundary, wheres, world.map.ceiling, moddings);
+        const Calc calc = { wheres, moddings };
+        frend(boundary, world.map.floring, calc, tracery);
+        crend(boundary, world.map.ceiling, calc);
         lowers[y] = lower.traceline.corrected;
     }
     unlock(sdl);
@@ -157,8 +158,8 @@ void render(const Sdl sdl, const World world)
     present(sdl);
     free(wheres);
     free(lowers);
-    free(party);
     free(moddings);
+    free(party);
     // Locks refresh rate
     const int t1 = SDL_GetTicks();
     const int ms = 1000.0 / sdl.fps - (t1 - t0);

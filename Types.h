@@ -41,6 +41,13 @@ Point;
 
 typedef struct
 {
+    Point* wheres;
+    int* moddings;
+}
+Calc;
+
+typedef struct
+{
     Point where;
     char* name;
 }
