@@ -9,7 +9,7 @@ SRCS+= Portals.c Boundary.c Surfaces.c Light.c Calc.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
 # Warnings flags
-CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Werror
+CFLAGS = -Wshadow -Wall -Wpedantic -Wextra
 # Debugging flags
 CFLAGS+= -g
 # Optimization flags
