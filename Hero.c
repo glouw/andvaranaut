@@ -31,8 +31,8 @@ static Line zoomed()
 static Light reset()
 {
     const float torch = 0.0;
-    const float brightness = 1250.0;
-    const float dtorch = 80.0;
+    const float brightness = 350.0;
+    const float dtorch = 20.0;
     const Light light = { torch, brightness, dtorch };
     return light;
 }
@@ -44,10 +44,13 @@ static Hero assign(const Hero hero, char* const line)
     const char* const value = trim(strtok(NULL, "\t \n"));
     if(match(field, "speed"))
         temp.speed = floating(value);
+    else
     if(match(field, "acceleration"))
         temp.acceleration = floating(value);
+    else
     if(match(field, "theta"))
         temp.theta = floating(value);
+    else
     if(match(field, "where"))
     {
         Point where;
