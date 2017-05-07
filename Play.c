@@ -19,10 +19,11 @@ void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
     const int fps = 60;
+    // Mutating game data
     Map map = open("start");
     Sprites sprites = wake("start");
-    Hero hero = spawn();
-    const Portals portals = populate("portals.cfg");
+    Hero hero = spawn("hero.cfg");
+    Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
     #ifdef PROFILE
     (void) done;

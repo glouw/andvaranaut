@@ -28,7 +28,41 @@ static Line zoomed()
     return fov;
 }
 
-Hero spawn()
+static Hero assign(const Hero hero, char* const line)
+{
+    Hero temp = hero;
+    const char* const field = trim(strtok(line, "="));
+    const char* const value = trim(strtok(NULL, "\t \n"));
+    if(match(field, "speed")) temp.speed = floating(value);
+    if(match(field, "acceleration")) temp.acceleration = floating(value);
+    if(match(field, "theta")) temp.theta = floating(value);
+    if(match(field, "where"))
+    {
+        Point where;
+        sscanf(value, "%f,%f", &where.x, &where.y);
+        temp.where = where;
+    }
+    return temp;
+}
+
+static Hero overturn(const Hero hero, const char* const name)
+{
+    char* const path = concat("config/", name);
+    FILE* const file = fopen(path, "r");
+    const int count = lns(file);
+    Hero temp = hero;
+    for(int i = 0; i < count; i++)
+    {
+        char* const line = readln(file);
+        temp = assign(temp, line);
+        free(line);
+    }
+    fclose(file);
+    free(path);
+    return temp;
+}
+
+Hero spawn(const char* const name)
 {
     const Line fov = normal();
     const Point where = { 5.5, 9.5 };
@@ -37,10 +71,9 @@ Hero spawn()
     const float acceleration = 0.0150;
     const float theta = 0.0;
     const Light light = reset();
-    const Hero hero = {
-        fov, where, velocity, speed, acceleration, theta, light
-    };
-    return hero;
+    const Hero hero = { fov, where, velocity, speed, acceleration, theta, light };
+    const Hero temp = overturn(hero, name);
+    return temp;
 }
 
 static Hero spin(const Hero hero, const uint8_t* key)

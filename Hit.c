@@ -23,7 +23,7 @@ static int inverted(const Compass facing)
 
 static Hit collision(const Point ray, const Point direction, char** const walling)
 {
-    const float epsilon = 1e-3;
+    const float epsilon = 1e-4;
     const Point where = add(ray, mul(direction, epsilon));
     const Point other = sub(ray, mul(direction, epsilon));
     const float offset = dec(ray.x + ray.y);
