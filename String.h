@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Types.h"
 
 char* build(const char* const str);

@@ -28,14 +28,26 @@ static Line zoomed()
     return fov;
 }
 
+static Light reset()
+{
+    const float torch = 0.0;
+    const float brightness = 1250.0;
+    const float dtorch = 80.0;
+    const Light light = { torch, brightness, dtorch };
+    return light;
+}
+
 static Hero assign(const Hero hero, char* const line)
 {
     Hero temp = hero;
     const char* const field = trim(strtok(line, "="));
     const char* const value = trim(strtok(NULL, "\t \n"));
-    if(match(field, "speed")) temp.speed = floating(value);
-    if(match(field, "acceleration")) temp.acceleration = floating(value);
-    if(match(field, "theta")) temp.theta = floating(value);
+    if(match(field, "speed"))
+        temp.speed = floating(value);
+    if(match(field, "acceleration"))
+        temp.acceleration = floating(value);
+    if(match(field, "theta"))
+        temp.theta = floating(value);
     if(match(field, "where"))
     {
         Point where;
@@ -87,22 +99,27 @@ static Hero spin(const Hero hero, const uint8_t* key)
 
 static Hero move(const Hero hero, char** const walling, const uint8_t* key)
 {
-    Hero step = hero;
+    Hero temp = hero;
+    // Acceleration
     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
     {
         const Point reference = { 1.0, 0.0 };
-        const Point direction = trn(reference, step.theta);
-        const Point acceleration = mul(direction, step.acceleration);
-        if(key[SDL_SCANCODE_W]) step.velocity = add(step.velocity, acceleration);
-        if(key[SDL_SCANCODE_S]) step.velocity = sub(step.velocity, acceleration);
-        if(key[SDL_SCANCODE_D]) step.velocity = add(step.velocity, rag(acceleration));
-        if(key[SDL_SCANCODE_A]) step.velocity = sub(step.velocity, rag(acceleration));
+        const Point direction = trn(reference, temp.theta);
+        const Point acceleration = mul(direction, temp.acceleration);
+        if(key[SDL_SCANCODE_W]) temp.velocity = add(temp.velocity, acceleration);
+        if(key[SDL_SCANCODE_S]) temp.velocity = sub(temp.velocity, acceleration);
+        if(key[SDL_SCANCODE_D]) temp.velocity = add(temp.velocity, rag(acceleration));
+        if(key[SDL_SCANCODE_A]) temp.velocity = sub(temp.velocity, rag(acceleration));
     }
-    else step.velocity = mul(step.velocity, 1.0 - step.acceleration / step.speed);
-    if(mag(step.velocity) > step.speed) step.velocity = mul(unt(step.velocity), step.speed);
-    step.where = add(step.where, step.velocity);
-    if(tile(step.where, walling)) step.velocity = zro(), step.where = hero.where;
-    return step;
+    else temp.velocity = mul(temp.velocity, 1.0 - temp.acceleration / temp.speed);
+    // Top speed check
+    if(mag(temp.velocity) > temp.speed)
+        temp.velocity = mul(unt(temp.velocity), temp.speed);
+    // Move and check collision
+    temp.where = add(temp.where, temp.velocity);
+    if(tile(temp.where, walling))
+        temp.velocity = zro(), temp.where = hero.where;
+    return temp;
 }
 
 static Hit shoot(const Hero hero, char** const walling, const uint8_t* key)

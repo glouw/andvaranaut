@@ -104,7 +104,7 @@ typedef struct
     Point where;
     int ascii;
     State state;
-    int transparent;
+    bool transparent;
 }
 Sprite;
 

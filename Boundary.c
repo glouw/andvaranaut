@@ -17,7 +17,8 @@ static int mod(const uint32_t pixel, const int r, const int g, const int b)
 // Wall renderer
 void wrend(const Boundary boundary, const Hit hit, const int modding)
 {
-    if(hit.neighbor) return;
+    if(hit.neighbor)
+        return;
     const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[hit.tile];
     const int row = surface->h * hit.offset;
     const uint32_t* const pixels = (uint32_t*) surface->pixels;

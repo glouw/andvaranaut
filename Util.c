@@ -22,7 +22,9 @@ int rnd(const float x)
 
 int lns(FILE* const file)
 {
-    int ch, lines = 0, pc = '\n';
+    int ch = EOF;
+    int lines = 0;
+    int pc = '\n';
     while((ch = getc(file)) != EOF)
     {
         if(ch == '\n')
@@ -37,7 +39,9 @@ int lns(FILE* const file)
 
 char* readln(FILE* const file)
 {
-    int ch, reads = 0, size = 64;
+    int ch = EOF;
+    int reads = 0;
+    int size = 64;
     char* line = (char*) malloc(size * sizeof(char));
     while((ch = getc(file)) != '\n' && ch != EOF)
     {
@@ -49,8 +53,11 @@ char* readln(FILE* const file)
     return line;
 }
 
-void bomb(const char* const message)
+void bomb(const char* const message, ...)
 {
-    puts(message);
+    va_list args;
+    va_start(args, message);
+    vprintf(message, args);
+    va_end(args);
     exit(1);
 }

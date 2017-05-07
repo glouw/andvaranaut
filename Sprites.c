@@ -8,10 +8,12 @@ void prints(const Sprites sprites)
 {
     for(int i = 0; i < sprites.count; i++)
     {
+        // Aliases
         const int ascii = sprites.sprite[i].ascii;
         const int state = sprites.sprite[i].state;
         const Point where = sprites.sprite[i].where;
-        printf("%c,%d,%f,%f", ascii, state, where.x, where.y);
+        const bool transparent = sprites.sprite[i].transparent;
+        printf("%c,%d,%f,%f,%s", ascii, state, where.x, where.y, boolean(transparent));
     }
 }
 
@@ -27,12 +29,13 @@ Sprites wake(const char* const name)
         char* const line = readln(file);
         char* const location = strtok(line, " ");
         char ascii = 0;
-        int state = 0, transparent = 0;
+        int state = 0;
+        int transparent = 0;
         sscanf(location, "%c,%d,%f,%f,%d", &ascii, &state, &where.x, &where.y, &transparent);
         sprite[i].where = where;
         sprite[i].ascii = ascii;
         sprite[i].state = (State) state;
-        sprite[i].transparent = transparent;
+        sprite[i].transparent = (bool) transparent;
         free(line);
     }
     const Sprites sprites = { count, sprite };

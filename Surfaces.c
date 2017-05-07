@@ -9,7 +9,8 @@ static SDL_Surface* load(const char* const path, const uint32_t format)
     if(strcmp(extension, ".bmp") == 0)
     {
         SDL_Surface* const bmp = SDL_LoadBMP(path);
-        if(!bmp) printf("Could not open %s\n", path);
+        if(!bmp)
+            bomb("Could not open %s\n", path);
         SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
         SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);
         SDL_FreeFormat(allocation);
@@ -19,7 +20,8 @@ static SDL_Surface* load(const char* const path, const uint32_t format)
     else // Sprites
     {
         SDL_Surface* const img = IMG_Load(path);
-        if(!img) printf("Could not open %s\n", path);
+        if(!img)
+            bomb("Could not open %s\n", path);
         SDL_SetColorKey(img, SDL_TRUE, SDL_MapRGB(img->format, 0x00, 0xFF, 0xFF));
         return img;
     }

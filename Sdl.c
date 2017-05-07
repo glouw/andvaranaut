@@ -15,7 +15,8 @@ Sdl setup(const int res, const int fps, const char* const name)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* const window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
-    if(window == NULL) bomb("Could not open window\nAre you in the console by chance?");
+    if(window == NULL)
+        bomb("Could not open window\n");
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
@@ -63,17 +64,17 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     for(; seen.w > 0; seen.w--, seen.x++)
     {
         const int x = seen.x;
-        if(x < 0 || x >= res) continue;
+        if(x < 0 || x >= res) { continue; }
         // Stop clipping if the sprite is seen
-        if(where.x < lowers[x].x) break;
+        if(where.x < lowers[x].x) { break; }
     }
     // Clips sprite from the right
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
-        if(x < 0 || x >= res) continue;
+        if(x < 0 || x >= res) { continue; }
         // Stops clipping if the sprite is seen - Increments width to avoid blank vertical line
-        if(where.x < lowers[x].x) { seen.w++; break; }
+        if(where.x < lowers[x].x) { seen.w = seen.w + 1; break; }
     }
     return seen;
 }
@@ -84,14 +85,16 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
     {
         const Sprite sprite = sprites.sprite[which];
         // Moves onto the next sprite if this sprite is behind the player
-        if(sprite.where.x < 0) continue;
+        if(sprite.where.x < 0)
+            continue;
         // Calculates sprite size
         const int size = focal(hero.fov) * sdl.res / sprite.where.x;
         const int corner = (sdl.res - size) / 2;
         const int slide = (sdl.res / 2) * ratio(hero.fov) * sprite.where.y / sprite.where.x;
         const SDL_Rect target = { corner + slide, corner, size, size };
         // Moves onto the next sprite if this sprite is off screen
-        if(target.x + target.w < 0 || target.x >= sdl.res) continue;
+        if(target.x + target.w < 0 || target.x >= sdl.res)
+            continue;
         // Selects sprite
         SDL_Surface* const surface = sdl.surfaces.surface[sprite.ascii - ' '];
         const int w = surface->w / FRAMES;
@@ -100,13 +103,15 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         // Clips sprites and prevents dangerous gcc optimizations
         const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, lowers);
         // Moves onto the next sprite if this sprite totally behind a wall
-        if(seen.w <= 0) continue;
+        if(seen.w <= 0)
+            continue;
         // Applies lighting to the sprite
         SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
         const int modding = illuminate(hero.light, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Applies transperancy to the sprite
-        if(sprite.transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
+        if(sprite.transparent)
+            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
         // Buffers the sprite
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
@@ -138,7 +143,8 @@ void render(const Sdl sdl, const World world)
             const Range range =  { world.map.ceiling, column, hits };
             const Impact upper = march(world.hero, range, sdl.res);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
-            if(hits == max) srend(boundary);
+            if(hits == max)
+                srend(boundary);
             const int modding = illuminate(world.hero.light, upper.traceline.corrected.x);
             wrend(boundary, upper.hit, modding);
         }
