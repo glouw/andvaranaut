@@ -60,7 +60,10 @@ static void readme()
     FILE* const file = fopen("README", "r");
     const int lines = lns(file );
     for(int i = 0; i < lines; i++)
-        puts(readln(file));
+    {
+        char* const line = readln(file);
+        free(line);
+    }
     fclose(file);
 }
 
