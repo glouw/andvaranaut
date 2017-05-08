@@ -1,12 +1,14 @@
 #include "Surfaces.h"
 
 #include "Util.h"
+#include "String.h"
+
 #include <SDL2/SDL_image.h>
 
 static SDL_Surface* load(const char* const path, const uint32_t format)
 {
     const char* const extension = strchr(path, '.');
-    if(strcmp(extension, ".bmp") == 0)
+    if(match(extension, ".bmp"))
     {
         SDL_Surface* const bmp = SDL_LoadBMP(path);
         if(!bmp)
@@ -41,4 +43,14 @@ Surfaces pull(const char* const path, const uint32_t format)
     fclose(file);
     const Surfaces surfaces = { lines, surface };
     return surfaces;
+}
+
+void clean(const Surfaces surfaces)
+{
+    for(int i = 0; i < surfaces.count; i++)
+    {
+        printf("surfaces %d\n", i);
+        SDL_FreeSurface(surfaces.surface[i]);
+    }
+    free(surfaces.surface);
 }

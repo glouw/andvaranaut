@@ -10,6 +10,7 @@
 #include "String.h"
 #include "Light.h"
 #include "Calc.h"
+#include "Textures.h"
 
 Sdl setup(const int res, const int fps, const char* const name)
 {
@@ -22,9 +23,10 @@ Sdl setup(const int res, const int fps, const char* const name)
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     char* const path = concat("config/", name);
     const Surfaces surfaces = pull(path, format);
+    const Textures textures = cache(surfaces, renderer);
     const int renders = 0;
     const int ticks = 0;
-    const Sdl sdl = { res, fps, surfaces, window, renderer, texture, renders, ticks };
+    const Sdl sdl = { res, fps, surfaces, textures, window, renderer, texture, renders, ticks };
     free(path);
     return sdl;
 }
@@ -35,8 +37,8 @@ void release(const Sdl sdl)
     SDL_Quit();
     SDL_DestroyWindow(sdl.window);
     SDL_DestroyRenderer(sdl.renderer);
-    for(int i = 0; i < sdl.surfaces.count; i++) SDL_FreeSurface(sdl.surfaces.surface[i]);
-    free(sdl.surfaces.surface);
+    clean(sdl.surfaces);
+    purge(sdl.textures);
 }
 
 Sdl tick(const Sdl sdl, const int renders)
@@ -96,7 +98,9 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         if(target.x + target.w < 0 || target.x >= sdl.res)
             continue;
         // Selects sprite
-        SDL_Surface* const surface = sdl.surfaces.surface[sprite.ascii - ' '];
+        const int selected = sprite.ascii - ' ';
+        SDL_Surface* const surface = sdl.surfaces.surface[selected];
+        SDL_Texture* const texture = sdl.textures.texture[selected];
         const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
         const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * sprite.state, w, h };
@@ -106,7 +110,6 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         if(seen.w <= 0)
             continue;
         // Applies lighting to the sprite
-        SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
         const int modding = illuminate(hero.light, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Applies transperancy to the sprite
@@ -116,7 +119,9 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
-        SDL_DestroyTexture(texture);
+        // Removes transperancy from the sprite
+        if(sprite.transparent)
+            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
     }
 }
 
@@ -125,7 +130,8 @@ void render(const Sdl sdl, const World world)
     const int t0 = SDL_GetTicks();
     // Precomputations
     float* const party = (float*) malloc(sdl.res * sizeof(*party));
-    const int m = sdl.res / 2, l = sdl.res;
+    const int m = sdl.res / 2;
+    const int l = sdl.res;
     for(int x = 0; x < m; x++) party[x] = fcast(world.hero.fov, sdl.res, x);
     for(int x = m; x < l; x++) party[x] = ccast(world.hero.fov, sdl.res, x);
     // Preallocations for render computations

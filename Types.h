@@ -15,6 +15,13 @@ Map;
 typedef struct
 {
     int count;
+    SDL_Texture** texture;
+}
+Textures;
+
+typedef struct
+{
+    int count;
     SDL_Surface** surface;
 }
 Surfaces;
@@ -171,6 +178,7 @@ typedef struct
     int res;
     int fps;
     Surfaces surfaces;
+    Textures textures;
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
