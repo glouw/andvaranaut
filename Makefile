@@ -22,10 +22,10 @@ LDFLAGS = -lSDL2 -lSDL2_image -lm
 # Dependency flags
 DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
 # Command line definitions
-CMD =
+AUX =
 # Compile, link, and post process
-COMP = $(CC) $(CMD) $(TARGET_ARCH) $(CFLAGS) $(DEPFLAGS) -c
-LINK = $(CC) $(CMD) $(TARGET_ARCH) $(CFLAGS) $(OBJS) $(LDFLAGS) -o
+COMP = $(CC) $(AUX) $(TARGET_ARCH) $(CFLAGS) $(DEPFLAGS) -c
+LINK = $(CC) $(AUX) $(TARGET_ARCH) $(CFLAGS) $(OBJS) $(LDFLAGS) -o
 POST = mv -f $*.Td $*.d
 $(PROJ): $(OBJS)
 	$(LINK) $(PROJ)

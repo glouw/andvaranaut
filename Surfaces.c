@@ -39,6 +39,7 @@ Surfaces pull(const char* const path, const uint32_t format)
         char* const line = readln(file);
         char* const trim = strtok(line, "# \n"); // Comments allowed
         surface[i] = load(trim, format);
+        free(line);
     }
     fclose(file);
     const Surfaces surfaces = { lines, surface };
@@ -48,9 +49,6 @@ Surfaces pull(const char* const path, const uint32_t format)
 void clean(const Surfaces surfaces)
 {
     for(int i = 0; i < surfaces.count; i++)
-    {
-        printf("surfaces %d\n", i);
         SDL_FreeSurface(surfaces.surface[i]);
-    }
     free(surfaces.surface);
 }

@@ -19,14 +19,12 @@ void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
     const int fps = 60;
-    // Mutating game data
     Map map = open("start");
     Sprites sprites = wake("start");
     Hero hero = spawn("hero.cfg");
     Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
     #ifdef PROFILE
-    (void) done;
     for(int renders = 0; renders < 60; renders++)
     #else
     for(int renders = 0; !done(); renders++)
@@ -49,8 +47,8 @@ void play(const char* argv[])
         kill(relative);
         sdl = tick(sdl, renders);
     }
+    release(sdl);
     close(map);
     kill(sprites);
     destroy(portals);
-    release(sdl);
 }

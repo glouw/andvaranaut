@@ -15,9 +15,6 @@ Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer)
 void purge(const Textures textures)
 {
     for(int i = 0; i < textures.count; i++)
-    {
-        printf("textures %d\n", i);
         SDL_DestroyTexture(textures.texture[i]);
-    }
     free(textures.texture);
 }

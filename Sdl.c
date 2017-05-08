@@ -19,26 +19,28 @@ Sdl setup(const int res, const int fps, const char* const name)
     if(window == NULL)
         bomb("Could not open window\n");
     SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if(renderer == NULL)
+        bomb("No renderer available\n");
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     char* const path = concat("config/", name);
     const Surfaces surfaces = pull(path, format);
+    free(path);
     const Textures textures = cache(surfaces, renderer);
     const int renders = 0;
     const int ticks = 0;
     const Sdl sdl = { res, fps, surfaces, textures, window, renderer, texture, renders, ticks };
-    free(path);
     return sdl;
 }
 
 void release(const Sdl sdl)
 {
+    clean(sdl.surfaces);
+    purge(sdl.textures);
     SDL_DestroyTexture(sdl.texture);
     SDL_Quit();
     SDL_DestroyWindow(sdl.window);
     SDL_DestroyRenderer(sdl.renderer);
-    clean(sdl.surfaces);
-    purge(sdl.textures);
 }
 
 Sdl tick(const Sdl sdl, const int renders)
