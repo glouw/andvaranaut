@@ -8,7 +8,6 @@ void prints(const Sprites sprites)
 {
     for(int i = 0; i < sprites.count; i++)
     {
-        // Aliases
         const int ascii = sprites.sprite[i].ascii;
         const int state = sprites.sprite[i].state;
         const Point where = sprites.sprite[i].where;

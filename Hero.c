@@ -31,7 +31,7 @@ static Line zoomed()
 static Light reset()
 {
     const float torch = 0.0;
-    const float brightness = 350.0;
+    const float brightness = 300.0;
     const float dtorch = 20.0;
     const Light light = { torch, brightness, dtorch };
     return light;
