@@ -46,7 +46,7 @@ static void _floating()
         printf("%f\n", floating(strings[i]));
 }
 
-static void __string()
+static void __String()
 {
     _build();
     _concat();
@@ -62,6 +62,7 @@ static void readme()
     for(int i = 0; i < lines; i++)
     {
         char* const line = readln(file);
+        puts(line);
         free(line);
     }
     fclose(file);
@@ -69,6 +70,6 @@ static void readme()
 
 void test()
 {
-    __string();
+    __String();
     readme();
 }

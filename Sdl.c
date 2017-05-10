@@ -25,11 +25,11 @@ Sdl setup(const int res, const int fps, const char* const name)
     SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     char* const path = concat("config/", name);
     const Surfaces surfaces = pull(path, format);
-    free(path);
     const Textures textures = cache(surfaces, renderer);
     const int renders = 0;
     const int ticks = 0;
     const Sdl sdl = { res, fps, surfaces, textures, window, renderer, texture, renders, ticks };
+    free(path);
     return sdl;
 }
 
