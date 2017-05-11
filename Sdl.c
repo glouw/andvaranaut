@@ -131,14 +131,14 @@ void render(const Sdl sdl, const World world)
 {
     const int t0 = SDL_GetTicks();
     // Precomputations
-    float* const party = (float*) malloc(sdl.res * sizeof(*party));
+    float* const party = toss(float, sdl.res);
     const int m = sdl.res / 2;
     const int l = sdl.res;
     for(int x = 0; x < m; x++) party[x] = fcast(world.hero.fov, sdl.res, x);
     for(int x = m; x < l; x++) party[x] = ccast(world.hero.fov, sdl.res, x);
     // Preallocations for render computations
     const Calc calc = prealloc(sdl.res);
-    Point* const lowers = (Point*) malloc(sdl.res * sizeof(*lowers));
+    Point* const lowers = toss(Point, sdl.res);
     // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
     const Line camera = rotate(world.hero.fov, world.hero.theta);
     const Display display = lock(sdl);

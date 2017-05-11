@@ -1,9 +1,10 @@
 #include "Calc.h"
+#include "Util.h"
 
 Calc prealloc(const int res)
 {
-    Point* const wheres = (Point*) malloc(res * sizeof(*wheres));
-    int* const moddings = (int*) malloc(res * sizeof(*moddings));
+    Point* const wheres = toss(Point, res);
+    int* const moddings = toss(int, res);
     const Calc calc = { wheres, moddings };
     return calc;
 }

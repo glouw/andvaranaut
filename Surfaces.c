@@ -33,7 +33,7 @@ Surfaces pull(const char* const path, const uint32_t format)
 {
     FILE* const file = fopen(path, "r");
     const int lines = lns(file);
-    SDL_Surface** const surface = (SDL_Surface**) malloc(lines * sizeof(*surface));
+    SDL_Surface** const surface = toss(SDL_Surface*, lines);
     for(int i = 0; i < lines; i++)
     {
         char* const line = readln(file);

@@ -21,7 +21,7 @@ Sprites wake(const char* const name)
     char* const path = concat("sprites/", name);
     FILE* const file = fopen(path, "r");
     const int count = lns(file);
-    Sprite* const sprite = (Sprite*) malloc(count * sizeof(*sprite));
+    Sprite* const sprite = toss(Sprite, count);
     for(int i = 0; i < count; i++)
     {
         Point where = { 0.0, 0.0 };
@@ -57,7 +57,7 @@ Sprites swap(const Sprites sprites, const char* const name)
 static Sprites copy(const Sprites sprites)
 {
     const int count = sprites.count;
-    Sprite* const temp = (Sprite*) malloc(sprites.count * sizeof(*sprites.sprite));
+    Sprite* const temp = toss(Sprite, count);
     const Sprites temps = { count, temp };
     memcpy(temps.sprite, sprites.sprite, sprites.count * sizeof(*sprites.sprite));
     return temps;

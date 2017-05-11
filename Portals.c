@@ -8,7 +8,7 @@ Portals populate(const char* const name)
     char* const path = concat("config/", name);
     FILE* const file = fopen(path, "r");
     const int count = lns(file);
-    Portal* const portal = (Portal*) malloc(count * sizeof(*portal));
+    Portal* const portal = toss(Portal, count);
     for(int i = 0; i < count; i++)
     {
         Point where = { 0.0, 0.0 };
