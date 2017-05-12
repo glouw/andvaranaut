@@ -9,7 +9,6 @@
 #include "Util.h"
 #include "String.h"
 #include "Light.h"
-#include "Calc.h"
 #include "Textures.h"
 
 Sdl setup(const int res, const int fps, const char* const name)
@@ -137,7 +136,8 @@ void render(const Sdl sdl, const World world)
     for(int x = 0; x < m; x++) party[x] = fcast(world.hero.fov, sdl.res, x);
     for(int x = m; x < l; x++) party[x] = ccast(world.hero.fov, sdl.res, x);
     // Preallocations for render computations
-    const Calc calc = prealloc(sdl.res);
+    Point* wheres = toss(Point, sdl.res);
+    int* moddings = toss(int, sdl.res);
     Point* const lowers = toss(Point, sdl.res);
     // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
     const Line camera = rotate(world.hero.fov, world.hero.theta);
@@ -163,6 +163,7 @@ void render(const Sdl sdl, const World world)
         const Tracery tracery = { lower.traceline, party, world.hero.light };
         const int modding = illuminate(world.hero.light, lower.traceline.corrected.x);
         wrend(boundary, lower.hit, modding);
+        const Calc calc = { wheres, moddings };
         frend(boundary, world.map.floring, calc, tracery);
         crend(boundary, world.map.ceiling, calc);
         lowers[y] = lower.traceline.corrected;
@@ -175,7 +176,8 @@ void render(const Sdl sdl, const World world)
     // Clean up all computations
     free(party);
     free(lowers);
-    abandon(calc);
+    free(wheres);
+    free(moddings);
     // Locks refresh rate
     const int t1 = SDL_GetTicks();
     const int ms = 1000.0 / sdl.fps - (t1 - t0);

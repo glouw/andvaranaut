@@ -19,12 +19,13 @@ static int done()
 void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
+    const int fps = 60;
     Map map = open("start");
     Sprites sprites = wake("start");
     Hero hero = spawn("hero.cfg");
     Portals portals = populate("portals.cfg");
-    Sdl sdl = setup(res, 60, "surfaces.cfg");
-    for(int renders = 0; sdl.res == 256 ? renders < 60 : !done(); renders++)
+    Sdl sdl = setup(res, fps, "surfaces.cfg");
+    for(int renders = 0; res == 256 ? renders < fps : !done(); renders++)
     {
         const uint8_t* key = SDL_GetKeyboardState(NULL);
         SDL_PumpEvents();

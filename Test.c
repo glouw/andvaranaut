@@ -5,7 +5,7 @@
 
 static void _build()
 {
-    char* strings[] = { "each", "must", "be", "built", "printed", "and", "freed" };
+    const char* strings[] = { "each", "must", "be", "built", "printed", "and", "freed" };
     for(int i = 0; i < len(strings); i++)
     {
         char* const string = build(strings[i]);
@@ -16,7 +16,7 @@ static void _build()
 
 static void _concat()
 {
-    char* strings[] = { "each", "must", "concatenate", "another", "string", "and", "freed" };
+    const char* strings[] = { "each", "must", "concatenate", "another", "string", "and", "freed" };
     for(int i = 0; i < len(strings); i++)
     {
         char* const string = concat(strings[i], "...");
@@ -27,7 +27,7 @@ static void _concat()
 
 static void _match()
 {
-    char* strings[] = { "each", "of", "these", "must", "match", "themselves" };
+    const char* strings[] = { "each", "of", "these", "must", "match", "themselves" };
     for(int i = 0; i < len(strings); i++)
         printf("%s\n", boolean(match(strings[i], strings[i])));
 }
@@ -41,7 +41,7 @@ static void _trim()
 
 static void _floating()
 {
-    char* strings[] = { "1.0", "2.0", "-1.2", "+42.0", "+0.0", "-0.0", "INF" };
+    const char* strings[] = { "1.0", "2.0", "-1.2", "+42.0", "+0.0", "-0.0", "INF" };
     for(int i = 0; i < len(strings); i++)
         printf("%f\n", floating(strings[i]));
 }
