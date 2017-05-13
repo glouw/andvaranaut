@@ -189,14 +189,6 @@ Sdl;
 
 typedef struct
 {
-    Hero hero;
-    Sprites sprites;
-    Map map;
-}
-World;
-
-typedef struct
-{
     uint32_t* pixels;
     int width;
 }

@@ -40,8 +40,7 @@ void play(const char* argv[])
             sprites = swap(sprites, portal.name);
         }
         const Sprites relatives = arrange(sprites, hero);
-        const World world = { hero, relatives, map };
-        render(sdl, world);
+        render(sdl, hero, relatives, map);
         kill(relatives);
         sdl = tick(sdl, renders);
     }

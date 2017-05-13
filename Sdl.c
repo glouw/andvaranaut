@@ -126,21 +126,21 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
     }
 }
 
-void render(const Sdl sdl, const World world)
+void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
 {
     const int t0 = SDL_GetTicks();
     // Precomputations
     float* const party = toss(float, sdl.res);
     const int m = sdl.res / 2;
     const int l = sdl.res;
-    for(int x = 0; x < m; x++) party[x] = fcast(world.hero.fov, sdl.res, x);
-    for(int x = m; x < l; x++) party[x] = ccast(world.hero.fov, sdl.res, x);
+    for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, sdl.res, x);
+    for(int x = m; x < l; x++) party[x] = ccast(hero.fov, sdl.res, x);
     // Preallocations for render computations
     Point* wheres = toss(Point, sdl.res);
     int* moddings = toss(int, sdl.res);
     Point* const lowers = toss(Point, sdl.res);
     // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
-    const Line camera = rotate(world.hero.fov, world.hero.theta);
+    const Line camera = rotate(hero.fov, hero.theta);
     const Display display = lock(sdl);
     for(int y = 0; y < sdl.res; y++)
     {
@@ -148,29 +148,29 @@ void render(const Sdl sdl, const World world)
         const Scanline scanline = { sdl, display, y };
         for(int max = 5, hits = max; hits > 0; hits--)
         {
-            const Range range =  { world.map.ceiling, column, hits };
-            const Impact upper = march(world.hero, range, sdl.res);
+            const Range range =  { map.ceiling, column, hits };
+            const Impact upper = march(hero, range, sdl.res);
             const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
             if(hits == max)
                 srend(boundary);
-            const int modding = illuminate(world.hero.light, upper.traceline.corrected.x);
+            const int modding = illuminate(hero.light, upper.traceline.corrected.x);
             wrend(boundary, upper.hit, modding);
         }
         // Just a single hit for the lower walls
-        const Range range =  { world.map.walling, column, 1 };
-        const Impact lower = march(world.hero, range, sdl.res);
+        const Range range =  { map.walling, column, 1 };
+        const Impact lower = march(hero, range, sdl.res);
         const Boundary boundary = { scanline, lower.wall };
-        const Tracery tracery = { lower.traceline, party, world.hero.light };
-        const int modding = illuminate(world.hero.light, lower.traceline.corrected.x);
+        const Tracery tracery = { lower.traceline, party, hero.light };
+        const int modding = illuminate(hero.light, lower.traceline.corrected.x);
         wrend(boundary, lower.hit, modding);
         const Calc calc = { wheres, moddings };
-        frend(boundary, world.map.floring, calc, tracery);
-        crend(boundary, world.map.ceiling, calc);
+        frend(boundary, map.floring, calc, tracery);
+        crend(boundary, map.ceiling, calc);
         lowers[y] = lower.traceline.corrected;
     }
     unlock(sdl);
     churn(sdl);
-    paste(sdl, world.sprites, lowers, world.hero);
+    paste(sdl, sprites, lowers, hero);
     // Presents buffer
     present(sdl);
     // Clean up all computations
