@@ -60,6 +60,7 @@ void present(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
+// Stop clipping if the sprite is seen
 static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const lowers)
 {
     SDL_Rect seen = frame;
@@ -67,16 +68,14 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     for(; seen.w > 0; seen.w--, seen.x++)
     {
         const int x = seen.x;
-        if(x < 0 || x >= res) { continue; }
-        // Stop clipping if the sprite is seen
-        if(where.x < lowers[x].x) { break; }
+        if(x < 0 || x >= res) continue;
+        if(where.x < lowers[x].x) break;
     }
     // Clips sprite from the right
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
-        if(x < 0 || x >= res) { continue; }
-        // Stops clipping if the sprite is seen - Increments width to avoid blank vertical line
+        if(x < 0 || x >= res) continue;
         if(where.x < lowers[x].x) { seen.w = seen.w + 1; break; }
     }
     return seen;

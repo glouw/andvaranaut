@@ -218,11 +218,11 @@ Hero touch(const Hero hero, const Map map, const uint8_t* key)
         temp = pick(temp, key);
     else
     {
-        edit(map, temp, key);
         temp = spin(temp, key);
         temp = move(temp, map.walling, key);
         temp = zoom(temp, key);
         temp = fade(temp);
+        edit(map, temp, key);
     }
     return temp;
 }

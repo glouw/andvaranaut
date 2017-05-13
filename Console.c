@@ -104,12 +104,24 @@ int lookup(const uint8_t* key)
     return -1;
 }
 
+static int insert(const uint8_t* key)
+{
+    return key[SDL_SCANCODE_I] == true;
+}
+
+static int normal(const uint8_t* key)
+{
+    return key[SDL_SCANCODE_CAPSLOCK] == true
+        || key[SDL_SCANCODE_ESCAPE] == true
+        || key[SDL_SCANCODE_RETURN] == true;
+}
+
 bool console(const uint8_t* key)
 {
     static bool enabled = false;
-    if(key[SDL_SCANCODE_I])
+    if(insert(key))
         enabled = true;
-    if(key[SDL_SCANCODE_CAPSLOCK] || key[SDL_SCANCODE_ESCAPE])
+    if(normal(key))
         enabled = false;
     return enabled;
 }
