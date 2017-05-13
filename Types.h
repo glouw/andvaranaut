@@ -1,6 +1,8 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <stdbool.h>
 
 typedef struct
@@ -135,6 +137,13 @@ typedef struct
 }
 Light;
 
+
+typedef enum
+{
+    FLORING, WALLING, CEILING
+}
+Party;
+
 typedef struct
 {
     Line fov;
@@ -145,6 +154,8 @@ typedef struct
     float theta;
     Light light;
     int block;
+    Party party;
+    bool consoling;
 }
 Hero;
 
@@ -183,6 +194,7 @@ typedef struct
     SDL_Texture* texture;
     int renders;
     int ticks;
+    TTF_Font* font;
 }
 Sdl;
 
@@ -207,3 +219,11 @@ typedef struct
     Wall wall;
 }
 Boundary;
+
+typedef struct
+{
+    char* text;
+    SDL_Color color;
+    int outline;
+}
+Ttf;

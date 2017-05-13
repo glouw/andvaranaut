@@ -10,10 +10,12 @@
 #include "String.h"
 #include "Light.h"
 #include "Textures.h"
+#include "Ttf.h"
 
 Sdl setup(const int res, const int fps, const char* const name)
 {
     SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
     SDL_Window* const window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
     if(window == NULL)
         bomb("Could not open window\n");
@@ -27,7 +29,8 @@ Sdl setup(const int res, const int fps, const char* const name)
     const Textures textures = cache(surfaces, renderer);
     const int renders = 0;
     const int ticks = 0;
-    const Sdl sdl = { res, fps, surfaces, textures, window, renderer, texture, renders, ticks };
+    TTF_Font* const font = TTF_OpenFont("fonts/Inconsolata-Regular.ttf", res / 16);
+    const Sdl sdl = { res, fps, surfaces, textures, window, renderer, texture, renders, ticks, font };
     free(path);
     return sdl;
 }
@@ -40,6 +43,7 @@ void release(const Sdl sdl)
     SDL_Quit();
     SDL_DestroyWindow(sdl.window);
     SDL_DestroyRenderer(sdl.renderer);
+    TTF_CloseFont(sdl.font);
 }
 
 Sdl tick(const Sdl sdl, const int renders)
@@ -125,6 +129,34 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
     }
 }
 
+static void print(const Sdl sdl, const int x, const int y, char* const text)
+{
+    const Ttf inner = { text, { 0xFF, 0xFF, 0x00, 0x00 }, 0 };
+    const Ttf outer = { text, { 0x00, 0x00, 0x00, 0x00 }, 1 };
+    scribble(outer, x, y, sdl);
+    scribble(inner, x, y, sdl);
+}
+
+static void inserting(const Sdl sdl, const Hero hero)
+{
+    // Strings
+    char* const insert = "-- INSERT --";
+    char block[] = { hero.block, '\0' };
+    // Location
+    const SDL_Rect top = size(sdl.font, block);
+    print(sdl, top.w, 0, block);
+    if(hero.consoling)
+    {
+        const SDL_Rect bot = size(sdl.font, insert);
+        print(sdl, top.w, sdl.res - bot.h, insert);
+    }
+}
+
+static void gui(const Sdl sdl, const Hero hero)
+{
+    inserting(sdl, hero);
+}
+
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
 {
     const int t0 = SDL_GetTicks();
@@ -160,6 +192,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     unlock(sdl);
     churn(sdl);
     paste(sdl, sprites, lowers, hero);
+    gui(sdl, hero);
     // Presents buffer
     present(sdl);
     // Clean up all computations

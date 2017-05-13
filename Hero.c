@@ -91,11 +91,14 @@ Hero spawn(const char* const name)
     const float acceleration = 0.0150;
     const float theta = 0.0;
     const Light light = reset();
-    // Default block action is delete
     const int block = ' ';
-    const Hero hero = { fov, where, velocity, speed, acceleration, theta, light, block };
-    const Hero temp = overturn(hero, name);
-    return temp;
+    const Party party = WALLING;
+    const bool consoling = false;
+    const Hero hero = {
+        fov, where, velocity, speed, acceleration, theta, light, block, party, consoling
+    };
+    const Hero fixed = overturn(hero, name);
+    return fixed;
 }
 
 static Hero spin(const Hero hero, const uint8_t* key)
@@ -189,7 +192,7 @@ static Hero zoom(const Hero hero, const uint8_t* key)
     return temp;
 }
 
-static Hero pick(const Hero hero, const uint8_t* key)
+static Hero type(const Hero hero, const uint8_t* key)
 {
     Hero temp = hero;
     const int pressed = lookup(key);
@@ -201,18 +204,69 @@ static Hero pick(const Hero hero, const uint8_t* key)
     return temp;
 }
 
+static Hero pick(const Hero hero, const uint8_t* key)
+{
+    Hero temp = hero;
+    if(key[SDL_SCANCODE_1]) temp.party = FLORING;
+    if(key[SDL_SCANCODE_2]) temp.party = WALLING;
+    if(key[SDL_SCANCODE_3]) temp.party = CEILING;
+    return temp;
+}
+
+static char** select(const Map map, const Party party)
+{
+    switch(party)
+    {
+        case CEILING: return map.ceiling;
+        case WALLING: return map.walling;
+        case FLORING: return map.floring;
+    }
+    return map.walling;
+}
+
+static void edit(const Hero hero, const Map map, const uint8_t* key)
+{
+    const float reach = 1.1;
+    const Point reference = { reach, 0.0 };
+    const Point direction = trn(reference, hero.theta);
+    const Point where = add(hero.where, direction);
+    // Wall operations
+    if(key[SDL_SCANCODE_Y])
+    {
+        const int x = where.x;
+        const int y = where.y;
+        char** const blocks = select(map, hero.party);
+        if(block(where, blocks) != '!')
+            blocks[y][x] = hero.block;
+    }
+}
+
+static Hero console(const Hero hero, const uint8_t* key)
+{
+    Hero temp = hero;
+    const bool insert = key[SDL_SCANCODE_I];
+    const bool normal = key[SDL_SCANCODE_CAPSLOCK]
+        || key[SDL_SCANCODE_ESCAPE]
+        || key[SDL_SCANCODE_RETURN];
+    if(insert) temp.consoling = true;
+    if(normal) temp.consoling = false;
+    return temp;
+}
+
 Hero touch(const Hero hero, const Map map, const uint8_t* key)
 {
     Hero temp = hero;
-    if(console(key))
-        temp = pick(temp, key);
+    temp = console(temp, key);
+    if(temp.consoling)
+        temp = type(temp, key);
     else
     {
         temp = spin(temp, key);
         temp = move(temp, map.walling, key);
         temp = zoom(temp, key);
         temp = fade(temp);
-        edit(map, temp, key);
+        temp = pick(temp, key);
+        edit(temp, map, key);
     }
     return temp;
 }

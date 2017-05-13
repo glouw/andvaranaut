@@ -3,8 +3,6 @@
 #include "Util.h"
 #include "String.h"
 
-#include <SDL2/SDL_image.h>
-
 static SDL_Surface* load(const char* const path, const uint32_t format)
 {
     const char* const extension = strchr(path, '.');

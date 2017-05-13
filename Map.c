@@ -45,19 +45,3 @@ Map reopen(const Map map, const char* const name)
     close(map);
     return open(name);
 }
-
-void edit(const Map map, const Hero hero, const uint8_t* key)
-{
-    const float reach = 1.1;
-    const Point reference = { reach, 0.0 };
-    const Point direction = trn(reference, hero.theta);
-    const Point where = add(hero.where, direction);
-    // Wall operations
-    if(key[SDL_SCANCODE_Y])
-    {
-        const int x = where.x;
-        const int y = where.y;
-        if(block(where, map.walling) != '!')
-            map.walling[y][x] = hero.block;
-    }
-}

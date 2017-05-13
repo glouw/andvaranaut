@@ -103,25 +103,3 @@ int lookup(const uint8_t* key)
     // Nothing was presse 
     return -1;
 }
-
-static int insert(const uint8_t* key)
-{
-    return key[SDL_SCANCODE_I] == true;
-}
-
-static int normal(const uint8_t* key)
-{
-    return key[SDL_SCANCODE_CAPSLOCK] == true
-        || key[SDL_SCANCODE_ESCAPE] == true
-        || key[SDL_SCANCODE_RETURN] == true;
-}
-
-bool console(const uint8_t* key)
-{
-    static bool enabled = false;
-    if(insert(key))
-        enabled = true;
-    if(normal(key))
-        enabled = false;
-    return enabled;
-}
