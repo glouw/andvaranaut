@@ -17,11 +17,12 @@ static uint32_t mod(const uint32_t pixel, const int r, const int g, const int b)
 // Wall renderer
 void wrend(const Boundary boundary, const Hit hit, const int modding)
 {
-    if(hit.neighbor)
-        return;
     // Aliases
     const int y = boundary.scanline.y;
     const int width = boundary.scanline.display.width;
+    // Only render what is seen
+    if(hit.neighbor)
+        return;
     // Paint
     const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[hit.tile];
     const int row = surface->h * hit.offset;
@@ -64,6 +65,9 @@ void frend(const Boundary boundary, char** const floring, const Calc calc, const
 // Ceiling renderer - Saves time by using some of frend()'s calculations
 void crend(const Boundary boundary, char** const ceiling, const Calc calc)
 {
+    // Aliases
+    const int y = boundary.scanline.y;
+    const int width = boundary.scanline.display.width;
     // Only bother rendering what can be seen
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
@@ -75,9 +79,6 @@ void crend(const Boundary boundary, char** const ceiling, const Calc calc)
             const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[visible];
             const int row = surface->h * dec(where.y);
             const int col = surface->w * dec(where.x);
-            // Aliases
-            const int y = boundary.scanline.y;
-            const int width = boundary.scanline.display.width;
             const int modding = calc.moddings[x];
             // Paint
             const uint32_t* const pixels = (uint32_t*) surface->pixels;
@@ -93,10 +94,11 @@ void srend(const Boundary boundary)
     // Aliases
     const int y = boundary.scanline.y;
     const int width = boundary.scanline.display.width;
+    const int res = boundary.scanline.sdl.res;
     // Paint
-    for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
+    for(int x = res / 2; x < res; x++)
     {
-        const int shade = 0x0F;
+        const int shade = 0x00;
         boundary.scanline.display.pixels[x + y * width] = shade << 0x10 | shade << 0x08 | shade;
     }
 }

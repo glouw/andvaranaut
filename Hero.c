@@ -33,7 +33,7 @@ static Line zoomed()
 static Light reset()
 {
     const float torch = 0.0;
-    const float brightness = 500.0;
+    const float brightness = 250.0;
     const float dtorch = brightness / 10.0;
     const Light light = { torch, brightness, dtorch };
     return light;
@@ -145,7 +145,7 @@ static Hit shoot(const Hero hero, char** const walling, const uint8_t* key)
 int handle(const Hero hero, char** const walling, const uint8_t* key)
 {
     const Hit hit = shoot(hero, walling, key);
-    const int ch = hit.tile + ' ';
+    const int ch = block(hit.where, walling);
     const float reach = 1.0;
     const int nearby = mag(sub(hero.where, hit.where)) < reach;
     return nearby && isportal(ch) ? ch : false;
@@ -205,7 +205,6 @@ static Hero pick(const Hero hero, const uint8_t* key)
     if(pressed == -1)
         return hero;
     temp.block = pressed;
-    // Clamp
     if(temp.block < ' ') temp.block = ' ';
     if(temp.block > '~') temp.block = '~';
     return temp;
