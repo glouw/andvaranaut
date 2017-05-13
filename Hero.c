@@ -193,8 +193,8 @@ static Hero fade(const Hero hero)
 static Hero zoom(const Hero hero, const uint8_t* key)
 {
     Hero temp = hero;
-    if(key[SDL_SCANCODE_K]) temp.fov = zoomed();
-    if(key[SDL_SCANCODE_J]) temp.fov = normal();
+    if(key[SDL_SCANCODE_P]) temp.fov = zoomed();
+    if(key[SDL_SCANCODE_O]) temp.fov = normal();
     return temp;
 }
 

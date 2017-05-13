@@ -5,35 +5,30 @@
 
 static Compass needle(const Point where, const Point other)
 {
-    const int wx = where.x;
-    const int wy = where.y;
-    const int ox = other.x;
-    const int oy = other.y;
-    if(wx < ox && wy == oy) return E; // East facing
-    if(wx > ox && wy == oy) return W; // West facing
-    if(wy > oy && wx == ox) return S; // South facing
-    // Default - North facing
-    return N;
+    if(where.x < other.x && (int) where.y == (int) other.y) return E; // East face
+    if(where.x > other.x && (int) where.y == (int) other.y) return W; // West face
+    if(where.y > other.y && (int) where.x == (int) other.x) return S; // South face
+    return N; // North face
 }
 
-static int inverted(const Compass facing)
+static int inverted(const Compass face)
 {
-    return facing == E || facing == S;
+    return face == E || face == S;
 }
 
 static Hit collision(const Point ray, const Point direction, char** const walling)
 {
-    const float epsilon = 1e-4;
+    const float epsilon = 1e-3;
     const Point where = add(ray, mul(direction, epsilon));
     const Point other = sub(ray, mul(direction, epsilon));
     const float offset = dec(ray.x + ray.y);
-    const Compass facing = needle(where, other);
+    const Compass face = needle(where, other);
     const Hit hit = {
         tile(where, walling),
         tile(other, walling),
-        inverted(facing) ? 1.0 - offset : offset,
+        inverted(face) ? 1.0 - offset : offset,
         ray,
-        facing
+        face
     };
     return hit;
 }

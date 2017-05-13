@@ -26,7 +26,7 @@ void play(const char* argv[])
     Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
     const uint8_t* key = SDL_GetKeyboardState(NULL);
-    for(int renders = 0; res == 256 ? renders < fps : !done(); renders++)
+    for(int renders = 0; res == 128 ? renders < fps : !done(); renders++)
     {
         SDL_PumpEvents();
         hero = touch(hero, map, key);
