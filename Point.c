@@ -80,9 +80,14 @@ Point cmp(const Point a, const Point b, const Point c)
     return mag(sub(b, a)) < mag(sub(c, a)) ? b : c;
 }
 
-int tile(const Point a, char** const tiles)
+int block(const Point a, char** const blocks)
 {
     const int x = a.x;
     const int y = a.y;
-    return tiles[y][x] - ' ';
+    return blocks[y][x];
+}
+
+int tile(const Point a, char** const blocks)
+{
+    return block(a, blocks) - ' ';
 }

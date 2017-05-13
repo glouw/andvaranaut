@@ -13,7 +13,7 @@ static int done()
     SDL_PollEvent(&event);
     const int type = event.type;
     const int sym = event.key.keysym.sym;
-    return type == SDL_QUIT || sym == SDLK_F1 || sym == SDLK_ESCAPE;
+    return type == SDL_QUIT || sym == SDLK_F1;
 }
 
 void play(const char* argv[])
@@ -25,9 +25,9 @@ void play(const char* argv[])
     Hero hero = spawn("hero.cfg");
     Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
+    const uint8_t* key = SDL_GetKeyboardState(NULL);
     for(int renders = 0; res == 256 ? renders < fps : !done(); renders++)
     {
-        const uint8_t* key = SDL_GetKeyboardState(NULL);
         SDL_PumpEvents();
         hero = touch(hero, map, key);
         const int ch = handle(hero, map.walling, key);

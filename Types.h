@@ -146,6 +146,7 @@ typedef struct
     float acceleration;
     float theta;
     Light light;
+    int block;
 }
 Hero;
 

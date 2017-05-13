@@ -8,6 +8,8 @@
 #include "String.h"
 #include "Line.h"
 #include "Light.h"
+#include "Map.h"
+#include "Console.h"
 
 static Line normal()
 {
@@ -31,8 +33,8 @@ static Line zoomed()
 static Light reset()
 {
     const float torch = 0.0;
-    const float brightness = 300.0;
-    const float dtorch = 20.0;
+    const float brightness = 500.0;
+    const float dtorch = brightness / 10.0;
     const Light light = { torch, brightness, dtorch };
     return light;
 }
@@ -86,7 +88,9 @@ Hero spawn(const char* const name)
     const float acceleration = 0.0150;
     const float theta = 0.0;
     const Light light = reset();
-    const Hero hero = { fov, where, velocity, speed, acceleration, theta, light };
+    // Default block action is delete
+    const int block = ' ';
+    const Hero hero = { fov, where, velocity, speed, acceleration, theta, light, block };
     const Hero temp = overturn(hero, name);
     return temp;
 }
@@ -114,6 +118,7 @@ static Hero move(const Hero hero, char** const walling, const uint8_t* key)
         if(key[SDL_SCANCODE_D]) temp.velocity = add(temp.velocity, rag(acceleration));
         if(key[SDL_SCANCODE_A]) temp.velocity = sub(temp.velocity, rag(acceleration));
     }
+    // Mass-Spring damping
     else temp.velocity = mul(temp.velocity, 1.0 - temp.acceleration / temp.speed);
     // Top speed check
     if(mag(temp.velocity) > temp.speed)
@@ -188,17 +193,36 @@ static Hero fade(const Hero hero)
 static Hero zoom(const Hero hero, const uint8_t* key)
 {
     Hero temp = hero;
-    if(key[SDL_SCANCODE_I]) temp.fov = zoomed();
-    if(key[SDL_SCANCODE_U]) temp.fov = normal();
+    if(key[SDL_SCANCODE_K]) temp.fov = zoomed();
+    if(key[SDL_SCANCODE_J]) temp.fov = normal();
+    return temp;
+}
+
+static Hero pick(const Hero hero, const uint8_t* key)
+{
+    Hero temp = hero;
+    const int pressed = lookup(key);
+    if(pressed == -1)
+        return hero;
+    temp.block = pressed;
+    // Clamp
+    if(temp.block < ' ') temp.block = ' ';
+    if(temp.block > '~') temp.block = '~';
     return temp;
 }
 
 Hero touch(const Hero hero, const Map map, const uint8_t* key)
 {
     Hero temp = hero;
-    temp = spin(temp, key);
-    temp = move(temp, map.walling, key);
-    temp = zoom(temp, key);
-    temp = fade(temp);
+    if(console(key))
+        temp = pick(temp, key);
+    else
+    {
+        edit(map, temp, key);
+        temp = spin(temp, key);
+        temp = move(temp, map.walling, key);
+        temp = zoom(temp, key);
+        temp = fade(temp);
+    }
     return temp;
 }

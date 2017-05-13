@@ -15,4 +15,5 @@ float slp(const Point a);
 Point shr(const Point a, const Point b);
 Point svr(const Point a, const Point b);
 Point cmp(const Point a, const Point b, const Point c);
-int tile(const Point a, char** const tiles);
+int block(const Point a, char** const blocks);
+int tile(const Point a, char** const blocks);
