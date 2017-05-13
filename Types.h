@@ -51,7 +51,6 @@ typedef struct
 {
     char** block;
     Point column;
-    int hits;
 }
 Range;
 
@@ -85,7 +84,6 @@ Compass;
 typedef struct
 {
     int tile;
-    int neighbor;
     float offset;
     Point where;
     Compass facing;

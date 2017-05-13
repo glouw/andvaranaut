@@ -1,6 +1,5 @@
 # God's tongue
 CC = gcc
-# Dialect
 CC+= -std=c99
 # Project name
 PROJ = water
@@ -8,7 +7,7 @@ PROJ = water
 SRCS = main.c Play.c Test.c Util.c Point.c Hit.c Line.c Map.c
 SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c String.c
 SRCS+= Portals.c Boundary.c Surfaces.c Light.c Textures.c
-SRCS+= Console.c
+SRCS+= Console.c Gui.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
 # Warnings flags
@@ -21,7 +20,7 @@ CFLAGS+= -fassociative-math -freciprocal-math -fno-signed-zeros
 CFLAGS+= -fno-trapping-math -frename-registers -funroll-loops
 ARCHITECTURE = -march=native
 # Linking flags
-LDFLAGS = -lSDL2 -lSDL2_image -lm
+LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 # Dependency flags
 DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
 # Command line definitions

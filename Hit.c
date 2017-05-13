@@ -25,7 +25,6 @@ static Hit collision(const Point ray, const Point direction, char** const wallin
     const Compass face = needle(where, other);
     const Hit hit = {
         tile(where, walling),
-        tile(other, walling),
         inverted(face) ? 1.0 - offset : offset,
         ray,
         face

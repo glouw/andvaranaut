@@ -20,9 +20,6 @@ void wrend(const Boundary boundary, const Hit hit, const int modding)
     // Aliases
     const int y = boundary.scanline.y;
     const int width = boundary.scanline.display.width;
-    // Only render what is seen
-    if(hit.neighbor)
-        return;
     // Paint
     const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[hit.tile];
     const int row = surface->h * hit.offset;
@@ -68,37 +65,17 @@ void crend(const Boundary boundary, char** const ceiling, const Calc calc)
     // Aliases
     const int y = boundary.scanline.y;
     const int width = boundary.scanline.display.width;
-    // Only bother rendering what can be seen
     for(int x = boundary.wall.clamped.top; x < boundary.scanline.sdl.res; x++)
     {
         const Point where = calc.wheres[x];
-        const int visible = tile(where, ceiling);
-        if(visible)
-        {
-            // Offsets
-            const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[visible];
-            const int row = surface->h * dec(where.y);
-            const int col = surface->w * dec(where.x);
-            const int modding = calc.moddings[x];
-            // Paint
-            const uint32_t* const pixels = (uint32_t*) surface->pixels;
-            const uint32_t pixel = pixels[col + row * surface->w];
-            boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
-        }
-    }
-}
-
-// Sky renderer
-void srend(const Boundary boundary)
-{
-    // Aliases
-    const int y = boundary.scanline.y;
-    const int width = boundary.scanline.display.width;
-    const int res = boundary.scanline.sdl.res;
-    // Paint
-    for(int x = res / 2; x < res; x++)
-    {
-        const int shade = 0x00;
-        boundary.scanline.display.pixels[x + y * width] = shade << 0x10 | shade << 0x08 | shade;
+        // Offsets
+        const SDL_Surface* const surface = boundary.scanline.sdl.surfaces.surface[tile(where, ceiling)];
+        const int row = surface->h * dec(where.y);
+        const int col = surface->w * dec(where.x);
+        const int modding = calc.moddings[x];
+        // Paint
+        const uint32_t* const pixels = (uint32_t*) surface->pixels;
+        const uint32_t pixel = pixels[col + row * surface->w];
+        boundary.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
     }
 }

@@ -8,6 +8,7 @@
 static SDL_Surface* load(const char* const path, const uint32_t format)
 {
     const char* const extension = strchr(path, '.');
+    // BMP: Wall, ceiling, and floorings
     if(match(extension, ".bmp"))
     {
         SDL_Surface* const bmp = SDL_LoadBMP(path);
@@ -19,7 +20,8 @@ static SDL_Surface* load(const char* const path, const uint32_t format)
         SDL_FreeSurface(bmp);
         return converted;
     }
-    else // Sprites
+    // PNG: Sprites
+    else
     {
         SDL_Surface* const img = IMG_Load(path);
         if(!img)
@@ -37,7 +39,8 @@ Surfaces pull(const char* const path, const uint32_t format)
     for(int i = 0; i < lines; i++)
     {
         char* const line = readln(file);
-        char* const trim = strtok(line, "# \n"); // Comments allowed
+        // Comments allowed
+        char* const trim = strtok(line, "# \n");
         surface[i] = load(trim, format);
         free(line);
     }

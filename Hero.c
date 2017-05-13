@@ -33,7 +33,7 @@ static Line zoomed()
 static Light reset()
 {
     const float torch = 0.0;
-    const float brightness = 250.0;
+    const float brightness = 750.0;
     const float dtorch = brightness / 10.0;
     const Light light = { torch, brightness, dtorch };
     return light;
@@ -46,6 +46,9 @@ static Hero assign(const Hero hero, char* const line)
     const char* const value = trim(strtok(NULL, "\t \n"));
     if(match(field, "speed"))
         temp.speed = floating(value);
+    else
+    if(match(field, "brightness"))
+        temp.light.brightness = floating(value);
     else
     if(match(field, "acceleration"))
         temp.acceleration = floating(value);
@@ -82,7 +85,7 @@ static Hero overturn(const Hero hero, const char* const name)
 Hero spawn(const char* const name)
 {
     const Line fov = normal();
-    const Point where = { 5.5, 9.5 };
+    const Point where = { 1.5, 1.5 };
     const Point velocity = { 0.0, 0.0 };
     const float speed = 0.12;
     const float acceleration = 0.0150;
@@ -138,7 +141,7 @@ static Hit shoot(const Hero hero, char** const walling, const uint8_t* key)
         const Point direction = trn(reference, hero.theta);
         return cast(hero.where, direction, walling);
     }
-    const Hit hit = { 0, 0, 0.0, zro(), W };
+    const Hit hit = { 0, 0.0, zro(), W };
     return hit;
 }
 
@@ -151,21 +154,9 @@ int handle(const Hero hero, char** const walling, const uint8_t* key)
     return nearby && isportal(ch) ? ch : false;
 }
 
-static Hit plow(const Hero hero, const Range range)
-{
-    Hit hit;
-    Point where = hero.where;
-    for(int count = 0; count < range.hits; count++)
-    {
-        hit = cast(where, range.column, range.block);
-        where = hit.where;
-    }
-    return hit;
-}
-
 Impact march(const Hero hero, const Range range, const int res)
 {
-    const Hit hit = plow(hero, range);
+    const Hit hit = cast(hero.where, range.column, range.block);
     const Point ray = sub(hit.where, hero.where);
     const Point corrected = trn(ray, -hero.theta);
     const Line trace = { hero.where, hit.where };

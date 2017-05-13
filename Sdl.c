@@ -131,7 +131,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     // Precomputations
     float* const party = toss(float, sdl.res);
     const int m = sdl.res / 2;
-    const int l = sdl.res;
+    const int l = sdl.res / 1;
     for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, sdl.res, x);
     for(int x = m; x < l; x++) party[x] = ccast(hero.fov, sdl.res, x);
     // Preallocations for render computations
@@ -145,18 +145,8 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     {
         const Point column = lerp(camera, y / (float) sdl.res);
         const Scanline scanline = { sdl, display, y };
-        for(int max = 5, hits = max; hits > 0; hits--)
-        {
-            const Range range =  { map.ceiling, column, hits };
-            const Impact upper = march(hero, range, sdl.res);
-            const Boundary boundary = { scanline, raise(upper.wall, sdl.res) };
-            if(hits == max)
-                srend(boundary);
-            const int modding = illuminate(hero.light, upper.traceline.corrected.x);
-            wrend(boundary, upper.hit, modding);
-        }
         // Just a single hit for the lower walls
-        const Range range =  { map.walling, column, 1 };
+        const Range range =  { map.walling, column };
         const Impact lower = march(hero, range, sdl.res);
         const Boundary boundary = { scanline, lower.wall };
         const Tracery tracery = { lower.traceline, party, hero.light };
