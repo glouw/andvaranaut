@@ -5,8 +5,18 @@ Controls:
     move: w,a,s,d
     turn: h,l
     open: e
-    zoom: u,i
+    zoom: o,p
+
+    insert mode: i
+    normal mode: enter, escape, capslock
+
+    floring select: 1
+    walling select: 2
+    ceiling select: 3
 
 Execution:
     The first command line argument selects the resolution:
-        ./water 700
+        ./water 512
+
+    Resolution 128 is reservered for performance testing and
+    will exit after 60 frame renders
