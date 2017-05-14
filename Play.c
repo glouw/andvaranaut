@@ -5,8 +5,6 @@
 #include "Sdl.h"
 #include "Map.h"
 #include "Sprites.h"
-#include "Util.h"
-#include "Console.h"
 
 static int done()
 {
@@ -29,8 +27,8 @@ void play(const char* argv[])
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(int renders = 0; res == 128 ? renders < fps : !done(); renders++)
     {
-        rest(sprites);
         SDL_PumpEvents();
+        rest(sprites);
         hero = console(hero, key);
         if(hero.consoling)
             hero = type(hero, key);
@@ -44,15 +42,6 @@ void play(const char* argv[])
             grab(hero, sprites, key);
             edit(hero, map, key);
             sprites = place(hero, sprites, key);
-        }
-        const int ch = handle(hero, map.walling, key);
-        if(ch)
-        {
-            const int index = ch - 'a';
-            const Portal portal = portals.portal[index];
-            map = reopen(map, portal.name);
-            hero = teleport(hero, portal);
-            sprites = swap(sprites, portal.name);
         }
         const Sprites relatives = arrange(sprites, hero);
         render(sdl, hero, relatives, map);

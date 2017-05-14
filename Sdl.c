@@ -5,11 +5,11 @@
 #include "Surfaces.h"
 #include "Line.h"
 #include "Hero.h"
-#include "Wall.h"
 #include "Util.h"
 #include "String.h"
 #include "Light.h"
 #include "Textures.h"
+#include "Ruler.h"
 #include "Ttf.h"
 
 Sdl setup(const int res, const int fps, const char* const name)
@@ -129,43 +129,23 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
     }
 }
 
-static void print(const Sdl sdl, const int x, const int y, char* const text)
+static void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
+{
+    const int height = 0;
+    const int margin = sdl.res / 32;
+    Ruler ruler = { sdl, margin, height };
+    ruler = selection(ruler, hero);
+    ruler = countings(ruler, sprites);
+    if(hero.consoling)
+        insertion(ruler);
+}
+
+void print(const Sdl sdl, const int x, const int y, char* const text)
 {
     const Ttf inner = { text, { 0xFF, 0xFF, 0x00, 0x00 }, 0 };
     const Ttf outer = { text, { 0x00, 0x00, 0x00, 0x00 }, 1 };
     scribble(outer, x, y, sdl);
     scribble(inner, x, y, sdl);
-}
-
-static char interpret(const Party party)
-{
-    if(party == CEILING)
-        return 'C';
-    else
-    if(party == WALLING)
-        return 'W';
-    else
-        return 'F';
-}
-
-static void inserting(const Sdl sdl, const Hero hero)
-{
-    const int margin = sdl.res / 32;
-    // Selected block display
-    char block[] = { interpret(hero.party), hero.block, '\0' };
-    print(sdl, margin, 0, block);
-    // Insert mode display
-    if(hero.consoling)
-    {
-        char* const string = "-- INSERT --";
-        const SDL_Rect insert = size(sdl.font, string);
-        print(sdl, margin, sdl.res - insert.h, string);
-    }
-}
-
-static void gui(const Sdl sdl, const Hero hero)
-{
-    inserting(sdl, hero);
 }
 
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
@@ -203,7 +183,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     unlock(sdl);
     churn(sdl);
     paste(sdl, sprites, lowers, hero);
-    gui(sdl, hero);
+    gui(sdl, hero, sprites);
     // Presents buffer
     present(sdl);
     // Clean up all computations

@@ -13,3 +13,5 @@ void churn(const Sdl sdl);
 void present(const Sdl sdl);
 
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map);
+
+void print(const Sdl sdl, const int x, const int y, char* const text);

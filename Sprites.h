@@ -14,4 +14,4 @@ void rest(const Sprites sprites);
 
 bool issprite(const int ascii);
 
-Sprite oddish(const Point where);
+Sprite registrar(const int ascii, const Point where);

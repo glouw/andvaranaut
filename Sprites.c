@@ -28,8 +28,6 @@ static inline void print(const Sprites sprites)
         printf("ascii=%c,state=%s,where=%f,%f,transparent=%s,width=%f\n",
             ascii, interpret(state), where.x, where.y, boolean(transparent), width);
     }
-    printf("count: %d\n", sprites.count);
-    printf("max: %d\n", sprites.max);
 }
 
 Sprites wake(const char* const name)
@@ -60,7 +58,6 @@ Sprites wake(const char* const name)
     const Sprites sprites = { count, max, sprite };
     fclose(file);
     free(path);
-    print(sprites);
     return sprites;
 }
 
@@ -134,8 +131,25 @@ bool issprite(const int ascii)
     return isalpha(ascii);
 }
 
-Sprite oddish(const Point where)
+static Sprite oddish(const Point where)
 {
     const Sprite sprite = { where, 'A', IDLE, false, 0.75 };
     return sprite;
+}
+
+static Sprite torch(const Point where)
+{
+    const Sprite sprite = { where, 'A', IDLE, true, 0.75 };
+    return sprite;
+}
+
+Sprite registrar(const int ascii, const Point where)
+{
+    switch(ascii)
+    {
+        case 'A': return oddish(where);
+        case 'B': return torch(where);
+    }
+    // Default
+    return oddish(where);
 }

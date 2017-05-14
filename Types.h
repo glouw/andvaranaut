@@ -204,6 +204,14 @@ Sdl;
 
 typedef struct
 {
+    Sdl sdl;
+    int margin;
+    int height;
+}
+Ruler;
+
+typedef struct
+{
     uint32_t* pixels;
     int width;
 }

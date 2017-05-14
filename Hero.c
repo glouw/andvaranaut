@@ -6,28 +6,19 @@
 #include "Wall.h"
 #include "Util.h"
 #include "String.h"
-#include "Line.h"
-#include "Light.h"
-#include "Map.h"
 #include "Sprites.h"
 #include "Console.h"
 
 static Line normal()
 {
-    const Line fov = {
-        { 1.0, -1.0 },
-        { 1.0, +1.0 }
-    };
+    const Line fov = { { 1.0, -1.0 }, { 1.0, +1.0 } };
     return fov;
 }
 
 static Line zoomed()
 {
     const Line nrm = normal();
-    const Line fov = {
-        { nrm.a.x, nrm.a.y / 4.0 },
-        { nrm.b.x, nrm.b.y / 4.0 }
-    };
+    const Line fov = { { nrm.a.x, nrm.a.y / 4.0 }, { nrm.b.x, nrm.b.y / 4.0 } };
     return fov;
 }
 
@@ -167,11 +158,11 @@ void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
             // Aliases
             const Point where = sprites.sprite[i].where;
             const float width = sprites.sprite[i].width;
+            // Grab only one sprite
             if(eql(fist, where, width))
             {
                 sprites.sprite[i].where = fist;
                 sprites.sprite[i].state = GRABBED;
-                // Grab only one sprite
                 break;
             }
         }
@@ -244,13 +235,7 @@ Hero pick(const Hero hero, const uint8_t* const key)
 
 static char** interpret(const Map map, const Party party)
 {
-    switch(party)
-    {
-        case CEILING: return map.ceiling;
-        case WALLING: return map.walling;
-        case FLORING: return map.floring;
-    }
-    return map.walling;
+    return party == CEILING ? map.ceiling : party == WALLING ? map.walling : map.floring;
 }
 
 void edit(const Hero hero, const Map map, const uint8_t* const key)
@@ -272,22 +257,16 @@ void edit(const Hero hero, const Map map, const uint8_t* const key)
 
 Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key)
 {
+    if(!issprite(hero.block))
+        return sprites;
     Sprites temp = sprites;
     if(temp.count >= temp.max)
-    {
-        temp.max *= 2;
-        temp.sprite = (Sprite*) realloc(temp.sprite, sizeof(*temp.sprite) * temp.max);
-    }
-    if(issprite(hero.block))
-    {
-        const Point reference = { hero.arm, 0.0 };
-        const Point direction = trn(reference, hero.theta);
-        const Point where = add(hero.where, direction);
-        if(key[SDL_SCANCODE_K])
-        {
-            temp.sprite[temp.count++] = oddish(where);
-        }
-    }
+        temp.sprite = retoss(temp.sprite, Sprite, temp.max *= 2);
+    const Point reference = { hero.arm, 0.0 };
+    const Point direction = trn(reference, hero.theta);
+    const Point where = add(hero.where, direction);
+    if(key[SDL_SCANCODE_K])
+        temp.sprite[temp.count++] = registrar(hero.block, where);
     return temp;
 }
 

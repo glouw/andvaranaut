@@ -22,3 +22,5 @@ void bomb(const char* const message, ...);
 #define boolean(test) (test ? "true" : "false")
 
 #define toss(t, n) ((t*) malloc((n) * sizeof(t)))
+
+#define retoss(pointer, t, n) ((t*) realloc((pointer), (n) * sizeof(t)))
