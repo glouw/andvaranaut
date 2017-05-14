@@ -148,6 +148,25 @@ static Hit shoot(const Hero hero, char** const walling, const uint8_t* const key
     return hit;
 }
 
+static void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
+{
+    if(key[SDL_SCANCODE_J])
+    {
+        const Point reference = { 1.0, 0.0 };
+        const Point direction = trn(reference, hero.theta);
+        const Point fist = add(hero.where, direction);
+        for(int i = 0; i < sprites.count; i++)
+        {
+            if(eql(fist, sprites.sprite[i].where, sprites.sprite[i].width))
+            {
+                sprites.sprite[i].where = fist;
+                sprites.sprite[i].state = GRABBED;
+            }
+            else sprites.sprite[i].state = IDLE;
+        }
+    }
+}
+
 int handle(const Hero hero, char** const walling, const uint8_t* const key)
 {
     const Hit hit = shoot(hero, walling, key);
@@ -253,7 +272,7 @@ static Hero console(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-Hero touch(const Hero hero, const Map map, const uint8_t* const key)
+Hero touch(const Hero hero, const Map map, const Sprites sprites, const uint8_t* const key)
 {
     Hero temp = hero;
     temp = console(temp, key);
@@ -266,6 +285,8 @@ Hero touch(const Hero hero, const Map map, const uint8_t* const key)
         temp = zoom(temp, key);
         temp = fade(temp);
         temp = pick(temp, key);
+        // Hero to World interaction
+        grab(temp, sprites, key);
         edit(temp, map, key);
     }
     return temp;

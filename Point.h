@@ -28,6 +28,8 @@ Point svr(const Point a, const Point b);
 
 Point cmp(const Point a, const Point b, const Point c);
 
+bool eql(const Point a, const Point b, const float epsilon);
+
 int block(const Point a, char** const blocks);
 
 int tile(const Point a, char** const blocks);

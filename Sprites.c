@@ -4,15 +4,28 @@
 #include "Util.h"
 #include "String.h"
 
-void prints(const Sprites sprites)
+static char* interpret(const State state)
+{
+    if(state == IDLE)
+        return "idle";
+    else
+    if(state == GRABBED)
+        return "grabbed";
+    return "N/A";
+}
+
+static inline void print(const Sprites sprites)
 {
     for(int i = 0; i < sprites.count; i++)
     {
+        // Aliases
         const int ascii = sprites.sprite[i].ascii;
         const int state = sprites.sprite[i].state;
         const Point where = sprites.sprite[i].where;
         const bool transparent = sprites.sprite[i].transparent;
-        printf("%c,%d,%f,%f,%s", ascii, state, where.x, where.y, boolean(transparent));
+        const float width = sprites.sprite[i].width;
+        printf("ascii=%c,state=%s,where=%f,%f,transparent=%s,width=%f\n",
+            ascii, interpret(state), where.x, where.y, boolean(transparent), width);
     }
 }
 
@@ -30,11 +43,14 @@ Sprites wake(const char* const name)
         char ascii = 0;
         int state = 0;
         int transparent = 0;
-        sscanf(location, "%c,%d,%f,%f,%d", &ascii, &state, &where.x, &where.y, &transparent);
+        float width = 0.0;
+        sscanf(location, "%c,%d,%f,%f,%d,%f",
+            &ascii, &state, &where.x, &where.y, &transparent, &width);
         sprite[i].where = where;
         sprite[i].ascii = ascii;
         sprite[i].state = (State) state;
         sprite[i].transparent = (bool) transparent;
+        sprite[i].width = width;
         free(line);
     }
     const Sprites sprites = { count, sprite };

@@ -2,8 +2,6 @@
 
 #include "Types.h"
 
-void prints(const Sprites sprites);
-
 Sprites wake(const char* const name);
 
 void kill(const Sprites sprites);

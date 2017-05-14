@@ -102,6 +102,7 @@ Frame;
 typedef enum
 {
     IDLE,
+    GRABBED, // NEEDS ARTWORK
     STATES
 }
 State;
@@ -112,6 +113,7 @@ typedef struct
     int ascii;
     State state;
     bool transparent;
+    float width;
 }
 Sprite;
 

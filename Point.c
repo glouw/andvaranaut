@@ -80,6 +80,15 @@ Point cmp(const Point a, const Point b, const Point c)
     return mag(sub(b, a)) < mag(sub(c, a)) ? b : c;
 }
 
+bool eql(const Point a, const Point b, const float epsilon)
+{
+    const bool w = a.x < b.x + (epsilon / 2.0);
+    const bool e = a.x > b.x - (epsilon / 2.0);
+    const bool s = a.y < b.y + (epsilon / 2.0);
+    const bool n = a.y > b.y - (epsilon / 2.0);
+    return w && e && s && n;
+}
+
 int block(const Point a, char** const blocks)
 {
     const int x = a.x;
