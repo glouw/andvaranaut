@@ -25,7 +25,7 @@ void play(const char* argv[])
     Hero hero = spawn("hero.cfg");
     Portals portals = populate("portals.cfg");
     Sdl sdl = setup(res, fps, "surfaces.cfg");
-    const uint8_t* key = SDL_GetKeyboardState(NULL);
+    const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(int renders = 0; res == 128 ? renders < fps : !done(); renders++)
     {
         SDL_PumpEvents();

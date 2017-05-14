@@ -1,9 +1,8 @@
 #include "Console.h"
 
-// A necessary evll - all supported key to tile mappings
-int lookup(const uint8_t* key)
+static int shifting(const uint8_t* const key)
 {
-    const int shift = key[SDL_SCANCODE_LSHIFT] | key[SDL_SCANCODE_RSHIFT];
+    const bool shift = key[SDL_SCANCODE_LSHIFT] || key[SDL_SCANCODE_RSHIFT];
     if(shift && key[SDL_SCANCODE_1]) return '!';
     if(shift && key[SDL_SCANCODE_2]) return '@';
     if(shift && key[SDL_SCANCODE_3]) return '#';
@@ -40,6 +39,7 @@ int lookup(const uint8_t* key)
     if(shift && key[SDL_SCANCODE_X]) return 'X';
     if(shift && key[SDL_SCANCODE_Y]) return 'Y';
     if(shift && key[SDL_SCANCODE_Z]) return 'Z';
+    // Punctuation and the likes
     if(shift && key[SDL_SCANCODE_EQUALS]) return '+';
     if(shift && key[SDL_SCANCODE_SEMICOLON]) return ':';
     if(shift && key[SDL_SCANCODE_COMMA]) return '<';
@@ -51,6 +51,12 @@ int lookup(const uint8_t* key)
     if(shift && key[SDL_SCANCODE_RIGHTBRACKET]) return '{';
     if(shift && key[SDL_SCANCODE_BACKSLASH]) return '|';
     if(shift && key[SDL_SCANCODE_LEFTBRACKET]) return '}';
+    // A shifted key was not pressed
+    return -1;
+}
+
+static int mapping(const uint8_t* const key)
+{
     if(key[SDL_SCANCODE_0]) return '0';
     if(key[SDL_SCANCODE_1]) return '1';
     if(key[SDL_SCANCODE_2]) return '2';
@@ -87,6 +93,7 @@ int lookup(const uint8_t* key)
     if(key[SDL_SCANCODE_X]) return 'x';
     if(key[SDL_SCANCODE_Y]) return 'y';
     if(key[SDL_SCANCODE_Z]) return 'z';
+    // Punctuation and the likes
     if(key[SDL_SCANCODE_EQUALS]) return '=';
     if(key[SDL_SCANCODE_SEMICOLON]) return ';';
     if(key[SDL_SCANCODE_COMMA]) return ',';
@@ -99,6 +106,19 @@ int lookup(const uint8_t* key)
     if(key[SDL_SCANCODE_BACKSLASH]) return '\\';
     if(key[SDL_SCANCODE_LEFTBRACKET]) return ']';
     if(key[SDL_SCANCODE_SPACE]) return ' ';
-    // Nothing was pressed
+    // A mapping key was not pressed
+    return -1;
+}
+
+// A necessary evll - all supported key to tile mappings
+int lookup(const uint8_t* const key)
+{
+    // Was a shifting key pressed?
+    const int shifts = shifting(key);
+    if(shifts != -1) return shifts;
+    // Was a mapping key pressed?
+    const int mapped = mapping(key);
+    if(mapped != -1) return mapped;
+    // No key was pressed
     return -1;
 }

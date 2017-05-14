@@ -2,4 +2,4 @@
 
 #include "Types.h"
 
-int lookup(const uint8_t* key);
+int lookup(const uint8_t* const key);

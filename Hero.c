@@ -101,7 +101,7 @@ Hero spawn(const char* const name)
     return fixed;
 }
 
-static Hero spin(const Hero hero, const uint8_t* key)
+static Hero spin(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const float dtheta = 0.1;
@@ -110,7 +110,7 @@ static Hero spin(const Hero hero, const uint8_t* key)
     return temp;
 }
 
-static Hero move(const Hero hero, char** const walling, const uint8_t* key)
+static Hero move(const Hero hero, char** const walling, const uint8_t* const key)
 {
     Hero temp = hero;
     // Acceleration
@@ -136,7 +136,7 @@ static Hero move(const Hero hero, char** const walling, const uint8_t* key)
     return temp;
 }
 
-static Hit shoot(const Hero hero, char** const walling, const uint8_t* key)
+static Hit shoot(const Hero hero, char** const walling, const uint8_t* const key)
 {
     if(key[SDL_SCANCODE_E])
     {
@@ -148,7 +148,7 @@ static Hit shoot(const Hero hero, char** const walling, const uint8_t* key)
     return hit;
 }
 
-int handle(const Hero hero, char** const walling, const uint8_t* key)
+int handle(const Hero hero, char** const walling, const uint8_t* const key)
 {
     const Hit hit = shoot(hero, walling, key);
     const int ch = block(hit.where, walling);
@@ -184,7 +184,7 @@ static Hero fade(const Hero hero)
     return temp.light.torch > hero.light.brightness ? hero : temp;
 }
 
-static Hero zoom(const Hero hero, const uint8_t* key)
+static Hero zoom(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_P]) temp.fov = zoomed();
@@ -192,7 +192,7 @@ static Hero zoom(const Hero hero, const uint8_t* key)
     return temp;
 }
 
-static Hero type(const Hero hero, const uint8_t* key)
+static Hero type(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const int pressed = lookup(key);
@@ -204,7 +204,7 @@ static Hero type(const Hero hero, const uint8_t* key)
     return temp;
 }
 
-static Hero pick(const Hero hero, const uint8_t* key)
+static Hero pick(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_1]) temp.party = FLORING;
@@ -224,7 +224,7 @@ static char** select(const Map map, const Party party)
     return map.walling;
 }
 
-static void edit(const Hero hero, const Map map, const uint8_t* key)
+static void edit(const Hero hero, const Map map, const uint8_t* const key)
 {
     const float reach = 1.1;
     const Point reference = { reach, 0.0 };
@@ -241,7 +241,7 @@ static void edit(const Hero hero, const Map map, const uint8_t* key)
     }
 }
 
-static Hero console(const Hero hero, const uint8_t* key)
+static Hero console(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const bool insert = key[SDL_SCANCODE_I];
@@ -253,7 +253,7 @@ static Hero console(const Hero hero, const uint8_t* key)
     return temp;
 }
 
-Hero touch(const Hero hero, const Map map, const uint8_t* key)
+Hero touch(const Hero hero, const Map map, const uint8_t* const key)
 {
     Hero temp = hero;
     temp = console(temp, key);
