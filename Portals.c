@@ -34,5 +34,7 @@ void destroy(const Portals portals)
 
 int isportal(const int ascii)
 {
-    return ascii >= 'a' && ascii <= 'z';
+    const bool prev = ascii == '{';
+    const bool next = ascii == '}';
+    return prev || next;
 }

@@ -158,6 +158,7 @@ typedef struct
     int block;
     Party party;
     bool consoling;
+    float arm;
 }
 Hero;
 

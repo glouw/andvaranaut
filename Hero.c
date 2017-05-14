@@ -94,8 +94,10 @@ Hero spawn(const char* const name)
     const int block = ' ';
     const Party party = WALLING;
     const bool consoling = false;
+    const float arm = 1.1;
     const Hero hero = {
-        fov, where, velocity, speed, acceleration, theta, light, block, party, consoling
+        fov, where, velocity, speed, acceleration,
+        theta, light, block, party, consoling, arm
     };
     const Hero fixed = overturn(hero, name);
     return fixed;
@@ -116,8 +118,9 @@ static Hero move(const Hero hero, char** const walling, const uint8_t* const key
     // Acceleration
     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
     {
+        // Directional unit vector reference, not arm reach
         const Point reference = { 1.0, 0.0 };
-        const Point direction = trn(reference, temp.theta);
+        const Point direction = trn(unt(reference), temp.theta);
         const Point acceleration = mul(direction, temp.acceleration);
         if(key[SDL_SCANCODE_W]) temp.velocity = add(temp.velocity, acceleration);
         if(key[SDL_SCANCODE_S]) temp.velocity = sub(temp.velocity, acceleration);
@@ -140,8 +143,9 @@ static Hit shoot(const Hero hero, char** const walling, const uint8_t* const key
 {
     if(key[SDL_SCANCODE_E])
     {
+        // Directional unit vector reference, not arm reach
         const Point reference = { 1.0, 0.0 };
-        const Point direction = trn(reference, hero.theta);
+        const Point direction = trn(unt(reference), hero.theta);
         return cast(hero.where, direction, walling);
     }
     const Hit hit = { 0, 0.0, zro(), W };
@@ -152,7 +156,7 @@ static void grab(const Hero hero, const Sprites sprites, const uint8_t* const ke
 {
     if(key[SDL_SCANCODE_J])
     {
-        const Point reference = { 1.0, 0.0 };
+        const Point reference = { hero.arm, 0.0 };
         const Point direction = trn(reference, hero.theta);
         const Point fist = add(hero.where, direction);
         for(int i = 0; i < sprites.count; i++)
@@ -161,8 +165,9 @@ static void grab(const Hero hero, const Sprites sprites, const uint8_t* const ke
             {
                 sprites.sprite[i].where = fist;
                 sprites.sprite[i].state = GRABBED;
+                break;
             }
-            else sprites.sprite[i].state = IDLE;
+            sprites.sprite[i].state = IDLE;
         }
     }
 }
@@ -171,8 +176,7 @@ int handle(const Hero hero, char** const walling, const uint8_t* const key)
 {
     const Hit hit = shoot(hero, walling, key);
     const int ch = block(hit.where, walling);
-    const float reach = 1.0;
-    const int nearby = mag(sub(hero.where, hit.where)) < reach;
+    const int nearby = mag(sub(hero.where, hit.where)) < hero.arm;
     return nearby && isportal(ch) ? ch : false;
 }
 
@@ -232,7 +236,7 @@ static Hero pick(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-static char** select(const Map map, const Party party)
+static char** interpret(const Map map, const Party party)
 {
     switch(party)
     {
@@ -245,16 +249,15 @@ static char** select(const Map map, const Party party)
 
 static void edit(const Hero hero, const Map map, const uint8_t* const key)
 {
-    const float reach = 1.1;
-    const Point reference = { reach, 0.0 };
+    const Point reference = { hero.arm, 0.0 };
     const Point direction = trn(reference, hero.theta);
     const Point where = add(hero.where, direction);
     // Wall operations
-    if(key[SDL_SCANCODE_Y])
+    if(key[SDL_SCANCODE_K])
     {
         const int x = where.x;
         const int y = where.y;
-        char** const blocks = select(map, hero.party);
+        char** const blocks = interpret(map, hero.party);
         if(block(where, blocks) != '!')
             blocks[y][x] = hero.block;
     }

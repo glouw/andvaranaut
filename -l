@@ -1,0 +1,132 @@
+[1mdiff --git a/Hero.c b/Hero.c[m
+[1mindex 68b1cae..7326179 100644[m
+[1m--- a/Hero.c[m
+[1m+++ b/Hero.c[m
+[36m@@ -94,8 +94,10 @@[m [mHero spawn(const char* const name)[m
+     const int block = ' ';[m
+     const Party party = WALLING;[m
+     const bool consoling = false;[m
+[32m+[m[32m    const float arm = 1.1;[m
+     const Hero hero = {[m
+[31m-        fov, where, velocity, speed, acceleration, theta, light, block, party, consoling[m
+[32m+[m[32m        fov, where, velocity, speed, acceleration,[m
+[32m+[m[32m        theta, light, block, party, consoling, arm[m
+     };[m
+     const Hero fixed = overturn(hero, name);[m
+     return fixed;[m
+[36m@@ -116,8 +118,9 @@[m [mstatic Hero move(const Hero hero, char** const walling, const uint8_t* const key[m
+     // Acceleration[m
+     if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])[m
+     {[m
+[32m+[m[32m        // Directional unit vector reference, not arm reach[m
+         const Point reference = { 1.0, 0.0 };[m
+[31m-        const Point direction = trn(reference, temp.theta);[m
+[32m+[m[32m        const Point direction = trn(unt(reference), temp.theta);[m
+         const Point acceleration = mul(direction, temp.acceleration);[m
+         if(key[SDL_SCANCODE_W]) temp.velocity = add(temp.velocity, acceleration);[m
+         if(key[SDL_SCANCODE_S]) temp.velocity = sub(temp.velocity, acceleration);[m
+[36m@@ -140,8 +143,9 @@[m [mstatic Hit shoot(const Hero hero, char** const walling, const uint8_t* const key[m
+ {[m
+     if(key[SDL_SCANCODE_E])[m
+     {[m
+[32m+[m[32m        // Directional unit vector reference, not arm reach[m
+         const Point reference = { 1.0, 0.0 };[m
+[31m-        const Point direction = trn(reference, hero.theta);[m
+[32m+[m[32m        const Point direction = trn(unt(reference), hero.theta);[m
+         return cast(hero.where, direction, walling);[m
+     }[m
+     const Hit hit = { 0, 0.0, zro(), W };[m
+[36m@@ -152,7 +156,7 @@[m [mstatic void grab(const Hero hero, const Sprites sprites, const uint8_t* const ke[m
+ {[m
+     if(key[SDL_SCANCODE_J])[m
+     {[m
+[31m-        const Point reference = { 1.0, 0.0 };[m
+[32m+[m[32m        const Point reference = { hero.arm, 0.0 };[m
+         const Point direction = trn(reference, hero.theta);[m
+         const Point fist = add(hero.where, direction);[m
+         for(int i = 0; i < sprites.count; i++)[m
+[36m@@ -161,8 +165,9 @@[m [mstatic void grab(const Hero hero, const Sprites sprites, const uint8_t* const ke[m
+             {[m
+                 sprites.sprite[i].where = fist;[m
+                 sprites.sprite[i].state = GRABBED;[m
+[32m+[m[32m                break;[m
+             }[m
+[31m-            else sprites.sprite[i].state = IDLE;[m
+[32m+[m[32m            sprites.sprite[i].state = IDLE;[m
+         }[m
+     }[m
+ }[m
+[36m@@ -171,8 +176,7 @@[m [mint handle(const Hero hero, char** const walling, const uint8_t* const key)[m
+ {[m
+     const Hit hit = shoot(hero, walling, key);[m
+     const int ch = block(hit.where, walling);[m
+[31m-    const float reach = 1.0;[m
+[31m-    const int nearby = mag(sub(hero.where, hit.where)) < reach;[m
+[32m+[m[32m    const int nearby = mag(sub(hero.where, hit.where)) < hero.arm;[m
+     return nearby && isportal(ch) ? ch : false;[m
+ }[m
+ [m
+[36m@@ -232,7 +236,7 @@[m [mstatic Hero pick(const Hero hero, const uint8_t* const key)[m
+     return temp;[m
+ }[m
+ [m
+[31m-static char** select(const Map map, const Party party)[m
+[32m+[m[32mstatic char** interpret(const Map map, const Party party)[m
+ {[m
+     switch(party)[m
+     {[m
+[36m@@ -245,16 +249,15 @@[m [mstatic char** select(const Map map, const Party party)[m
+ [m
+ static void edit(const Hero hero, const Map map, const uint8_t* const key)[m
+ {[m
+[31m-    const float reach = 1.1;[m
+[31m-    const Point reference = { reach, 0.0 };[m
+[32m+[m[32m    const Point reference = { hero.arm, 0.0 };[m
+     const Point direction = trn(reference, hero.theta);[m
+     const Point where = add(hero.where, direction);[m
+     // Wall operations[m
+[31m-    if(key[SDL_SCANCODE_Y])[m
+[32m+[m[32m    if(key[SDL_SCANCODE_K])[m
+     {[m
+         const int x = where.x;[m
+         const int y = where.y;[m
+[31m-        char** const blocks = select(map, hero.party);[m
+[32m+[m[32m        char** const blocks = interpret(map, hero.party);[m
+         if(block(where, blocks) != '!')[m
+             blocks[y][x] = hero.block;[m
+     }[m
+[1mdiff --git a/README b/README[m
+[1mindex 0db49f0..8d65064 100644[m
+[1m--- a/README[m
+[1m+++ b/README[m
+[36m@@ -6,13 +6,15 @@[m [mControls:[m
+     turn: h,l[m
+     open: e[m
+     zoom: o,p[m
+[32m+[m[32m    grab: j[m
+[32m+[m[32m    edit: k (Edits a block)[m
+ [m
+     insert mode: i[m
+     normal mode: enter, escape, capslock[m
+ [m
+[31m-    floring select: 1[m
+[31m-    walling select: 2[m
+[31m-    ceiling select: 3[m
+[32m+[m[32m        floring select: 1[m
+[32m+[m[32m        walling select: 2[m
+[32m+[m[32m        ceiling select: 3[m
+ [m
+ Execution:[m
+     The first command line argument selects the resolution:[m
+[1mdiff --git a/Types.h b/Types.h[m
+[1mindex a11fe25..6dc1593 100644[m
+[1m--- a/Types.h[m
+[1m+++ b/Types.h[m
+[36m@@ -158,6 +158,7 @@[m [mtypedef struct[m
+     int block;[m
+     Party party;[m
+     bool consoling;[m
+[32m+[m[32m    float arm;[m
+ }[m
+ Hero;[m
+ [m
