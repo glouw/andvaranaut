@@ -148,23 +148,22 @@ static Hit shoot(const Hero hero, char** const walling, const uint8_t* const key
 
 void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
 {
-    if(key[SDL_SCANCODE_J])
+    if(!key[SDL_SCANCODE_J])
+        return;
+    const Point reference = { hero.arm, 0.0 };
+    const Point direction = trn(reference, hero.theta);
+    const Point fist = add(hero.where, direction);
+    for(int i = 0; i < sprites.count; i++)
     {
-        const Point reference = { hero.arm, 0.0 };
-        const Point direction = trn(reference, hero.theta);
-        const Point fist = add(hero.where, direction);
-        for(int i = 0; i < sprites.count; i++)
+        // Aliases
+        const Point where = sprites.sprite[i].where;
+        const float width = sprites.sprite[i].width;
+        // Grab only one sprite
+        if(eql(fist, where, width))
         {
-            // Aliases
-            const Point where = sprites.sprite[i].where;
-            const float width = sprites.sprite[i].width;
-            // Grab only one sprite
-            if(eql(fist, where, width))
-            {
-                sprites.sprite[i].where = fist;
-                sprites.sprite[i].state = GRABBED;
-                break;
-            }
+            sprites.sprite[i].where = fist;
+            sprites.sprite[i].state = GRABBED;
+            break;
         }
     }
 }
