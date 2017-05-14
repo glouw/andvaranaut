@@ -106,8 +106,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         SDL_Surface* const surface = sdl.surfaces.surface[selected];
         SDL_Texture* const texture = sdl.textures.texture[selected];
         const int w = surface->w / FRAMES;
-        const int h = surface->h / 1; /*/ STATES; TODO: Artwork for more sprite states*/
-        const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * 0/** sprite.state*/, w, h };
+        const int h = surface->h / STATES;
+        const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * sprite.state, w, h };
         // Clips sprites and prevents dangerous gcc optimizations
         const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, lowers);
         // Moves onto the next sprite if this sprite totally behind a wall

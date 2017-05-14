@@ -102,7 +102,7 @@ Frame;
 typedef enum
 {
     IDLE,
-    GRABBED, // NEEDS ARTWORK
+    GRABBED, // NEEDS ARTWORK FOR ALL SPRITES
     STATES
 }
 State;
