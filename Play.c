@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "Sprites.h"
 #include "Util.h"
+#include "Console.h"
 
 static int done()
 {
@@ -30,7 +31,20 @@ void play(const char* argv[])
     {
         rest(sprites);
         SDL_PumpEvents();
-        hero = touch(hero, map, sprites, key);
+        hero = console(hero, key);
+        if(hero.consoling)
+            hero = type(hero, key);
+        else
+        {
+            hero = spin(hero, key);
+            hero = move(hero, map.walling, key);
+            hero = zoom(hero, key);
+            hero = fade(hero);
+            hero = pick(hero, key);
+            grab(hero, sprites, key);
+            edit(hero, map, key);
+            sprites = place(hero, sprites, key);
+        }
         const int ch = handle(hero, map.walling, key);
         if(ch)
         {

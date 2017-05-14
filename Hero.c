@@ -9,6 +9,7 @@
 #include "Line.h"
 #include "Light.h"
 #include "Map.h"
+#include "Sprites.h"
 #include "Console.h"
 
 static Line normal()
@@ -105,7 +106,7 @@ Hero spawn(const char* const name)
     return fixed;
 }
 
-static Hero spin(const Hero hero, const uint8_t* const key)
+Hero spin(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const float dtheta = 0.1;
@@ -114,7 +115,7 @@ static Hero spin(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-static Hero move(const Hero hero, char** const walling, const uint8_t* const key)
+Hero move(const Hero hero, char** const walling, const uint8_t* const key)
 {
     Hero temp = hero;
     // Acceleration
@@ -154,7 +155,7 @@ static Hit shoot(const Hero hero, char** const walling, const uint8_t* const key
     return hit;
 }
 
-static void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
+void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
 {
     if(key[SDL_SCANCODE_J])
     {
@@ -205,14 +206,14 @@ Hero teleport(const Hero hero, const Portal portal)
     return temp;
 }
 
-static Hero fade(const Hero hero)
+Hero fade(const Hero hero)
 {
     Hero temp = hero;
     temp.light.torch += hero.light.dtorch;
     return temp.light.torch > hero.light.brightness ? hero : temp;
 }
 
-static Hero zoom(const Hero hero, const uint8_t* const key)
+Hero zoom(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_P]) temp.fov = zoomed();
@@ -220,7 +221,7 @@ static Hero zoom(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-static Hero type(const Hero hero, const uint8_t* const key)
+Hero type(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const int pressed = lookup(key);
@@ -232,7 +233,7 @@ static Hero type(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-static Hero pick(const Hero hero, const uint8_t* const key)
+Hero pick(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_1]) temp.party = FLORING;
@@ -252,12 +253,13 @@ static char** interpret(const Map map, const Party party)
     return map.walling;
 }
 
-static void edit(const Hero hero, const Map map, const uint8_t* const key)
+void edit(const Hero hero, const Map map, const uint8_t* const key)
 {
+    if(issprite(hero.block))
+        return;
     const Point reference = { hero.arm, 0.0 };
     const Point direction = trn(reference, hero.theta);
     const Point where = add(hero.where, direction);
-    // Wall operations
     if(key[SDL_SCANCODE_K])
     {
         const int x = where.x;
@@ -268,7 +270,28 @@ static void edit(const Hero hero, const Map map, const uint8_t* const key)
     }
 }
 
-static Hero console(const Hero hero, const uint8_t* const key)
+Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key)
+{
+    Sprites temp = sprites;
+    if(temp.count >= temp.max)
+    {
+        temp.max *= 2;
+        temp.sprite = (Sprite*) realloc(temp.sprite, sizeof(*temp.sprite) * temp.max);
+    }
+    if(issprite(hero.block))
+    {
+        const Point reference = { hero.arm, 0.0 };
+        const Point direction = trn(reference, hero.theta);
+        const Point where = add(hero.where, direction);
+        if(key[SDL_SCANCODE_K])
+        {
+            temp.sprite[temp.count++] = oddish(where);
+        }
+    }
+    return temp;
+}
+
+Hero console(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const bool insert = key[SDL_SCANCODE_I];
@@ -277,24 +300,5 @@ static Hero console(const Hero hero, const uint8_t* const key)
         || key[SDL_SCANCODE_RETURN];
     if(insert) temp.consoling = true;
     if(normal) temp.consoling = false;
-    return temp;
-}
-
-Hero touch(const Hero hero, const Map map, const Sprites sprites, const uint8_t* const key)
-{
-    Hero temp = hero;
-    temp = console(temp, key);
-    if(temp.consoling)
-        temp = type(temp, key);
-    else
-    {
-        temp = spin(temp, key);
-        temp = move(temp, map.walling, key);
-        temp = zoom(temp, key);
-        temp = fade(temp);
-        temp = pick(temp, key);
-        grab(temp, sprites, key);
-        edit(temp, map, key);
-    }
     return temp;
 }

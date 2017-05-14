@@ -120,6 +120,7 @@ Sprite;
 typedef struct
 {
     int count;
+    int max;
     Sprite* sprite;
 }
 Sprites;

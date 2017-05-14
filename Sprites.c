@@ -11,7 +11,8 @@ static char* interpret(const State state)
     else
     if(state == GRABBED)
         return "grabbed";
-    return "N/A";
+    else
+        return "N/A";
 }
 
 static inline void print(const Sprites sprites)
@@ -27,6 +28,8 @@ static inline void print(const Sprites sprites)
         printf("ascii=%c,state=%s,where=%f,%f,transparent=%s,width=%f\n",
             ascii, interpret(state), where.x, where.y, boolean(transparent), width);
     }
+    printf("count: %d\n", sprites.count);
+    printf("max: %d\n", sprites.max);
 }
 
 Sprites wake(const char* const name)
@@ -53,9 +56,11 @@ Sprites wake(const char* const name)
         sprite[i].width = width;
         free(line);
     }
-    const Sprites sprites = { count, sprite };
+    const int max = count;
+    const Sprites sprites = { count, max, sprite };
     fclose(file);
     free(path);
+    print(sprites);
     return sprites;
 }
 
@@ -73,8 +78,9 @@ Sprites swap(const Sprites sprites, const char* const name)
 static Sprites copy(const Sprites sprites)
 {
     const int count = sprites.count;
+    const int max = sprites.max;
     Sprite* const temp = toss(Sprite, count);
-    const Sprites temps = { count, temp };
+    const Sprites temps = { count, max, temp };
     memcpy(temps.sprite, sprites.sprite, sprites.count * sizeof(*sprites.sprite));
     return temps;
 }
@@ -121,4 +127,15 @@ void rest(const Sprites sprites)
 {
     for(int i = 0; i < sprites.count; i++)
         sprites.sprite[i].state = IDLE;
+}
+
+bool issprite(const int ascii)
+{
+    return isalpha(ascii);
+}
+
+Sprite oddish(const Point where)
+{
+    const Sprite sprite = { where, 'A', IDLE, false, 0.75 };
+    return sprite;
 }
