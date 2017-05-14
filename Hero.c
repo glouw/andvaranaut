@@ -94,6 +94,8 @@ Hero spawn(const char* const name)
     const int block = ' ';
     const Party party = WALLING;
     const bool consoling = false;
+    // An arm reach slightly greater than one will prevent
+    // the player from placing a block on their current location
     const float arm = 1.1;
     const Hero hero = {
         fov, where, velocity, speed, acceleration,
@@ -161,13 +163,16 @@ static void grab(const Hero hero, const Sprites sprites, const uint8_t* const ke
         const Point fist = add(hero.where, direction);
         for(int i = 0; i < sprites.count; i++)
         {
-            if(eql(fist, sprites.sprite[i].where, sprites.sprite[i].width))
+            // Aliases
+            const Point where = sprites.sprite[i].where;
+            const float width = sprites.sprite[i].width;
+            if(eql(fist, where, width))
             {
                 sprites.sprite[i].where = fist;
                 sprites.sprite[i].state = GRABBED;
+                // Grab only one sprite
                 break;
             }
-            sprites.sprite[i].state = IDLE;
         }
     }
 }
@@ -288,7 +293,6 @@ Hero touch(const Hero hero, const Map map, const Sprites sprites, const uint8_t*
         temp = zoom(temp, key);
         temp = fade(temp);
         temp = pick(temp, key);
-        // Hero to World interaction
         grab(temp, sprites, key);
         edit(temp, map, key);
     }

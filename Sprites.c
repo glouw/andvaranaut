@@ -116,3 +116,9 @@ Sprites arrange(const Sprites sprites, const Hero hero)
     sort(copied);
     return copied;
 }
+
+void rest(const Sprites sprites)
+{
+    for(int i = 0; i < sprites.count; i++)
+        sprites.sprite[i].state = IDLE;
+}

@@ -28,6 +28,7 @@ void play(const char* argv[])
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(int renders = 0; res == 128 ? renders < fps : !done(); renders++)
     {
+        rest(sprites);
         SDL_PumpEvents();
         hero = touch(hero, map, sprites, key);
         const int ch = handle(hero, map.walling, key);
