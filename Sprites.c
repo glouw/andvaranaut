@@ -4,17 +4,6 @@
 #include "Util.h"
 #include "String.h"
 
-static char* interpret(const State state)
-{
-    if(state == IDLE)
-        return "idle";
-    else
-    if(state == GRABBED)
-        return "grabbed";
-    else
-        return "N/A";
-}
-
 static inline void print(const Sprites sprites)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -25,8 +14,8 @@ static inline void print(const Sprites sprites)
         const Point where = sprites.sprite[i].where;
         const bool transparent = sprites.sprite[i].transparent;
         const float width = sprites.sprite[i].width;
-        printf("ascii=%c,state=%s,where=%f,%f,transparent=%s,width=%f\n",
-            ascii, interpret(state), where.x, where.y, boolean(transparent), width);
+        printf("ascii=%c,state=%d,where=%f,%f,transparent=%s,width=%f\n",
+            ascii, state, where.x, where.y, boolean(transparent), width);
     }
 }
 

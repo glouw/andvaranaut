@@ -13,7 +13,7 @@ static char interpret(const Party party)
 Ruler selection(const Ruler ruler, const Hero hero)
 {
     Ruler temp = ruler;
-    char string[] = { interpret(hero.party), hero.block, '\0' };
+    char string[] = { interpret(hero.party), (char) hero.block, '\0' };
     const SDL_Rect select = size(temp.sdl.font, string);
     print(temp.sdl, temp.margin, 0, string);
     temp.height = select.h;
@@ -35,9 +35,9 @@ Ruler countings(const Ruler ruler, const Sprites sprites)
 Ruler insertion(const Ruler ruler)
 {
     Ruler temp = ruler;
-    char* const string = "-- INSERT --";
-    const SDL_Rect insert = size(temp.sdl.font, string);
-    print(temp.sdl, temp.margin, temp.sdl.res - insert.h, string);
+    const char* const string = "-- INSERT --";
+    const SDL_Rect insert = size(temp.sdl.font, (char*) string);
+    print(temp.sdl, temp.margin, temp.sdl.res - insert.h, (char*) string);
     temp.height = temp.sdl.res;
     return temp;
 }
