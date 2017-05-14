@@ -29,7 +29,7 @@ Sdl setup(const int res, const int fps, const char* const name)
     const Textures textures = cache(surfaces, renderer);
     const int renders = 0;
     const int ticks = 0;
-    TTF_Font* const font = TTF_OpenFont("fonts/Inconsolata-Regular.ttf", res / 16);
+    TTF_Font* const font = TTF_OpenFont("fonts/alterebro-pixel-font.ttf", res / 8);
     const Sdl sdl = { res, fps, surfaces, textures, window, renderer, texture, renders, ticks, font };
     free(path);
     return sdl;
@@ -137,18 +137,29 @@ static void print(const Sdl sdl, const int x, const int y, char* const text)
     scribble(inner, x, y, sdl);
 }
 
+static char interpret(const Party party)
+{
+    if(party == CEILING)
+        return 'C';
+    else
+    if(party == WALLING)
+        return 'W';
+    else
+        return 'F';
+}
+
 static void inserting(const Sdl sdl, const Hero hero)
 {
-    // Strings
-    char* const insert = "-- INSERT --";
-    char block[] = { hero.block, '\0' };
-    // Location
-    const SDL_Rect top = size(sdl.font, block);
-    print(sdl, top.w, 0, block);
+    const int margin = sdl.res / 32;
+    // Selected block display
+    char block[] = { interpret(hero.party), hero.block, '\0' };
+    print(sdl, margin, 0, block);
+    // Insert mode display
     if(hero.consoling)
     {
-        const SDL_Rect bot = size(sdl.font, insert);
-        print(sdl, top.w, sdl.res - bot.h, insert);
+        char* const string = "-- INSERT --";
+        const SDL_Rect insert = size(sdl.font, string);
+        print(sdl, margin, sdl.res - insert.h, string);
     }
 }
 

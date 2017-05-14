@@ -20,7 +20,7 @@ static SDL_Rect placing(TTF_Font* const font, char* const text, const int x, con
 void scribble(const Ttf ttf, const int x, const int y, const Sdl sdl)
 {
     TTF_SetFontOutline(sdl.font, ttf.outline);
-    SDL_Surface* const surface = TTF_RenderText_Blended(sdl.font, ttf.text, ttf.color);
+    SDL_Surface* const surface = TTF_RenderText_Solid(sdl.font, ttf.text, ttf.color);
     SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
     SDL_FreeSurface(surface);
     const SDL_Rect place = placing(sdl.font, ttf.text, x, y);

@@ -1,43 +1,19 @@
 #include "Console.h"
 
-// A necessary evll
+// A necessary evll - all supported key to tile mappings
 int lookup(const uint8_t* key)
 {
     const int shift = key[SDL_SCANCODE_LSHIFT] | key[SDL_SCANCODE_RSHIFT];
-    // All supported key to tile mappings
-    if(key[SDL_SCANCODE_SPACE]) return ' ';
-    if(shift && key[SDL_SCANCODE_3]) return '#';
     if(shift && key[SDL_SCANCODE_1]) return '!';
-    // < " >
+    if(shift && key[SDL_SCANCODE_2]) return '@';
+    if(shift && key[SDL_SCANCODE_3]) return '#';
     if(shift && key[SDL_SCANCODE_4]) return '$';
     if(shift && key[SDL_SCANCODE_5]) return '%';
+    if(shift && key[SDL_SCANCODE_6]) return '^';
     if(shift && key[SDL_SCANCODE_7]) return '&';
-    // < ' >
+    if(shift && key[SDL_SCANCODE_8]) return '*';
     if(shift && key[SDL_SCANCODE_9]) return '(';
     if(shift && key[SDL_SCANCODE_0]) return ')';
-    if(shift && key[SDL_SCANCODE_8]) return '*';
-    // < + >
-    // < , >
-    // < - >
-    // < . >
-    // < / >
-    if(key[SDL_SCANCODE_0]) return '0';
-    if(key[SDL_SCANCODE_1]) return '1';
-    if(key[SDL_SCANCODE_2]) return '2';
-    if(key[SDL_SCANCODE_3]) return '3';
-    if(key[SDL_SCANCODE_4]) return '4';
-    if(key[SDL_SCANCODE_5]) return '5';
-    if(key[SDL_SCANCODE_6]) return '6';
-    if(key[SDL_SCANCODE_7]) return '7';
-    if(key[SDL_SCANCODE_8]) return '8';
-    if(key[SDL_SCANCODE_9]) return '9';
-    // < : >
-    // < ; >
-    // < < >
-    // < = >
-    // < > >
-    // < ? >
-    if(shift && key[SDL_SCANCODE_2]) return '@';
     if(shift && key[SDL_SCANCODE_A]) return 'A';
     if(shift && key[SDL_SCANCODE_B]) return 'B';
     if(shift && key[SDL_SCANCODE_C]) return 'C';
@@ -64,12 +40,27 @@ int lookup(const uint8_t* key)
     if(shift && key[SDL_SCANCODE_X]) return 'X';
     if(shift && key[SDL_SCANCODE_Y]) return 'Y';
     if(shift && key[SDL_SCANCODE_Z]) return 'Z';
-    // < [ >
-    // < \ >
-    // < ] >
-    if(shift && key[SDL_SCANCODE_6]) return '^';
-    // < _ >
-    // < ` >
+    if(shift && key[SDL_SCANCODE_EQUALS]) return '+';
+    if(shift && key[SDL_SCANCODE_SEMICOLON]) return ':';
+    if(shift && key[SDL_SCANCODE_COMMA]) return '<';
+    if(shift && key[SDL_SCANCODE_PERIOD]) return '>';
+    if(shift && key[SDL_SCANCODE_SLASH]) return '?';
+    if(shift && key[SDL_SCANCODE_APOSTROPHE]) return '"';
+    if(shift && key[SDL_SCANCODE_MINUS]) return '_';
+    if(shift && key[SDL_SCANCODE_GRAVE]) return '~';
+    if(shift && key[SDL_SCANCODE_RIGHTBRACKET]) return '{';
+    if(shift && key[SDL_SCANCODE_BACKSLASH]) return '|';
+    if(shift && key[SDL_SCANCODE_LEFTBRACKET]) return '}';
+    if(key[SDL_SCANCODE_0]) return '0';
+    if(key[SDL_SCANCODE_1]) return '1';
+    if(key[SDL_SCANCODE_2]) return '2';
+    if(key[SDL_SCANCODE_3]) return '3';
+    if(key[SDL_SCANCODE_4]) return '4';
+    if(key[SDL_SCANCODE_5]) return '5';
+    if(key[SDL_SCANCODE_6]) return '6';
+    if(key[SDL_SCANCODE_7]) return '7';
+    if(key[SDL_SCANCODE_8]) return '8';
+    if(key[SDL_SCANCODE_9]) return '9';
     if(key[SDL_SCANCODE_A]) return 'a';
     if(key[SDL_SCANCODE_B]) return 'b';
     if(key[SDL_SCANCODE_C]) return 'c';
@@ -96,10 +87,18 @@ int lookup(const uint8_t* key)
     if(key[SDL_SCANCODE_X]) return 'x';
     if(key[SDL_SCANCODE_Y]) return 'y';
     if(key[SDL_SCANCODE_Z]) return 'z';
-    // < { >
-    // < | >
-    // < } >
-    // < ~ >
-    // Nothing was presse 
+    if(key[SDL_SCANCODE_EQUALS]) return '=';
+    if(key[SDL_SCANCODE_SEMICOLON]) return ';';
+    if(key[SDL_SCANCODE_COMMA]) return ',';
+    if(key[SDL_SCANCODE_PERIOD]) return '.';
+    if(key[SDL_SCANCODE_SLASH]) return '/';
+    if(key[SDL_SCANCODE_APOSTROPHE]) return '\'';
+    if(key[SDL_SCANCODE_MINUS]) return '-';
+    if(key[SDL_SCANCODE_GRAVE]) return '`';
+    if(key[SDL_SCANCODE_RIGHTBRACKET]) return '[';
+    if(key[SDL_SCANCODE_BACKSLASH]) return '\\';
+    if(key[SDL_SCANCODE_LEFTBRACKET]) return ']';
+    if(key[SDL_SCANCODE_SPACE]) return ' ';
+    // Nothing was pressed
     return -1;
 }
