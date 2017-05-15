@@ -12,6 +12,4 @@ Sprites arrange(const Sprites sprites, const Hero hero);
 
 void rest(const Sprites sprites);
 
-bool issprite(const int ascii);
-
 Sprite registrar(const int ascii, const Point where);

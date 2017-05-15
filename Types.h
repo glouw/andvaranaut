@@ -63,20 +63,6 @@ typedef struct
 }
 Calc;
 
-typedef struct
-{
-    Point where;
-    char* name;
-}
-Portal;
-
-typedef struct
-{
-    int count;
-    Portal* portal;
-}
-Portals;
-
 typedef enum
 {
     N, E, S, W
@@ -156,7 +142,7 @@ typedef struct
     float acceleration;
     float theta;
     Light light;
-    int block;
+    int surface;
     Party party;
     bool consoling;
     float arm;

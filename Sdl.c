@@ -12,59 +12,16 @@
 #include "Ruler.h"
 #include "Ttf.h"
 
-Sdl setup(const int res, const int fps, const char* const name)
-{
-    SDL_Init(SDL_INIT_VIDEO);
-    TTF_Init();
-    SDL_Window* const window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
-    if(window == NULL)
-        bomb("Could not open window\n");
-    SDL_Renderer* const renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if(renderer == NULL)
-        bomb("No renderer available\n");
-    const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
-    SDL_Texture* const texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
-    char* const path = concat("config/", name);
-    const Surfaces surfaces = pull(path, format);
-    const Textures textures = cache(surfaces, renderer);
-    const int renders = 0;
-    const int ticks = 0;
-    TTF_Font* const font = TTF_OpenFont("fonts/alterebro-pixel-font.ttf", res / 8);
-    const Sdl sdl = { res, fps, surfaces, textures, window, renderer, texture, renders, ticks, font };
-    free(path);
-    return sdl;
-}
-
-void release(const Sdl sdl)
-{
-    clean(sdl.surfaces);
-    purge(sdl.textures);
-    SDL_DestroyTexture(sdl.texture);
-    SDL_Quit();
-    SDL_DestroyWindow(sdl.window);
-    SDL_DestroyRenderer(sdl.renderer);
-    TTF_CloseFont(sdl.font);
-}
-
-Sdl tick(const Sdl sdl, const int renders)
-{
-    Sdl temp = sdl;
-    temp.renders = renders;
-    temp.ticks = renders / (sdl.fps / 6);
-    return temp;
-}
-
-void churn(const Sdl sdl)
+static void churn(const Sdl sdl)
 {
     SDL_RenderCopyEx(sdl.renderer, sdl.texture, NULL, NULL, -90.0, NULL, (SDL_RendererFlip) 0);
 }
 
-void present(const Sdl sdl)
+static void present(const Sdl sdl)
 {
     SDL_RenderPresent(sdl.renderer);
 }
 
-// Stop clipping if the sprite is seen
 static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const lowers)
 {
     SDL_Rect seen = frame;
@@ -137,7 +94,45 @@ static void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
     ruler = selection(ruler, hero);
     ruler = countings(ruler, sprites);
     if(hero.consoling)
-        insertion(ruler);
+        ruler = insertion(ruler);
+}
+
+Sdl setup(const int res, const int fps)
+{
+    const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
+    SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
+    Sdl sdl;
+    sdl.window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
+    sdl.renderer = SDL_CreateRenderer(sdl.window, -1, SDL_RENDERER_ACCELERATED);
+    sdl.texture = SDL_CreateTexture(sdl.renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
+    sdl.surfaces = pull(format);
+    sdl.textures = cache(sdl.surfaces, sdl.renderer);
+    sdl.renders = 0;
+    sdl.ticks = 0;
+    sdl.res = res;
+    sdl.fps = fps;
+    sdl.font = TTF_OpenFont("fonts/alterebro-pixel-font.ttf", res / 8);
+    return sdl;
+}
+
+void release(const Sdl sdl)
+{
+    clean(sdl.surfaces);
+    purge(sdl.textures);
+    SDL_DestroyTexture(sdl.texture);
+    SDL_Quit();
+    SDL_DestroyWindow(sdl.window);
+    SDL_DestroyRenderer(sdl.renderer);
+    TTF_CloseFont(sdl.font);
+}
+
+Sdl tick(const Sdl sdl, const int renders)
+{
+    Sdl temp = sdl;
+    temp.renders = renders;
+    temp.ticks = renders / (sdl.fps / 5);
+    return temp;
 }
 
 void print(const Sdl sdl, const int x, const int y, char* const text)
@@ -168,8 +163,10 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     {
         const Point column = lerp(camera, y / (float) sdl.res);
         const Scanline scanline = { sdl, display, y };
-        // Just a single hit for the lower walls
         const Range range =  { map.walling, column };
+        // Once upon a time this engine supported upper and lower wall rendering.
+        // The upper wall rendering has been removed, but the lower wall renderer,
+        // that which is eye level with player, remained and kept name
         const Impact lower = march(hero, range, sdl.res);
         const Boundary boundary = { scanline, lower.wall };
         const Tracery tracery = { lower.traceline, party, hero.light };

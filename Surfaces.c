@@ -29,9 +29,9 @@ static SDL_Surface* load(const char* const path, const uint32_t format)
     }
 }
 
-Surfaces pull(const char* const path, const uint32_t format)
+Surfaces pull(const uint32_t format)
 {
-    FILE* const file = fopen(path, "r");
+    FILE* const file = fopen("surfaces/surfaces.cfg", "r");
     const int lines = lns(file);
     SDL_Surface** const surface = toss(SDL_Surface*, lines);
     for(int i = 0; i < lines; i++)

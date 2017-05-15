@@ -6,8 +6,8 @@ PROJ = water
 # Source files
 SRCS = main.c Play.c Test.c Util.c Point.c Hit.c Line.c Map.c
 SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c String.c
-SRCS+= Portals.c Boundary.c Surfaces.c Light.c Textures.c
-SRCS+= Console.c Ttf.c Ruler.c
+SRCS+= Boundary.c Surfaces.c Light.c Textures.c Console.c
+SRCS+= Ttf.c Ruler.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
 # Warnings flags

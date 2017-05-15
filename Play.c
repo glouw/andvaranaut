@@ -1,7 +1,6 @@
 #include "Play.h"
 
 #include "Hero.h"
-#include "Portals.h"
 #include "Sdl.h"
 #include "Map.h"
 #include "Sprites.h"
@@ -21,9 +20,8 @@ void play(const char* argv[])
     const int fps = 60;
     Map map = open("start");
     Sprites sprites = wake("start");
-    Hero hero = spawn("hero.cfg");
-    Portals portals = populate("portals.cfg");
-    Sdl sdl = setup(res, fps, "surfaces.cfg");
+    Hero hero = spawn();
+    Sdl sdl = setup(res, fps);
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(int renders = 0; res == 128 ? renders < fps : !done(); renders++)
     {
@@ -34,11 +32,7 @@ void play(const char* argv[])
             hero = type(hero, key);
         else
         {
-            hero = spin(hero, key);
-            hero = move(hero, map.walling, key);
-            hero = zoom(hero, key);
-            hero = fade(hero);
-            hero = pick(hero, key);
+            hero = sustain(hero, map, key);
             grab(hero, sprites, key);
             edit(hero, map, key);
             sprites = place(hero, sprites, key);
@@ -51,5 +45,4 @@ void play(const char* argv[])
     release(sdl);
     close(map);
     kill(sprites);
-    destroy(portals);
 }

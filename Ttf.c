@@ -1,5 +1,13 @@
 #include "Ttf.h"
 
+static SDL_Rect placing(TTF_Font* const font, char* const text, const int x, const int y)
+{
+    SDL_Rect target = size(font, text);
+    target.x = x;
+    target.y = y;
+    return target;
+}
+
 SDL_Rect size(TTF_Font* const font, char* const text)
 {
     int w = 0;
@@ -7,14 +15,6 @@ SDL_Rect size(TTF_Font* const font, char* const text)
     TTF_SizeText(font, text, &w, &h);
     const SDL_Rect rect = { 0, 0, w, h };
     return rect;
-}
-
-static SDL_Rect placing(TTF_Font* const font, char* const text, const int x, const int y)
-{
-    SDL_Rect target = size(font, text);
-    target.x = x;
-    target.y = y;
-    return target;
 }
 
 void scribble(const Ttf ttf, const int x, const int y, const Sdl sdl)
