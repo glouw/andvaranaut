@@ -95,28 +95,6 @@ void entomb(const Sprites sprites, const char* const name)
     free(path);
 }
 
-static Sprite _A(const Point where)
-{
-    Sprite sprite;
-    sprite.where = where;
-    sprite.ascii = 'A';
-    sprite.state = IDLE;
-    sprite.transparent = false;
-    sprite.width = 0.75;
-    return sprite;
-}
-
-static Sprite _B(const Point where)
-{
-    Sprite sprite;
-    sprite.where = where;
-    sprite.ascii = 'A';
-    sprite.state = IDLE;
-    sprite.transparent = true;
-    sprite.width = 0.75;
-    return sprite;
-}
-
 void kill(const Sprites sprites)
 {
     free(sprites.sprite);
@@ -143,12 +121,46 @@ void rest(const Sprites sprites)
         sprites.sprite[i].state = IDLE;
 }
 
+static Sprite _o(const Point where)
+{
+    Sprite sprite;
+    sprite.where = where;
+    sprite.ascii = 'o';
+    sprite.state = IDLE;
+    sprite.transparent = false;
+    sprite.width = 0.80;
+    return sprite;
+}
+
+static Sprite _g(const Point where)
+{
+    Sprite sprite;
+    sprite.where = where;
+    sprite.ascii = 'g';
+    sprite.state = IDLE;
+    sprite.transparent = true;
+    sprite.width = 0.66;
+    return sprite;
+}
+
+static Sprite _z(const Point where)
+{
+    Sprite sprite;
+    sprite.where = where;
+    sprite.ascii = 'z';
+    sprite.state = IDLE;
+    sprite.transparent = false;
+    sprite.width = 0.33;
+    return sprite;
+}
+
 Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
-        case 'A': return _A(where);
-        case 'B': return _B(where);
+        case 'o': return _o(where);
+        case 'g': return _g(where);
+        case 'z': return _z(where);
     }
-    return _A(where);
+    return _o(where);
 }
