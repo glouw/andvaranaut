@@ -41,13 +41,13 @@ char* readln(FILE* const file)
 {
     int ch = EOF;
     int reads = 0;
-    int size = 64;
+    int size = 128;
     char* line = toss(char, size);
     while((ch = getc(file)) != '\n' && ch != EOF)
     {
         line[reads++] = ch;
         if(reads + 1 == size)
-            line = (char*) realloc(line, size *= 2);
+            retoss(line, char, size *= 2);
     }
     line[reads] = '\0';
     return line;

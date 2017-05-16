@@ -13,3 +13,5 @@ Sprites arrange(const Sprites sprites, const Hero hero);
 void rest(const Sprites sprites);
 
 Sprite registrar(const int ascii, const Point where);
+
+void entomb(const Sprites sprites, const char* const name);

@@ -7,14 +7,16 @@ Controls:
     open: e
     zoom: o,p
     grab: j
-    edit: k (Edits a block)
+    edit: k
+    exit: F1
+    save: F5
 
     insert mode: i
     normal mode: enter, escape, capslock
 
-        floring select: 1
-        walling select: 2
-        ceiling select: 3
+        1: flooring
+        2: walling
+        3: ceiling
 
 Execution:
     The first command line argument selects the resolution:

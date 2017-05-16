@@ -15,15 +15,26 @@ Map open(const char* const name)
 {
     char* const path = concat("maps/", name);
     FILE* const file = fopen(path, "r");
-    // Three blocks per map: a ceiling block, a wall block, and a floor block
-    const int rows = lns(file) / 3;
-    char** const ceiling = get(file, rows);
-    char** const walling = get(file, rows);
-    char** const floring = get(file, rows);
-    const Map map = { rows, ceiling, walling, floring };
+    Map map;
+    map.rows = lns(file) / 3;
+    map.ceiling = get(file, map.rows);
+    map.walling = get(file, map.rows);
+    map.floring = get(file, map.rows);
     fclose(file);
     free(path);
     return map;
+}
+
+void dump(const Map map, const char* const name)
+{
+    char* const path = concat("maps/", name);
+    remove(path);
+    FILE* const file = fopen(path, "w");
+    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.ceiling[row]);
+    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.walling[row]);
+    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.floring[row]);
+    fclose(file);
+    free(path);
 }
 
 void close(const Map map)

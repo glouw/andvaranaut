@@ -6,10 +6,10 @@
 
 static Sprites copy(const Sprites sprites)
 {
-    const int count = sprites.count;
-    const int max = sprites.max;
-    Sprite* const temp = toss(Sprite, count);
-    const Sprites temps = { count, max, temp };
+    Sprites temps;
+    temps.count = sprites.count;
+    temps.max = sprites.max;
+    temps.sprite = toss(Sprite, sprites.count);
     memcpy(temps.sprite, sprites.sprite, sprites.count * sizeof(*sprites.sprite));
     return temps;
 }
@@ -31,7 +31,7 @@ static int comparator(const void *a, const void* b)
     const Point pa = *(const Point *) a;
     const Point pb = *(const Point *) b;
     if(mag(pa) < mag(pb))
-        return 1;
+        return +1;
     else
     if(mag(pa) > mag(pb))
         return -1;
@@ -47,34 +47,55 @@ Sprites wake(const char* const name)
 {
     char* const path = concat("sprites/", name);
     FILE* const file = fopen(path, "r");
-    const int count = lns(file);
-    Sprite* const sprite = toss(Sprite, count);
-    for(int i = 0; i < count; i++)
+    Sprites sprites;
+    sprites.count = lns(file);
+    sprites.sprite = toss(Sprite, sprites.count);
+    sprites.max = sprites.count;
+    for(int i = 0; i < sprites.count; i++)
     {
-        Point where = { 0.0, 0.0 };
         char* const line = readln(file);
-        char* const location = strtok(line, " ");
         char ascii = 0;
         int state = 0;
+        Point where = { 0.0, 0.0 };
         int transparent = 0;
         float width = 0.0;
-        sscanf(location, "%c,%d,%f,%f,%d,%f",
-            &ascii, &state, &where.x, &where.y, &transparent, &width);
-        sprite[i].where = where;
-        sprite[i].ascii = ascii;
-        sprite[i].state = (State) state;
-        sprite[i].transparent = (bool) transparent;
-        sprite[i].width = width;
+        sscanf(line, "%c,%d,%f,%f,%d,%f\n",
+            &ascii,
+            &state,
+            &where.x,
+            &where.y,
+            &transparent,
+            &width);
+        sprites.sprite[i].where = where;
+        sprites.sprite[i].ascii = ascii;
+        sprites.sprite[i].state = (State) state;
+        sprites.sprite[i].transparent = (bool) transparent;
+        sprites.sprite[i].width = width;
         free(line);
     }
-    const int max = count;
-    const Sprites sprites = { count, max, sprite };
     fclose(file);
     free(path);
     return sprites;
 }
 
-static Sprite oddish(const Point where)
+void entomb(const Sprites sprites, const char* const name)
+{
+    char* const path = concat("sprites/", name);
+    remove(path);
+    FILE* const file = fopen(path, "w");
+    for(int i = 0; i < sprites.count; i++)
+        fprintf(file, "%c,%d,%f,%f,%d,%f\n",
+            sprites.sprite[i].ascii,
+            sprites.sprite[i].state,
+            sprites.sprite[i].where.x,
+            sprites.sprite[i].where.y,
+            sprites.sprite[i].transparent,
+            sprites.sprite[i].width);
+    fclose(file);
+    free(path);
+}
+
+static Sprite _A(const Point where)
 {
     Sprite sprite;
     sprite.where = where;
@@ -85,7 +106,7 @@ static Sprite oddish(const Point where)
     return sprite;
 }
 
-static Sprite torch(const Point where)
+static Sprite _B(const Point where)
 {
     Sprite sprite;
     sprite.where = where;
@@ -126,8 +147,8 @@ Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
-        case 'A': return oddish(where);
-        case 'B': return torch(where);
+        case 'A': return _A(where);
+        case 'B': return _B(where);
     }
-    return oddish(where);
+    return _A(where);
 }

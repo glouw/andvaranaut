@@ -5,6 +5,7 @@
 #include "Wall.h"
 #include "Util.h"
 #include "String.h"
+#include "Map.h"
 #include "Sprites.h"
 #include "Console.h"
 
@@ -30,17 +31,16 @@ static Light reset()
 static Point init()
 {
     Point where;
-    where.x = 2.5;
-    where.y = 2.5;
+    where.x = 3.5;
+    where.y = 3.5;
     return where;
 }
 
 static Hero spin(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
-    const float dtheta = 0.1;
-    if(key[SDL_SCANCODE_H]) temp.theta -= dtheta;
-    if(key[SDL_SCANCODE_L]) temp.theta += dtheta;
+    if(key[SDL_SCANCODE_H]) temp.theta -= 0.1;
+    if(key[SDL_SCANCODE_L]) temp.theta += 0.1;
     return temp;
 }
 
@@ -185,6 +185,14 @@ void edit(const Hero hero, const Map map, const uint8_t* const key)
     }
 }
 
+void save(const Map map, const Sprites sprites, const char* const start, const uint8_t* key)
+{
+    if(!key[SDL_SCANCODE_F5])
+        return;
+    dump(map, start);
+    entomb(sprites, start);
+}
+
 Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key)
 {
     if(!key[SDL_SCANCODE_K])
@@ -192,6 +200,8 @@ Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key)
     if(!issprite(hero.surface))
         return sprites;
     Sprites temp = sprites;
+    if(temp.count == 0)
+        retoss(temp.sprite, Sprite, temp.max = 1);
     if(temp.count >= temp.max)
         retoss(temp.sprite, Sprite, temp.max *= 2);
     const Point hand = touch(hero);

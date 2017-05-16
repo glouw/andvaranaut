@@ -5,25 +5,22 @@
 #include "Map.h"
 #include "Sprites.h"
 
-static int done()
+static bool done(const uint8_t* const key)
 {
-    SDL_Event event;
-    SDL_PollEvent(&event);
-    const int type = event.type;
-    const int sym = event.key.keysym.sym;
-    return type == SDL_QUIT || sym == SDLK_F1;
+    return key[SDL_SCANCODE_F1];
 }
 
 void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
     const int fps = 60;
-    Map map = open("start");
-    Sprites sprites = wake("start");
+    const char* const start = "start";
+    Map map = open(start);
+    Sprites sprites = wake(start);
     Hero hero = spawn();
     Sdl sdl = setup(res, fps);
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
-    for(int renders = 0; res == 128 ? renders < fps : !done(); renders++)
+    for(int renders = 0; res == 128 ? renders < fps : !done(key); renders++)
     {
         SDL_PumpEvents();
         rest(sprites);
@@ -36,6 +33,7 @@ void play(const char* argv[])
             grab(hero, sprites, key);
             edit(hero, map, key);
             sprites = place(hero, sprites, key);
+            save(map, sprites, start, key);
         }
         const Sprites relatives = arrange(sprites, hero);
         render(sdl, hero, relatives, map);
