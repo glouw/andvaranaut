@@ -1,7 +1,8 @@
 #include "Sdl.h"
 
 #include "Display.h"
-#include "Boundary.h"
+#include "Sliver.h"
+#include "Sprites.h"
 #include "Surfaces.h"
 #include "Line.h"
 #include "Hero.h"
@@ -86,7 +87,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
     }
 }
 
-static void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
+static void cgui(const Sdl sdl, const Hero hero, const Sprites sprites)
 {
     Ruler ruler;
     ruler.sdl = sdl;
@@ -94,8 +95,8 @@ static void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
     ruler.margin = sdl.res / 32;
     ruler = selection(ruler, hero);
     ruler = countings(ruler, sprites);
-    if(hero.consoling)
-        ruler = insertion(ruler);
+    saved(ruler, hero);
+    insertion(ruler, hero);
 }
 
 Sdl setup(const int res, const int fps)
@@ -146,7 +147,8 @@ void print(const Sdl sdl, const int x, const int y, char* const text)
 
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
 {
-    const int t0 = SDL_GetTicks();
+    // Sprite location relative to player
+    const Sprites relatives = arrange(sprites, hero);
     // Precomputations
     float* const party = toss(float, sdl.res);
     const int m = sdl.res / 2;
@@ -169,28 +171,26 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         // The upper wall rendering has been removed, but the lower wall renderer,
         // that which is eye level with player, remained and kept name
         const Impact lower = march(hero, trajectory, sdl.res);
-        const Boundary boundary = { scanline, lower.wall };
+        const Sliver sliver = { scanline, lower.wall };
         const Tracery tracery = { lower.traceline, party, hero.torch };
         const int modding = illuminate(hero.torch, lower.traceline.corrected.x);
-        wrend(boundary, lower.hit, modding);
-        const Calc calc = { wheres, moddings };
-        frend(boundary, map.floring, calc, tracery);
-        crend(boundary, map.ceiling, calc);
+        wrend(sliver, lower.hit, modding);
+        frend(sliver, map.floring, wheres, moddings, tracery);
+        crend(sliver, map.ceiling, wheres, moddings);
         lowers[y] = lower.traceline.corrected;
     }
     unlock(sdl);
     churn(sdl);
-    paste(sdl, sprites, lowers, hero);
-    gui(sdl, hero, sprites);
-    // Presents buffer
+    paste(sdl, relatives, lowers, hero);
+    #ifdef CONSOLE
+    cgui(sdl, hero, relatives);
+    #else
+    (void) cgui;
+    #endif
     present(sdl);
-    // Clean up all computations
     free(party);
     free(lowers);
     free(wheres);
     free(moddings);
-    // Locks refresh rate
-    const int t1 = SDL_GetTicks();
-    const int ms = 1000.0 / sdl.fps - (t1 - t0);
-    SDL_Delay(ms < 0 ? 0 : ms);
+    kill(relatives);
 }

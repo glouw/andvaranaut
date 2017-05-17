@@ -10,7 +10,7 @@ static Sprites copy(const Sprites sprites)
     temps.count = sprites.count;
     temps.max = sprites.max;
     temps.sprite = toss(Sprite, sprites.count);
-    memcpy(temps.sprite, sprites.sprite, sprites.count * sizeof(*sprites.sprite));
+    memcpy(temps.sprite, sprites.sprite, sprites.count * sizeof(Sprite));
     return temps;
 }
 
@@ -40,7 +40,7 @@ static int comparator(const void *a, const void* b)
 
 static void sort(const Sprites copied)
 {
-    qsort(copied.sprite, copied.count, sizeof(*copied.sprite), comparator);
+    qsort(copied.sprite, copied.count, sizeof(Sprite), comparator);
 }
 
 Sprites wake(const char* const name)

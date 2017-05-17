@@ -13,6 +13,14 @@ Torch fade(const Torch torch)
     return temp.light > temp.brightness ? torch : temp;
 }
 
+Torch flicker(const Torch torch)
+{
+    Torch temp = torch;
+    temp.light -= rand() % (int) (1.75 * temp.brightness);
+    temp.light = temp.light < 0 ? 0 : temp.light;
+    return temp;
+}
+
 Torch reset()
 {
     Torch torch;

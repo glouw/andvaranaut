@@ -28,16 +28,24 @@ Ruler countings(const Ruler ruler, const Sprites sprites)
     const SDL_Rect count = size(temp.sdl.font, string);
     sprintf(string, "%d", sprites.count);
     print(temp.sdl, temp.margin, temp.height, string);
-    temp.height = count.h;
+    temp.height += count.h;
     return temp;
 }
 
-Ruler insertion(const Ruler ruler)
+void saved(const Ruler ruler, const Hero hero)
 {
-    Ruler temp = ruler;
+    if(!hero.saved)
+        return;
+    const char* const string = "Saved!";
+    const SDL_Rect saved = size(ruler.sdl.font, (char*) string);
+    print(ruler.sdl, ruler.margin, ruler.sdl.res - saved.h, (char*) string);
+}
+
+void insertion(const Ruler ruler, const Hero hero)
+{
+    if(!hero.consoling)
+        return;
     const char* const string = "-- INSERT --";
-    const SDL_Rect insert = size(temp.sdl.font, (char*) string);
-    print(temp.sdl, temp.margin, temp.sdl.res - insert.h, (char*) string);
-    temp.height = temp.sdl.res;
-    return temp;
+    const SDL_Rect insert = size(ruler.sdl.font, (char*) string);
+    print(ruler.sdl, ruler.margin, ruler.sdl.res - insert.h, (char*) string);
 }

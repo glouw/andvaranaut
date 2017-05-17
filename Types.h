@@ -56,13 +56,6 @@ typedef struct
 }
 Trajectory;
 
-typedef struct
-{
-    Point* wheres;
-    int* moddings;
-}
-Calc;
-
 typedef enum
 {
     N, E, S, W
@@ -145,7 +138,9 @@ typedef struct
     int surface;
     Party party;
     bool consoling;
+    bool saved;
     float arm;
+    char* map;
 }
 Hero;
 
@@ -216,7 +211,7 @@ typedef struct
     Scanline scanline;
     Wall wall;
 }
-Boundary;
+Sliver;
 
 typedef struct
 {
