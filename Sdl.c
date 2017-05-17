@@ -7,7 +7,7 @@
 #include "Hero.h"
 #include "Util.h"
 #include "String.h"
-#include "Light.h"
+#include "Torch.h"
 #include "Textures.h"
 #include "Ruler.h"
 #include "Ttf.h"
@@ -71,7 +71,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         if(seen.w <= 0)
             continue;
         // Applies lighting to the sprite
-        const int modding = illuminate(hero.light, sprite.where.x);
+        const int modding = illuminate(hero.torch, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Applies transperancy to the sprite
         if(sprite.transparent)
@@ -88,9 +88,10 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
 
 static void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
 {
-    const int height = 0;
-    const int margin = sdl.res / 32;
-    Ruler ruler = { sdl, margin, height };
+    Ruler ruler;
+    ruler.sdl = sdl;
+    ruler.height = 0;
+    ruler.margin = sdl.res / 32;
     ruler = selection(ruler, hero);
     ruler = countings(ruler, sprites);
     if(hero.consoling)
@@ -163,14 +164,14 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     {
         const Point column = lerp(camera, y / (float) sdl.res);
         const Scanline scanline = { sdl, display, y };
-        const Range range =  { map.walling, column };
+        const Trajectory trajectory =  { map.walling, column };
         // Once upon a time this engine supported upper and lower wall rendering.
         // The upper wall rendering has been removed, but the lower wall renderer,
         // that which is eye level with player, remained and kept name
-        const Impact lower = march(hero, range, sdl.res);
+        const Impact lower = march(hero, trajectory, sdl.res);
         const Boundary boundary = { scanline, lower.wall };
-        const Tracery tracery = { lower.traceline, party, hero.light };
-        const int modding = illuminate(hero.light, lower.traceline.corrected.x);
+        const Tracery tracery = { lower.traceline, party, hero.torch };
+        const int modding = illuminate(hero.torch, lower.traceline.corrected.x);
         wrend(boundary, lower.hit, modding);
         const Calc calc = { wheres, moddings };
         frend(boundary, map.floring, calc, tracery);

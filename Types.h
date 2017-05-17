@@ -54,7 +54,7 @@ typedef struct
     char** block;
     Point column;
 }
-Range;
+Trajectory;
 
 typedef struct
 {
@@ -71,7 +71,7 @@ Compass;
 
 typedef struct
 {
-    int tile;
+    int surface;
     float offset;
     Point where;
     Compass facing;
@@ -120,11 +120,11 @@ Line;
 
 typedef struct
 {
-    float torch;
+    float light;
     float brightness;
     float dtorch;
 }
-Light;
+Torch;
 
 
 typedef enum
@@ -141,7 +141,7 @@ typedef struct
     float speed;
     float acceleration;
     float theta;
-    Light light;
+    Torch torch;
     int surface;
     Party party;
     bool consoling;
@@ -161,7 +161,7 @@ typedef struct
 {
     Traceline traceline;
     float* party;
-    Light light;
+    Torch torch;
 }
 Tracery;
 

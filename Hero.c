@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "Sprites.h"
 #include "Console.h"
+#include "Torch.h"
 
 static Line lens(const float scale)
 {
@@ -17,15 +18,6 @@ static Line lens(const float scale)
     fov.b.x = 1.0;
     fov.b.y = scale;
     return fov;
-}
-
-static Light reset()
-{
-    Light light;
-    light.torch = 0.0;
-    light.brightness = 750.0;
-    light.dtorch = light.brightness / 10.0;
-    return light;
 }
 
 static Point init()
@@ -71,13 +63,6 @@ static Hero move(const Hero hero, char** const walling, const uint8_t* const key
     return temp;
 }
 
-static Hero fade(const Hero hero)
-{
-    Hero temp = hero;
-    temp.light.torch += hero.light.dtorch;
-    return temp.light.torch > hero.light.brightness ? hero : temp;
-}
-
 static Hero zoom(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
@@ -121,7 +106,7 @@ Hero spawn()
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
     hero.theta = 0.0;
-    hero.light = reset();
+    hero.torch = reset();
     hero.surface = ' ';
     hero.party = WALLING;
     hero.consoling = false;
@@ -129,9 +114,9 @@ Hero spawn()
     return hero;
 }
 
-Impact march(const Hero hero, const Range range, const int res)
+Impact march(const Hero hero, const Trajectory trajectory, const int res)
 {
-    const Hit hit = cast(hero.where, range.column, range.block);
+    const Hit hit = cast(hero.where, trajectory.column, trajectory.block);
     const Point ray = sub(hit.where, hero.where);
     const Point corrected = trn(ray, -hero.theta);
     const Line trace = { hero.where, hit.where };
@@ -227,7 +212,7 @@ Hero sustain(const Hero hero, const Map map, const uint8_t* key)
     temp = spin(temp, key);
     temp = move(temp, map.walling, key);
     temp = zoom(temp, key);
-    temp = fade(temp);
     temp = pick(temp, key);
+    temp.torch = fade(temp.torch);
     return temp;
 }

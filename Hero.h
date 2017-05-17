@@ -4,7 +4,7 @@
 
 Hero spawn();
 
-Impact march(const Hero hero, const Range range, const int res);
+Impact march(const Hero hero, const Trajectory trajectory, const int res);
 
 Hero type(const Hero hero, const uint8_t* const key);
 

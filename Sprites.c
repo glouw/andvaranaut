@@ -14,7 +14,7 @@ static Sprites copy(const Sprites sprites)
     return temps;
 }
 
-static void push(const Sprites copied, const Hero hero)
+static void pull(const Sprites copied, const Hero hero)
 {
     for(int i = 0; i < copied.count; i++)
         copied.sprite[i].where = sub(copied.sprite[i].where, hero.where);
@@ -109,7 +109,7 @@ Sprites swap(const Sprites sprites, const char* const name)
 Sprites arrange(const Sprites sprites, const Hero hero)
 {
     const Sprites copied = copy(sprites);
-    push(copied, hero);
+    pull(copied, hero);
     turn(copied, hero);
     sort(copied);
     return copied;

@@ -36,5 +36,5 @@ Hit cast(const Point where, const Point direction, char** const walling)
 {
     const Point ray = cmp(where, shr(where, direction), svr(where, direction));
     const Hit hit = collision(ray, direction, walling);
-    return hit.tile ? hit : cast(ray, direction, walling);
+    return hit.surface ? hit : cast(ray, direction, walling);
 }
