@@ -23,8 +23,8 @@ static Line lens(const float scale)
 static Point init()
 {
     Point where;
-    where.x = 3.5;
-    where.y = 3.5;
+    where.x = 4.5;
+    where.y = 4.5;
     return where;
 }
 
