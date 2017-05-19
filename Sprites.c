@@ -115,23 +115,6 @@ void rest(const Sprites sprites, const State state)
             sprites.sprite[i].state = IDLE;
 }
 
-void walk(const Sprites sprites, const Map map)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        const Point delta = {
-            0.1 * ((float) rand() / (float) RAND_MAX - 0.5),
-            0.1 * ((float) rand() / (float) RAND_MAX - 0.5),
-        };
-        if(sprites.sprite[i].state != GRABBED)
-        {
-            const Point where = add(sprites.sprite[i].where, delta);
-            if(!tile(where, map.walling))
-                sprites.sprite[i].where = where;
-        }
-    }
-}
-
 static Sprite _o(const Point where)
 {
     Sprite sprite;

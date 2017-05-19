@@ -6,8 +6,6 @@ void sort(const Sprites copied);
 
 void rest(const Sprites sprites, const State state);
 
-void walk(const Sprites sprites, const Map map); 
-
 int count(const Sprites sprites, const State state);
 
 Sprites wake(const char* const name);

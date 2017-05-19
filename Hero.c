@@ -253,6 +253,5 @@ Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_
     if(scared(temp, sprites))
         temp.torch = flicker(temp.torch);
     grab(temp, sprites, key);
-    walk(sprites, map);
     return temp;
 }
