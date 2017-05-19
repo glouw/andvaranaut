@@ -38,9 +38,18 @@ static int comparator(const void *a, const void* b)
     return 0;
 }
 
-static void sort(const Sprites copied)
+void sort(const Sprites copied)
 {
     qsort(copied.sprite, copied.count, sizeof(Sprite), comparator);
+}
+
+int count(const Sprites sprites, const State state)
+{
+    int occurances = 0;
+    for(int i = 0; i < sprites.count; i++)
+        if(sprites.sprite[i].state == state)
+            occurances++;
+    return occurances;
 }
 
 Sprites wake(const char* const name)
@@ -99,10 +108,28 @@ Sprites arrange(const Sprites sprites, const Hero hero)
     return copied;
 }
 
-void rest(const Sprites sprites)
+void rest(const Sprites sprites, const State state)
 {
     for(int i = 0; i < sprites.count; i++)
-        sprites.sprite[i].state = IDLE;
+        if(sprites.sprite[i].state == state)
+            sprites.sprite[i].state = IDLE;
+}
+
+void walk(const Sprites sprites, const Map map)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        const Point delta = {
+            0.1 * ((float) rand() / (float) RAND_MAX - 0.5),
+            0.1 * ((float) rand() / (float) RAND_MAX - 0.5),
+        };
+        if(sprites.sprite[i].state != GRABBED)
+        {
+            const Point where = add(sprites.sprite[i].where, delta);
+            if(!tile(where, map.walling))
+                sprites.sprite[i].where = where;
+        }
+    }
 }
 
 static Sprite _o(const Point where)

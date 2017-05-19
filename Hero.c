@@ -147,14 +147,19 @@ Hero type(const Hero hero, const uint8_t* const key)
 static void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
 {
     if(!key[SDL_SCANCODE_J])
+    {
+        rest(sprites, GRABBED);
         return;
+    }
+    if(count(sprites, GRABBED) > 1)
+        rest(sprites, GRABBED);
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
         if(eql(hand, sprites.sprite[i].where, sprites.sprite[i].width))
         {
-            sprites.sprite[i].where = hand;
             sprites.sprite[i].state = GRABBED;
-            break;
+            sprites.sprite[i].where = hand;
+            return;
         }
 }
 
@@ -178,7 +183,8 @@ Map edit(const Hero hero, const Map map, const uint8_t* const key)
         return map;
     if(issprite(hero.surface))
         return map;
-    const Point hand = touch(hero, 1.5);
+    // 1.45 to avoid being less than sqrt(2) and placing blocks on self
+    const Point hand = touch(hero, 1.45);
     char** const blocks = interpret(map, hero.party);
     if(block(hand, blocks) != '!')
     {
@@ -243,9 +249,10 @@ Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_
     temp = save(temp, map, sprites, key);
     temp.torch = fade(temp.torch);
     // Sprites
-    rest(sprites);
+    sort(sprites);
     if(scared(temp, sprites))
         temp.torch = flicker(temp.torch);
     grab(temp, sprites, key);
+    walk(sprites, map);
     return temp;
 }
