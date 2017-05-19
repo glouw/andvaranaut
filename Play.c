@@ -5,35 +5,27 @@
 #include "Map.h"
 #include "Sprites.h"
 
+static bool done(const uint8_t* const key)
+{
+    return key[SDL_SCANCODE_F1];
+}
+
 void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
     const int fps = 60;
-    const char* const start = "start";
-    Map map = open(start);
-    Sprites sprites = wake(start);
-    Hero hero = spawn(start);
+    Hero hero = spawn();
+    Map map = open(hero.zone);
+    Sprites sprites = wake(hero.zone);
     Sdl sdl = setup(res, fps);
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
-    for(int renders = 0; res == 128 ? renders < fps : !key[SDL_SCANCODE_F1]; renders++)
+    for(int renders = 0; res == 128 ? renders < fps : !done(key); renders++)
     {
         const int t0 = SDL_GetTicks();
         SDL_PumpEvents();
-        rest(sprites);
-        #ifdef CONSOLE
-        hero = console(hero, key);
-        if(hero.consoling)
-            hero = type(hero, key);
-        else
-        #endif
-        {
-            hero = sustain(hero, sprites, map, key);
-            #ifdef CONSOLE
-            edit(hero, map, key);
-            sprites = place(hero, sprites, key);
-            hero = save(hero, map, sprites, key);
-            #endif
-        }
+        hero = sustain(hero, sprites, map, key);
+        map = edit(hero, map, key);
+        sprites = place(hero, sprites, key);
         render(sdl, hero, sprites, map);
         sdl = tick(sdl, renders);
         const int t1 = SDL_GetTicks();

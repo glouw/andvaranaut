@@ -87,7 +87,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
     }
 }
 
-static void cgui(const Sdl sdl, const Hero hero, const Sprites sprites)
+static void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
 {
     Ruler ruler;
     ruler.sdl = sdl;
@@ -182,11 +182,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     unlock(sdl);
     churn(sdl);
     paste(sdl, relatives, lowers, hero);
-    #ifdef CONSOLE
-    cgui(sdl, hero, relatives);
-    #else
-    (void) cgui;
-    #endif
+    gui(sdl, hero, relatives);
     present(sdl);
     free(party);
     free(lowers);

@@ -55,22 +55,9 @@ Sprites wake(const char* const name)
     {
         char* const line = readln(file);
         char ascii = 0;
-        int state = 0;
         Point where = { 0.0, 0.0 };
-        int transparent = 0;
-        float width = 0.0;
-        sscanf(line, "%c,%d,%f,%f,%d,%f\n",
-            &ascii,
-            &state,
-            &where.x,
-            &where.y,
-            &transparent,
-            &width);
-        sprites.sprite[i].where = where;
-        sprites.sprite[i].ascii = ascii;
-        sprites.sprite[i].state = (State) state;
-        sprites.sprite[i].transparent = (bool) transparent;
-        sprites.sprite[i].width = width;
+        sscanf(line, "%c,%f,%f\n", &ascii, &where.x, &where.y);
+        sprites.sprite[i] = registrar(ascii, where);
         free(line);
     }
     fclose(file);
@@ -84,13 +71,10 @@ void entomb(const Sprites sprites, const char* const name)
     remove(path);
     FILE* const file = fopen(path, "w");
     for(int i = 0; i < sprites.count; i++)
-        fprintf(file, "%c,%d,%f,%f,%d,%f\n",
+        fprintf(file, "%c,%f,%f\n",
             sprites.sprite[i].ascii,
-            sprites.sprite[i].state,
             sprites.sprite[i].where.x,
-            sprites.sprite[i].where.y,
-            sprites.sprite[i].transparent,
-            sprites.sprite[i].width);
+            sprites.sprite[i].where.y);
     fclose(file);
     free(path);
 }
@@ -128,7 +112,7 @@ static Sprite _o(const Point where)
     sprite.ascii = 'o';
     sprite.state = IDLE;
     sprite.transparent = false;
-    sprite.width = 0.80;
+    sprite.width = 0.88;
     return sprite;
 }
 

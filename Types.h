@@ -140,7 +140,7 @@ typedef struct
     bool consoling;
     bool saved;
     float arm;
-    char* map;
+    char* zone;
 }
 Hero;
 

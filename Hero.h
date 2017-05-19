@@ -2,7 +2,7 @@
 
 #include "Types.h"
 
-Hero spawn(const char* const map);
+Hero spawn();
 
 Impact march(const Hero hero, const Trajectory trajectory, const int res);
 
@@ -12,7 +12,7 @@ Hero console(const Hero hero, const uint8_t* const key);
 
 Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* key);
 
-void edit(const Hero hero, const Map map, const uint8_t* const key);
+Map edit(const Hero hero, const Map map, const uint8_t* const key);
 
 Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_t* key);
 

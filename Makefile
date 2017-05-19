@@ -24,7 +24,7 @@ LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 # Dependency flags
 DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
 # Command line definitions
-AUX = -DCONSOLE
+AUX =
 # Compile, link, and post process
 COMP = $(CC) $(AUX) $(ARCHITECTURE) $(CFLAGS) $(DEPFLAGS) -c
 LINK = $(CC) $(AUX) $(ARCHITECTURE) $(CFLAGS) $(OBJS) $(LDFLAGS) -o

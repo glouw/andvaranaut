@@ -28,7 +28,7 @@ static Point init()
     return where;
 }
 
-Hero spawn(const char* const map)
+Hero spawn()
 {
     Hero hero;
     hero.fov = lens(1.0);
@@ -42,8 +42,8 @@ Hero spawn(const char* const map)
     hero.party = WALLING;
     hero.consoling = false;
     hero.saved = false;
-    hero.arm = 1.5;
-    hero.map = (char*) map;
+    hero.arm = 1.0;
+    hero.zone = "lvl00";
     return hero;
 }
 
@@ -162,22 +162,23 @@ static bool scared(const Hero hero, const Sprites sprites)
 {
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
-        if(eql(hand, sprites.sprite[i].where, sprites.sprite[i].width))
+        if(eql(hand, sprites.sprite[i].where, 2.00))
         {
-            // What scares our fearless hero?
             if(sprites.sprite[i].transparent)
                 return true;
         }
     return false;
 }
 
-void edit(const Hero hero, const Map map, const uint8_t* const key)
+Map edit(const Hero hero, const Map map, const uint8_t* const key)
 {
+    if(hero.consoling)
+        return map;
     if(!key[SDL_SCANCODE_K])
-        return;
+        return map;
     if(issprite(hero.surface))
-        return;
-    const Point hand = touch(hero, hero.arm);
+        return map;
+    const Point hand = touch(hero, 1.5);
     char** const blocks = interpret(map, hero.party);
     if(block(hand, blocks) != '!')
     {
@@ -185,6 +186,7 @@ void edit(const Hero hero, const Map map, const uint8_t* const key)
         const int y = hand.y;
         blocks[y][x] = hero.surface;
     }
+    return map;
 }
 
 Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* key)
@@ -192,14 +194,16 @@ Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* 
     if(!key[SDL_SCANCODE_F5])
         return hero;
     Hero temp = hero;
-    dump(map, hero.map);
-    entomb(sprites, hero.map);
+    dump(map, hero.zone);
+    entomb(sprites, hero.zone);
     temp.saved = true;
     return temp;
 }
 
 Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key)
 {
+    if(hero.consoling)
+        return sprites;
     if(!key[SDL_SCANCODE_K])
         return sprites;
     if(!issprite(hero.surface))
@@ -223,19 +227,25 @@ Hero console(const Hero hero, const uint8_t* const key)
         || key[SDL_SCANCODE_RETURN];
     if(insert) temp.consoling = true, temp.saved = false;
     if(normal) temp.consoling = false;
-    return temp;
+    return temp.consoling ? type(temp, key) : temp;
 }
 
 Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_t* key)
 {
-    Hero temp = hero;
+    Hero temp = console(hero, key);
+    if(temp.consoling)
+        return temp;
+    // Hero
     temp = spin(temp, key);
     temp = move(temp, map.walling, key);
     temp = zoom(temp, key);
     temp = pick(temp, key);
+    temp = save(temp, map, sprites, key);
+    temp.torch = fade(temp.torch);
+    // Sprites
+    rest(sprites);
     if(scared(temp, sprites))
         temp.torch = flicker(temp.torch);
-    temp.torch = fade(temp.torch);
     grab(temp, sprites, key);
     return temp;
 }
