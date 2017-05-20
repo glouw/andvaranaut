@@ -146,32 +146,56 @@ Hero type(const Hero hero, const uint8_t* const key)
 
 static void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
 {
+    rest(sprites, GRABBED);
     if(!key[SDL_SCANCODE_J])
-    {
-        rest(sprites, GRABBED);
         return;
-    }
-    if(count(sprites, GRABBED) > 1)
-        rest(sprites, GRABBED);
+    // Grab one sprite
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
-        if(eql(hand, sprites.sprite[i].where, sprites.sprite[i].width))
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(eql(hand, sprite->where, sprite->width))
         {
-            sprites.sprite[i].state = GRABBED;
-            sprites.sprite[i].where = hand;
+            sprite->state = GRABBED;
+            sprite->where = hand;
             return;
         }
+    }
+}
+
+// Pushes sprites away from grabbed sprites
+static void push(const Sprites sprites)
+{
+    Sprite* const grabbed = find(sprites, GRABBED);
+    if(!grabbed)
+        return;
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        // Continue if trying to push self
+        if(sprite == grabbed)
+            continue;
+        // Push by the width of the biggest sprite
+        const float width = max(sprite->width, grabbed->width);
+        if(eql(sprite->where, grabbed->where, width))
+        {
+            const Point delta = sub(sprite->where, grabbed->where);
+            sprite->where = add(sprite->where, delta);
+        }
+    }
 }
 
 static bool scared(const Hero hero, const Sprites sprites)
 {
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
-        if(eql(hand, sprites.sprite[i].where, 2.00))
-        {
-            if(sprites.sprite[i].transparent)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        // 2.0 to be effective within block range
+        if(eql(hand, sprite->where, 2.0))
+            if(sprite->transparent)
                 return true;
-        }
+    }
     return false;
 }
 
@@ -251,5 +275,7 @@ Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_
     if(scared(temp, sprites))
         temp.torch = flicker(temp.torch);
     grab(temp, sprites, key);
+    push(sprites);
+    constrain(sprites, hero, map);
     return temp;
 }

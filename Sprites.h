@@ -21,3 +21,7 @@ Sprite registrar(const int ascii, const Point where);
 void entomb(const Sprites sprites, const char* const name);
 
 void prints(const Sprites sprites);
+
+Sprite* find(const Sprites sprites, const State state);
+
+void constrain(const Sprites sprites, const Hero hero, const Map map);

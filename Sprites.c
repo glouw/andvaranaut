@@ -17,19 +17,28 @@ static Sprites copy(const Sprites sprites)
 static void pull(const Sprites sprites, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
-        sprites.sprite[i].where = sub(sprites.sprite[i].where, hero.where);
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        sprite->where = sub(sprite->where, hero.where);
+    }
 }
 
 static void push(const Sprites sprites, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
-        sprites.sprite[i].where = add(sprites.sprite[i].where, hero.where);
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        sprite->where = add(sprite->where, hero.where);
+    }
 }
 
 static void turn(const Sprites sprites, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
-        sprites.sprite[i].where = trn(sprites.sprite[i].where, -hero.theta);
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        sprite->where = trn(sprite->where, -hero.theta);
+    }
 }
 
 static int backwards(const void *a, const void* b)
@@ -51,6 +60,17 @@ static int forewards(const void *a, const void* b)
 static void sort(const Sprites sprites, const bool foreward)
 {
     qsort(sprites.sprite, sprites.count, sizeof(Sprite), foreward ? forewards : backwards);
+}
+
+Sprite* find(const Sprites sprites, const State state)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(sprite->state == state)
+            return sprite;
+    }
+    return NULL;
 }
 
 int count(const Sprites sprites, const State state)
@@ -99,10 +119,10 @@ void entomb(const Sprites sprites, const char* const name)
     remove(path);
     FILE* const file = fopen(path, "w");
     for(int i = 0; i < sprites.count; i++)
-        fprintf(file, "%c,%f,%f\n",
-            sprites.sprite[i].ascii,
-            sprites.sprite[i].where.x,
-            sprites.sprite[i].where.y);
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        fprintf(file, "%c,%f,%f\n", sprite->ascii, sprite->where.x, sprite->where.y);
+    }
     fclose(file);
     free(path);
 }
@@ -137,8 +157,25 @@ void rearrange(const Sprites sprites, const Hero hero)
 void rest(const Sprites sprites, const State state)
 {
     for(int i = 0; i < sprites.count; i++)
-        if(sprites.sprite[i].state == state)
-            sprites.sprite[i].state = IDLE;
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(sprite->state == state)
+            sprite->state = IDLE;
+    }
+}
+
+void constrain(const Sprites sprites, const Hero hero, const Map map)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        // Move the sprite infront of the hero if the sprite is stuck in a wall
+        if(tile(sprite->where, map.walling))
+        {
+            const Point delta = sub(sprite->where, hero.where);
+            sprite->where = add(hero.where, dvd(delta, 2.0));
+        }
+    }
 }
 
 static Sprite birth(const Point where)
@@ -187,3 +224,4 @@ Sprite registrar(const int ascii, const Point where)
     }
     return birth(where);
 }
+
