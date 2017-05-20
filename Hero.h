@@ -14,6 +14,18 @@ Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* 
 
 Map edit(const Hero hero, const Map map, const uint8_t* const key);
 
-Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_t* key);
-
 Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key);
+
+Hero move(const Hero hero, char** const walling, const uint8_t* const key);
+
+Hero spin(const Hero hero, const uint8_t* const key);
+
+void grab(const Hero hero, const Sprites sprites, const uint8_t* const key);
+
+bool scared(const Hero hero, const Sprites sprites);
+
+void shove(const Sprites sprites);
+
+Hero zoom(const Hero hero, const uint8_t* const key);
+
+Hero pick(const Hero hero, const uint8_t* const key);

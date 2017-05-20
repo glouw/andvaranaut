@@ -178,7 +178,7 @@ void constrain(const Sprites sprites, const Hero hero, const Map map)
     }
 }
 
-static Sprite birth(const Point where)
+static Sprite generic(const Point where)
 {
     Sprite sprite;
     sprite.where = where;
@@ -191,7 +191,7 @@ static Sprite birth(const Point where)
 
 static Sprite _o(const Point where)
 {
-    Sprite sprite = birth(where);
+    Sprite sprite = generic(where);
     sprite.ascii = 'o';
     sprite.width = 0.88;
     return sprite;
@@ -199,7 +199,7 @@ static Sprite _o(const Point where)
 
 static Sprite _g(const Point where)
 {
-    Sprite sprite = birth(where);
+    Sprite sprite = generic(where);
     sprite.ascii = 'g';
     sprite.transparent = true;
     sprite.width = 0.66;
@@ -208,7 +208,7 @@ static Sprite _g(const Point where)
 
 static Sprite _z(const Point where)
 {
-    Sprite sprite = birth(where);
+    Sprite sprite = generic(where);
     sprite.ascii = 'z';
     sprite.width = 0.33;
     return sprite;
@@ -222,6 +222,6 @@ Sprite registrar(const int ascii, const Point where)
         case 'g': return _g(where);
         case 'z': return _z(where);
     }
-    return birth(where);
+    return generic(where);
 }
 

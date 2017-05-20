@@ -4,7 +4,6 @@
 #include "Hit.h"
 #include "Wall.h"
 #include "Util.h"
-#include "String.h"
 #include "Map.h"
 #include "Sprites.h"
 #include "Console.h"
@@ -47,7 +46,7 @@ Hero spawn()
     return hero;
 }
 
-static Hero spin(const Hero hero, const uint8_t* const key)
+Hero spin(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_H]) temp.theta -= 0.1;
@@ -69,7 +68,7 @@ static Point accelerate(const Hero hero)
     return mul(direction, hero.acceleration);
 }
 
-static Hero move(const Hero hero, char** const walling, const uint8_t* const key)
+Hero move(const Hero hero, char** const walling, const uint8_t* const key)
 {
     Hero temp = hero;
     // Acceleration
@@ -93,7 +92,7 @@ static Hero move(const Hero hero, char** const walling, const uint8_t* const key
     return temp;
 }
 
-static Hero zoom(const Hero hero, const uint8_t* const key)
+Hero zoom(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_P]) temp.fov = lens(0.25);
@@ -106,7 +105,7 @@ static bool issprite(const int ascii)
     return isalpha(ascii);
 }
 
-static Hero pick(const Hero hero, const uint8_t* const key)
+Hero pick(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_1]) temp.party = FLORING;
@@ -144,7 +143,7 @@ Hero type(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-static void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
+void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
 {
     rest(sprites, GRABBED);
     if(!key[SDL_SCANCODE_J])
@@ -163,8 +162,8 @@ static void grab(const Hero hero, const Sprites sprites, const uint8_t* const ke
     }
 }
 
-// Pushes sprites away from grabbed sprites
-static void push(const Sprites sprites)
+// Shoves sprites away from grabbed sprites
+void shove(const Sprites sprites)
 {
     Sprite* const grabbed = find(sprites, GRABBED);
     if(!grabbed)
@@ -172,10 +171,10 @@ static void push(const Sprites sprites)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        // Continue if trying to push self
+        // Continue if trying to shove self
         if(sprite == grabbed)
             continue;
-        // Push by the width of the biggest sprite
+        // Shove by the width of the biggest sprite
         const float width = max(sprite->width, grabbed->width);
         if(eql(sprite->where, grabbed->where, width))
         {
@@ -185,7 +184,7 @@ static void push(const Sprites sprites)
     }
 }
 
-static bool scared(const Hero hero, const Sprites sprites)
+bool scared(const Hero hero, const Sprites sprites)
 {
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
@@ -258,24 +257,4 @@ Hero console(const Hero hero, const uint8_t* const key)
     if(insert) temp.consoling = true, temp.saved = false;
     if(normal) temp.consoling = false;
     return temp.consoling ? type(temp, key) : temp;
-}
-
-Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_t* key)
-{
-    Hero temp = console(hero, key);
-    if(temp.consoling)
-        return temp;
-    temp = spin(temp, key);
-    temp = move(temp, map.walling, key);
-    temp = zoom(temp, key);
-    temp = pick(temp, key);
-    temp = save(temp, map, sprites, key);
-    temp.torch = fade(temp.torch);
-    rearrange(sprites, hero);
-    if(scared(temp, sprites))
-        temp.torch = flicker(temp.torch);
-    grab(temp, sprites, key);
-    push(sprites);
-    constrain(sprites, hero, map);
-    return temp;
 }

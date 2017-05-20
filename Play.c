@@ -4,6 +4,7 @@
 #include "Sdl.h"
 #include "Map.h"
 #include "Sprites.h"
+#include "World.h"
 
 static bool done(const uint8_t* const key)
 {
