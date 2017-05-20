@@ -1,9 +1,11 @@
 #include "Test.h"
 
 #include "Util.h"
+#include "Sprites.h"
+#include "Hero.h"
 #include "String.h"
 
-static void _build()
+static inline void _build()
 {
     const char* strings[] = { "each", "must", "be", "built", "printed", "and", "freed" };
     for(int i = 0; i < len(strings); i++)
@@ -14,7 +16,7 @@ static void _build()
     }
 }
 
-static void _concat()
+static inline void _concat()
 {
     const char* strings[] = { "each", "must", "concatenate", "another", "string", "and", "freed" };
     for(int i = 0; i < len(strings); i++)
@@ -25,28 +27,28 @@ static void _concat()
     }
 }
 
-static void _match()
+static inline void _match()
 {
     const char* strings[] = { "each", "of", "these", "must", "match", "themselves" };
     for(int i = 0; i < len(strings); i++)
         printf("%s\n", boolean(match(strings[i], strings[i])));
 }
 
-static void _trim()
+static inline void _trim()
 {
     char strings[][80] = { " lorem ", "  ipsum  ", "morel ", " muspi", " notice the spaces " };
     for(int i = 0; i < len(strings); i++)
         printf("_%s_\n", trim(strings[i]));
 }
 
-static void _floating()
+static inline void _floating()
 {
     const char* strings[] = { "1.0", "2.0", "-1.2", "+42.0", "+0.0", "-0.0", "INF" };
     for(int i = 0; i < len(strings); i++)
         printf("%f\n", floating(strings[i]));
 }
 
-static void __String()
+static inline void __String()
 {
     _build();
     _concat();
@@ -55,7 +57,23 @@ static void __String()
     _floating();
 }
 
-static void readme()
+static inline void _rearrange()
+{
+    Hero hero = spawn();
+    Sprites sprites = wake(hero.zone);
+    prints(sprites);
+    rearrange(sprites, hero);
+    puts("-- Sorted forwards relative to hero start");
+    prints(sprites);
+    kill(sprites);
+}
+
+static inline void __Sprites()
+{
+    _rearrange();
+}
+
+static inline void readme()
 {
     FILE* const file = fopen("README", "r");
     const int lines = lns(file );
@@ -70,6 +88,5 @@ static void readme()
 
 void test()
 {
-    __String();
-    readme();
+    __Sprites();
 }

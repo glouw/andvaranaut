@@ -241,15 +241,13 @@ Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_
     Hero temp = console(hero, key);
     if(temp.consoling)
         return temp;
-    // Hero
     temp = spin(temp, key);
     temp = move(temp, map.walling, key);
     temp = zoom(temp, key);
     temp = pick(temp, key);
     temp = save(temp, map, sprites, key);
     temp.torch = fade(temp.torch);
-    // Sprites
-    sort(sprites);
+    rearrange(sprites, hero);
     if(scared(temp, sprites))
         temp.torch = flicker(temp.torch);
     grab(temp, sprites, key);
