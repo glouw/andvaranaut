@@ -10,8 +10,7 @@
 #include "String.h"
 #include "Torch.h"
 #include "Textures.h"
-#include "Ruler.h"
-#include "Ttf.h"
+#include "Gui.h"
 
 static void churn(const Sdl sdl)
 {
@@ -87,18 +86,6 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
     }
 }
 
-static void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
-{
-    Ruler ruler;
-    ruler.sdl = sdl;
-    ruler.height = 0;
-    ruler.margin = sdl.res / 32;
-    ruler = selection(ruler, hero);
-    ruler = countings(ruler, sprites);
-    saved(ruler, hero);
-    insertion(ruler, hero);
-}
-
 extern Sdl setup(const int res, const int fps)
 {
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
@@ -135,14 +122,6 @@ extern Sdl tick(const Sdl sdl, const int renders)
     temp.renders = renders;
     temp.ticks = renders / (sdl.fps / 5);
     return temp;
-}
-
-extern void print(const Sdl sdl, const int x, const int y, char* const text)
-{
-    const Ttf inner = { text, { 0xFF, 0xFF, 0x00, 0x00 }, 0 };
-    const Ttf outer = { text, { 0x00, 0x00, 0x00, 0x00 }, 1 };
-    scribble(outer, x, y, sdl);
-    scribble(inner, x, y, sdl);
 }
 
 extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
