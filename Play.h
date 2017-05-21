@@ -2,4 +2,5 @@
 
 #include "Types.h"
 
-void play(const char* argv[]);
+extern void play(const char* argv[]);
+

@@ -2,6 +2,7 @@
 
 #include "Types.h"
 
-Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer);
+extern Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer);
 
-void purge(const Textures textures);
+extern void purge(const Textures textures);
+

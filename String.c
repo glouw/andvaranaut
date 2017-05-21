@@ -2,14 +2,14 @@
 
 #include "Util.h"
 
-char* build(const char* const str)
+extern char* build(const char* const str)
 {
     char* copy = toss(char, strlen(str) + 1);
     strcpy(copy, str);
     return copy;
 }
 
-char* concat(const char* const a, const char* const b)
+extern char* concat(const char* const a, const char* const b)
 {
     char* c = toss(char, strlen(a) + strlen(b) + 1);
     strcpy(c, a);
@@ -17,12 +17,12 @@ char* concat(const char* const a, const char* const b)
     return c;
 }
 
-bool match(const char* const a, const char* const b)
+extern bool match(const char* const a, const char* const b)
 {
     return strcmp(a, b) == 0;
 }
 
-char* trim(char* const a)
+extern char* trim(char* const a)
 {
     char* start = a;
     // Trim from the left
@@ -34,7 +34,7 @@ char* trim(char* const a)
     return start;
 }
 
-float floating(const char* const a)
+extern float floating(const char* const a)
 {
     return strtof(a, NULL);
 }

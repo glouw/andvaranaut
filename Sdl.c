@@ -99,7 +99,7 @@ static void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
     insertion(ruler, hero);
 }
 
-Sdl setup(const int res, const int fps)
+extern Sdl setup(const int res, const int fps)
 {
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Init(SDL_INIT_VIDEO);
@@ -118,7 +118,7 @@ Sdl setup(const int res, const int fps)
     return sdl;
 }
 
-void release(const Sdl sdl)
+extern void release(const Sdl sdl)
 {
     clean(sdl.surfaces);
     purge(sdl.textures);
@@ -129,7 +129,7 @@ void release(const Sdl sdl)
     TTF_CloseFont(sdl.font);
 }
 
-Sdl tick(const Sdl sdl, const int renders)
+extern Sdl tick(const Sdl sdl, const int renders)
 {
     Sdl temp = sdl;
     temp.renders = renders;
@@ -137,7 +137,7 @@ Sdl tick(const Sdl sdl, const int renders)
     return temp;
 }
 
-void print(const Sdl sdl, const int x, const int y, char* const text)
+extern void print(const Sdl sdl, const int x, const int y, char* const text)
 {
     const Ttf inner = { text, { 0xFF, 0xFF, 0x00, 0x00 }, 0 };
     const Ttf outer = { text, { 0x00, 0x00, 0x00, 0x00 }, 1 };
@@ -145,7 +145,7 @@ void print(const Sdl sdl, const int x, const int y, char* const text)
     scribble(inner, x, y, sdl);
 }
 
-void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
+extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
 {
     // Sprite location relative to player
     const Sprites relatives = arrange(sprites, hero);

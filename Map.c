@@ -11,7 +11,7 @@ static char** get(FILE* const file, const int rows)
     return block;
 }
 
-Map open(const char* const name)
+extern Map open(const char* const name)
 {
     char* const path = concat("maps/", name);
     FILE* const file = fopen(path, "r");
@@ -25,7 +25,7 @@ Map open(const char* const name)
     return map;
 }
 
-void dump(const Map map, const char* const name)
+extern void dump(const Map map, const char* const name)
 {
     char* const path = concat("maps/", name);
     remove(path);
@@ -37,7 +37,7 @@ void dump(const Map map, const char* const name)
     free(path);
 }
 
-void close(const Map map)
+extern void close(const Map map)
 {
     for(int row = 0; row < map.rows; row++)
     {
@@ -50,7 +50,7 @@ void close(const Map map)
     free(map.floring);
 }
 
-Map reopen(const Map map, const char* const name)
+extern Map reopen(const Map map, const char* const name)
 {
     close(map);
     return open(name);

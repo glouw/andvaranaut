@@ -2,30 +2,31 @@
 
 #include "Types.h"
 
-Hero spawn();
+extern Hero spawn();
 
-Impact march(const Hero hero, const Trajectory trajectory, const int res);
+extern Hero spin(const Hero hero, const uint8_t* const key);
 
-Hero type(const Hero hero, const uint8_t* const key);
+extern Point touch(const Hero hero, const float reach);
 
-Hero console(const Hero hero, const uint8_t* const key);
+extern Hero move(const Hero hero, char** const walling, const uint8_t* const key);
 
-Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* key);
+extern Hero zoom(const Hero hero, const uint8_t* const key);
 
-Map edit(const Hero hero, const Map map, const uint8_t* const key);
+extern Hero pick(const Hero hero, const uint8_t* const key);
 
-Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key);
+extern Impact march(const Hero hero, const Trajectory trajectory, const int res);
 
-Hero move(const Hero hero, char** const walling, const uint8_t* const key);
+extern Hero type(const Hero hero, const uint8_t* const key);
 
-Hero spin(const Hero hero, const uint8_t* const key);
+extern bool scared(const Hero hero, const Sprites sprites);
 
-void grab(const Hero hero, const Sprites sprites, const uint8_t* const key);
+extern Map edit(const Hero hero, const Map map, const uint8_t* const key);
 
-bool scared(const Hero hero, const Sprites sprites);
+extern Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* key);
 
-void shove(const Sprites sprites);
+extern Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key);
 
-Hero zoom(const Hero hero, const uint8_t* const key);
+extern Hero console(const Hero hero, const uint8_t* const key);
 
-Hero pick(const Hero hero, const uint8_t* const key);
+extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_t* const key);
+

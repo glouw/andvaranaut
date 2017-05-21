@@ -15,7 +15,7 @@ static uint32_t mod(const uint32_t pixel, const int r, const int g, const int b)
 }
 
 // Wall renderer
-void wrend(const Sliver sliver, const Hit hit, const int modding)
+extern void wrend(const Sliver sliver, const Hit hit, const int modding)
 {
     // Aliases
     const int y = sliver.scanline.y;
@@ -34,7 +34,7 @@ void wrend(const Sliver sliver, const Hit hit, const int modding)
 }
 
 // Floor renderer
-void frend(const Sliver sliver, char** const floring, Point* wheres, int* moddings, const Tracery tracery)
+extern void frend(const Sliver sliver, char** const floring, Point* wheres, int* moddings, const Tracery tracery)
 {
     // Aliases
     const int width = sliver.scanline.display.width;
@@ -60,7 +60,7 @@ void frend(const Sliver sliver, char** const floring, Point* wheres, int* moddin
 }
 
 // Ceiling renderer - Saves time by using some of frend()'s calculations
-void crend(const Sliver sliver, char** const ceiling, Point* wheres, int* moddings)
+extern void crend(const Sliver sliver, char** const ceiling, Point* wheres, int* moddings)
 {
     // Aliases
     const int y = sliver.scanline.y;

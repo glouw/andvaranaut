@@ -2,12 +2,13 @@
 
 #include "Types.h"
 
-char* build(const char* const str);
+extern char* build(const char* const str);
 
-char* concat(const char* const a, const char* const b);
+extern char* concat(const char* const a, const char* const b);
 
-bool match(const char* const a, const char* const b);
+extern bool match(const char* const a, const char* const b);
 
-char* trim(char* const a);
+extern char* trim(char* const a);
 
-float floating(const char* const a);
+extern float floating(const char* const a);
+

@@ -205,7 +205,7 @@ static int mapping(const uint8_t* const key)
     return -1;
 }
 
-int lookup(const uint8_t* const key)
+extern int lookup(const uint8_t* const key)
 {
     const int shifts = shifting(key);
     if(shifts != -1)

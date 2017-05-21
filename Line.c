@@ -2,33 +2,33 @@
 
 #include "Point.h"
 
-Line rotate(const Line line, const float t)
+extern Line rotate(const Line line, const float t)
 {
     const Line rotated = { trn(line.a, t), trn(line.b, t) };
     return rotated;
 }
 
-Point lerp(const Line line, const float n)
+extern Point lerp(const Line line, const float n)
 {
     return add(line.a, mul(sub(line.b, line.a), n));
 }
 
-float focal(const Line line)
+extern float focal(const Line line)
 {
     return line.a.x / (line.b.y - line.a.y);
 }
 
-float ratio(const Line line)
+extern float ratio(const Line line)
 {
     return line.a.x / line.b.y;
 }
 
-float ccast(const Line fov, const int res, const int x)
+extern float ccast(const Line fov, const int res, const int x)
 {
     return focal(fov) * res / (2 * x - (res - 1));
 }
 
-float fcast(const Line fov, const int res, const int x)
+extern float fcast(const Line fov, const int res, const int x)
 {
     return -ccast(fov, res, x);
 }

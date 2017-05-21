@@ -10,7 +10,7 @@ static char interpret(const Party party)
     return party == CEILING ? 'C' : party == WALLING ? 'W' : 'F';
 }
 
-Ruler selection(const Ruler ruler, const Hero hero)
+extern Ruler selection(const Ruler ruler, const Hero hero)
 {
     Ruler temp = ruler;
     char string[] = { interpret(hero.party), (char) hero.surface, '\0' };
@@ -20,7 +20,7 @@ Ruler selection(const Ruler ruler, const Hero hero)
     return temp;
 }
 
-Ruler countings(const Ruler ruler, const Sprites sprites)
+extern Ruler countings(const Ruler ruler, const Sprites sprites)
 {
     Ruler temp = ruler;
     const int max = (CHAR_BIT * sizeof(int) - 1) / 3 + 2;
@@ -32,7 +32,7 @@ Ruler countings(const Ruler ruler, const Sprites sprites)
     return temp;
 }
 
-void saved(const Ruler ruler, const Hero hero)
+extern void saved(const Ruler ruler, const Hero hero)
 {
     if(!hero.saved)
         return;
@@ -41,7 +41,7 @@ void saved(const Ruler ruler, const Hero hero)
     print(ruler.sdl, ruler.margin, ruler.sdl.res - saved.h, (char*) string);
 }
 
-void insertion(const Ruler ruler, const Hero hero)
+extern void insertion(const Ruler ruler, const Hero hero)
 {
     if(!hero.consoling)
         return;

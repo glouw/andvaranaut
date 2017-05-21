@@ -2,10 +2,11 @@
 
 #include "Types.h"
 
-Map open(const char* const name);
+extern Map open(const char* const name);
 
-void close(const Map map);
+extern void dump(const Map map, const char* const name);
 
-void dump(const Map map, const char* const name);
+extern void close(const Map map);
 
-Map reopen(const Map map, const char* const name);
+extern Map reopen(const Map map, const char* const name);
+

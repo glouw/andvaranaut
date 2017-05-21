@@ -2,10 +2,11 @@
 
 #include "Types.h"
 
-int illuminate(const Torch torch, const float distance);
+extern int illuminate(const Torch torch, const float distance);
 
-Torch fade(const Torch torch);
+extern Torch fade(const Torch torch);
 
-Torch flicker(const Torch torch);
+extern Torch flicker(const Torch torch);
 
-Torch reset();
+extern Torch reset();
+

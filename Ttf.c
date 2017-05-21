@@ -8,7 +8,7 @@ static SDL_Rect placing(TTF_Font* const font, char* const text, const int x, con
     return target;
 }
 
-SDL_Rect size(TTF_Font* const font, char* const text)
+extern SDL_Rect size(TTF_Font* const font, char* const text)
 {
     int w = 0;
     int h = 0;
@@ -17,7 +17,7 @@ SDL_Rect size(TTF_Font* const font, char* const text)
     return rect;
 }
 
-void scribble(const Ttf ttf, const int x, const int y, const Sdl sdl)
+extern void scribble(const Ttf ttf, const int x, const int y, const Sdl sdl)
 {
     TTF_SetFontOutline(sdl.font, ttf.outline);
     SDL_Surface* const surface = TTF_RenderText_Solid(sdl.font, ttf.text, ttf.color);

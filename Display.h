@@ -2,6 +2,7 @@
 
 #include "Types.h"
 
-Display lock(const Sdl sdl);
+extern Display lock(const Sdl sdl);
 
-void unlock(const Sdl sdl);
+extern void unlock(const Sdl sdl);
+

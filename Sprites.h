@@ -2,26 +2,25 @@
 
 #include "Types.h"
 
-void rest(const Sprites sprites, const State state);
+extern Sprite* find(const Sprites sprites, const State state);
 
-int count(const Sprites sprites, const State state);
+extern int count(const Sprites sprites, const State state);
 
-Sprites wake(const char* const name);
+extern void prints(const Sprites sprites);
 
-void kill(const Sprites sprites);
+extern Sprites wake(const char* const name);
 
-Sprites swap(const Sprites sprites, const char* const name);
+extern void entomb(const Sprites sprites, const char* const name);
 
-Sprites arrange(const Sprites sprites, const Hero hero);
+extern void kill(const Sprites sprites);
 
-void rearrange(const Sprites sprites, const Hero hero);
+extern Sprites swap(const Sprites sprites, const char* const name);
 
-Sprite registrar(const int ascii, const Point where);
+extern Sprites arrange(const Sprites sprites, const Hero hero);
 
-void entomb(const Sprites sprites, const char* const name);
+extern void rest(const Sprites sprites, const State state);
 
-void prints(const Sprites sprites);
+extern void flourish(const Sprites sprites, const Hero hero, const Map map, const uint8_t* const key);
 
-Sprite* find(const Sprites sprites, const State state);
+extern Sprite registrar(const int ascii, const Point where);
 
-void constrain(const Sprites sprites, const Hero hero, const Map map);

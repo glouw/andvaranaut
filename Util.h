@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Types.h"
+
 #include <stdlib.h>
 
 int fl(const float x);

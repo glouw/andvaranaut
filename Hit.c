@@ -38,7 +38,7 @@ static Hit collision(const Point ray, const Point direction, char** const wallin
     return hit;
 }
 
-Hit cast(const Point where, const Point direction, char** const walling)
+extern Hit cast(const Point where, const Point direction, char** const walling)
 {
     const Point ray = cmp(where, shr(where, direction), svr(where, direction));
     const Hit hit = collision(ray, direction, walling);

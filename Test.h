@@ -2,4 +2,5 @@
 
 #include "Types.h"
 
-void test();
+extern void test();
+

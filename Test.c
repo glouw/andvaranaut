@@ -57,22 +57,6 @@ static inline void __String()
     _floating();
 }
 
-static inline void _rearrange()
-{
-    Hero hero = spawn();
-    Sprites sprites = wake(hero.zone);
-    prints(sprites);
-    rearrange(sprites, hero);
-    puts("-- Sorted forwards relative to hero start");
-    prints(sprites);
-    kill(sprites);
-}
-
-static inline void __Sprites()
-{
-    _rearrange();
-}
-
 static inline void readme()
 {
     FILE* const file = fopen("README", "r");
@@ -86,7 +70,7 @@ static inline void readme()
     fclose(file);
 }
 
-void test()
+extern void test()
 {
-    __Sprites();
+    readme();
 }

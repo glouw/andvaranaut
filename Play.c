@@ -4,14 +4,13 @@
 #include "Sdl.h"
 #include "Map.h"
 #include "Sprites.h"
-#include "World.h"
 
 static bool done(const uint8_t* const key)
 {
     return key[SDL_SCANCODE_F1];
 }
 
-void play(const char* argv[])
+extern void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
     const int fps = 60;
@@ -27,6 +26,7 @@ void play(const char* argv[])
         hero = sustain(hero, sprites, map, key);
         map = edit(hero, map, key);
         sprites = place(hero, sprites, key);
+        flourish(sprites, hero, map, key);
         render(sdl, hero, sprites, map);
         sdl = tick(sdl, renders);
         const int t1 = SDL_GetTicks();

@@ -2,4 +2,5 @@
 
 #include "Types.h"
 
-int lookup(const uint8_t* const key);
+extern int lookup(const uint8_t* const key);
+

@@ -2,6 +2,7 @@
 
 #include "Types.h"
 
-Surfaces pull(const uint32_t format);
+extern Surfaces pull(const uint32_t format);
 
-void clean(const Surfaces surfaces);
+extern void clean(const Surfaces surfaces);
+

@@ -1,19 +1,19 @@
 #include "Torch.h"
 
-int illuminate(const Torch torch, const float distance)
+extern int illuminate(const Torch torch, const float distance)
 {
     const int luminance = torch.light / (distance * distance);
     return luminance > 0xFF ? 0xFF : luminance;
 }
 
-Torch fade(const Torch torch)
+extern Torch fade(const Torch torch)
 {
     Torch temp = torch;
     temp.light += temp.dtorch;
     return temp.light > temp.brightness ? torch : temp;
 }
 
-Torch flicker(const Torch torch)
+extern Torch flicker(const Torch torch)
 {
     Torch temp = torch;
     temp.light -= rand() % (int) (0.25 * temp.brightness);
@@ -21,7 +21,7 @@ Torch flicker(const Torch torch)
     return temp;
 }
 
-Torch reset()
+extern Torch reset()
 {
     Torch torch;
     torch.light = 0.0;

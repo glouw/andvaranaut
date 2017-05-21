@@ -27,7 +27,7 @@ static Point init()
     return where;
 }
 
-Hero spawn()
+extern Hero spawn()
 {
     Hero hero;
     hero.fov = lens(1.0);
@@ -46,7 +46,7 @@ Hero spawn()
     return hero;
 }
 
-Hero spin(const Hero hero, const uint8_t* const key)
+extern Hero spin(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_H]) temp.theta -= 0.1;
@@ -54,7 +54,7 @@ Hero spin(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-static Point touch(const Hero hero, const float reach)
+extern Point touch(const Hero hero, const float reach)
 {
     const Point reference = { reach, 0.0 };
     const Point direction = trn(reference, hero.theta);
@@ -68,7 +68,7 @@ static Point accelerate(const Hero hero)
     return mul(direction, hero.acceleration);
 }
 
-Hero move(const Hero hero, char** const walling, const uint8_t* const key)
+extern Hero move(const Hero hero, char** const walling, const uint8_t* const key)
 {
     Hero temp = hero;
     // Acceleration
@@ -92,7 +92,7 @@ Hero move(const Hero hero, char** const walling, const uint8_t* const key)
     return temp;
 }
 
-Hero zoom(const Hero hero, const uint8_t* const key)
+extern Hero zoom(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_P]) temp.fov = lens(0.25);
@@ -105,7 +105,7 @@ static bool issprite(const int ascii)
     return isalpha(ascii);
 }
 
-Hero pick(const Hero hero, const uint8_t* const key)
+extern Hero pick(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_1]) temp.party = FLORING;
@@ -119,7 +119,7 @@ static char** interpret(const Map map, const Party party)
     return party == CEILING ? map.ceiling : party == WALLING ? map.walling : map.floring;
 }
 
-Impact march(const Hero hero, const Trajectory trajectory, const int res)
+extern Impact march(const Hero hero, const Trajectory trajectory, const int res)
 {
     const Hit hit = cast(hero.where, trajectory.column, trajectory.block);
     const Point ray = sub(hit.where, hero.where);
@@ -131,7 +131,7 @@ Impact march(const Hero hero, const Trajectory trajectory, const int res)
     return impact;
 }
 
-Hero type(const Hero hero, const uint8_t* const key)
+extern Hero type(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const int pressed = lookup(key);
@@ -143,48 +143,7 @@ Hero type(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
-{
-    rest(sprites, GRABBED);
-    if(!key[SDL_SCANCODE_J])
-        return;
-    // Grab one sprite
-    const Point hand = touch(hero, hero.arm);
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        if(eql(hand, sprite->where, sprite->width))
-        {
-            sprite->state = GRABBED;
-            sprite->where = hand;
-            return;
-        }
-    }
-}
-
-// Shoves sprites away from grabbed sprites
-void shove(const Sprites sprites)
-{
-    Sprite* const grabbed = find(sprites, GRABBED);
-    if(!grabbed)
-        return;
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        // Continue if trying to shove self
-        if(sprite == grabbed)
-            continue;
-        // Shove by the width of the biggest sprite
-        const float width = max(sprite->width, grabbed->width);
-        if(eql(sprite->where, grabbed->where, width))
-        {
-            const Point delta = sub(sprite->where, grabbed->where);
-            sprite->where = add(sprite->where, delta);
-        }
-    }
-}
-
-bool scared(const Hero hero, const Sprites sprites)
+extern bool scared(const Hero hero, const Sprites sprites)
 {
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
@@ -198,7 +157,7 @@ bool scared(const Hero hero, const Sprites sprites)
     return false;
 }
 
-Map edit(const Hero hero, const Map map, const uint8_t* const key)
+extern Map edit(const Hero hero, const Map map, const uint8_t* const key)
 {
     if(hero.consoling)
         return map;
@@ -218,7 +177,7 @@ Map edit(const Hero hero, const Map map, const uint8_t* const key)
     return map;
 }
 
-Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* key)
+extern Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* key)
 {
     if(!key[SDL_SCANCODE_F5])
         return hero;
@@ -229,7 +188,7 @@ Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* 
     return temp;
 }
 
-Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key)
+extern Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key)
 {
     if(hero.consoling)
         return sprites;
@@ -247,7 +206,7 @@ Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key)
     return temp;
 }
 
-Hero console(const Hero hero, const uint8_t* const key)
+extern Hero console(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const bool insert = key[SDL_SCANCODE_I];
@@ -257,4 +216,20 @@ Hero console(const Hero hero, const uint8_t* const key)
     if(insert) temp.consoling = true, temp.saved = false;
     if(normal) temp.consoling = false;
     return temp.consoling ? type(temp, key) : temp;
+}
+
+extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_t* const key)
+{
+    Hero temp = console(hero, key);
+    if(temp.consoling)
+        return temp;
+    temp = spin(temp, key);
+    temp = move(temp, map.walling, key);
+    temp = zoom(temp, key);
+    temp = pick(temp, key);
+    temp = save(temp, map, sprites, key);
+    temp.torch = fade(temp.torch);
+    if(scared(temp, sprites))
+        temp.torch = flicker(temp.torch);
+    return temp;
 }
