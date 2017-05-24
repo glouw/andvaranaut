@@ -5,7 +5,7 @@
 #include "Hero.h"
 #include "String.h"
 
-extern Sprite* find(const Sprites sprites, const State state)
+static Sprite* find(const Sprites sprites, const State state)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -16,7 +16,7 @@ extern Sprite* find(const Sprites sprites, const State state)
     return NULL;
 }
 
-extern int count(const Sprites sprites, const State state)
+static inline int count(const Sprites sprites, const State state)
 {
     int occurances = 0;
     for(int i = 0; i < sprites.count; i++)
@@ -25,7 +25,7 @@ extern int count(const Sprites sprites, const State state)
     return occurances;
 }
 
-extern void prints(const Sprites sprites)
+static inline void prints(const Sprites sprites)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -75,7 +75,7 @@ extern void kill(const Sprites sprites)
     free(sprites.sprite);
 }
 
-extern Sprites swap(const Sprites sprites, const char* const name)
+static inline Sprites swap(const Sprites sprites, const char* const name)
 {
     kill(sprites);
     return wake(name);
@@ -200,33 +200,14 @@ static void shove(const Sprites sprites)
     }
 }
 
-static void grab(const Sprites sprites, const Hero hero, const uint8_t* const key)
-{
-    rest(sprites, GRABBED);
-    if(!key[SDL_SCANCODE_J])
-        return;
-    // Grab one sprite
-    const Point hand = touch(hero, hero.arm);
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        if(eql(hand, sprite->where, sprite->width))
-        {
-            sprite->state = GRABBED;
-            sprite->where = hand;
-            return;
-        }
-    }
-}
-
-extern void flourish(const Sprites sprites, const Hero hero, const Map map, const uint8_t* const key)
+extern void flourish(const Sprites sprites, const Hero hero, const Map map)
 {
     rearrange(sprites, hero);
-    grab(sprites, hero, key);
     shove(sprites);
     constrain(sprites, hero, map);
 }
 
+// All sprites must inherit from this generic base
 static Sprite generic(const Point where)
 {
     Sprite sprite;
@@ -259,7 +240,7 @@ static Sprite _z(const Point where)
 {
     Sprite sprite = generic(where);
     sprite.ascii = 'z';
-    sprite.width = 0.33;
+    sprite.width = 0.50;
     return sprite;
 }
 

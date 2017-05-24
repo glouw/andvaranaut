@@ -23,10 +23,16 @@ extern void play(const char* argv[])
     {
         const int t0 = SDL_GetTicks();
         SDL_PumpEvents();
-        hero = sustain(hero, sprites, map, key);
+        // Sprite data operations must occur first as sprites are sorted
+        // relative to hero position
+        flourish(sprites, hero, map);
+        // Map editing can be disabled - not a planned gameplay feature
         map = edit(hero, map, key);
         sprites = place(hero, sprites, key);
-        flourish(sprites, hero, map, key);
+        hero = save(hero, map, sprites, key);
+        // Hero data operates on sprite and map data, as well as user input
+        hero = sustain(hero, sprites, map, key);
+        // Renders and a frame delays
         render(sdl, hero, sprites, map);
         sdl = tick(sdl, renders);
         const int t1 = SDL_GetTicks();

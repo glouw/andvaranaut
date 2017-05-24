@@ -22,8 +22,8 @@ static Line lens(const float scale)
 static Point init()
 {
     Point where;
-    where.x = 4.5;
-    where.y = 4.5;
+    where.x = 2.5;
+    where.y = 2.5;
     return where;
 }
 
@@ -46,7 +46,7 @@ extern Hero spawn()
     return hero;
 }
 
-extern Hero spin(const Hero hero, const uint8_t* const key)
+static Hero spin(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_H]) temp.theta -= 0.1;
@@ -54,7 +54,7 @@ extern Hero spin(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-extern Point touch(const Hero hero, const float reach)
+static Point touch(const Hero hero, const float reach)
 {
     const Point reference = { reach, 0.0 };
     const Point direction = trn(reference, hero.theta);
@@ -68,7 +68,7 @@ static Point accelerate(const Hero hero)
     return mul(direction, hero.acceleration);
 }
 
-extern Hero move(const Hero hero, char** const walling, const uint8_t* const key)
+static Hero move(const Hero hero, char** const walling, const uint8_t* const key)
 {
     Hero temp = hero;
     // Acceleration
@@ -80,19 +80,38 @@ extern Hero move(const Hero hero, char** const walling, const uint8_t* const key
         if(key[SDL_SCANCODE_D]) temp.velocity = add(temp.velocity, rag(acceleration));
         if(key[SDL_SCANCODE_A]) temp.velocity = sub(temp.velocity, rag(acceleration));
     }
-    // Mass-Spring damping
+    // Mass-spring damping system
     else temp.velocity = mul(temp.velocity, 1.0 - temp.acceleration / temp.speed);
     // Top speed check
     if(mag(temp.velocity) > temp.speed)
         temp.velocity = mul(unt(temp.velocity), temp.speed);
-    // Move and check collision
+    // Moves and checks for a collision
     temp.where = add(temp.where, temp.velocity);
     if(tile(temp.where, walling))
         temp.velocity = zro(), temp.where = hero.where;
     return temp;
 }
 
-extern Hero zoom(const Hero hero, const uint8_t* const key)
+static void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
+{
+    rest(sprites, GRABBED);
+    if(!key[SDL_SCANCODE_J])
+        return;
+    // Grabs one sprite
+    const Point hand = touch(hero, hero.arm);
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(eql(hand, sprite->where, sprite->width))
+        {
+            sprite->state = GRABBED;
+            sprite->where = hand;
+            return;
+        }
+    }
+}
+
+static Hero zoom(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_P]) temp.fov = lens(0.25);
@@ -105,7 +124,7 @@ static bool issprite(const int ascii)
     return isalpha(ascii);
 }
 
-extern Hero pick(const Hero hero, const uint8_t* const key)
+static Hero pick(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     if(key[SDL_SCANCODE_1]) temp.party = FLORING;
@@ -131,7 +150,7 @@ extern Impact march(const Hero hero, const Trajectory trajectory, const int res)
     return impact;
 }
 
-extern Hero type(const Hero hero, const uint8_t* const key)
+static Hero type(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const int pressed = lookup(key);
@@ -143,7 +162,7 @@ extern Hero type(const Hero hero, const uint8_t* const key)
     return temp;
 }
 
-extern bool scared(const Hero hero, const Sprites sprites)
+static bool scared(const Hero hero, const Sprites sprites)
 {
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
@@ -165,15 +184,20 @@ extern Map edit(const Hero hero, const Map map, const uint8_t* const key)
         return map;
     if(issprite(hero.surface))
         return map;
-    // 1.45 to avoid being less than sqrt(2) and placing blocks on self
-    const Point hand = touch(hero, 1.45);
+    // 1.5 to avoid placing block on self (eg. ~sqrt(2))
+    const Point hand = touch(hero, 1.5);
+    const int x = hand.x;
+    const int y = hand.y;
+    // Out of bounds check - first the rows the column requires the row
+    if(y < 0 || y >= map.rows)
+        return map;
+    // Then the columns
+    if(x < 0 || x >= (int) strlen(map.walling[y]))
+        return map;
+    // Place the block
     char** const blocks = interpret(map, hero.party);
     if(block(hand, blocks) != '!')
-    {
-        const int x = hand.x;
-        const int y = hand.y;
         blocks[y][x] = hero.surface;
-    }
     return map;
 }
 
@@ -206,7 +230,7 @@ extern Sprites place(const Hero hero, const Sprites sprites, const uint8_t* cons
     return temp;
 }
 
-extern Hero console(const Hero hero, const uint8_t* const key)
+static Hero console(const Hero hero, const uint8_t* const key)
 {
     Hero temp = hero;
     const bool insert = key[SDL_SCANCODE_I];
@@ -227,9 +251,10 @@ extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const
     temp = move(temp, map.walling, key);
     temp = zoom(temp, key);
     temp = pick(temp, key);
-    temp = save(temp, map, sprites, key);
     temp.torch = fade(temp.torch);
     if(scared(temp, sprites))
         temp.torch = flicker(temp.torch);
+    // Hint: Use <hero> instead of <temp> for a mass-inertia effect
+    grab(temp, sprites, key);
     return temp;
 }

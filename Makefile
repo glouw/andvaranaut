@@ -38,6 +38,10 @@ $(PROJ): $(OBJS)
 %.d: ;
 .PRECIOUS: %.d
 -include $(patsubst %,%.d,$(basename $(SRCS)))
+# Uniformity, amirite?
+.PHONY: headers
+headers:
+	python headers.py
 # Do as your mother tells you
 .PHONY: clean
 clean:

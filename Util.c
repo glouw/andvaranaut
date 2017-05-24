@@ -1,26 +1,26 @@
 #include "Util.h"
 
-int fl(const float x)
+extern int fl(const float x)
 {
     return (int) x - (x < (int) x);
 }
 
-int cl(const float x)
+extern int cl(const float x)
 {
     return (int) x + (x > (int) x);
 }
 
-float dec(const float x)
+extern float dec(const float x)
 {
     return x - (int) x;
 }
 
-int rnd(const float x)
+extern int rnd(const float x)
 {
     return x + 0.5;
 }
 
-int lns(FILE* const file)
+extern int lns(FILE* const file)
 {
     int ch = EOF;
     int lines = 0;
@@ -37,7 +37,7 @@ int lns(FILE* const file)
     return lines;
 }
 
-char* readln(FILE* const file)
+extern char* readln(FILE* const file)
 {
     int ch = EOF;
     int reads = 0;
@@ -53,7 +53,7 @@ char* readln(FILE* const file)
     return line;
 }
 
-void bomb(const char* const message, ...)
+extern void bomb(const char* const message, ...)
 {
     va_list args;
     va_start(args, message);

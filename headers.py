@@ -1,3 +1,8 @@
+# Generates a header file from a source file.
+#   Functions to be exported must be marked with extern.
+#   Functions to be kept private must be marked with
+#   static for the sake of the linker.
+
 import os
 
 def preps(h):
@@ -13,7 +18,14 @@ for path in os.listdir("."):
     if ".c" in path:
         head = path.replace(".c", ".h")
         # Exceptions
-        if head == "Util.h" or head == "main.h":
+        # Util:
+        #   for the Handwritten macros
+        # Main:
+        #   main will never have a header file
+        # Types:
+        #   for safety
+        exceptions = ["Util.h", "main.h", "Types.h"]
+        if head in exceptions:
             continue
         h = open(head, "w")
         c = open(path, "r")

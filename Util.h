@@ -4,19 +4,19 @@
 
 #include <stdlib.h>
 
-int fl(const float x);
+extern int fl(const float x);
 
-int cl(const float x);
+extern int cl(const float x);
 
-int rnd(const float x);
+extern int rnd(const float x);
 
-float dec(const float x);
+extern float dec(const float x);
 
-int lns(FILE* const file);
+extern int lns(FILE* const file);
 
-char* readln(FILE* const file);
+extern char* readln(FILE* const file);
 
-void bomb(const char* const message, ...);
+extern void bomb(const char* const message, ...);
 
 #define len(array) (int) (sizeof(array) / sizeof(*array))
 
