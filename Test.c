@@ -70,7 +70,16 @@ static inline void readme()
     fclose(file);
 }
 
+static inline void license()
+{
+    puts("Water copyright (c) 2017 Gustav Louw, Cameron Bauer");
+    puts("This program comes with ABSOLUTELY NO WARRANTY.");
+    puts("This is free software, and you are welcome to redistribute it");
+    puts("under certain conditions.");
+}
+
 extern void test()
 {
+    license();
     readme();
 }
