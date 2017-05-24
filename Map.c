@@ -11,9 +11,11 @@ static char** get(FILE* const file, const int rows)
     return block;
 }
 
-extern Map open(const char* const name)
+extern Map open(const int level)
 {
-    char* const path = concat("maps/", name);
+    char which[MINTS];
+    sprintf(which, "%d", level);
+    char* const path = concat("maps/lvl", which);
     FILE* const file = fopen(path, "r");
     Map map;
     map.rows = lns(file) / 3;
@@ -25,9 +27,11 @@ extern Map open(const char* const name)
     return map;
 }
 
-extern void dump(const Map map, const char* const name)
+extern void dump(const Map map, const int level)
 {
-    char* const path = concat("maps/", name);
+    char which[MINTS];
+    sprintf(which, "%d", level);
+    char* const path = concat("maps/lvl", which);
     remove(path);
     FILE* const file = fopen(path, "w");
     for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.ceiling[row]);
@@ -50,8 +54,8 @@ extern void close(const Map map)
     free(map.floring);
 }
 
-extern Map reopen(const Map map, const char* const name)
+extern Map reopen(const Map map, const int level)
 {
     close(map);
-    return open(name);
+    return open(level);
 }

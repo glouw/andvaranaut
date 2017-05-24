@@ -15,8 +15,8 @@ extern void play(const char* argv[])
     const int res = strtol(argv[1], NULL, 0);
     const int fps = 60;
     Hero hero = spawn();
-    Map map = open(hero.zone);
-    Sprites sprites = wake(hero.zone);
+    Map map = open(hero.level);
+    Sprites sprites = wake(hero.level);
     Sdl sdl = setup(res, fps);
     const uint8_t* const key = SDL_GetKeyboardState(NULL);
     for(int renders = 0; res == 128 ? renders < fps : !done(key); renders++)

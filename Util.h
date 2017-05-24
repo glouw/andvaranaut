@@ -2,8 +2,6 @@
 
 #include "Types.h"
 
-#include <stdlib.h>
-
 extern int fl(const float x);
 
 extern int cl(const float x);
@@ -29,3 +27,6 @@ extern void bomb(const char* const message, ...);
 #define max(a, b) (a > b ? a : b)
 
 #define min(a, b) (a < b ? a : b)
+
+// Minimum array size for integer to string conversions
+#define MINTS ((CHAR_BIT * sizeof(int) - 1) / 3 + 2)

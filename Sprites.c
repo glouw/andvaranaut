@@ -34,9 +34,11 @@ static inline void prints(const Sprites sprites)
     }
 }
 
-extern Sprites wake(const char* const name)
+extern Sprites wake(const int level)
 {
-    char* const path = concat("sprites/", name);
+    char which[MINTS];
+    sprintf(which, "%d", level);
+    char* const path = concat("sprites/lvl", which);
     FILE* const file = fopen(path, "r");
     Sprites sprites;
     sprites.count = lns(file);
@@ -56,9 +58,11 @@ extern Sprites wake(const char* const name)
     return sprites;
 }
 
-extern void entomb(const Sprites sprites, const char* const name)
+extern void entomb(const Sprites sprites, const int level)
 {
-    char* const path = concat("sprites/", name);
+    char which[MINTS];
+    sprintf(which, "%d", level);
+    char* const path = concat("sprites/lvl", which);
     remove(path);
     FILE* const file = fopen(path, "w");
     for(int i = 0; i < sprites.count; i++)
@@ -75,10 +79,10 @@ extern void kill(const Sprites sprites)
     free(sprites.sprite);
 }
 
-static inline Sprites swap(const Sprites sprites, const char* const name)
+static inline Sprites swap(const Sprites sprites, const int level)
 {
     kill(sprites);
-    return wake(name);
+    return wake(level);
 }
 
 static void pull(const Sprites sprites, const Hero hero)

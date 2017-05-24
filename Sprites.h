@@ -2,9 +2,9 @@
 
 #include "Types.h"
 
-extern Sprites wake(const char* const name);
+extern Sprites wake(const int level);
 
-extern void entomb(const Sprites sprites, const char* const name);
+extern void entomb(const Sprites sprites, const int level);
 
 extern void kill(const Sprites sprites);
 

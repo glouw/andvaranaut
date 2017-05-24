@@ -42,7 +42,7 @@ extern Hero spawn()
     hero.consoling = false;
     hero.saved = false;
     hero.arm = 1.0;
-    hero.zone = "lvl00";
+    hero.level = 0;
     return hero;
 }
 
@@ -206,8 +206,8 @@ extern Hero save(const Hero hero, const Map map, const Sprites sprites, const ui
     if(!key[SDL_SCANCODE_F5])
         return hero;
     Hero temp = hero;
-    dump(map, hero.zone);
-    entomb(sprites, hero.zone);
+    dump(map, hero.level);
+    entomb(sprites, hero.level);
     temp.saved = true;
     return temp;
 }

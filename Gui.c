@@ -1,11 +1,10 @@
 #include "Gui.h"
 
 #include "Sdl.h"
-#include <limits.h>
+#include "Util.h"
 
 typedef struct
 {
-    Sdl sdl;
     int margin;
     int height;
 }
@@ -60,54 +59,52 @@ static void print(const Sdl sdl, const int x, const int y, char* const text)
     scribble(inner, x, y, sdl);
 }
 
-static Ruler select(const Ruler ruler, const Hero hero)
+static Ruler select(const Ruler ruler, const Sdl sdl, const Hero hero)
 {
     Ruler temp = ruler;
     char string[] = { interpret(hero.party), (char) hero.surface, '\0' };
-    const SDL_Rect select = size(temp.sdl.font, string);
-    print(temp.sdl, temp.margin, 0, string);
-    temp.height = select.h;
+    const SDL_Rect select = size(sdl.font, string);
+    print(sdl, temp.margin, 0, string);
+    temp.height += select.h;
     return temp;
 }
 
-static Ruler count(const Ruler ruler, const Sprites sprites)
+static Ruler count(const Ruler ruler, const Sdl sdl, const Sprites sprites)
 {
     Ruler temp = ruler;
-    const int max = (CHAR_BIT * sizeof(int) - 1) / 3 + 2;
-    char string[max];
-    const SDL_Rect count = size(temp.sdl.font, string);
+    char string[MINTS];
+    const SDL_Rect count = size(sdl.font, string);
     sprintf(string, "%d", sprites.count);
-    print(temp.sdl, temp.margin, temp.height, string);
+    print(sdl, temp.margin, temp.height, string);
     temp.height += count.h;
     return temp;
 }
 
-static void saved(const Ruler ruler, const Hero hero)
+static void saved(const Ruler ruler, const Sdl sdl, const Hero hero)
 {
     if(!hero.saved)
         return;
     const char* const string = "Saved!";
-    const SDL_Rect saved = size(ruler.sdl.font, (char*) string);
-    print(ruler.sdl, ruler.margin, ruler.sdl.res - saved.h, (char*) string);
+    const SDL_Rect saved = size(sdl.font, (char*) string);
+    print(sdl, ruler.margin, sdl.res - saved.h, (char*) string);
 }
 
-static void insert(const Ruler ruler, const Hero hero)
+static void insert(const Ruler ruler, const Sdl sdl, const Hero hero)
 {
     if(!hero.consoling)
         return;
     const char* const string = "-- INSERT --";
-    const SDL_Rect insert = size(ruler.sdl.font, (char*) string);
-    print(ruler.sdl, ruler.margin, ruler.sdl.res - insert.h, (char*) string);
+    const SDL_Rect insert = size(sdl.font, (char*) string);
+    print(sdl, ruler.margin, sdl.res - insert.h, (char*) string);
 }
 
 extern void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
 {
     Ruler ruler;
-    ruler.sdl = sdl;
     ruler.height = 0;
     ruler.margin = sdl.res / 32;
-    ruler = select(ruler, hero);
-    ruler = count(ruler, sprites);
-    saved(ruler, hero);
-    insert(ruler, hero);
+    ruler = select(ruler, sdl, hero);
+    ruler = count(ruler, sdl, sprites);
+    saved(ruler, sdl, hero);
+    insert(ruler, sdl, hero);
 }
