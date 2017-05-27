@@ -7,7 +7,7 @@ PROJ = water
 SRCS = main.c Play.c Test.c Util.c Point.c Hit.c Line.c Map.c
 SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c String.c
 SRCS+= Sliver.c Surfaces.c Torch.c Textures.c Console.c
-SRCS+= Gui.c
+SRCS+= Gui.c Input.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
 # Warnings flags
@@ -24,7 +24,7 @@ LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 # Dependency flags
 DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
 # Command line definitions
-AUX =
+AUX = -DDEV
 # Compile, link, and post process
 COMP = $(CC) $(AUX) $(ARCHITECTURE) $(CFLAGS) $(DEPFLAGS) -c
 LINK = $(CC) $(AUX) $(ARCHITECTURE) $(CFLAGS) $(OBJS) $(LDFLAGS) -o

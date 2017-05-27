@@ -90,6 +90,7 @@ extern Sdl setup(const int res, const int fps)
 {
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Init(SDL_INIT_VIDEO);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
     TTF_Init();
     Sdl sdl;
     sdl.window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);

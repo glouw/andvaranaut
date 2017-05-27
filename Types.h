@@ -204,3 +204,16 @@ typedef struct
     Wall wall;
 }
 Sliver;
+
+typedef struct
+{
+    // Mouse
+    float sensitivity;
+    int dx;
+    int dy;
+    // Left, middle, right mouse buttons
+    bool l, m, r;
+    // Keyboard
+    const uint8_t* key;
+}
+Input;

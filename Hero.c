@@ -46,11 +46,14 @@ extern Hero spawn()
     return hero;
 }
 
-static Hero spin(const Hero hero, const uint8_t* const key)
+static Hero spin(const Hero hero, const Input input)
 {
     Hero temp = hero;
-    if(key[SDL_SCANCODE_H]) temp.theta -= 0.1;
-    if(key[SDL_SCANCODE_L]) temp.theta += 0.1;
+    // Keyboard
+    if(input.key[SDL_SCANCODE_H]) temp.theta -= 0.1;
+    if(input.key[SDL_SCANCODE_L]) temp.theta += 0.1;
+    // Mouse
+    temp.theta += input.dx * input.sensitivity;
     return temp;
 }
 
@@ -68,17 +71,20 @@ static Point accelerate(const Hero hero)
     return mul(direction, hero.acceleration);
 }
 
-static Hero move(const Hero hero, char** const walling, const uint8_t* const key)
+static Hero move(const Hero hero, char** const walling, const Input input)
 {
     Hero temp = hero;
     // Acceleration
-    if(key[SDL_SCANCODE_W] || key[SDL_SCANCODE_S] || key[SDL_SCANCODE_D] || key[SDL_SCANCODE_A])
+    if(input.key[SDL_SCANCODE_W]
+    || input.key[SDL_SCANCODE_S]
+    || input.key[SDL_SCANCODE_D]
+    || input.key[SDL_SCANCODE_A])
     {
         const Point acceleration = accelerate(hero);
-        if(key[SDL_SCANCODE_W]) temp.velocity = add(temp.velocity, acceleration);
-        if(key[SDL_SCANCODE_S]) temp.velocity = sub(temp.velocity, acceleration);
-        if(key[SDL_SCANCODE_D]) temp.velocity = add(temp.velocity, rag(acceleration));
-        if(key[SDL_SCANCODE_A]) temp.velocity = sub(temp.velocity, rag(acceleration));
+        if(input.key[SDL_SCANCODE_W]) temp.velocity = add(temp.velocity, acceleration);
+        if(input.key[SDL_SCANCODE_S]) temp.velocity = sub(temp.velocity, acceleration);
+        if(input.key[SDL_SCANCODE_D]) temp.velocity = add(temp.velocity, rag(acceleration));
+        if(input.key[SDL_SCANCODE_A]) temp.velocity = sub(temp.velocity, rag(acceleration));
     }
     // Mass-spring damping system
     else temp.velocity = mul(temp.velocity, 1.0 - temp.acceleration / temp.speed);
@@ -92,10 +98,10 @@ static Hero move(const Hero hero, char** const walling, const uint8_t* const key
     return temp;
 }
 
-static void grab(const Hero hero, const Sprites sprites, const uint8_t* const key)
+static void grab(const Hero hero, const Sprites sprites, const Input input)
 {
     rest(sprites, GRABBED);
-    if(!key[SDL_SCANCODE_J])
+    if(!(input.key[SDL_SCANCODE_J] || input.l))
         return;
     // Grabs one sprite
     const Point hand = touch(hero, hero.arm);
@@ -111,11 +117,11 @@ static void grab(const Hero hero, const Sprites sprites, const uint8_t* const ke
     }
 }
 
-static Hero zoom(const Hero hero, const uint8_t* const key)
+static Hero zoom(const Hero hero, const Input input)
 {
     Hero temp = hero;
-    if(key[SDL_SCANCODE_P]) temp.fov = lens(0.25);
-    if(key[SDL_SCANCODE_O]) temp.fov = lens(1.00);
+    if(input.key[SDL_SCANCODE_P]) temp.fov = lens(0.25);
+    if(input.key[SDL_SCANCODE_O]) temp.fov = lens(1.00);
     return temp;
 }
 
@@ -124,12 +130,12 @@ static bool issprite(const int ascii)
     return isalpha(ascii);
 }
 
-static Hero pick(const Hero hero, const uint8_t* const key)
+static Hero pick(const Hero hero, const Input input)
 {
     Hero temp = hero;
-    if(key[SDL_SCANCODE_1]) temp.party = FLORING;
-    if(key[SDL_SCANCODE_2]) temp.party = WALLING;
-    if(key[SDL_SCANCODE_3]) temp.party = CEILING;
+    if(input.key[SDL_SCANCODE_1]) temp.party = FLORING;
+    if(input.key[SDL_SCANCODE_2]) temp.party = WALLING;
+    if(input.key[SDL_SCANCODE_3]) temp.party = CEILING;
     return temp;
 }
 
@@ -150,10 +156,10 @@ extern Impact march(const Hero hero, const Trajectory trajectory, const int res)
     return impact;
 }
 
-static Hero type(const Hero hero, const uint8_t* const key)
+static Hero type(const Hero hero, const Input input)
 {
     Hero temp = hero;
-    const int pressed = lookup(key);
+    const int pressed = lookup(input.key);
     if(pressed == -1)
         return hero;
     temp.surface = pressed;
@@ -176,15 +182,15 @@ static bool scared(const Hero hero, const Sprites sprites)
     return false;
 }
 
-extern Map edit(const Hero hero, const Map map, const uint8_t* const key)
+extern Map edit(const Hero hero, const Map map, const Input input)
 {
     if(hero.consoling)
         return map;
-    if(!key[SDL_SCANCODE_K])
+    if(!(input.key[SDL_SCANCODE_K] || input.r))
         return map;
     if(issprite(hero.surface))
         return map;
-    // 1.5 to avoid placing block on self (eg. ~sqrt(2))
+    // 1.5 to avoid placing block on self (eg. ~sqrt(2.0))
     const Point hand = touch(hero, 1.5);
     const int x = hand.x;
     const int y = hand.y;
@@ -201,9 +207,9 @@ extern Map edit(const Hero hero, const Map map, const uint8_t* const key)
     return map;
 }
 
-extern Hero save(const Hero hero, const Map map, const Sprites sprites, const uint8_t* key)
+extern Hero save(const Hero hero, const Map map, const Sprites sprites, const Input input)
 {
-    if(!key[SDL_SCANCODE_F5])
+    if(!input.key[SDL_SCANCODE_F5])
         return hero;
     Hero temp = hero;
     dump(map, hero.level);
@@ -212,11 +218,11 @@ extern Hero save(const Hero hero, const Map map, const Sprites sprites, const ui
     return temp;
 }
 
-extern Sprites place(const Hero hero, const Sprites sprites, const uint8_t* const key)
+extern Sprites place(const Hero hero, const Sprites sprites, const Input input)
 {
     if(hero.consoling)
         return sprites;
-    if(!key[SDL_SCANCODE_K])
+    if(!input.key[SDL_SCANCODE_K])
         return sprites;
     if(!issprite(hero.surface))
         return sprites;
@@ -230,31 +236,31 @@ extern Sprites place(const Hero hero, const Sprites sprites, const uint8_t* cons
     return temp;
 }
 
-static Hero console(const Hero hero, const uint8_t* const key)
+static Hero console(const Hero hero, const Input input)
 {
     Hero temp = hero;
-    const bool insert = key[SDL_SCANCODE_I];
-    const bool normal = key[SDL_SCANCODE_CAPSLOCK]
-        || key[SDL_SCANCODE_ESCAPE]
-        || key[SDL_SCANCODE_RETURN];
+    const bool insert = input.key[SDL_SCANCODE_I];
+    const bool normal = input.key[SDL_SCANCODE_CAPSLOCK]
+        || input.key[SDL_SCANCODE_ESCAPE]
+        || input.key[SDL_SCANCODE_RETURN];
     if(insert) temp.consoling = true, temp.saved = false;
     if(normal) temp.consoling = false;
-    return temp.consoling ? type(temp, key) : temp;
+    return temp.consoling ? type(temp, input) : temp;
 }
 
-extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const uint8_t* const key)
+extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const Input input)
 {
-    Hero temp = console(hero, key);
+    Hero temp = console(hero, input);
     if(temp.consoling)
         return temp;
-    temp = spin(temp, key);
-    temp = move(temp, map.walling, key);
-    temp = zoom(temp, key);
-    temp = pick(temp, key);
+    temp = spin(temp, input);
+    temp = move(temp, map.walling, input);
+    temp = zoom(temp, input);
+    temp = pick(temp, input);
     temp.torch = fade(temp.torch);
     if(scared(temp, sprites))
         temp.torch = flicker(temp.torch);
     // Hint: Use <hero> instead of <temp> for a mass-inertia effect
-    grab(temp, sprites, key);
+    grab(temp, sprites, input);
     return temp;
 }
