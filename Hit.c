@@ -5,16 +5,9 @@
 
 static Compass needle(const Point where, const Point other)
 {
-    // East face
-    if(where.x < other.x && (int) where.y == (int) other.y)
-        return E;
-    // West face
-    if(where.x > other.x && (int) where.y == (int) other.y)
-        return W;
-    // South face
-    if(where.y > other.y && (int) where.x == (int) other.x)
-        return S;
-    // North face
+    if(where.x < other.x && (int) where.y == (int) other.y) return E;
+    if(where.x > other.x && (int) where.y == (int) other.y) return W;
+    if(where.y > other.y && (int) where.x == (int) other.x) return S;
     return N;
 }
 

@@ -23,12 +23,9 @@ extern void play(const char* argv[])
     for(int renders = 0; res == 128 ? renders < fps : !done(input.key); renders++)
     {
         const int t0 = SDL_GetTicks();
-        // Sprite data operations must occur first as sprites are sorted
-        // relative to hero position
+        // Flourish sorts the sprites relative to the hero's position
         sprites = flourish(sprites, hero, map, input);
-        // Hero data operates on sprite and map data, as well as user input
         hero = sustain(hero, sprites, map, input);
-        // Renders and a frame delays
         render(sdl, hero, sprites, map);
         sdl = tick(sdl, renders);
         const int t1 = SDL_GetTicks();
