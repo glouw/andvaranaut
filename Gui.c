@@ -91,7 +91,7 @@ static void saved(const Ruler ruler, const Sdl sdl, const Hero hero)
 
 static void insert(const Ruler ruler, const Sdl sdl, const Hero hero)
 {
-    if(!hero.consoling)
+    if(!hero.inserting)
         return;
     const char* const string = "-- INSERT --";
     const SDL_Rect insert = size(sdl.font, (char*) string);
@@ -100,6 +100,9 @@ static void insert(const Ruler ruler, const Sdl sdl, const Hero hero)
 
 extern void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
 {
+    // Gui only active when consoling
+    if(!hero.consoling)
+        return;
     Ruler ruler;
     ruler.height = 0;
     ruler.margin = sdl.res / 32;

@@ -12,7 +12,7 @@ extern Sprites arrange(const Sprites sprites, const Hero hero);
 
 extern void rest(const Sprites sprites, const State state);
 
-extern void flourish(const Sprites sprites, const Hero hero, const Map map);
+extern bool issprite(const int ascii);
 
-extern Sprite registrar(const int ascii, const Point where);
+extern Sprites flourish(const Sprites sprites, const Hero hero, const Map map, const Input input);
 

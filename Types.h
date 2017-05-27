@@ -5,6 +5,9 @@
 #include <stdbool.h>
 #include <limits.h>
 
+// To ease autoheader generation, all public
+// types will be declared here
+
 typedef struct
 {
     int rows;
@@ -137,6 +140,7 @@ typedef struct
     Torch torch;
     int surface;
     Party party;
+    bool inserting;
     bool consoling;
     bool saved;
     float arm;
@@ -207,13 +211,15 @@ Sliver;
 
 typedef struct
 {
-    // Mouse
-    float sensitivity;
+    // Mouse sensitivity
+    float sx;
+    float sy;
+    // Mouse deltas
     int dx;
     int dy;
-    // Left, middle, right mouse buttons
+    // Mouse Left, middle, right button state
     bool l, m, r;
-    // Keyboard
+    // Keyboard state
     const uint8_t* key;
 }
 Input;

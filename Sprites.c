@@ -5,6 +5,53 @@
 #include "Hero.h"
 #include "String.h"
 
+static Sprite generic(const Point where)
+{
+    Sprite sprite;
+    sprite.where = where;
+    sprite.ascii = 'o';
+    sprite.state = IDLE;
+    sprite.transparent = false;
+    sprite.width = 1.00;
+    return sprite;
+}
+
+static Sprite _o(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.ascii = 'o';
+    sprite.width = 0.88;
+    return sprite;
+}
+
+static Sprite _g(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.ascii = 'g';
+    sprite.transparent = true;
+    sprite.width = 0.66;
+    return sprite;
+}
+
+static Sprite _z(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.ascii = 'z';
+    sprite.width = 0.50;
+    return sprite;
+}
+
+static Sprite registrar(const int ascii, const Point where)
+{
+    switch(ascii)
+    {
+        case 'o': return _o(where);
+        case 'g': return _g(where);
+        case 'z': return _z(where);
+    }
+    return generic(where);
+}
+
 static Sprite* find(const Sprites sprites, const State state)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -174,7 +221,7 @@ static void constrain(const Sprites sprites, const Hero hero, const Map map)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        // Move the sprite infront of the hero if the sprite is stuck in a wall
+        // Move the sprite closer to the hero if the sprite is stuck in a wall
         if(tile(sprite->where, map.walling))
         {
             const Point delta = sub(sprite->where, hero.where);
@@ -204,57 +251,35 @@ static void shove(const Sprites sprites)
     }
 }
 
-extern void flourish(const Sprites sprites, const Hero hero, const Map map)
+extern bool issprite(const int ascii)
+{
+    return isalpha(ascii);
+}
+
+static Sprites place(const Sprites sprites, const Hero hero, const Input input)
+{
+    if(hero.inserting)
+        return sprites;
+    if(!hero.consoling)
+        return sprites;
+    if(!(input.key[SDL_SCANCODE_K] || input.r))
+        return sprites;
+    if(!issprite(hero.surface))
+        return sprites;
+    Sprites temp = sprites;
+    if(temp.count == 0)
+        retoss(temp.sprite, Sprite, temp.max = 1);
+    if(temp.count >= temp.max)
+        retoss(temp.sprite, Sprite, temp.max *= 2);
+    const Point hand = touch(hero, hero.arm);
+        temp.sprite[temp.count++] = registrar(hero.surface, hand);
+    return temp;
+}
+
+extern Sprites flourish(const Sprites sprites, const Hero hero, const Map map, const Input input)
 {
     rearrange(sprites, hero);
     shove(sprites);
     constrain(sprites, hero, map);
-}
-
-// All sprites must inherit from this generic base
-static Sprite generic(const Point where)
-{
-    Sprite sprite;
-    sprite.where = where;
-    sprite.ascii = 'o';
-    sprite.state = IDLE;
-    sprite.transparent = false;
-    sprite.width = 1.00;
-    return sprite;
-}
-
-static Sprite _o(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.ascii = 'o';
-    sprite.width = 0.88;
-    return sprite;
-}
-
-static Sprite _g(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.ascii = 'g';
-    sprite.transparent = true;
-    sprite.width = 0.66;
-    return sprite;
-}
-
-static Sprite _z(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.ascii = 'z';
-    sprite.width = 0.50;
-    return sprite;
-}
-
-extern Sprite registrar(const int ascii, const Point where)
-{
-    switch(ascii)
-    {
-        case 'o': return _o(where);
-        case 'g': return _g(where);
-        case 'z': return _z(where);
-    }
-    return generic(where);
+    return place(sprites, hero, input);
 }

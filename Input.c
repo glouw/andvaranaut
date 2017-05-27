@@ -4,7 +4,8 @@ extern Input ready()
 {
     Input input;
     // Mouse
-    input.sensitivity = 0.01;
+    input.sx = 0.01;
+    input.sy = 0.10;
     input.dx = 0;
     input.dy = 0;
     // Keyboard

@@ -22,8 +22,8 @@ static Line lens(const float scale)
 static Point init()
 {
     Point where;
-    where.x = 2.5;
-    where.y = 2.5;
+    where.x = 5.5;
+    where.y = 5.5;
     return where;
 }
 
@@ -39,6 +39,7 @@ extern Hero spawn()
     hero.torch = reset();
     hero.surface = ' ';
     hero.party = WALLING;
+    hero.inserting = false;
     hero.consoling = false;
     hero.saved = false;
     hero.arm = 1.0;
@@ -48,16 +49,18 @@ extern Hero spawn()
 
 static Hero spin(const Hero hero, const Input input)
 {
+    if(hero.inserting)
+        return hero;
     Hero temp = hero;
     // Keyboard
     if(input.key[SDL_SCANCODE_H]) temp.theta -= 0.1;
     if(input.key[SDL_SCANCODE_L]) temp.theta += 0.1;
     // Mouse
-    temp.theta += input.dx * input.sensitivity;
+    temp.theta += input.dx * input.sx;
     return temp;
 }
 
-static Point touch(const Hero hero, const float reach)
+extern Point touch(const Hero hero, const float reach)
 {
     const Point reference = { reach, 0.0 };
     const Point direction = trn(reference, hero.theta);
@@ -73,6 +76,8 @@ static Point accelerate(const Hero hero)
 
 static Hero move(const Hero hero, char** const walling, const Input input)
 {
+    if(hero.inserting)
+        return hero;
     Hero temp = hero;
     // Acceleration
     if(input.key[SDL_SCANCODE_W]
@@ -101,6 +106,10 @@ static Hero move(const Hero hero, char** const walling, const Input input)
 static void grab(const Hero hero, const Sprites sprites, const Input input)
 {
     rest(sprites, GRABBED);
+    if(hero.inserting)
+        return;
+    if(!hero.consoling)
+        return;
     if(!(input.key[SDL_SCANCODE_J] || input.l))
         return;
     // Grabs one sprite
@@ -119,19 +128,18 @@ static void grab(const Hero hero, const Sprites sprites, const Input input)
 
 static Hero zoom(const Hero hero, const Input input)
 {
+    if(hero.inserting)
+        return hero;
     Hero temp = hero;
-    if(input.key[SDL_SCANCODE_P]) temp.fov = lens(0.25);
-    if(input.key[SDL_SCANCODE_O]) temp.fov = lens(1.00);
+    if(input.key[SDL_SCANCODE_P] ||  input.m) temp.fov = lens(0.25);
+    if(input.key[SDL_SCANCODE_O] || !input.m) temp.fov = lens(1.00);
     return temp;
-}
-
-static bool issprite(const int ascii)
-{
-    return isalpha(ascii);
 }
 
 static Hero pick(const Hero hero, const Input input)
 {
+    if(hero.inserting)
+        return hero;
     Hero temp = hero;
     if(input.key[SDL_SCANCODE_1]) temp.party = FLORING;
     if(input.key[SDL_SCANCODE_2]) temp.party = WALLING;
@@ -182,33 +190,38 @@ static bool scared(const Hero hero, const Sprites sprites)
     return false;
 }
 
-extern Map edit(const Hero hero, const Map map, const Input input)
+static void edit(const Hero hero, const Map map, const Input input)
 {
-    if(hero.consoling)
-        return map;
+    if(hero.inserting)
+        return;
+    if(!hero.consoling)
+        return;
     if(!(input.key[SDL_SCANCODE_K] || input.r))
-        return map;
+        return;
     if(issprite(hero.surface))
-        return map;
+        return;
     // 1.5 to avoid placing block on self (eg. ~sqrt(2.0))
     const Point hand = touch(hero, 1.5);
     const int x = hand.x;
     const int y = hand.y;
     // Out of bounds check - first the rows the column requires the row
     if(y < 0 || y >= map.rows)
-        return map;
+        return;
     // Then the columns
     if(x < 0 || x >= (int) strlen(map.walling[y]))
-        return map;
+        return;
     // Place the block
     char** const blocks = interpret(map, hero.party);
     if(block(hand, blocks) != '!')
         blocks[y][x] = hero.surface;
-    return map;
 }
 
 extern Hero save(const Hero hero, const Map map, const Sprites sprites, const Input input)
 {
+    if(!hero.consoling)
+        return hero;
+    if(hero.inserting)
+        return hero;
     if(!input.key[SDL_SCANCODE_F5])
         return hero;
     Hero temp = hero;
@@ -218,49 +231,45 @@ extern Hero save(const Hero hero, const Map map, const Sprites sprites, const In
     return temp;
 }
 
-extern Sprites place(const Hero hero, const Sprites sprites, const Input input)
+static Hero consoling(const Hero hero, const Input input)
 {
     if(hero.consoling)
-        return sprites;
-    if(!input.key[SDL_SCANCODE_K])
-        return sprites;
-    if(!issprite(hero.surface))
-        return sprites;
-    Sprites temp = sprites;
-    if(temp.count == 0)
-        retoss(temp.sprite, Sprite, temp.max = 1);
-    if(temp.count >= temp.max)
-        retoss(temp.sprite, Sprite, temp.max *= 2);
-    const Point hand = touch(hero, hero.arm);
-        temp.sprite[temp.count++] = registrar(hero.surface, hand);
+        return hero;
+    Hero temp = hero;
+    temp.consoling = input.key[SDL_SCANCODE_GRAVE];
     return temp;
 }
 
-static Hero console(const Hero hero, const Input input)
+static Hero inserting(const Hero hero, const Input input)
 {
+    if(!hero.consoling)
+        return hero;
     Hero temp = hero;
     const bool insert = input.key[SDL_SCANCODE_I];
     const bool normal = input.key[SDL_SCANCODE_CAPSLOCK]
         || input.key[SDL_SCANCODE_ESCAPE]
         || input.key[SDL_SCANCODE_RETURN];
-    if(insert) temp.consoling = true, temp.saved = false;
-    if(normal) temp.consoling = false;
-    return temp.consoling ? type(temp, input) : temp;
+    if(insert) temp.inserting = true, temp.saved = false;
+    if(normal) temp.inserting = false;
+    return temp.inserting ? type(temp, input) : temp;
 }
 
 extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const Input input)
 {
-    Hero temp = console(hero, input);
-    if(temp.consoling)
-        return temp;
+    // Once console mode is on it is on for good
+    Hero temp = consoling(hero, input);
+    // Skip all hero actions if in insert mode
+    temp = inserting(temp, input);
+    // Hero actions
     temp = spin(temp, input);
     temp = move(temp, map.walling, input);
     temp = zoom(temp, input);
     temp = pick(temp, input);
     temp.torch = fade(temp.torch);
+    temp = save(temp, map, sprites, input);
     if(scared(temp, sprites))
         temp.torch = flicker(temp.torch);
-    // Hint: Use <hero> instead of <temp> for a mass-inertia effect
     grab(temp, sprites, input);
+    edit(temp, map, input);
     return temp;
 }

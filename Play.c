@@ -25,13 +25,7 @@ extern void play(const char* argv[])
         const int t0 = SDL_GetTicks();
         // Sprite data operations must occur first as sprites are sorted
         // relative to hero position
-        flourish(sprites, hero, map);
-        #ifdef DEV
-        // Developer mode - not a planned gameplay feature
-        map = edit(hero, map, input);
-        sprites = place(hero, sprites, input);
-        hero = save(hero, map, sprites, input);
-        #endif
+        sprites = flourish(sprites, hero, map, input);
         // Hero data operates on sprite and map data, as well as user input
         hero = sustain(hero, sprites, map, input);
         // Renders and a frame delays
