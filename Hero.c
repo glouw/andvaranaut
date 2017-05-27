@@ -6,7 +6,7 @@
 #include "Util.h"
 #include "Map.h"
 #include "Sprites.h"
-#include "Console.h"
+#include "Keys.h"
 #include "Torch.h"
 
 static Line lens(const float scale)
