@@ -31,7 +31,7 @@ extern void play(const char* argv[])
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0 / sdl.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
-        // Updates the keyboard
+        // Updates the keyboard and mouse
         input = pump(input);
     }
     release(sdl);
