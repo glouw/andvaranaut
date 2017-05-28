@@ -2,7 +2,7 @@
 
 extern int illuminate(const Torch torch, const float distance)
 {
-    const int luminance = torch.light / (distance * distance);
+    const int luminance = torch.light / distance;
     return luminance > 0xFF ? 0xFF : luminance;
 }
 
@@ -25,7 +25,7 @@ extern Torch reset()
 {
     Torch torch;
     torch.light = 0.0;
-    torch.brightness = 750.0;
+    torch.brightness = 300.0;
     torch.dtorch = torch.brightness / 10.0;
     return torch;
 }

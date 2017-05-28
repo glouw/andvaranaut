@@ -12,32 +12,40 @@ static Sprite generic(const Point where)
     sprite.ascii = 'o';
     sprite.state = IDLE;
     sprite.transparent = false;
-    sprite.width = 1.00;
+    sprite.width = 0.5;
     return sprite;
 }
 
 static Sprite _o(const Point where)
 {
     Sprite sprite = generic(where);
+    sprite.width = 0.66;
     sprite.ascii = 'o';
-    sprite.width = 0.88;
     return sprite;
 }
 
 static Sprite _g(const Point where)
 {
     Sprite sprite = generic(where);
+    sprite.width = 0.60;
     sprite.ascii = 'g';
     sprite.transparent = true;
-    sprite.width = 0.66;
+    return sprite;
+}
+
+static Sprite _t(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.width = 0.33;
+    sprite.ascii = 't';
     return sprite;
 }
 
 static Sprite _z(const Point where)
 {
     Sprite sprite = generic(where);
-    sprite.ascii = 'z';
     sprite.width = 0.50;
+    sprite.ascii = 'z';
     return sprite;
 }
 
@@ -47,38 +55,10 @@ static Sprite registrar(const int ascii, const Point where)
     {
         case 'o': return _o(where);
         case 'g': return _g(where);
+        case 't': return _t(where);
         case 'z': return _z(where);
     }
     return generic(where);
-}
-
-static Sprite* find(const Sprites sprites, const State state)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        if(sprite->state == state)
-            return sprite;
-    }
-    return NULL;
-}
-
-static inline int count(const Sprites sprites, const State state)
-{
-    int occurances = 0;
-    for(int i = 0; i < sprites.count; i++)
-        if(sprites.sprite[i].state == state)
-            occurances++;
-    return occurances;
-}
-
-static inline void prints(const Sprites sprites)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        const Sprite sprite = sprites.sprite[i];
-        printf("%c,%f,%f\n", sprite.ascii, sprite.where.x, sprite.where.y);
-    }
 }
 
 extern Sprites wake(const int level)
@@ -126,6 +106,7 @@ extern void kill(const Sprites sprites)
     free(sprites.sprite);
 }
 
+// To be used at a later date for portals
 static inline Sprites swap(const Sprites sprites, const int level)
 {
     kill(sprites);
@@ -216,41 +197,6 @@ extern void rest(const Sprites sprites, const State state)
     }
 }
 
-static void constrain(const Sprites sprites, const Hero hero, const Map map)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        // Move the sprite closer to the hero if the sprite is stuck in a wall
-        if(tile(sprite->where, map.walling))
-        {
-            const Point delta = sub(sprite->where, hero.where);
-            sprite->where = add(hero.where, dvd(delta, 2.0));
-        }
-    }
-}
-
-static void shove(const Sprites sprites)
-{
-    Sprite* const grabbed = find(sprites, GRABBED);
-    if(!grabbed)
-        return;
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        // Continue if trying to shove self
-        if(sprite == grabbed)
-            continue;
-        // Shove by the width of the biggest sprite
-        const float width = max(sprite->width, grabbed->width);
-        if(eql(sprite->where, grabbed->where, width))
-        {
-            const Point delta = sub(sprite->where, grabbed->where);
-            sprite->where = add(sprite->where, delta);
-        }
-    }
-}
-
 extern bool issprite(const int ascii)
 {
     return isalpha(ascii);
@@ -276,10 +222,8 @@ static Sprites place(const Sprites sprites, const Hero hero, const Input input)
     return temp;
 }
 
-extern Sprites flourish(const Sprites sprites, const Hero hero, const Map map, const Input input)
+extern Sprites flourish(const Sprites sprites, const Hero hero, const Input input)
 {
     rearrange(sprites, hero);
-    shove(sprites);
-    constrain(sprites, hero, map);
     return place(sprites, hero, input);
 }

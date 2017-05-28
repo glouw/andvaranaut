@@ -24,7 +24,7 @@ extern void play(const char* argv[])
     {
         const int t0 = SDL_GetTicks();
         // Flourish sorts the sprites relative to the hero's position
-        sprites = flourish(sprites, hero, map, input);
+        sprites = flourish(sprites, hero, input);
         hero = sustain(hero, sprites, map, input);
         render(sdl, hero, sprites, map);
         sdl = tick(sdl, renders);

@@ -176,20 +176,6 @@ static Hero type(const Hero hero, const Input input)
     return temp;
 }
 
-static bool scared(const Hero hero, const Sprites sprites)
-{
-    const Point hand = touch(hero, hero.arm);
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        // 2.0 to be effective within block range
-        if(eql(hand, sprite->where, 2.0))
-            if(sprite->transparent)
-                return true;
-    }
-    return false;
-}
-
 static void edit(const Hero hero, const Map map, const Input input)
 {
     if(hero.inserting)
@@ -256,9 +242,7 @@ static Hero inserting(const Hero hero, const Input input)
 
 extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const Input input)
 {
-    // Once console mode is on it is on for good
     Hero temp = consoling(hero, input);
-    // Skip all hero actions if in insert mode
     temp = inserting(temp, input);
     // Hero actions
     temp = spin(temp, input);
@@ -267,8 +251,6 @@ extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const
     temp = pick(temp, input);
     temp.torch = fade(temp.torch);
     temp = save(temp, map, sprites, input);
-    if(scared(temp, sprites))
-        temp.torch = flicker(temp.torch);
     grab(temp, sprites, input);
     edit(temp, map, input);
     return temp;
