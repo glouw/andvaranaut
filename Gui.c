@@ -100,7 +100,6 @@ static void insert(const Ruler ruler, const Sdl sdl, const Hero hero)
 
 extern void gui(const Sdl sdl, const Hero hero, const Sprites sprites)
 {
-    // Gui only active when consoling
     if(!hero.consoling)
         return;
     Ruler ruler;

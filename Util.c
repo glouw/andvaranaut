@@ -15,11 +15,6 @@ extern float dec(const float x)
     return x - (int) x;
 }
 
-extern int rnd(const float x)
-{
-    return x + 0.5;
-}
-
 extern int lns(FILE* const file)
 {
     int ch = EOF;

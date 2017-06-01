@@ -23,15 +23,16 @@ extern void play(const char* argv[])
     for(int renders = 0; res == 128 ? renders < fps : !done(input.key); renders++)
     {
         const int t0 = SDL_GetTicks();
-        // Flourish sorts the sprites relative to the hero's position
-        sprites = flourish(sprites, hero, input);
+        // Data
         hero = sustain(hero, sprites, map, input);
+        sprites = caretake(sprites, hero, input);
+        // Output
         render(sdl, hero, sprites, map);
         sdl = tick(sdl, renders);
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0 / sdl.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
-        // Updates the keyboard and mouse
+        // Input
         input = pump(input);
     }
     release(sdl);

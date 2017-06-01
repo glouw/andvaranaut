@@ -13,14 +13,6 @@ extern Torch fade(const Torch torch)
     return temp.light > temp.brightness ? torch : temp;
 }
 
-extern Torch flicker(const Torch torch)
-{
-    Torch temp = torch;
-    temp.light -= rand() % (int) (0.25 * temp.brightness);
-    temp.light = temp.light < 0 ? 0 : temp.light;
-    return temp;
-}
-
 extern Torch reset()
 {
     Torch torch;

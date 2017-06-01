@@ -94,6 +94,8 @@ extern Sdl setup(const int res, const int fps)
     TTF_Init();
     Sdl sdl;
     sdl.window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
+    if(!sdl.window)
+        bomb("Could not open window\n");
     sdl.renderer = SDL_CreateRenderer(sdl.window, -1, SDL_RENDERER_ACCELERATED);
     sdl.texture = SDL_CreateTexture(sdl.renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     sdl.surfaces = pull(format);

@@ -106,13 +106,6 @@ extern void kill(const Sprites sprites)
     free(sprites.sprite);
 }
 
-// To be used at a later date for portals
-static inline Sprites swap(const Sprites sprites, const int level)
-{
-    kill(sprites);
-    return wake(level);
-}
-
 static void pull(const Sprites sprites, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -222,8 +215,32 @@ static Sprites place(const Sprites sprites, const Hero hero, const Input input)
     return temp;
 }
 
-extern Sprites flourish(const Sprites sprites, const Hero hero, const Input input)
+static void grab(const Sprites sprites, const Hero hero, const Input input)
+{
+    rest(sprites, GRABBED);
+    if(hero.inserting)
+        return;
+    if(!hero.consoling)
+        return;
+    if(!(input.key[SDL_SCANCODE_J] || input.l))
+        return;
+    // Grabs one sprite
+    const Point hand = touch(hero, hero.arm);
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(eql(hand, sprite->where, sprite->width))
+        {
+            sprite->state = GRABBED;
+            sprite->where = hand;
+            return;
+        }
+    }
+}
+
+extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input)
 {
     rearrange(sprites, hero);
+    grab(sprites, hero, input);
     return place(sprites, hero, input);
 }

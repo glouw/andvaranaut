@@ -103,29 +103,6 @@ static Hero move(const Hero hero, char** const walling, const Input input)
     return temp;
 }
 
-static void grab(const Hero hero, const Sprites sprites, const Input input)
-{
-    rest(sprites, GRABBED);
-    if(hero.inserting)
-        return;
-    if(!hero.consoling)
-        return;
-    if(!(input.key[SDL_SCANCODE_J] || input.l))
-        return;
-    // Grabs one sprite
-    const Point hand = touch(hero, hero.arm);
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        if(eql(hand, sprite->where, sprite->width))
-        {
-            sprite->state = GRABBED;
-            sprite->where = hand;
-            return;
-        }
-    }
-}
-
 static Hero zoom(const Hero hero, const Input input)
 {
     if(hero.inserting)
@@ -167,7 +144,7 @@ extern Impact march(const Hero hero, const Trajectory trajectory, const int res)
 static Hero type(const Hero hero, const Input input)
 {
     Hero temp = hero;
-    const int pressed = lookup(input.key);
+    const int pressed = find(input.key);
     if(pressed == -1)
         return hero;
     temp.surface = pressed;
@@ -190,7 +167,7 @@ static void edit(const Hero hero, const Map map, const Input input)
     const Point hand = touch(hero, 1.5);
     const int x = hand.x;
     const int y = hand.y;
-    // Out of bounds check - first the rows the column requires the row
+    // Out of bounds check - first the rows
     if(y < 0 || y >= map.rows)
         return;
     // Then the columns
@@ -202,7 +179,7 @@ static void edit(const Hero hero, const Map map, const Input input)
         blocks[y][x] = hero.surface;
 }
 
-extern Hero save(const Hero hero, const Map map, const Sprites sprites, const Input input)
+static Hero save(const Hero hero, const Map map, const Sprites sprites, const Input input)
 {
     if(!hero.consoling)
         return hero;
@@ -244,14 +221,12 @@ extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const
 {
     Hero temp = consoling(hero, input);
     temp = inserting(temp, input);
-    // Hero actions
     temp = spin(temp, input);
     temp = move(temp, map.walling, input);
     temp = zoom(temp, input);
     temp = pick(temp, input);
     temp.torch = fade(temp.torch);
-    temp = save(temp, map, sprites, input);
-    grab(temp, sprites, input);
     edit(temp, map, input);
+    temp = save(temp, map, sprites, input);
     return temp;
 }

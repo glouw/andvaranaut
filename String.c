@@ -2,13 +2,6 @@
 
 #include "Util.h"
 
-extern char* build(const char* const str)
-{
-    char* copy = toss(char, strlen(str) + 1);
-    strcpy(copy, str);
-    return copy;
-}
-
 extern char* concat(const char* const a, const char* const b)
 {
     char* c = toss(char, strlen(a) + strlen(b) + 1);
@@ -32,9 +25,4 @@ extern char* trim(char* const a)
     while(isspace(*--end)) *end = '\0';
     // Want the mirror?
     return start;
-}
-
-extern float floating(const char* const a)
-{
-    return strtof(a, NULL);
 }
