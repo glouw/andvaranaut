@@ -85,7 +85,7 @@ static Hero move(const Hero hero, char** const walling, const Input input)
     || input.key[SDL_SCANCODE_D]
     || input.key[SDL_SCANCODE_A])
     {
-        const Point acceleration = accelerate(hero);
+        const Point acceleration = accelerate(temp);
         if(input.key[SDL_SCANCODE_W]) temp.velocity = add(temp.velocity, acceleration);
         if(input.key[SDL_SCANCODE_S]) temp.velocity = sub(temp.velocity, acceleration);
         if(input.key[SDL_SCANCODE_D]) temp.velocity = add(temp.velocity, rag(acceleration));
@@ -98,6 +98,7 @@ static Hero move(const Hero hero, char** const walling, const Input input)
         temp.velocity = mul(unt(temp.velocity), temp.speed);
     // Moves and checks for a collision
     temp.where = add(temp.where, temp.velocity);
+    // Reset hero if collision
     if(tile(temp.where, walling))
         temp.velocity = zro(), temp.where = hero.where;
     return temp;
@@ -143,10 +144,10 @@ extern Impact march(const Hero hero, const Trajectory trajectory, const int res)
 
 static Hero type(const Hero hero, const Input input)
 {
-    Hero temp = hero;
     const int pressed = find(input.key);
     if(pressed == -1)
         return hero;
+    Hero temp = hero;
     temp.surface = pressed;
     if(temp.surface < ' ') temp.surface = ' ';
     if(temp.surface > '~') temp.surface = '~';
@@ -188,8 +189,8 @@ static Hero save(const Hero hero, const Map map, const Sprites sprites, const In
     if(!input.key[SDL_SCANCODE_F5])
         return hero;
     Hero temp = hero;
-    dump(map, hero.level);
-    entomb(sprites, hero.level);
+    dump(map, temp.level);
+    entomb(sprites, temp.level);
     temp.saved = true;
     return temp;
 }
