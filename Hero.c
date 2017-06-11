@@ -36,7 +36,7 @@ extern Hero spawn()
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
     hero.theta = 0.0;
-    hero.torch = reset();
+    hero.torch = out();
     hero.surface = ' ';
     hero.party = WALLING;
     hero.inserting = false;
@@ -218,6 +218,27 @@ static Hero inserting(const Hero hero, const Input input)
     return temp.inserting ? type(temp, input) : temp;
 }
 
+extern bool teleporting(const Hero hero, const Map map, const Input input, const int ticks)
+{
+    static int last;
+    const int buffer = 3;
+    if(ticks < last + buffer)
+        return false;
+    if(!input.key[SDL_SCANCODE_E])
+        return false;
+    last = ticks;
+    return isportal(map, hero.where);
+}
+
+extern Hero teleport(const Hero hero, const Map map)
+{
+    Hero temp = hero;
+    temp.torch = out();
+    if(block(hero.where, map.floring) == '~') temp.level++;
+    if(block(hero.where, map.ceiling) == '~') temp.level--;
+    return temp;
+}
+
 extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const Input input)
 {
     Hero temp = consoling(hero, input);
@@ -226,7 +247,7 @@ extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const
     temp = move(temp, map.walling, input);
     temp = zoom(temp, input);
     temp = pick(temp, input);
-    temp.torch = fade(temp.torch);
+    temp.torch = burn(temp.torch);
     edit(temp, map, input);
     temp = save(temp, map, sprites, input);
     return temp;

@@ -10,3 +10,5 @@ extern void close(const Map map);
 
 extern Map reopen(const Map map, const int level);
 
+extern bool isportal(const Map map, const Point where);
+

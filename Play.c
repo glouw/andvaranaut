@@ -24,6 +24,12 @@ extern void play(const char* argv[])
     {
         const int t0 = SDL_GetTicks();
         // Data
+        if(teleporting(hero, map, input, sdl.ticks))
+        {
+            hero = teleport(hero, map);
+            map = reopen(map, hero.level);
+            sprites = rewake(sprites, hero.level);
+        }
         hero = sustain(hero, sprites, map, input);
         sprites = caretake(sprites, hero, input);
         // Output

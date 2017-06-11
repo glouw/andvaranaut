@@ -8,6 +8,8 @@ extern void entomb(const Sprites sprites, const int level);
 
 extern void kill(const Sprites sprites);
 
+extern Sprites rewake(const Sprites sprites, const int level);
+
 extern Sprites arrange(const Sprites sprites, const Hero hero);
 
 extern void rest(const Sprites sprites, const State state);

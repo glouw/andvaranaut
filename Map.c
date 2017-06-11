@@ -1,6 +1,7 @@
 #include "Map.h"
 
 #include "Util.h"
+#include "Point.h"
 #include "String.h"
 
 static char** get(FILE* const file, const int rows)
@@ -58,4 +59,10 @@ extern Map reopen(const Map map, const int level)
 {
     close(map);
     return open(level);
+}
+
+extern bool isportal(const Map map, const Point where)
+{
+    return block(where, map.floring) == '~'
+        || block(where, map.ceiling) == '~';
 }

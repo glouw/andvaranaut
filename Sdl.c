@@ -7,7 +7,6 @@
 #include "Line.h"
 #include "Hero.h"
 #include "Util.h"
-#include "String.h"
 #include "Torch.h"
 #include "Textures.h"
 #include "Gui.h"
@@ -22,7 +21,7 @@ static void present(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
-static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const lowers)
+static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const impacts)
 {
     SDL_Rect seen = frame;
     // Clips sprite from the left
@@ -30,19 +29,19 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     {
         const int x = seen.x;
         if(x < 0 || x >= res) continue;
-        if(where.x < lowers[x].x) break;
+        if(where.x < impacts[x].x) break;
     }
     // Clips sprite from the right
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
         if(x < 0 || x >= res) continue;
-        if(where.x < lowers[x].x) { seen.w = seen.w + 1; break; }
+        if(where.x < impacts[x].x) { seen.w = seen.w + 1; break; }
     }
     return seen;
 }
 
-static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, const Hero hero)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const impacts, const Hero hero)
 {
     for(int which = 0; which < sprites.count; which++)
     {
@@ -66,7 +65,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const lowers, con
         const int h = surface->h / STATES;
         const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * sprite.state, w, h };
         // Clips sprites and prevents dangerous gcc optimizations
-        const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, lowers);
+        const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, impacts);
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0)
             continue;
@@ -140,7 +139,7 @@ extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const 
     // Preallocations for render computations
     Point* wheres = toss(Point, sdl.res);
     int* moddings = toss(int, sdl.res);
-    Point* const lowers = toss(Point, sdl.res);
+    Point* const impacts = toss(Point, sdl.res);
     // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
     const Line camera = rotate(hero.fov, hero.theta);
     const Display display = lock(sdl);
@@ -149,25 +148,22 @@ extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const 
         const Point column = lerp(camera, y / (float) sdl.res);
         const Scanline scanline = { sdl, display, y };
         const Trajectory trajectory =  { map.walling, column };
-        // Once upon a time this engine supported upper and lower wall rendering.
-        // The upper wall rendering has been removed, but the lower wall renderer,
-        // that which is eye level with player, remained and kept name
-        const Impact lower = march(hero, trajectory, sdl.res);
-        const Sliver sliver = { scanline, lower.wall };
-        const Tracery tracery = { lower.traceline, party, hero.torch };
-        const int modding = illuminate(hero.torch, lower.traceline.corrected.x);
-        wrend(sliver, lower.hit, modding);
+        const Impact impact = march(hero, trajectory, sdl.res);
+        const Sliver sliver = { scanline, impact.wall };
+        const Tracery tracery = { impact.traceline, party, hero.torch };
+        const int modding = illuminate(hero.torch, impact.traceline.corrected.x);
+        wrend(sliver, impact.hit, modding);
         frend(sliver, map.floring, wheres, moddings, tracery);
         crend(sliver, map.ceiling, wheres, moddings);
-        lowers[y] = lower.traceline.corrected;
+        impacts[y] = impact.traceline.corrected;
     }
     unlock(sdl);
     churn(sdl);
-    paste(sdl, relatives, lowers, hero);
+    paste(sdl, relatives, impacts, hero);
     gui(sdl, hero, relatives);
     present(sdl);
     free(party);
-    free(lowers);
+    free(impacts);
     free(wheres);
     free(moddings);
     kill(relatives);

@@ -6,18 +6,18 @@ extern int illuminate(const Torch torch, const float distance)
     return luminance > 0xFF ? 0xFF : luminance;
 }
 
-extern Torch fade(const Torch torch)
+extern Torch burn(const Torch torch)
 {
     Torch temp = torch;
     temp.light += temp.dtorch;
     return temp.light > temp.brightness ? torch : temp;
 }
 
-extern Torch reset()
+extern Torch out()
 {
     Torch torch;
     torch.light = 0.0;
     torch.brightness = 300.0;
-    torch.dtorch = torch.brightness / 10.0;
+    torch.dtorch = torch.brightness / 20.0;
     return torch;
 }

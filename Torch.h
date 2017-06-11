@@ -4,7 +4,7 @@
 
 extern int illuminate(const Torch torch, const float distance);
 
-extern Torch fade(const Torch torch);
+extern Torch burn(const Torch torch);
 
-extern Torch reset();
+extern Torch out();
 

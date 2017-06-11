@@ -12,7 +12,7 @@ static Sprite generic(const Point where)
     sprite.ascii = 'o';
     sprite.state = IDLE;
     sprite.transparent = false;
-    sprite.width = 0.5;
+    sprite.width = 0.66;
     return sprite;
 }
 
@@ -24,15 +24,6 @@ static Sprite _o(const Point where)
     return sprite;
 }
 
-static Sprite _g(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.width = 0.60;
-    sprite.ascii = 'g';
-    sprite.transparent = true;
-    return sprite;
-}
-
 static Sprite _t(const Point where)
 {
     Sprite sprite = generic(where);
@@ -41,22 +32,12 @@ static Sprite _t(const Point where)
     return sprite;
 }
 
-static Sprite _z(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.width = 0.50;
-    sprite.ascii = 'z';
-    return sprite;
-}
-
 static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
         case 'o': return _o(where);
-        case 'g': return _g(where);
         case 't': return _t(where);
-        case 'z': return _z(where);
     }
     return generic(where);
 }
@@ -104,6 +85,12 @@ extern void entomb(const Sprites sprites, const int level)
 extern void kill(const Sprites sprites)
 {
     free(sprites.sprite);
+}
+
+extern Sprites rewake(const Sprites sprites, const int level)
+{
+    kill(sprites);
+    return wake(level);
 }
 
 static void pull(const Sprites sprites, const Hero hero)

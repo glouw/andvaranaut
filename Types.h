@@ -7,9 +7,6 @@
 #include <stdbool.h>
 #include <limits.h>
 
-// To ease autoheader generation, all public
-// types will be declared here
-
 typedef struct
 {
     int rows;
@@ -220,7 +217,9 @@ typedef struct
     int dx;
     int dy;
     // Mouse Left, middle, right button state
-    bool l, m, r;
+    bool l;
+    bool m;
+    bool r;
     // Keyboard state
     const uint8_t* key;
 }
