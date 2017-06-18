@@ -7,7 +7,7 @@
 
 static Sprite generic(const Point where)
 {
-    Sprite sprite;
+    Sprite sprite = { 0 };
     sprite.where = where;
     sprite.ascii = 'o';
     sprite.state = IDLE;
@@ -24,20 +24,11 @@ static Sprite _o(const Point where)
     return sprite;
 }
 
-static Sprite _t(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.width = 0.33;
-    sprite.ascii = 't';
-    return sprite;
-}
-
 static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
         case 'o': return _o(where);
-        case 't': return _t(where);
     }
     return generic(where);
 }
@@ -204,6 +195,7 @@ static Sprites place(const Sprites sprites, const Hero hero, const Input input)
 
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
+    // Will only rest a grabbed sprite
     rest(sprites, GRABBED);
     if(hero.inserting)
         return;
@@ -211,10 +203,10 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
         return;
     if(!(input.key[SDL_SCANCODE_J] || input.l))
         return;
-    // Grabs one sprite
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
     {
+        // Grabs the closest sprite
         Sprite* const sprite = &sprites.sprite[i];
         if(eql(hand, sprite->where, sprite->width))
         {

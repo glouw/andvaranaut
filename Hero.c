@@ -8,6 +8,7 @@
 #include "Sprites.h"
 #include "Keys.h"
 #include "Torch.h"
+#include "Input.h"
 
 static Line lens(const float scale)
 {
@@ -65,6 +66,41 @@ extern Point touch(const Hero hero, const float reach)
     const Point reference = { reach, 0.0 };
     const Point direction = trn(reference, hero.theta);
     return add(hero.where, direction);
+}
+
+typedef struct
+{
+    int dx;
+    int dy;
+    bool swung;
+    float power;
+}
+Attack;
+
+static Attack swing(const Hero hero, const Sprites sprites, const Input input)
+{
+    static int dx = 0;
+    static int dy = 0;
+    Attack attack = { 0 };
+    if(hero.consoling)
+        return attack;
+    if(hero.inserting)
+        return attack;
+    if(input.l)
+    {
+        dx += input.dx;
+        dy += input.dy;
+    }
+    else
+    {
+        attack.dx = dx;
+        attack.dy = dy;
+        attack.power = hypotf(attack.dx, attack.dy);
+        dx = 0;
+        dy = 0;
+        if(attack.dx != 0 && attack.dy != 0) attack.swung = true;
+    }
+    return attack;
 }
 
 static Point accelerate(const Hero hero)
@@ -249,6 +285,9 @@ extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const
     temp = pick(temp, input);
     temp.torch = burn(temp.torch);
     edit(temp, map, input);
+    Attack attack = swing(temp, sprites, input);
+    if(attack.swung)
+        printf("%d %d %f\n", attack.dx, attack.dy, attack.power);
     temp = save(temp, map, sprites, input);
     return temp;
 }
