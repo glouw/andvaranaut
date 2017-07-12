@@ -68,6 +68,7 @@ extern Point touch(const Hero hero, const float reach)
     return add(hero.where, direction);
 }
 
+// Attack direction (dx, dy)
 typedef struct
 {
     int dx;
