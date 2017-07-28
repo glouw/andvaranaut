@@ -19,6 +19,7 @@ extern Map open(const int level)
     char* const path = concat("maps/lvl", which);
     FILE* const file = fopen(path, "r");
     Map map;
+    zero(map);
     map.rows = lns(file) / 3;
     map.ceiling = get(file, map.rows);
     map.walling = get(file, map.rows);

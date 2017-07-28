@@ -2,14 +2,6 @@
 
 #include "Util.h"
 
-extern Point zro()
-{
-    Point out;
-    out.x = 0.0;
-    out.y = 0.0;
-    return out;
-}
-
 extern Point trn(const Point a, const float t)
 {
     Point out;

@@ -2,8 +2,6 @@
 
 #include "Types.h"
 
-extern Point zro();
-
 extern Point trn(const Point a, const float t);
 
 extern Point rag(const Point a);

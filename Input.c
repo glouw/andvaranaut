@@ -1,5 +1,7 @@
 #include "Input.h"
 
+#include "Util.h"
+
 static Input keyboard(const Input input)
 {
     SDL_PumpEvents();
@@ -24,6 +26,7 @@ extern Input pump(const Input input)
 extern Input ready()
 {
     Input input;
+    zero(input);
     // Mouse
     input.sx = 0.01;
     input.sy = 0.10;

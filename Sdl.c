@@ -92,6 +92,7 @@ extern Sdl setup(const int res, const int fps)
     SDL_SetRelativeMouseMode(SDL_TRUE);
     TTF_Init();
     Sdl sdl;
+    zero(sdl);
     sdl.window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
     if(!sdl.window)
         bomb("Could not open window\n");
@@ -99,8 +100,6 @@ extern Sdl setup(const int res, const int fps)
     sdl.texture = SDL_CreateTexture(sdl.renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     sdl.surfaces = pull(format);
     sdl.textures = cache(sdl.surfaces, sdl.renderer);
-    sdl.renders = 0;
-    sdl.ticks = 0;
     sdl.res = res;
     sdl.fps = fps;
     sdl.font = TTF_OpenFont("fonts/alterebro-pixel-font.ttf", res / 8);

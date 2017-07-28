@@ -104,7 +104,7 @@ static Attack melee(const Hero hero, const Input input)
         if(vect.x != 0 && vect.y != 0) attack = swing(hero, vect);
         // Reset attack vector as the reset vector
         // is persistent across function calls
-        vect = zro();
+        zero(vect);
     }
     return attack;
 }
@@ -142,7 +142,10 @@ static Hero move(const Hero hero, char** const walling, const Input input)
     temp.where = add(temp.where, temp.velocity);
     // Reset hero if collision
     if(tile(temp.where, walling))
-        temp.velocity = zro(), temp.where = hero.where;
+    {
+        zero(temp.velocity);
+        temp.where = hero.where;
+    }
     return temp;
 }
 
