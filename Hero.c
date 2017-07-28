@@ -3,9 +3,11 @@
 #include "Point.h"
 #include "Hit.h"
 #include "Wall.h"
+#include "Hero.h"
 #include "Util.h"
 #include "Map.h"
 #include "Sprites.h"
+#include "Attack.h"
 #include "Keys.h"
 #include "Torch.h"
 #include "Input.h"
@@ -39,7 +41,7 @@ extern Hero spawn()
     hero.torch = out();
     hero.surface = ' ';
     hero.party = WALLING;
-    hero.arm = 1.0;
+    hero.arm = 0.5;
     return hero;
 }
 
@@ -61,52 +63,6 @@ extern Point touch(const Hero hero, const float reach)
     const Point reference = { reach, 0.0 };
     const Point direction = trn(reference, hero.theta);
     return add(hero.where, direction);
-}
-
-static Attack nothing()
-{
-    Attack attack;
-    zero(attack);
-    return attack;
-}
-
-static Attack swing(const Hero hero, const Point vect)
-{
-    Attack attack = nothing();
-    attack.vect = vect;
-    attack.power = mag(vect);
-    attack.type.swing = true;
-    attack.reach = 1.5;
-    attack.where = touch(hero, attack.reach);
-    attack.area = 2 * attack.reach;
-    return attack;
-}
-
-static Attack melee(const Hero hero, const Input input)
-{
-    Attack attack = nothing();
-    if(hero.consoling)
-        return attack;
-    if(hero.inserting)
-        return attack;
-    // Attack vector (persistent across function calls)
-    static Point vect;
-    // Held down mouse button, grow attack vector
-    if(input.l)
-    {
-        vect.x += input.dx;
-        vect.y += input.dy;
-    }
-    // Mouse button let go, calculate attack power from attack vector
-    else
-    {
-        // Attack was a swing if there was weapon movement
-        if(vect.x != 0 && vect.y != 0) attack = swing(hero, vect);
-        // Reset attack vector as the reset vector
-        // is persistent across function calls
-        zero(vect);
-    }
-    return attack;
 }
 
 static Point accelerate(const Hero hero)

@@ -138,7 +138,7 @@ typedef struct
     }
     type;
     float power;
-    Point where;
+    Point tip;
     float reach;
     float area;
 }

@@ -199,7 +199,7 @@ static void hurt(const Sprites sprites, const Hero hero)
     {
         Sprite* const sprite = &sprites.sprite[i];
         const float aoe = max(hero.attack.area, sprite->width);
-        if(eql(hero.attack.where, sprite->where, aoe))
+        if(eql(hero.attack.tip, sprite->where, aoe))
         {
             sprite->health -= hero.attack.power;
         }
