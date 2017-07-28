@@ -24,6 +24,8 @@ extern void bomb(const char* const message, ...);
 
 #define retoss(ptr, t, n) (ptr = (t*) realloc((ptr), (n) * sizeof(t)))
 
+#define zero(a) (memset(&a, 0, sizeof(a)))
+
 #define max(a, b) (a > b ? a : b)
 
 #define min(a, b) (a < b ? a : b)

@@ -7,7 +7,8 @@
 
 static Sprite generic(const Point where)
 {
-    Sprite sprite = { 0 };
+    Sprite sprite;
+    zero(sprite);
     sprite.where = where;
     sprite.ascii = 'o';
     sprite.state = IDLE;
@@ -188,7 +189,7 @@ extern bool issprite(const int ascii)
 // Thus, a large AOE weapon can hurt many small sprites at once with great ease,
 // but a small AOE weapon can hurt one small sprite with great difficulty,
 // and a small AOE weapon can hurt one large sprite with great ease
-extern void hurt(const Sprites sprites, const Hero hero)
+static void hurt(const Sprites sprites, const Hero hero)
 {
     if(hero.inserting)
         return;
@@ -225,6 +226,10 @@ static Sprites place(const Sprites sprites, const Hero hero, const Input input)
     return temp;
 }
 
+// Grabs the closest sprite to move the sprite.
+// Only applicable within console mode.
+// Note that this is not a gameplay feature.
+// Great for map design
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
     if(hero.inserting)
@@ -236,7 +241,6 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
     {
-        // Grabs the closest sprite
         Sprite* const sprite = &sprites.sprite[i];
         if(eql(hand, sprite->where, sprite->width))
         {
@@ -252,6 +256,7 @@ extern Sprites caretake(const Sprites sprites, const Hero hero, const Input inpu
     rearrange(sprites, hero);
     rest(sprites, GRABBED);
     grab(sprites, hero, input);
+    hurt(sprites, hero);
     surrender(sprites);
     return place(sprites, hero, input);
 }

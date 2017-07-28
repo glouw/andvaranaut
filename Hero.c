@@ -20,7 +20,7 @@ static Line lens(const float scale)
     return fov;
 }
 
-static Point init()
+static Point beginning()
 {
     Point where;
     where.x = 5.5;
@@ -31,20 +31,15 @@ static Point init()
 extern Hero spawn()
 {
     Hero hero;
+    zero(hero);
     hero.fov = lens(1.0);
-    hero.where = init();
-    hero.velocity = zro();
+    hero.where = beginning();
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
-    hero.theta = 0.0;
     hero.torch = out();
     hero.surface = ' ';
     hero.party = WALLING;
-    hero.inserting = false;
-    hero.consoling = false;
-    hero.saved = false;
     hero.arm = 1.0;
-    hero.level = 0;
     return hero;
 }
 
@@ -68,14 +63,33 @@ extern Point touch(const Hero hero, const float reach)
     return add(hero.where, direction);
 }
 
-static Attack swing(const Hero hero, const Input input)
+static Attack nothing()
 {
-    Attack attack = { 0 };
+    Attack attack;
+    zero(attack);
+    return attack;
+}
+
+static Attack swing(const Hero hero, const Point vect)
+{
+    Attack attack = nothing();
+    attack.vect = vect;
+    attack.power = mag(vect);
+    attack.type.swing = true;
+    attack.reach = 1.5;
+    attack.where = touch(hero, attack.reach);
+    attack.area = 2 * attack.reach;
+    return attack;
+}
+
+static Attack melee(const Hero hero, const Input input)
+{
+    Attack attack = nothing();
     if(hero.consoling)
         return attack;
     if(hero.inserting)
         return attack;
-    // Attack vector
+    // Attack vector (persistent across function calls)
     static Point vect;
     // Held down mouse button, grow attack vector
     if(input.l)
@@ -87,16 +101,9 @@ static Attack swing(const Hero hero, const Input input)
     else
     {
         // Attack was a swing if there was weapon movement
-        if(vect.x != 0 && vect.y != 0)
-        {
-            attack.vect = vect;
-            attack.power = mag(vect);
-            attack.type.swing = true;
-            attack.reach = 1.5;
-            attack.where = touch(hero, attack.reach);
-            attack.area = 2 * attack.reach;
-        }
-        // Reset attack vector
+        if(vect.x != 0 && vect.y != 0) attack = swing(hero, vect);
+        // Reset attack vector as the reset vector
+        // is persistent across function calls
         vect = zro();
     }
     return attack;
@@ -284,8 +291,7 @@ extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const
     temp = pick(temp, input);
     temp.torch = burn(temp.torch);
     edit(temp, map, input);
-    temp.attack = swing(temp, input);
-    hurt(sprites, hero);
+    temp.attack = melee(temp, input);
     temp = save(temp, map, sprites, input);
     return temp;
 }
