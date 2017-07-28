@@ -13,6 +13,7 @@ static Sprite generic(const Point where)
     sprite.state = IDLE;
     sprite.transparent = false;
     sprite.width = 0.66;
+    sprite.health = 0.66;
     return sprite;
 }
 
@@ -21,6 +22,7 @@ static Sprite _o(const Point where)
     Sprite sprite = generic(where);
     sprite.width = 0.66;
     sprite.ascii = 'o';
+    sprite.health = 100.0;
     return sprite;
 }
 
@@ -106,16 +108,14 @@ static int backwards(const void *a, const void* b)
 {
     const Point pa = *(const Point *) a;
     const Point pb = *(const Point *) b;
-    if(mag(pa) < mag(pb)) return +1; else if(mag(pa) > mag(pb)) return -1;
-    return 0;
+    return mag(pa) < mag(pb) ? +1 : mag(pa) > mag(pb) ? -1 : 0;
 }
 
 static int forewards(const void *a, const void* b)
 {
     const Point pa = *(const Point *) a;
     const Point pb = *(const Point *) b;
-    if(mag(pa) < mag(pb)) return -1; else if(mag(pa) > mag(pb)) return +1;
-    return 0;
+    return mag(pa) < mag(pb) ? -1 : mag(pa) > mag(pb) ? +1 : 0;
 }
 
 static void sort(const Sprites sprites, const bool foreward)
@@ -168,9 +168,41 @@ extern void rest(const Sprites sprites, const State state)
     }
 }
 
+static void surrender(const Sprites sprites)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(sprite->health < 0.0)
+            sprite->state = MERCY;
+    }
+}
+
 extern bool issprite(const int ascii)
 {
     return isalpha(ascii);
+}
+
+// Hurts all sprites within Area of Effect (AOE).
+// Weapon AOE is overriden by sprite width if larger than weapon AOE.
+// Thus, a large AOE weapon can hurt many small sprites at once with great ease,
+// but a small AOE weapon can hurt one small sprite with great difficulty,
+// and a small AOE weapon can hurt one large sprite with great ease
+extern void hurt(const Sprites sprites, const Hero hero)
+{
+    if(hero.inserting)
+        return;
+    if(hero.consoling)
+        return;
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        const float aoe = max(hero.attack.area, sprite->width);
+        if(eql(hero.attack.where, sprite->where, aoe))
+        {
+            sprite->health -= hero.attack.power;
+        }
+    }
 }
 
 static Sprites place(const Sprites sprites, const Hero hero, const Input input)
@@ -195,8 +227,6 @@ static Sprites place(const Sprites sprites, const Hero hero, const Input input)
 
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
-    // Will only rest a grabbed sprite
-    rest(sprites, GRABBED);
     if(hero.inserting)
         return;
     if(!hero.consoling)
@@ -220,6 +250,8 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
 extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input)
 {
     rearrange(sprites, hero);
+    rest(sprites, GRABBED);
     grab(sprites, hero, input);
+    surrender(sprites);
     return place(sprites, hero, input);
 }

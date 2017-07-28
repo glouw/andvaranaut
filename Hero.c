@@ -68,38 +68,36 @@ extern Point touch(const Hero hero, const float reach)
     return add(hero.where, direction);
 }
 
-// Attack direction (dx, dy)
-typedef struct
+static Attack swing(const Hero hero, const Input input)
 {
-    int dx;
-    int dy;
-    bool swung;
-    float power;
-}
-Attack;
-
-static Attack swing(const Hero hero, const Sprites sprites, const Input input)
-{
-    static int dx = 0;
-    static int dy = 0;
     Attack attack = { 0 };
     if(hero.consoling)
         return attack;
     if(hero.inserting)
         return attack;
+    // Attack vector
+    static Point vect;
+    // Held down mouse button, grow attack vector
     if(input.l)
     {
-        dx += input.dx;
-        dy += input.dy;
+        vect.x += input.dx;
+        vect.y += input.dy;
     }
+    // Mouse button let go, calculate attack power from attack vector
     else
     {
-        attack.dx = dx;
-        attack.dy = dy;
-        attack.power = hypotf(attack.dx, attack.dy);
-        dx = 0;
-        dy = 0;
-        if(attack.dx != 0 && attack.dy != 0) attack.swung = true;
+        // Attack was a swing if there was weapon movement
+        if(vect.x != 0 && vect.y != 0)
+        {
+            attack.vect = vect;
+            attack.power = mag(vect);
+            attack.type.swing = true;
+            attack.reach = 1.5;
+            attack.where = touch(hero, attack.reach);
+            attack.area = 2 * attack.reach;
+        }
+        // Reset attack vector
+        vect = zro();
     }
     return attack;
 }
@@ -286,9 +284,8 @@ extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const
     temp = pick(temp, input);
     temp.torch = burn(temp.torch);
     edit(temp, map, input);
-    Attack attack = swing(temp, sprites, input);
-    if(attack.swung)
-        printf("%d %d %f\n", attack.dx, attack.dy, attack.power);
+    temp.attack = swing(temp, input);
+    hurt(sprites, hero);
     temp = save(temp, map, sprites, input);
     return temp;
 }

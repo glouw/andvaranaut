@@ -84,6 +84,7 @@ typedef enum
 {
     IDLE,
     GRABBED,
+    MERCY,
     STATES
 }
 State;
@@ -95,6 +96,7 @@ typedef struct
     State state;
     bool transparent;
     float width;
+    float health;
 }
 Sprite;
 
@@ -121,12 +123,26 @@ typedef struct
 }
 Torch;
 
-
 typedef enum
 {
     FLORING, WALLING, CEILING
 }
 Party;
+
+typedef struct
+{
+    Point vect;
+    union
+    {
+        bool swing;
+    }
+    type;
+    float power;
+    Point where;
+    float reach;
+    float area;
+}
+Attack;
 
 typedef struct
 {
@@ -144,6 +160,7 @@ typedef struct
     bool saved;
     float arm;
     int level;
+    Attack attack;
 }
 Hero;
 
