@@ -10,9 +10,10 @@
 typedef struct
 {
     int rows;
-    char** ceiling;
-    char** walling;
-    char** floring;
+    // Clang likes to break these pointers
+    char** volatile ceiling;
+    char** volatile walling;
+    char** volatile floring;
 }
 Map;
 
