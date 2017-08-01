@@ -81,9 +81,14 @@ extern Point svr(const Point a, const Point b)
     return out;
 }
 
+extern bool inf(const Point a)
+{
+    return isinf(a.x) || isinf(a.y);
+}
+
 extern Point cmp(const Point a, const Point b, const Point c)
 {
-    return mag(sub(b, a)) < mag(sub(c, a)) ? b : c;
+    return inf(c) ? b : inf(b) ? c : mag(sub(b, a)) < mag(sub(c, a)) ? b : c;
 }
 
 extern bool eql(const Point a, const Point b, const float epsilon)

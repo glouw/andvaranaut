@@ -64,7 +64,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const impacts, co
         const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
         const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * sprite.state, w, h };
-        // Clips sprites and prevents dangerous gcc optimizations
+        // Gcc likes to mess with _seen_
         const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, impacts);
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0)

@@ -16,7 +16,8 @@ extern void play(const char* argv[])
     const int res = strtol(argv[1], NULL, 0);
     const int fps = 60;
     Hero hero = spawn();
-    Map map = open(hero.level);
+    // Clang likes to mess with _map_
+    volatile Map map = open(hero.level);
     Sprites sprites = wake(hero.level);
     Sdl sdl = setup(res, fps);
     Input input = ready();
