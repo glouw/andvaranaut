@@ -4,6 +4,26 @@
 #include "Hero.h"
 #include "Point.h"
 
+static float reach(const Weapon weapon)
+{
+    switch(weapon)
+    {
+        case LONG_SWORD: return 0.75;
+        default:
+            return 0.0;
+    }
+}
+
+static float power(const Weapon weapon)
+{
+    switch(weapon)
+    {
+        case LONG_SWORD: return 0.10;
+        default:
+            return 0.0;
+    }
+}
+
 extern Attack nothing()
 {
     Attack attack;
@@ -14,38 +34,11 @@ extern Attack nothing()
 extern Attack swing(const Hero hero, const Point vect)
 {
     Attack attack = nothing();
-    attack.vect = vect;
-    attack.power = mag(vect);
     attack.type.swing = true;
-    attack.reach = hero.arm + 0.75;
-    attack.tip = touch(hero, attack.reach);
+    attack.vect = vect;
+    attack.power = power(hero.weapon) * mag(vect);
+    attack.reach = hero.arm + reach(hero.weapon);
+    attack.where = touch(hero, attack.reach);
     attack.area = 2 * attack.reach;
-    return attack;
-}
-
-extern Attack melee(const Hero hero, const Input input)
-{
-    Attack attack = nothing();
-    if(hero.consoling)
-        return attack;
-    if(hero.inserting)
-        return attack;
-    // Attack vector (persistent across function calls)
-    static Point vect;
-    // Held down mouse button, grow attack vector
-    if(input.l)
-    {
-        vect.x += input.dx;
-        vect.y += input.dy;
-    }
-    // Mouse button let go, calculate attack power from attack vector
-    else
-    {
-        // Attack was a swing if there was weapon movement
-        if(vect.x != 0 && vect.y != 0) attack = swing(hero, vect);
-        // Reset attack vector as the reset vector
-        // is persistent across function calls
-        zero(vect);
-    }
     return attack;
 }

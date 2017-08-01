@@ -30,5 +30,7 @@ extern void bomb(const char* const message, ...);
 
 #define min(a, b) (a < b ? a : b)
 
+#define pi (3.14159265358979323846)
+
 // Minimum array size for integer to string conversions
 #define MINTS ((CHAR_BIT * sizeof(int) - 1) / 3 + 2)

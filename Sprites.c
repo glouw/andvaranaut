@@ -12,13 +12,12 @@ static Sprite generic(const Point where)
     sprite.where = where;
     sprite.ascii = 'o';
     sprite.state = IDLE;
-    sprite.transparent = false;
     sprite.width = 0.66;
-    sprite.health = 0.66;
+    sprite.health = 50.0;
     return sprite;
 }
 
-static Sprite _o(const Point where)
+static Sprite _o_(const Point where)
 {
     Sprite sprite = generic(where);
     sprite.width = 0.66;
@@ -31,7 +30,7 @@ static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
-        case 'o': return _o(where);
+        case 'o': return _o_(where);
     }
     return generic(where);
 }
@@ -184,24 +183,32 @@ extern bool issprite(const int ascii)
     return isalpha(ascii);
 }
 
+static Compass needle(const Point vect)
+{
+    const float angle = atan2f(vect.y, vect.x);
+    return (Compass) ((int) roundf(DIRS * angle / (2.0 * pi) + DIRS) % DIRS);
+}
+
 // Hurts all sprites within Area of Effect (AOE).
 // Weapon AOE is overriden by sprite width if larger than weapon AOE.
-// Thus, a large AOE weapon can hurt many small sprites at once with great ease,
-// but a small AOE weapon can hurt one small sprite with great difficulty,
-// and a small AOE weapon can hurt one large sprite with great ease
 static void hurt(const Sprites sprites, const Hero hero)
 {
     if(hero.inserting)
         return;
     if(hero.consoling)
         return;
+    // Note: all attack types will go here
+    if(!hero.attack.type.swing)
+        return;
+    const Compass dir = needle(hero.attack.vect);
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         const float aoe = max(hero.attack.area, sprite->width);
-        if(eql(hero.attack.tip, sprite->where, aoe))
+        if(eql(hero.attack.where, sprite->where, aoe))
         {
             sprite->health -= hero.attack.power;
+            sprite->state = (State) dir;
         }
     }
 }
@@ -226,10 +233,7 @@ static Sprites place(const Sprites sprites, const Hero hero, const Input input)
     return temp;
 }
 
-// Grabs the closest sprite to move the sprite.
-// Only applicable within console mode.
-// Note that this is not a gameplay feature.
-// Great for map design
+// Grabs the closest sprite
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
     if(hero.inserting)

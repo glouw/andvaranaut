@@ -21,11 +21,9 @@ ARCHITECTURE = -march=native
 LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 # Dependency flags
 DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
-# Command line definitions
-AUX =
 # Compile, link, and post process
-COMP = $(CC) $(AUX) $(ARCHITECTURE) $(CFLAGS) $(DEPFLAGS) -c
-LINK = $(CC) $(AUX) $(ARCHITECTURE) $(CFLAGS) $(OBJS) $(LDFLAGS) -o
+COMP = $(CC) $(ARCHITECTURE) $(CFLAGS) $(DEPFLAGS) -c
+LINK = $(CC) $(ARCHITECTURE) $(CFLAGS) $(OBJS) $(LDFLAGS) -o
 POST = mv -f $*.Td $*.d
 $(PROJ): $(OBJS)
 	$(LINK) $(PROJ)

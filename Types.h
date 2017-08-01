@@ -60,7 +60,7 @@ Trajectory;
 
 typedef enum
 {
-    N, E, S, W
+    E, SE, S, SW, W, NW, N, NE, DIRS
 }
 Compass;
 
@@ -82,6 +82,17 @@ Frame;
 
 typedef enum
 {
+    // Hurt directions
+    // (Easy Compass typecasting)
+    H_E,
+    H_SE,
+    H_S,
+    H_SW,
+    H_W,
+    H_NW,
+    H_N,
+    H_NE,
+    // Other directions
     IDLE,
     GRABBED,
     MERCY,
@@ -138,11 +149,18 @@ typedef struct
     }
     type;
     float power;
-    Point tip;
+    Point where;
     float reach;
     float area;
 }
 Attack;
+
+typedef enum
+{
+    LONG_SWORD,
+    WEAPONS
+}
+Weapon;
 
 typedef struct
 {
@@ -160,6 +178,7 @@ typedef struct
     bool saved;
     float arm;
     int level;
+    Weapon weapon;
     Attack attack;
 }
 Hero;

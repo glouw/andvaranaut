@@ -41,6 +41,7 @@ extern Hero spawn()
     hero.torch = out();
     hero.surface = ' ';
     hero.party = WALLING;
+    hero.weapon = LONG_SWORD;
     hero.arm = 0.5;
     return hero;
 }
@@ -240,6 +241,35 @@ extern Hero teleport(const Hero hero, const Map map)
     return temp;
 }
 
+static Hero melee(const Hero hero, const Input input)
+{
+    Hero temp = hero;
+    temp.attack = nothing();
+    if(temp.consoling)
+        return temp;
+    if(temp.inserting)
+        return temp;
+    // Attack vector (persistent across function calls)
+    static Point vect;
+    // Held down mouse button, grow attack vector
+    if(input.l)
+    {
+        vect.x += input.dx;
+        vect.y += input.dy;
+    }
+    // Mouse button let go, calculate attack power from attack vector
+    else
+    {
+        // Attack was a swing if there was weapon movement
+        if(vect.x != 0 && vect.y != 0)
+            temp.attack = swing(hero, vect);
+        // Reset attack vector as the reset vector
+        // is persistent across function calls
+        zero(vect);
+    }
+    return temp;
+}
+
 extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const Input input)
 {
     Hero temp = consoling(hero, input);
@@ -250,7 +280,7 @@ extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const
     temp = pick(temp, input);
     temp.torch = burn(temp.torch);
     edit(temp, map, input);
-    temp.attack = melee(temp, input);
+    temp = melee(temp, input);
     temp = save(temp, map, sprites, input);
     return temp;
 }
