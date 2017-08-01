@@ -60,6 +60,7 @@ static inline void license()
 
 extern void test()
 {
+    __String();
     license();
     readme();
 }

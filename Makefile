@@ -1,6 +1,5 @@
 # God's tongue
-CC = gcc
-CC+= -std=c99
+CC = clang -std=c99
 # Project name
 PROJ = water
 # Source files
@@ -15,7 +14,7 @@ CFLAGS = -Wshadow -Wall -Wpedantic -Wextra
 # Debugging flags
 CFLAGS+= -g
 # Optimization flags
-CFLAGS+= -Ofast -flto -fwhole-program -fsingle-precision-constant
+CFLAGS+= -Ofast -flto
 ARCHITECTURE = -march=native
 # Linking flags
 LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
