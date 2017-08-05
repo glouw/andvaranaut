@@ -24,9 +24,11 @@ extern Point shr(const Point a, const Point b);
 
 extern Point svr(const Point a, const Point b);
 
+extern int inf(const Point a);
+
 extern Point cmp(const Point a, const Point b, const Point c);
 
-extern bool eql(const Point a, const Point b, const float epsilon);
+extern int eql(const Point a, const Point b, const float epsilon);
 
 extern int block(const Point a, char** const blocks);
 

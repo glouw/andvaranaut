@@ -10,7 +10,7 @@ extern char* concat(const char* const a, const char* const b)
     return c;
 }
 
-extern bool match(const char* const a, const char* const b)
+extern int match(const char* const a, const char* const b)
 {
     return strcmp(a, b) == 0;
 }

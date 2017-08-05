@@ -62,7 +62,7 @@ extern Map reopen(const Map map, const int level)
     return open(level);
 }
 
-extern bool isportal(const Map map, const Point where)
+extern int isportal(const Map map, const Point where)
 {
     return block(where, map.floring) == '~'
         || block(where, map.ceiling) == '~';

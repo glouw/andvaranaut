@@ -10,7 +10,7 @@ SRCS+= Gui.c Input.c Attack.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
 # Warnings flags
-CFLAGS = -Wshadow -Wall -Wpedantic -Wextra
+CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wpadded
 # Debugging flags
 CFLAGS+= -g
 # Optimization flags

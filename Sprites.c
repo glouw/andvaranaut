@@ -118,7 +118,7 @@ static int forewards(const void *a, const void* b)
     return mag(pa) < mag(pb) ? -1 : mag(pa) > mag(pb) ? +1 : 0;
 }
 
-static void sort(const Sprites sprites, const bool foreward)
+static void sort(const Sprites sprites, const int foreward)
 {
     qsort(sprites.sprite, sprites.count, sizeof(Sprite), foreward ? forewards : backwards);
 }
@@ -178,7 +178,7 @@ static void surrender(const Sprites sprites)
     }
 }
 
-extern bool issprite(const int ascii)
+extern int issprite(const int ascii)
 {
     return isalpha(ascii);
 }

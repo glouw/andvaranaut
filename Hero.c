@@ -211,8 +211,8 @@ static Hero inserting(const Hero hero, const Input input)
     if(!hero.consoling)
         return hero;
     Hero temp = hero;
-    const bool insert = input.key[SDL_SCANCODE_I];
-    const bool normal = input.key[SDL_SCANCODE_CAPSLOCK]
+    const int insert = input.key[SDL_SCANCODE_I];
+    const int normal = input.key[SDL_SCANCODE_CAPSLOCK]
         || input.key[SDL_SCANCODE_ESCAPE]
         || input.key[SDL_SCANCODE_RETURN];
     if(insert) temp.inserting = true, temp.saved = false;
@@ -220,15 +220,15 @@ static Hero inserting(const Hero hero, const Input input)
     return temp.inserting ? type(temp, input) : temp;
 }
 
-extern bool teleporting(const Hero hero, const Map map, const Input input, const int ticks)
+extern int teleporting(const Hero hero, const Map map, const Input input, const Sdl sdl)
 {
     static int last;
     const int buffer = 3;
-    if(ticks < last + buffer)
+    if(sdl.ticks < last + buffer)
         return false;
     if(!input.key[SDL_SCANCODE_E])
         return false;
-    last = ticks;
+    last = sdl.ticks;
     return isportal(map, hero.where);
 }
 

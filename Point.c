@@ -81,7 +81,7 @@ extern Point svr(const Point a, const Point b)
     return out;
 }
 
-extern bool inf(const Point a)
+extern int inf(const Point a)
 {
     return isinf(a.x) || isinf(a.y);
 }
@@ -91,7 +91,7 @@ extern Point cmp(const Point a, const Point b, const Point c)
     return inf(c) ? b : inf(b) ? c : mag(sub(b, a)) < mag(sub(c, a)) ? b : c;
 }
 
-extern bool eql(const Point a, const Point b, const float epsilon)
+extern int eql(const Point a, const Point b, const float epsilon)
 {
     return a.x < b.x + (epsilon / 2.0)
         && a.x > b.x - (epsilon / 2.0)

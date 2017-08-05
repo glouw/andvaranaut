@@ -2,7 +2,7 @@
 
 static int shifting(const uint8_t* const key)
 {
-    const bool shift =
+    const int shift =
         key[SDL_SCANCODE_LSHIFT] ||
         key[SDL_SCANCODE_RSHIFT];
     if(shift && key[SDL_SCANCODE_1])

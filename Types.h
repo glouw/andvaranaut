@@ -7,10 +7,13 @@
 #include <stdbool.h>
 #include <limits.h>
 
+// All structs fields are natuarlly alligned
+// through the use of ints, pointers, and floats
+
 typedef struct
 {
     int rows;
-    // Clang likes to break these pointers
+    // Clang like to break these pointers
     char** volatile ceiling;
     char** volatile walling;
     char** volatile floring;
@@ -84,7 +87,6 @@ Frame;
 typedef enum
 {
     // Hurt directions
-    // (Easy Compass typecasting)
     H_E,
     H_SE,
     H_S,
@@ -93,7 +95,7 @@ typedef enum
     H_NW,
     H_N,
     H_NE,
-    // Other directions
+    // States
     IDLE,
     GRABBED,
     MERCY,
@@ -106,7 +108,7 @@ typedef struct
     Point where;
     int ascii;
     State state;
-    bool transparent;
+    int transparent;
     float width;
     float health;
 }
@@ -146,7 +148,7 @@ typedef struct
     Point vect;
     union
     {
-        bool swing;
+        int swing;
     }
     type;
     float power;
@@ -174,9 +176,9 @@ typedef struct
     Torch torch;
     int surface;
     Party party;
-    bool inserting;
-    bool consoling;
-    bool saved;
+    int inserting;
+    int consoling;
+    int saved;
     float arm;
     int level;
     Weapon weapon;
@@ -254,9 +256,9 @@ typedef struct
     int dx;
     int dy;
     // Mouse Left, middle, right button state
-    bool l;
-    bool m;
-    bool r;
+    int l;
+    int m;
+    int r;
     // Keyboard state
     const uint8_t* key;
 }

@@ -6,7 +6,7 @@
 #include "Sprites.h"
 #include "Input.h"
 
-static bool done(const uint8_t* const key)
+static int done(const uint8_t* const key)
 {
     return key[SDL_SCANCODE_F1];
 }
@@ -24,7 +24,7 @@ extern void play(const char* argv[])
     {
         const int t0 = SDL_GetTicks();
         // Data
-        if(teleporting(hero, map, input, sdl.ticks))
+        if(teleporting(hero, map, input, sdl))
         {
             hero = teleport(hero, map);
             map = reopen(map, hero.level);
