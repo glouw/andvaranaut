@@ -6,11 +6,6 @@
 #include "Sprites.h"
 #include "Input.h"
 
-static int done(const uint8_t* const key)
-{
-    return key[SDL_SCANCODE_F1];
-}
-
 extern void play(const char* argv[])
 {
     const int res = strtol(argv[1], NULL, 0);
@@ -20,7 +15,7 @@ extern void play(const char* argv[])
     Sprites sprites = wake(hero.level);
     Sdl sdl = setup(res, fps);
     Input input = ready();
-    for(int renders = 0; res == 128 ? renders < fps : !done(input.key); renders++)
+    for(int renders = 0; res == 128 ? renders < fps : !input.key[SDL_SCANCODE_F1]; renders++)
     {
         const int t0 = SDL_GetTicks();
         // Data

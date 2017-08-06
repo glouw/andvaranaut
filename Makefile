@@ -1,5 +1,4 @@
-# God's tongue
-CC = clang -std=c99
+CC = gcc -std=c99
 # Project name
 PROJ = water
 # Source files
@@ -33,11 +32,11 @@ $(PROJ): $(OBJS)
 %.d: ;
 .PRECIOUS: %.d
 -include $(patsubst %,%.d,$(basename $(SRCS)))
-# Uniformity, amirite?
+
 .PHONY: headers
 headers:
 	python headers.py
-# Do as your mother tells you
+
 .PHONY: clean
 clean:
 	rm -f cachegrind.out.*

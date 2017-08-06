@@ -145,15 +145,13 @@ extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const 
     for(int y = 0; y < sdl.res; y++)
     {
         const Point column = lerp(camera, y / (float) sdl.res);
+        const Impact impact = march(hero, map.walling, column, sdl.res);
         const Scanline scanline = { sdl, display, y };
-        const Trajectory trajectory =  { map.walling, column };
-        const Impact impact = march(hero, trajectory, sdl.res);
-        const Sliver sliver = { scanline, impact.wall };
-        const Tracery tracery = { impact.traceline, party, hero.torch };
-        const int modding = illuminate(hero.torch, impact.traceline.corrected.x);
-        wrend(sliver, impact.hit, modding);
-        frend(sliver, map.floring, wheres, moddings, tracery);
-        crend(sliver, map.ceiling, wheres, moddings);
+        const Sliver sliver = { scanline, impact };
+        wrend(sliver, hero.torch, moddings);
+        frend(sliver, map.floring, hero.torch, wheres, moddings, party);
+        crend(sliver, map.ceiling, wheres);
+        light(sliver, moddings);
         impacts[y] = impact.traceline.corrected;
     }
     unlock(sdl);

@@ -55,13 +55,6 @@ typedef struct
 }
 Point;
 
-typedef struct
-{
-    char** block;
-    Point column;
-}
-Trajectory;
-
 typedef enum
 {
     E, SE, S, SW, W, NW, N, NE, DIRS
@@ -197,14 +190,6 @@ Traceline;
 typedef struct
 {
     Traceline traceline;
-    float* party;
-    Torch torch;
-}
-Tracery;
-
-typedef struct
-{
-    Traceline traceline;
     Wall wall;
     Hit hit;
 }
@@ -243,7 +228,7 @@ Scanline;
 typedef struct
 {
     Scanline scanline;
-    Wall wall;
+    Impact impact;
 }
 Sliver;
 

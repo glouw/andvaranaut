@@ -132,9 +132,9 @@ static char** interpret(const Map map, const Party party)
     return party == CEILING ? map.ceiling : party == WALLING ? map.walling : map.floring;
 }
 
-extern Impact march(const Hero hero, const Trajectory trajectory, const int res)
+extern Impact march(const Hero hero, char** const block, const Point column, const int res)
 {
-    const Hit hit = cast(hero.where, trajectory.column, trajectory.block);
+    const Hit hit = cast(hero.where, column, block);
     const Point ray = sub(hit.where, hero.where);
     const Point corrected = trn(ray, -hero.theta);
     const Line trace = { hero.where, hit.where };

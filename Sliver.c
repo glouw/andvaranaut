@@ -5,77 +5,84 @@
 #include "Util.h"
 #include "Torch.h"
 
-// Software implementation of the SDL2 Texture Color Mod function - Discards alpha
-static uint32_t mod(const uint32_t pixel, const int r, const int g, const int b)
-{
-    const int rm = r / (float) 0xFF * (uint8_t) (pixel >> 0x10);
-    const int gm = g / (float) 0xFF * (uint8_t) (pixel >> 0x08);
-    const int bm = b / (float) 0xFF * (uint8_t) (pixel >> 0x00);
-    return rm << 0x10 | gm << 0x08 | bm << 0x00;
-}
-
 // Wall renderer
-extern void wrend(const Sliver sliver, const Hit hit, const int modding)
+extern void wrend(const Sliver sliver, const Torch torch, int* const moddings)
 {
     // Aliases
     const int y = sliver.scanline.y;
     const int width = sliver.scanline.display.width;
     // Paint
-    const SDL_Surface* const surface = sliver.scanline.sdl.surfaces.surface[hit.surface];
-    const int row = surface->h * hit.offset;
+    const SDL_Surface* const surface = sliver.scanline.sdl.surfaces.surface[sliver.impact.hit.surface];
+    const int row = surface->h * sliver.impact.hit.offset;
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
-    for(int x = sliver.wall.clamped.bot; x < sliver.wall.clamped.top; x++)
+    const float height = sliver.impact.wall.top - sliver.impact.wall.bot;
+    for(int x = sliver.impact.wall.clamped.bot; x < sliver.impact.wall.clamped.top; x++)
     {
-        const float offset = (x - sliver.wall.bot) / (float) (sliver.wall.top - sliver.wall.bot);
+        const float offset = (x - sliver.impact.wall.bot) / height;
         const int col = surface->w * offset;
-        const uint32_t pixel = pixels[col + row * surface->w];
-        sliver.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
+        sliver.scanline.display.pixels[x + y * width] = pixels[col + row * surface->w];
     }
+    // Save wall light modding
+    const int modding = illuminate(torch, sliver.impact.traceline.corrected.x);
+    for(int x = sliver.impact.wall.clamped.bot; x < sliver.impact.wall.clamped.top; x++)
+        moddings[x] = modding;
 }
 
-// Floor renderer
-extern void frend(const Sliver sliver, char** const floring, Point* wheres, int* const moddings, const Tracery tracery)
+// Floor renderer - precalucates some of crend()'s stuff
+extern void frend(const Sliver sliver, char** const floring, const Torch torch, Point* const wheres, int* const moddings, const float* party)
 {
     // Aliases
     const int width = sliver.scanline.display.width;
     const int y = sliver.scanline.y;
     // Paint
-    for(int x = 0; x < sliver.wall.clamped.bot; x++)
+    for(int x = 0; x < sliver.impact.wall.clamped.bot; x++)
     {
         const int log = sliver.scanline.sdl.res - 1 - x;
-        const Point where = lerp(tracery.traceline.trace, tracery.party[x] / tracery.traceline.corrected.x);
-        // Save
-        wheres[log] = where;
+        const Point where = wheres[log] = lerp(sliver.impact.traceline.trace, party[x] / sliver.impact.traceline.corrected.x);
         const int seen = tile(where, floring);
         const SDL_Surface* const surface = sliver.scanline.sdl.surfaces.surface[seen];
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const int row = surface->h * dec(where.y);
         const int col = surface->w * dec(where.x);
-        const uint32_t pixel = pixels[col + row * surface->w];
-        const int modding = illuminate(tracery.torch, mag(sub(where, tracery.traceline.trace.a)));
-        // Save
-        moddings[log] = modding;
-        sliver.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
+        sliver.scanline.display.pixels[x + y * width] = pixels[col + row * surface->w];
+        // Save floor and ceiling light modding
+        const int modding = illuminate(torch, mag(sub(where, sliver.impact.traceline.trace.a)));
+        moddings[x] = moddings[log] = modding;
     }
 }
 
 // Ceiling renderer - Saves time by using some of frend()'s calculations
-extern void crend(const Sliver sliver, char** const ceiling, Point* wheres, int* const moddings)
+extern void crend(const Sliver sliver, char** const ceiling, Point* wheres)
 {
     // Aliases
     const int y = sliver.scanline.y;
     const int width = sliver.scanline.display.width;
-    for(int x = sliver.wall.clamped.top; x < sliver.scanline.sdl.res; x++)
+    // Paint
+    for(int x = sliver.impact.wall.clamped.top; x < sliver.scanline.sdl.res; x++)
     {
         const Point where = wheres[x];
-        // Offsets
         const SDL_Surface* const surface = sliver.scanline.sdl.surfaces.surface[tile(where, ceiling)];
         const int row = surface->h * dec(where.y);
         const int col = surface->w * dec(where.x);
-        const int modding = moddings[x];
-        // Paint
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
-        const uint32_t pixel = pixels[col + row * surface->w];
-        sliver.scanline.display.pixels[x + y * width] = mod(pixel, modding, modding, modding);
+        sliver.scanline.display.pixels[x + y * width] = pixels[col + row * surface->w];
     }
+}
+
+static inline void mod(uint32_t* const pixel, const int m)
+{
+    const int rm = m / (float) 0xFF * (*pixel >> 0x10 & 0xFF);
+    const int gm = m / (float) 0xFF * (*pixel >> 0x08 & 0xFF);
+    const int bm = m / (float) 0xFF * (*pixel >> 0x00 & 0xFF);
+    *pixel = rm << 0x10 | gm << 0x08 | bm << 0x00;
+}
+
+extern void light(const Sliver sliver, int* const moddings)
+{
+    // Aliases
+    const int y = sliver.scanline.y;
+    const int width = sliver.scanline.display.width;
+    // Apply all lighting mods
+    for(int x = 0; x < sliver.scanline.sdl.res; x++)
+        mod(&sliver.scanline.display.pixels[x + y * width], moddings[x]);
 }
