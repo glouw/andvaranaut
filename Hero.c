@@ -41,7 +41,7 @@ extern Hero spawn()
     hero.torch = out();
     hero.surface = ' ';
     hero.party = WALLING;
-    hero.weapon = LONG_SWORD;
+    hero.weapon = LSWORD;
     hero.arm = 0.5;
     return hero;
 }

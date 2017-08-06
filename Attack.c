@@ -8,7 +8,8 @@ static float reach(const Weapon weapon)
 {
     switch(weapon)
     {
-        case LONG_SWORD: return 0.75;
+        case LSWORD:
+            return 0.75;
         default:
             return 0.0;
     }
@@ -18,7 +19,8 @@ static float power(const Weapon weapon)
 {
     switch(weapon)
     {
-        case LONG_SWORD: return 0.10;
+        case LSWORD:
+            return 0.10;
         default:
             return 0.0;
     }

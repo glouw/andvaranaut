@@ -153,7 +153,7 @@ Attack;
 
 typedef enum
 {
-    LONG_SWORD,
+    LSWORD,
     WEAPONS
 }
 Weapon;
