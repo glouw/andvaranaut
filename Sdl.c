@@ -21,7 +21,7 @@ static void present(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
-static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const impacts)
+static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const correcteds)
 {
     SDL_Rect seen = frame;
     // Clips sprite from the left
@@ -29,19 +29,19 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     {
         const int x = seen.x;
         if(x < 0 || x >= res) continue;
-        if(where.x < impacts[x].x) break;
+        if(where.x < correcteds[x].x) break;
     }
     // Clips sprite from the right
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
         if(x < 0 || x >= res) continue;
-        if(where.x < impacts[x].x) { seen.w = seen.w + 1; break; }
+        if(where.x < correcteds[x].x) { seen.w = seen.w + 1; break; }
     }
     return seen;
 }
 
-static void paste(const Sdl sdl, const Sprites sprites, Point* const impacts, const Hero hero)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds, const Hero hero)
 {
     for(int which = 0; which < sprites.count; which++)
     {
@@ -65,7 +65,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const impacts, co
         const int h = surface->h / STATES;
         const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * sprite.state, w, h };
         // Gcc likes to mess with _seen_
-        const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, impacts);
+        const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, correcteds);
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0)
             continue;
@@ -138,7 +138,7 @@ extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const 
     // Preallocations for render computations
     Point* wheres = toss(Point, sdl.res);
     int* moddings = toss(int, sdl.res);
-    Point* const impacts = toss(Point, sdl.res);
+    Point* const correcteds = toss(Point, sdl.res);
     // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
     const Line camera = rotate(hero.fov, hero.theta);
     const Display display = lock(sdl);
@@ -152,15 +152,15 @@ extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const 
         frend(sliver, map.floring, hero.torch, wheres, moddings, party);
         crend(sliver, map.ceiling, wheres);
         light(sliver, moddings);
-        impacts[y] = impact.traceline.corrected;
+        correcteds[y] = impact.traceline.corrected;
     }
     unlock(sdl);
     churn(sdl);
-    paste(sdl, relatives, impacts, hero);
+    paste(sdl, relatives, correcteds, hero);
     gui(sdl, hero, relatives);
     present(sdl);
     free(party);
-    free(impacts);
+    free(correcteds);
     free(wheres);
     free(moddings);
     kill(relatives);
