@@ -173,7 +173,7 @@ typedef struct
     int consoling;
     int saved;
     float arm;
-    int level;
+    int floor;
     Weapon weapon;
     Attack attack;
 }

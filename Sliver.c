@@ -69,7 +69,7 @@ extern void crend(const Sliver sliver, char** const ceiling, Point* wheres)
     }
 }
 
-static inline void mod(uint32_t* const pixel, const int m)
+static void mod(uint32_t* const pixel, const int m)
 {
     const int rm = m / (float) 0xFF * (*pixel >> 0x10 & 0xFF);
     const int gm = m / (float) 0xFF * (*pixel >> 0x08 & 0xFF);

@@ -191,8 +191,8 @@ static Hero save(const Hero hero, const Map map, const Sprites sprites, const In
     if(!input.key[SDL_SCANCODE_F5])
         return hero;
     Hero temp = hero;
-    dump(map, temp.level);
-    entomb(sprites, temp.level);
+    dump(map, temp.floor);
+    entomb(sprites, temp.floor);
     temp.saved = true;
     return temp;
 }
@@ -236,8 +236,8 @@ extern Hero teleport(const Hero hero, const Map map)
 {
     Hero temp = hero;
     temp.torch = out();
-    if(block(hero.where, map.floring) == '~') temp.level++;
-    if(block(hero.where, map.ceiling) == '~') temp.level--;
+    if(block(hero.where, map.floring) == '~') temp.floor++;
+    if(block(hero.where, map.ceiling) == '~') temp.floor--;
     return temp;
 }
 

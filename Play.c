@@ -11,8 +11,8 @@ extern void play(const char* argv[])
     const int res = strtol(argv[1], NULL, 0);
     const int fps = 60;
     Hero hero = spawn();
-    Map map = open(hero.level);
-    Sprites sprites = wake(hero.level);
+    Map map = open(hero.floor);
+    Sprites sprites = wake(hero.floor);
     Sdl sdl = setup(res, fps);
     Input input = ready();
     for(int renders = 0; res == 128 ? renders < fps : !input.key[SDL_SCANCODE_F1]; renders++)
@@ -22,8 +22,8 @@ extern void play(const char* argv[])
         if(teleporting(hero, map, input, sdl))
         {
             hero = teleport(hero, map);
-            map = reopen(map, hero.level);
-            sprites = rewake(sprites, hero.level);
+            map = reopen(map, hero.floor);
+            sprites = rewake(sprites, hero.floor);
         }
         hero = sustain(hero, sprites, map, input);
         sprites = caretake(sprites, hero, input);
