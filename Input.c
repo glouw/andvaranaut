@@ -30,11 +30,6 @@ extern Input ready()
     // Mouse
     input.sx = 0.01;
     input.sy = 0.10;
-    input.dx = 0;
-    input.dy = 0;
-    input.l = false;
-    input.m = false;
-    input.r = false;
     // Keyboard
     input.key = SDL_GetKeyboardState(NULL);
     return pump(input);

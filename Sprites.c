@@ -17,12 +17,26 @@ static Sprite generic(const Point where)
     return sprite;
 }
 
+static Sprite _i_(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.ascii = 'i';
+    sprite.width = 0.167;
+    return sprite;
+}
+
+static Sprite _j_(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.ascii = 'j';
+    return sprite;
+}
+
 static Sprite _o_(const Point where)
 {
     Sprite sprite = generic(where);
-    sprite.width = 0.66;
     sprite.ascii = 'o';
-    sprite.health = 100.0;
+    sprite.width = 0.66;
     return sprite;
 }
 
@@ -31,6 +45,8 @@ static Sprite registrar(const int ascii, const Point where)
     switch(ascii)
     {
         case 'o': return _o_(where);
+        case 'i': return _i_(where);
+        case 'j': return _j_(where);
     }
     return generic(where);
 }
@@ -214,7 +230,7 @@ static void hurt(const Sprites sprites, const Hero hero, const Sdl sdl)
     }
 }
 
-static Sprites place(const Sprites sprites, const Hero hero, const Input input)
+static Sprites place(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl)
 {
     if(hero.inserting)
         return sprites;
@@ -224,6 +240,11 @@ static Sprites place(const Sprites sprites, const Hero hero, const Input input)
         return sprites;
     if(!issprite(hero.surface))
         return sprites;
+    // Timer
+    static int last;
+    if(sdl.ticks < last + 2)
+        return sprites;
+    last = sdl.ticks;
     Sprites temp = sprites;
     if(temp.count == 0)
         retoss(temp.sprite, Sprite, temp.max = 1);
@@ -263,5 +284,5 @@ extern Sprites caretake(const Sprites sprites, const Hero hero, const Input inpu
     grab(sprites, hero, input);
     hurt(sprites, hero, sdl);
     surrender(sprites);
-    return place(sprites, hero, input);
+    return place(sprites, hero, input, sdl);
 }

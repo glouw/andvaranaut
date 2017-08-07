@@ -262,7 +262,7 @@ static Hero melee(const Hero hero, const Input input)
     {
         // Attack was a swing if there was weapon movement
         if(vect.x != 0 && vect.y != 0)
-            temp.attack = swing(hero, vect);
+            temp.attack = swing(temp, vect);
         // Reset attack vector as the reset vector
         // is persistent across function calls
         zero(vect);
