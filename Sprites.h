@@ -12,9 +12,7 @@ extern Sprites rewake(const Sprites sprites, const int level);
 
 extern Sprites arrange(const Sprites sprites, const Hero hero);
 
-extern void rest(const Sprites sprites, const State state);
-
 extern int issprite(const int ascii);
 
-extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input);
+extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl);
 

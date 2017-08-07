@@ -158,12 +158,12 @@ static void rearrange(const Sprites sprites, const Hero hero)
     push(sprites, hero);
 }
 
-extern void rest(const Sprites sprites, const State state)
+static void rest(const Sprites sprites, const Sdl sdl)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(sprite->state == state)
+        if(sprite->ticks < sdl.ticks)
             sprite->state = IDLE;
     }
 }
@@ -191,7 +191,7 @@ static Compass needle(const Point vect)
 
 // Hurts all sprites within Area of Effect (AOE).
 // Weapon AOE is overriden by sprite width if larger than weapon AOE.
-static void hurt(const Sprites sprites, const Hero hero)
+static void hurt(const Sprites sprites, const Hero hero, const Sdl sdl)
 {
     if(hero.inserting)
         return;
@@ -207,6 +207,7 @@ static void hurt(const Sprites sprites, const Hero hero)
         const float aoe = max(hero.attack.area, sprite->width);
         if(eql(hero.attack.where, sprite->where, aoe))
         {
+            sprite->ticks = sdl.ticks + 3;
             sprite->health -= hero.attack.power;
             sprite->state = (State) dir;
         }
@@ -255,12 +256,12 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     }
 }
 
-extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input)
+extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl)
 {
     rearrange(sprites, hero);
-    rest(sprites, GRABBED);
+    rest(sprites, sdl);
     grab(sprites, hero, input);
-    hurt(sprites, hero);
+    hurt(sprites, hero, sdl);
     surrender(sprites);
     return place(sprites, hero, input);
 }

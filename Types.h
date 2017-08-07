@@ -104,6 +104,7 @@ typedef struct
     int transparent;
     float width;
     float health;
+    int ticks;
 }
 Sprite;
 
