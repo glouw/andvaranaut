@@ -8,7 +8,7 @@ extern Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer)
     SDL_Texture** const texture = toss(SDL_Texture*, count);
     for(int i = 0; i < count; i++)
         texture[i] = SDL_CreateTextureFromSurface(renderer, surfaces.surface[i]);
-    const Textures textures = { count, texture };
+    const Textures textures = { texture, count };
     return textures;
 }
 

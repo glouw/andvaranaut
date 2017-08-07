@@ -44,7 +44,7 @@ extern Surfaces pull(const uint32_t format)
         free(line);
     }
     fclose(file);
-    const Surfaces surfaces = { lines, surface };
+    const Surfaces surfaces = { surface, lines };
     return surfaces;
 }
 

@@ -12,25 +12,25 @@
 
 typedef struct
 {
-    int rows;
     // Clang like to break these pointers
     char** volatile ceiling;
     char** volatile walling;
     char** volatile floring;
+    int rows;
 }
 Map;
 
 typedef struct
 {
-    int count;
     SDL_Texture** texture;
+    int count;
 }
 Textures;
 
 typedef struct
 {
-    int count;
     SDL_Surface** surface;
+    int count;
 }
 Surfaces;
 
@@ -109,9 +109,9 @@ Sprite;
 
 typedef struct
 {
+    Sprite* sprite;
     int count;
     int max;
-    Sprite* sprite;
 }
 Sprites;
 
@@ -197,16 +197,16 @@ Impact;
 
 typedef struct
 {
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    SDL_Texture* texture;
+    TTF_Font* font;
     int res;
     int fps;
     Surfaces surfaces;
     Textures textures;
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    SDL_Texture* texture;
     int renders;
     int ticks;
-    TTF_Font* font;
 }
 Sdl;
 
@@ -234,6 +234,8 @@ Sliver;
 
 typedef struct
 {
+    // Keyboard state
+    const uint8_t* key;
     // Mouse sensitivity
     float sx;
     float sy;
@@ -244,7 +246,5 @@ typedef struct
     int l;
     int m;
     int r;
-    // Keyboard state
-    const uint8_t* key;
 }
 Input;
