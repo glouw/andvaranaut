@@ -5,6 +5,7 @@
 #include "Sprites.h"
 #include "Surfaces.h"
 #include "Line.h"
+#include "Point.h"
 #include "Hero.h"
 #include "Util.h"
 #include "Torch.h"
@@ -55,7 +56,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds,
         const int even = odd(size) ? size + 1 : size;
         // Calculates sprite location on screen
         const int corner = (sdl.res - even) / 2;
-        const int slider = (sdl.res / 2) * ratio(hero.fov) * sprite.where.y / sprite.where.x;
+        const int slider = (sdl.res / 2) * ratio(hero.fov) * slp(sprite.where);
         const SDL_Rect target = { corner + slider, corner, even, even };
         // Moves onto the next sprite if this sprite is off screen
         if(target.x + target.w < 0 || target.x >= sdl.res)
