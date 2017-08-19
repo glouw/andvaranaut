@@ -11,7 +11,7 @@ static float reach(const Weapon weapon)
         case LSWORD:
             return 0.75;
         default:
-            return 0.0;
+            return 0.00;
     }
 }
 
@@ -22,20 +22,14 @@ static float power(const Weapon weapon)
         case LSWORD:
             return 0.10;
         default:
-            return 0.0;
+            return 0.00;
     }
-}
-
-extern Attack nothing()
-{
-    Attack attack;
-    zero(attack);
-    return attack;
 }
 
 extern Attack swing(const Hero hero, const Point vect)
 {
-    Attack attack = nothing();
+    Attack attack;
+    zero(attack);
     attack.type.swing = true;
     attack.vect = vect;
     attack.power = power(hero.weapon) * mag(vect);

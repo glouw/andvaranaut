@@ -244,7 +244,7 @@ extern Hero teleport(const Hero hero, const Map map)
 static Hero melee(const Hero hero, const Input input)
 {
     Hero temp = hero;
-    temp.attack = nothing();
+    zero(temp.attack);
     if(temp.consoling)
         return temp;
     if(temp.inserting)
