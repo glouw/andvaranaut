@@ -1,9 +1,4 @@
-# Generates a header file from a source file.
-#   Functions to be exported must be marked with extern.
-#   Functions to be kept private must be marked with
-#   static for the sake of the linker.
-
-import os
+import os, sys
 
 def preps(h):
     h.write("#pragma once\n\n")
@@ -14,22 +9,25 @@ def parse(h, c):
         if "extern" in line.split():
             h.write(line.replace("\n", ";\n\n"))
 
-for path in os.listdir("."):
-    if ".c" in path:
-        head = path.replace(".c", ".h")
-        # Exceptions
-        # Util:
-        #   for the Handwritten macros
-        # Main:
-        #   main will never have a header file
-        # Types:
-        #   for safety
-        exceptions = ["Util.h", "main.h", "Types.h"]
-        if head in exceptions:
-            continue
-        h = open(head, "w")
-        c = open(path, "r")
+def make_header(source):
+    """Makes the header for one .c source file"""
+    header = source.replace(".c", ".h")
+    # The following headers files must not be generated
+    exceptions = ["Util.h", "main.h", "Types.h"]
+    if header in exceptions: return
+    # If the file cannot be opened then no header file will be made
+    with open(header, "w") as h, open(source, "r") as c:
+        if not h or not c:
+            return
         preps(h)
         parse(h, c)
-        h.close()
-        c.close()
+
+def main():
+    # Will generate the header file for a single .c file
+    if len(sys.argv) == 2: make_header(sys.argv[1])
+    # Will generate the header file for all the .c files
+    else:
+        for path in os.listdir("."):
+            if ".c" in path: make_header(path)
+
+main()

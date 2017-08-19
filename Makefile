@@ -1,4 +1,4 @@
-CC = clang -std=c99
+CC = gcc -std=c99
 # Project name
 PROJ = water
 # Source files
