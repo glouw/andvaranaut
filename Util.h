@@ -30,6 +30,8 @@ extern void bomb(const char* const message, ...);
 
 #define min(a, b) (a < b ? a : b)
 
+#define odd(a) (a % 2)
+
 #define pi (3.14159265358979323846)
 
 // Minimum array size for integer to string conversions
