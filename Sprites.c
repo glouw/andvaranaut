@@ -21,7 +21,7 @@ static Sprite _i_(const Point where)
 {
     Sprite sprite = generic(where);
     sprite.ascii = 'i';
-    sprite.width = 0.167;
+    sprite.width = 0.1;
     return sprite;
 }
 
@@ -29,6 +29,7 @@ static Sprite _j_(const Point where)
 {
     Sprite sprite = generic(where);
     sprite.ascii = 'j';
+    sprite.width = 0.3;
     return sprite;
 }
 
@@ -174,6 +175,18 @@ static void rearrange(const Sprites sprites, const Hero hero)
     push(sprites, hero);
 }
 
+#if NEEDED
+static bool any(const Sprites sprites, const State state)
+{
+    for(int i = 0; i < sprites.count; i++)
+        if(sprites.sprite[i].state == state)
+            return true;
+    return false;
+}
+#endif
+
+// Sprites will only ever rest after their ticks have
+// exceeded the universal tick counter
 static void rest(const Sprites sprites, const Sdl sdl)
 {
     for(int i = 0; i < sprites.count; i++)
