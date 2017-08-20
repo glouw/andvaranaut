@@ -14,5 +14,5 @@ extern Sprites arrange(const Sprites sprites, const Hero hero);
 
 extern int issprite(const int ascii);
 
-extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl);
+extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl, const Map map);
 

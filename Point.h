@@ -22,6 +22,8 @@ extern float slp(const Point a);
 
 extern Point shr(const Point a, const Point b);
 
+extern Point mid(const Point a);
+
 extern Point svr(const Point a, const Point b);
 
 extern int inf(const Point a);

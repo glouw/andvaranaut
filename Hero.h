@@ -12,5 +12,5 @@ extern int teleporting(const Hero hero, const Map map, const Input input, const 
 
 extern Hero teleport(const Hero hero, const Map map);
 
-extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const Input input);
+extern Hero sustain(const Hero hero, const Map map, const Input input);
 

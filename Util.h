@@ -6,8 +6,6 @@ extern int fl(const float x);
 
 extern int cl(const float x);
 
-extern int rnd(const float x);
-
 extern float dec(const float x);
 
 extern int lns(FILE* const file);

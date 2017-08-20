@@ -73,6 +73,14 @@ extern Point shr(const Point a, const Point b)
     return out;
 }
 
+extern Point mid(const Point a)
+{
+    Point out;
+    out.x = fl(a.x) + 0.5;
+    out.y = fl(a.y) + 0.5;
+    return out;
+}
+
 extern Point svr(const Point a, const Point b)
 {
     Point out;

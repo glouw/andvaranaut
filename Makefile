@@ -4,7 +4,7 @@ PROJ = water
 # Source files
 SRCS = main.c Play.c Test.c Util.c Point.c Hit.c Line.c Map.c
 SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c String.c
-SRCS+= Sliver.c Surfaces.c Torch.c Textures.c Keys.c
+SRCS+= Sliver.c Surfaces.c Torch.c Textures.c
 SRCS+= Gui.c Input.c Attack.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)

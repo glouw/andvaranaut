@@ -14,6 +14,7 @@ static Sprite generic(const Point where)
     sprite.state = IDLE;
     sprite.width = 0.66;
     sprite.health = 50.0;
+    sprite.grabbable = true;
     return sprite;
 }
 
@@ -21,7 +22,8 @@ static Sprite _i_(const Point where)
 {
     Sprite sprite = generic(where);
     sprite.ascii = 'i';
-    sprite.width = 0.1;
+    sprite.width = 0.3;
+    sprite.grabbable = false;
     return sprite;
 }
 
@@ -30,6 +32,7 @@ static Sprite _j_(const Point where)
     Sprite sprite = generic(where);
     sprite.ascii = 'j';
     sprite.width = 0.3;
+    sprite.grabbable = false;
     return sprite;
 }
 
@@ -175,16 +178,6 @@ static void rearrange(const Sprites sprites, const Hero hero)
     push(sprites, hero);
 }
 
-#if NEEDED
-static bool any(const Sprites sprites, const State state)
-{
-    for(int i = 0; i < sprites.count; i++)
-        if(sprites.sprite[i].state == state)
-            return true;
-    return false;
-}
-#endif
-
 // Sprites will only ever rest after their ticks have
 // exceeded the universal tick counter
 static void rest(const Sprites sprites, const Sdl sdl)
@@ -218,15 +211,10 @@ static Compass needle(const Point vect)
     return (Compass) ((int) roundf(DIRS * angle / (2.0 * pi) + DIRS) % DIRS);
 }
 
-// Hurts all sprites within Area of Effect (AOE).
-// Weapon AOE is overriden by sprite width if larger than weapon AOE.
+// Hurts all sprites within Area of Effect (AOE)
 static void hurt(const Sprites sprites, const Hero hero, const Sdl sdl)
 {
-    if(hero.inserting)
-        return;
-    if(hero.consoling)
-        return;
-    // Note: all attack types will go here
+    // Note: all attack types must go here
     if(!hero.attack.type.swing)
         return;
     const Compass dir = needle(hero.attack.vect);
@@ -243,37 +231,10 @@ static void hurt(const Sprites sprites, const Hero hero, const Sdl sdl)
     }
 }
 
-static Sprites place(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl)
-{
-    if(hero.inserting)
-        return sprites;
-    if(!hero.consoling)
-        return sprites;
-    if(!(input.key[SDL_SCANCODE_K] || input.r))
-        return sprites;
-    if(!issprite(hero.surface))
-        return sprites;
-    // Timer
-    static int last;
-    if(sdl.ticks < last + 2)
-        return sprites;
-    last = sdl.ticks;
-    Sprites temp = sprites;
-    if(temp.count == 0)
-        retoss(temp.sprite, Sprite, temp.max = 1);
-    if(temp.count >= temp.max)
-        retoss(temp.sprite, Sprite, temp.max *= 2);
-    const Point hand = touch(hero, hero.arm);
-        temp.sprite[temp.count++] = registrar(hero.surface, hand);
-    return temp;
-}
-
-// Grabs the closest sprite
+// Grabs the closest sprite when using hands
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
-    if(hero.inserting)
-        return;
-    if(!hero.consoling)
+    if(hero.weapon != HANDS)
         return;
     if(!(input.key[SDL_SCANCODE_J] || input.l))
         return;
@@ -281,6 +242,8 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        if(!sprite->grabbable)
+            continue;
         if(eql(hand, sprite->where, sprite->width))
         {
             sprite->state = GRABBED;
@@ -290,12 +253,58 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     }
 }
 
-extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl)
+static Sprite* find(const Sprites sprites, const State state)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(sprite->state == state)
+            return sprite;
+    }
+    return NULL;
+}
+
+// Shoves the closest sprite away if a sprite is grabbed
+static void shove(const Sprites sprites)
+{
+    Sprite* const grabbed = find(sprites, GRABBED);
+    if(!grabbed)
+        return;
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        // Do not count the sprite that is currently grabbed
+        if(sprite == grabbed)
+            continue;
+        const float width = max(sprite->width, grabbed->width);
+        if(eql(sprite->where, grabbed->where, width))
+        {
+            const Point delta = sub(sprite->where, grabbed->where);
+            sprite->where = add(sprite->where, delta);
+        }
+    }
+}
+
+// Puts a sprite at the hero's location if a sprite goes out of bounds
+static void bound(const Sprites sprites, const Hero hero, const Map map)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(tile(sprite->where, map.walling))
+            sprite->where = mid(hero.where);
+    }
+}
+
+extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl, const Map map)
 {
     rearrange(sprites, hero);
     rest(sprites, sdl);
     grab(sprites, hero, input);
+    shove(sprites);
     hurt(sprites, hero, sdl);
     surrender(sprites);
-    return place(sprites, hero, input, sdl);
+    bound(sprites, hero, map);
+    // Will be modified when sprites create other sprites
+    return sprites;
 }

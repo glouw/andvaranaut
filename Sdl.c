@@ -161,7 +161,6 @@ extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const 
     unlock(sdl);
     churn(sdl);
     paste(sdl, relatives, correcteds, hero);
-    gui(sdl, hero, relatives);
     present(sdl);
     free(party);
     free(correcteds);

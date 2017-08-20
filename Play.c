@@ -25,8 +25,8 @@ extern void play(const char* argv[])
             map = reopen(map, hero.floor);
             sprites = rewake(sprites, hero.floor);
         }
-        hero = sustain(hero, sprites, map, input);
-        sprites = caretake(sprites, hero, input, sdl);
+        hero = sustain(hero, map, input);
+        sprites = caretake(sprites, hero, input, sdl, map);
         // Output
         render(sdl, hero, sprites, map);
         sdl = tick(sdl, renders);

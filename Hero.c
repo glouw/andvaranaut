@@ -8,7 +8,6 @@
 #include "Map.h"
 #include "Sprites.h"
 #include "Attack.h"
-#include "Keys.h"
 #include "Torch.h"
 #include "Input.h"
 
@@ -39,17 +38,13 @@ extern Hero spawn()
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
     hero.torch = out();
-    hero.surface = ' ';
-    hero.party = WALLING;
-    hero.weapon = LSWORD;
+    hero.weapon = HANDS;
     hero.arm = 0.75;
     return hero;
 }
 
 static Hero spin(const Hero hero, const Input input)
 {
-    if(hero.inserting)
-        return hero;
     Hero temp = hero;
     // Keyboard
     if(input.key[SDL_SCANCODE_H]) temp.theta -= 0.1;
@@ -75,8 +70,6 @@ static Point accelerate(const Hero hero)
 
 static Hero move(const Hero hero, char** const walling, const Input input)
 {
-    if(hero.inserting)
-        return hero;
     Hero temp = hero;
     // Acceleration
     if(input.key[SDL_SCANCODE_W]
@@ -108,28 +101,10 @@ static Hero move(const Hero hero, char** const walling, const Input input)
 
 static Hero zoom(const Hero hero, const Input input)
 {
-    if(hero.inserting)
-        return hero;
     Hero temp = hero;
     if(input.key[SDL_SCANCODE_P] ||  input.m) temp.fov = lens(0.25);
     if(input.key[SDL_SCANCODE_O] || !input.m) temp.fov = lens(1.00);
     return temp;
-}
-
-static Hero pick(const Hero hero, const Input input)
-{
-    if(hero.inserting)
-        return hero;
-    Hero temp = hero;
-    if(input.key[SDL_SCANCODE_1]) temp.party = FLORING;
-    if(input.key[SDL_SCANCODE_2]) temp.party = WALLING;
-    if(input.key[SDL_SCANCODE_3]) temp.party = CEILING;
-    return temp;
-}
-
-static char** interpret(const Map map, const Party party)
-{
-    return party == CEILING ? map.ceiling : party == WALLING ? map.walling : map.floring;
 }
 
 extern Impact march(const Hero hero, char** const block, const Point column, const int res)
@@ -142,82 +117,6 @@ extern Impact march(const Hero hero, char** const block, const Point column, con
     const Traceline traceline = { trace, corrected, hero.fov };
     const Impact impact = { traceline, wall, hit };
     return impact;
-}
-
-static Hero type(const Hero hero, const Input input)
-{
-    const int pressed = find(input.key);
-    if(pressed == -1)
-        return hero;
-    Hero temp = hero;
-    temp.surface = pressed;
-    if(temp.surface < ' ') temp.surface = ' ';
-    if(temp.surface > '~') temp.surface = '~';
-    return temp;
-}
-
-static void edit(const Hero hero, const Map map, const Input input)
-{
-    if(hero.inserting)
-        return;
-    if(!hero.consoling)
-        return;
-    if(!(input.key[SDL_SCANCODE_K] || input.r))
-        return;
-    if(issprite(hero.surface))
-        return;
-    // 1.5 to avoid placing block on self (eg. ~sqrt(2.0))
-    const Point hand = touch(hero, 1.5);
-    const int x = hand.x;
-    const int y = hand.y;
-    // Out of bounds check - first the rows
-    if(y < 0 || y >= map.rows)
-        return;
-    // Then the columns
-    if(x < 0 || x >= (int) strlen(map.walling[y]))
-        return;
-    // Place the block
-    char** const blocks = interpret(map, hero.party);
-    if(block(hand, blocks) != '!')
-        blocks[y][x] = hero.surface;
-}
-
-static Hero save(const Hero hero, const Map map, const Sprites sprites, const Input input)
-{
-    if(!hero.consoling)
-        return hero;
-    if(hero.inserting)
-        return hero;
-    if(!input.key[SDL_SCANCODE_F5])
-        return hero;
-    Hero temp = hero;
-    dump(map, temp.floor);
-    entomb(sprites, temp.floor);
-    temp.saved = true;
-    return temp;
-}
-
-static Hero consoling(const Hero hero, const Input input)
-{
-    if(hero.consoling)
-        return hero;
-    Hero temp = hero;
-    temp.consoling = input.key[SDL_SCANCODE_GRAVE];
-    return temp;
-}
-
-static Hero inserting(const Hero hero, const Input input)
-{
-    if(!hero.consoling)
-        return hero;
-    Hero temp = hero;
-    const int insert = input.key[SDL_SCANCODE_I];
-    const int normal = input.key[SDL_SCANCODE_CAPSLOCK]
-        || input.key[SDL_SCANCODE_ESCAPE]
-        || input.key[SDL_SCANCODE_RETURN];
-    if(insert) temp.inserting = true, temp.saved = false;
-    if(normal) temp.inserting = false;
-    return temp.inserting ? type(temp, input) : temp;
 }
 
 extern int teleporting(const Hero hero, const Map map, const Input input, const Sdl sdl)
@@ -243,12 +142,11 @@ extern Hero teleport(const Hero hero, const Map map)
 
 static Hero melee(const Hero hero, const Input input)
 {
+    // Cannot attack with hands - hands are for grabbing
+    if(hero.weapon == HANDS)
+        return hero;
     Hero temp = hero;
     zero(temp.attack);
-    if(temp.consoling)
-        return temp;
-    if(temp.inserting)
-        return temp;
     // Attack vector (persistent across function calls)
     static Point vect;
     // Held down mouse button, grow attack vector
@@ -261,26 +159,20 @@ static Hero melee(const Hero hero, const Input input)
     else
     {
         // Attack was a swing if there was weapon movement
-        if(vect.x != 0 && vect.y != 0)
-            temp.attack = swing(temp, vect);
-        // Reset attack vector as the reset vector
-        // is persistent across function calls
+        if(vect.x != 0 && vect.y != 0) temp.attack = swing(temp, vect);
+        // Reset attack vector as the reset vector is persistent across function calls
         zero(vect);
     }
     return temp;
 }
 
-extern Hero sustain(const Hero hero, const Sprites sprites, const Map map, const Input input)
+extern Hero sustain(const Hero hero, const Map map, const Input input)
 {
-    Hero temp = consoling(hero, input);
-    temp = inserting(temp, input);
+    Hero temp = hero;
     temp = spin(temp, input);
     temp = move(temp, map.walling, input);
     temp = zoom(temp, input);
-    temp = pick(temp, input);
     temp.torch = burn(temp.torch);
-    edit(temp, map, input);
     temp = melee(temp, input);
-    temp = save(temp, map, sprites, input);
     return temp;
 }

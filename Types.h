@@ -105,6 +105,7 @@ typedef struct
     float width;
     float health;
     int ticks;
+    int grabbable; // Make movable instead for shoves
 }
 Sprite;
 
@@ -131,12 +132,6 @@ typedef struct
 }
 Torch;
 
-typedef enum
-{
-    FLORING, WALLING, CEILING
-}
-Party;
-
 typedef struct
 {
     Point vect;
@@ -155,6 +150,7 @@ Attack;
 typedef enum
 {
     LSWORD,
+    HANDS,
     WEAPONS
 }
 Weapon;
@@ -168,12 +164,8 @@ typedef struct
     float acceleration;
     float theta;
     Torch torch;
-    int surface;
-    Party party;
-    int inserting;
-    int consoling;
-    int saved;
     float arm;
+    // The floor that the hero is currently on
     int floor;
     Weapon weapon;
     Attack attack;
