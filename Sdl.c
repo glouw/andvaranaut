@@ -50,14 +50,13 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds,
         // Moves onto the next sprite if this sprite is behind the player
         if(sprite.where.x < 0)
             continue;
-        // Calculates sprite size - the sprite must be an even integer else
-        // the sprite will jitter with movement
-        const int size = focal(hero.fov) * sdl.res / sprite.where.x;
-        const int even = odd(size) ? size + 1 : size;
+        // Calculates sprite size
+        // The sprite must be an even integer else the sprite will jitter with movement
+        const int size = balance(focal(hero.fov) * sdl.res / sprite.where.x);
         // Calculates sprite location on screen
-        const int corner = (sdl.res - even) / 2;
+        const int corner = (sdl.res - size) / 2;
         const int slider = (sdl.res / 2) * ratio(hero.fov) * slp(sprite.where);
-        const SDL_Rect target = { corner + slider, corner, even, even };
+        const SDL_Rect target = { corner + slider, corner, size, size };
         // Moves onto the next sprite if this sprite is off screen
         if(target.x + target.w < 0 || target.x >= sdl.res)
             continue;

@@ -56,3 +56,13 @@ extern void bomb(const char* const message, ...)
     va_end(args);
     exit(1);
 }
+
+extern bool odd(const int a)
+{
+    return a % 2;
+}
+
+extern int balance(const int a)
+{
+    return odd(a) ? a + 1 : a;
+}

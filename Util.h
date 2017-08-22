@@ -14,6 +14,14 @@ extern char* readln(FILE* const file);
 
 extern void bomb(const char* const message, ...);
 
+extern bool odd(const int a);
+
+extern int balance(const int a);
+
+/*
+ * Some generic macros
+ */
+
 #define len(array) (int) (sizeof(array) / sizeof(*array))
 
 #define boolean(test) (test ? "true" : "false")
@@ -27,8 +35,6 @@ extern void bomb(const char* const message, ...);
 #define max(a, b) (a > b ? a : b)
 
 #define min(a, b) (a < b ? a : b)
-
-#define odd(a) (a % 2)
 
 #define pi (3.14159265358979323846)
 
