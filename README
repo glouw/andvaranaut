@@ -3,24 +3,15 @@ Water:
 
 Controls:
     move: w,a,s,d
-    turn: h,l
+    turn: h,l or mouse
     open: e
     zoom: o,p
-    grab: j
-    edit: k
+    grab: j or left mouse
     exit: F1
-    save: F5
-
-    insert mode: i
-    normal mode: enter, escape, capslock
-
-        1: flooring
-        2: walling
-        3: ceiling
 
 Execution:
     The first command line argument selects the resolution:
         ./water 512
 
     Resolution 128 is reservered for performance testing and
-    will exit after 60 frame renders
+    will exit after 60 rendered frames

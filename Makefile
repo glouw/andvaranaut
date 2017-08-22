@@ -4,8 +4,7 @@ PROJ = water
 # Source files
 SRCS = main.c Play.c Test.c Util.c Point.c Hit.c Line.c Map.c
 SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c String.c
-SRCS+= Sliver.c Surfaces.c Torch.c Textures.c
-SRCS+= Gui.c Input.c Attack.c
+SRCS+= Sliver.c Surfaces.c Torch.c Textures.c Gui.c Input.c Attack.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
 # Warnings flags
@@ -23,6 +22,7 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
 COMP = $(CC) $(ARCHITECTURE) $(CFLAGS) $(DEPFLAGS) -c
 LINK = $(CC) $(ARCHITECTURE) $(CFLAGS) $(OBJS) $(LDFLAGS) -o
 POST = mv -f $*.Td $*.d
+
 $(PROJ): $(OBJS)
 	$(LINK) $(PROJ)
 %.o : %.c
@@ -30,12 +30,9 @@ $(PROJ): $(OBJS)
 	$(COMP) $(OUTPUT_OPTION) $<
 	@$(POST)
 %.d: ;
+
 .PRECIOUS: %.d
 -include $(patsubst %,%.d,$(basename $(SRCS)))
-
-.PHONY: headers
-headers:
-	python headers.py
 
 .PHONY: clean
 clean:
