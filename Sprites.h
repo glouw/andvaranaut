@@ -4,7 +4,7 @@
 
 extern Sprites wake(const int level);
 
-extern void entomb(const Sprites sprites, const int level);
+extern void freeze(const Sprites sprites, const int level);
 
 extern void kill(const Sprites sprites);
 

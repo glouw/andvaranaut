@@ -105,7 +105,7 @@ typedef struct
     float width;
     float health;
     int ticks;
-    int grabbable; // Make movable instead for shoves
+    int moveable;
 }
 Sprite;
 

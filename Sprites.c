@@ -14,7 +14,7 @@ static Sprite generic(const Point where)
     sprite.state = IDLE;
     sprite.width = 0.66;
     sprite.health = 50.0;
-    sprite.grabbable = true;
+    sprite.moveable = true;
     return sprite;
 }
 
@@ -23,7 +23,7 @@ static Sprite _i_(const Point where)
     Sprite sprite = generic(where);
     sprite.ascii = 'i';
     sprite.width = 0.3;
-    sprite.grabbable = false;
+    sprite.moveable = false;
     return sprite;
 }
 
@@ -32,7 +32,7 @@ static Sprite _j_(const Point where)
     Sprite sprite = generic(where);
     sprite.ascii = 'j';
     sprite.width = 0.3;
-    sprite.grabbable = false;
+    sprite.moveable = false;
     return sprite;
 }
 
@@ -79,7 +79,7 @@ extern Sprites wake(const int level)
     return sprites;
 }
 
-extern void entomb(const Sprites sprites, const int level)
+extern void freeze(const Sprites sprites, const int level)
 {
     char which[MINTS];
     sprintf(which, "%d", level);
@@ -242,7 +242,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(!sprite->grabbable)
+        if(!sprite->moveable)
             continue;
         if(eql(hand, sprite->where, sprite->width))
         {
@@ -276,6 +276,9 @@ static void shove(const Sprites sprites)
         // Do not count the sprite that is currently grabbed
         if(sprite == grabbed)
             continue;
+        // Do not shove a sprite that is not moveable
+        if(!sprite->moveable)
+            continue;
         const float width = max(sprite->width, grabbed->width);
         if(eql(sprite->where, grabbed->where, width))
         {
@@ -285,14 +288,17 @@ static void shove(const Sprites sprites)
     }
 }
 
-// Puts a sprite at the hero's location if a sprite goes out of bounds
+// Puts a sprite in front of the hero if the sprite goes out of bounds
 static void bound(const Sprites sprites, const Hero hero, const Map map)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         if(tile(sprite->where, map.walling))
-            sprite->where = mid(hero.where);
+        {
+            const Point delta = mul(sub(hero.where, sprite->where), 0.5);
+            sprite->where = add(sprite->where, delta);
+        }
     }
 }
 
