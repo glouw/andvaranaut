@@ -295,10 +295,7 @@ static void bound(const Sprites sprites, const Hero hero, const Map map)
     {
         Sprite* const sprite = &sprites.sprite[i];
         if(tile(sprite->where, map.walling))
-        {
-            const Point delta = mul(sub(hero.where, sprite->where), 0.5);
-            sprite->where = add(sprite->where, delta);
-        }
+            sprite->where = mid(hero.where);
     }
 }
 
