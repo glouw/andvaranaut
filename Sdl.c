@@ -10,7 +10,6 @@
 #include "Util.h"
 #include "Torch.h"
 #include "Textures.h"
-#include "Gui.h"
 
 static void churn(const Sdl sdl)
 {

@@ -13,3 +13,4 @@ extern float ratio(const Line line);
 extern float ccast(const Line fov, const int res, const int x);
 
 extern float fcast(const Line fov, const int res, const int x);
+

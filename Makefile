@@ -2,9 +2,9 @@ CC = gcc -std=c99
 # Project name
 PROJ = water
 # Source files
-SRCS = main.c Play.c Test.c Util.c Point.c Hit.c Line.c Map.c
+SRCS = main.c Util.c Point.c Hit.c Line.c Map.c
 SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c String.c
-SRCS+= Sliver.c Surfaces.c Torch.c Textures.c Gui.c Input.c Attack.c
+SRCS+= Sliver.c Surfaces.c Torch.c Textures.c print.c Input.c Attack.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
 # Warnings flags
