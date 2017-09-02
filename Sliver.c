@@ -1,9 +1,6 @@
 #include "Sliver.h"
-
 #include "Line.h"
-#include "Point.h"
 #include "util.h"
-#include "Torch.h"
 
 // Wall renderer
 void wrend(const Sliver sliver, const Torch torch, int* const moddings)

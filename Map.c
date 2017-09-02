@@ -1,6 +1,5 @@
 #include "Map.h"
 #include "util.h"
-#include "Point.h"
 
 static char** get(FILE* const file, const int rows)
 {

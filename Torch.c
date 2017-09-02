@@ -1,5 +1,4 @@
 #include "Torch.h"
-
 #include "util.h"
 
 int illuminate(const Torch torch, const float distance)

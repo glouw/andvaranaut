@@ -1,7 +1,5 @@
 #include "Wall.h"
 
-#include "Line.h"
-
 Wall project(const int res, const Line fov, const Point corrected)
 {
     const int height = focal(fov) * res / corrected.x;
