@@ -44,7 +44,7 @@ static void __String()
 static void license()
 {
     puts(
-    "Water copyright (c) 2017 Gustav Louw\n"
+    "Water copyright (c) 2017 Gustav Louw, Cameron Bauer, Omar Hefnawi\n"
     "This program comes with ABSOLUTELY NO WARRANTY.\n"
     "This is free software, and you are welcome to redistribute it\n"
     "under certain conditions.\n\n"

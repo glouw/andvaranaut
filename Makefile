@@ -13,8 +13,9 @@ CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wpadded
 CFLAGS+= -g
 # Optimization flags
 CFLAGS+= -Ofast -flto
-ARCHITECTURE = -march=native
-# Linking flags
+# Architecture flags
+ARCHITECTURE = -march=native -m32
+# Linker flags
 LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 # Dependency flags
 DEPFLAGS = -MT $@ -MMD -MP -MF $*.Td
