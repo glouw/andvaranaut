@@ -2,7 +2,7 @@
 
 #include "Line.h"
 
-extern Wall project(const int res, const Line fov, const Point corrected)
+Wall project(const int res, const Line fov, const Point corrected)
 {
     const int height = focal(fov) * res / corrected.x;
     const int bot = (res - height) / 2;

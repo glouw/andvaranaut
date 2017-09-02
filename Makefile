@@ -1,10 +1,12 @@
 CC = gcc -std=c99
 # Project name
 PROJ = water
-# Source files
-SRCS = main.c Util.c Point.c Hit.c Line.c Map.c
-SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c String.c
-SRCS+= Sliver.c Surfaces.c Torch.c Textures.c print.c Input.c Attack.c
+# Modules
+SRCS = main.c util.c print.c
+# Types (Capitalized)
+SRCS+= Point.c Hit.c Line.c Map.c Weapon.c
+SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c
+SRCS+= Sliver.c Surfaces.c Torch.c Textures.c Input.c
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
 # Warnings flags

@@ -1,8 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "Hero.h"
-#include "Map.h"
 #include "Sprites.h"
+#include "Map.h"
 #include "Sdl.h"
-#include "Input.h"
 
 int main(const int argc, const char* argv[])
 {
@@ -25,14 +26,14 @@ int main(const int argc, const char* argv[])
     {
         const int t0 = SDL_GetTicks();
         // Data
-        if(teleporting(hero, map, input, sdl))
+        if(teleporting(hero, map, input, sdl.ticks))
         {
             hero = teleport(hero, map);
             map = reopen(map, hero.floor);
             sprites = rewake(sprites, hero.floor);
         }
         hero = sustain(hero, map, input);
-        sprites = caretake(sprites, hero, input, sdl, map);
+        sprites = caretake(sprites, hero, input, sdl.ticks, map);
         // Output
         render(sdl, hero, sprites, map);
         sdl = tick(sdl, renders);

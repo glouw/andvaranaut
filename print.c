@@ -1,7 +1,7 @@
 #include "print.h"
 
 #include "Sdl.h"
-#include "Util.h"
+#include "util.h"
 
 typedef struct
 {
@@ -39,7 +39,7 @@ static void scribble(const Ttf ttf, const int x, const int y, const Sdl sdl)
     SDL_DestroyTexture(texture);
 }
 
-extern void print(const Sdl sdl, const int x, const int y, char* const text)
+void print(const Sdl sdl, const int x, const int y, char* const text)
 {
     const Ttf inner = { text, { 0xFF, 0xFF, 0x00, 0x00 }, 0 };
     const Ttf outer = { text, { 0x00, 0x00, 0x00, 0x00 }, 1 };

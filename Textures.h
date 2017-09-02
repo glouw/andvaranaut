@@ -1,8 +1,15 @@
 #pragma once
 
-#include "Types.h"
+#include <SDL2/SDL.h>
+#include "Surfaces.h"
 
-extern Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer);
+typedef struct
+{
+    SDL_Texture** texture;
+    int count;
+}
+Textures;
 
-extern void purge(const Textures textures);
+Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer);
 
+void purge(const Textures textures);

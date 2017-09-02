@@ -1,8 +1,6 @@
 #include "Map.h"
-
-#include "Util.h"
+#include "util.h"
 #include "Point.h"
-#include "String.h"
 
 static char** get(FILE* const file, const int rows)
 {
@@ -12,7 +10,7 @@ static char** get(FILE* const file, const int rows)
     return block;
 }
 
-extern Map open(const int level)
+Map open(const int level)
 {
     char which[MINTS];
     sprintf(which, "%d", level);
@@ -29,7 +27,7 @@ extern Map open(const int level)
     return map;
 }
 
-extern void dump(const Map map, const int level)
+void dump(const Map map, const int level)
 {
     char which[MINTS];
     sprintf(which, "%d", level);
@@ -43,7 +41,7 @@ extern void dump(const Map map, const int level)
     free(path);
 }
 
-extern void close(const Map map)
+void close(const Map map)
 {
     for(int row = 0; row < map.rows; row++)
     {
@@ -56,13 +54,13 @@ extern void close(const Map map)
     free(map.floring);
 }
 
-extern Map reopen(const Map map, const int level)
+Map reopen(const Map map, const int level)
 {
     close(map);
     return open(level);
 }
 
-extern int isportal(const Map map, const Point where)
+int isportal(const Map map, const Point where)
 {
     return block(where, map.floring) == '~'
         || block(where, map.ceiling) == '~';

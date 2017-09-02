@@ -1,9 +1,11 @@
-#include "Sprites.h"
+#include <ctype.h>
+#include <math.h>
+#include <SDL2/SDL.h>
 
+#include "Sprites.h"
 #include "Point.h"
-#include "Util.h"
+#include "util.h"
 #include "Hero.h"
-#include "String.h"
 
 static Sprite generic(const Point where)
 {
@@ -55,7 +57,7 @@ static Sprite registrar(const int ascii, const Point where)
     return generic(where);
 }
 
-extern Sprites wake(const int level)
+Sprites wake(const int level)
 {
     char which[MINTS];
     sprintf(which, "%d", level);
@@ -79,7 +81,7 @@ extern Sprites wake(const int level)
     return sprites;
 }
 
-extern void freeze(const Sprites sprites, const int level)
+void freeze(const Sprites sprites, const int level)
 {
     char which[MINTS];
     sprintf(which, "%d", level);
@@ -95,12 +97,12 @@ extern void freeze(const Sprites sprites, const int level)
     free(path);
 }
 
-extern void kill(const Sprites sprites)
+void kill(const Sprites sprites)
 {
     free(sprites.sprite);
 }
 
-extern Sprites rewake(const Sprites sprites, const int level)
+Sprites rewake(const Sprites sprites, const int level)
 {
     kill(sprites);
     return wake(level);
@@ -162,7 +164,7 @@ static void turn(const Sprites sprites, const Hero hero)
     }
 }
 
-extern Sprites arrange(const Sprites sprites, const Hero hero)
+Sprites arrange(const Sprites sprites, const Hero hero)
 {
     const Sprites copied = copy(sprites);
     pull(copied, hero);
@@ -180,12 +182,12 @@ static void rearrange(const Sprites sprites, const Hero hero)
 
 // Sprites will only ever rest after their ticks have
 // exceeded the universal tick counter
-static void rest(const Sprites sprites, const Sdl sdl)
+static void rest(const Sprites sprites, const int ticks)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(sprite->ticks < sdl.ticks)
+        if(sprite->ticks < ticks)
             sprite->state = IDLE;
     }
 }
@@ -200,7 +202,7 @@ static void surrender(const Sprites sprites)
     }
 }
 
-extern int issprite(const int ascii)
+int issprite(const int ascii)
 {
     return isalpha(ascii);
 }
@@ -212,7 +214,7 @@ static Compass needle(const Point vect)
 }
 
 // Hurts all sprites within Area of Effect (AOE)
-static void hurt(const Sprites sprites, const Hero hero, const Sdl sdl)
+static void hurt(const Sprites sprites, const Hero hero, const int ticks)
 {
     // Note: all attack types must go here
     if(!hero.attack.type.swing)
@@ -224,7 +226,7 @@ static void hurt(const Sprites sprites, const Hero hero, const Sdl sdl)
         const float aoe = max(hero.attack.area, sprite->width);
         if(eql(hero.attack.where, sprite->where, aoe))
         {
-            sprite->ticks = sdl.ticks + 3;
+            sprite->ticks = ticks + 3;
             sprite->health -= hero.attack.power;
             sprite->state = (State) dir;
         }
@@ -299,13 +301,13 @@ static void bound(const Sprites sprites, const Hero hero, const Map map)
     }
 }
 
-extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl, const Map map)
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const int ticks, const Map map)
 {
     rearrange(sprites, hero);
-    rest(sprites, sdl);
+    rest(sprites, ticks);
     grab(sprites, hero, input);
     shove(sprites);
-    hurt(sprites, hero, sdl);
+    hurt(sprites, hero, ticks);
     surrender(sprites);
     bound(sprites, hero, map);
     // Will be modified when sprites create other sprites

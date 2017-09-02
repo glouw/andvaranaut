@@ -1,12 +1,32 @@
 #pragma once
 
-#include "Types.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
-extern Sdl setup(const int res, const int fps);
+#include "Surfaces.h"
+#include "Textures.h"
+#include "Hero.h"
+#include "Sprites.h"
 
-extern void release(const Sdl sdl);
+typedef struct
+{
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    SDL_Texture* texture;
+    TTF_Font* font;
+    int res;
+    int fps;
+    Surfaces surfaces;
+    Textures textures;
+    int renders;
+    int ticks;
+}
+Sdl;
 
-extern Sdl tick(const Sdl sdl, const int renders);
+Sdl setup(const int res, const int fps);
 
-extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map);
+void release(const Sdl sdl);
 
+Sdl tick(const Sdl sdl, const int renders);
+
+void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map);

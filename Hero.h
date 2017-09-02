@@ -1,16 +1,37 @@
 #pragma once
 
-#include "Types.h"
+#include "Line.h"
+#include "Torch.h"
+#include "Weapon.h"
+#include "Attack.h"
+#include "Impact.h"
+#include "Map.h"
+#include "Input.h"
 
-extern Hero spawn();
+typedef struct
+{
+    Line fov;
+    Point where;
+    Point velocity;
+    float speed;
+    float acceleration;
+    float theta;
+    Torch torch;
+    float arm;
+    int floor;
+    Weapon weapon;
+    Attack attack;
+}
+Hero;
 
-extern Point touch(const Hero hero, const float reach);
+Hero spawn();
 
-extern Impact march(const Hero hero, char** const block, const Point column, const int res);
+Point touch(const Hero hero, const float reach);
 
-extern int teleporting(const Hero hero, const Map map, const Input input, const Sdl sdl);
+Impact march(const Hero hero, char** const block, const Point column, const int res);
 
-extern Hero teleport(const Hero hero, const Map map);
+int teleporting(const Hero hero, const Map map, const Input input, const int ticks);
 
-extern Hero sustain(const Hero hero, const Map map, const Input input);
+Hero teleport(const Hero hero, const Map map);
 
+Hero sustain(const Hero hero, const Map map, const Input input);

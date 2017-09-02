@@ -1,6 +1,15 @@
 #pragma once
 
-#include "Types.h"
+#include "Point.h"
+#include "Compass.h"
 
-extern Hit cast(const Point where, const Point direction, char** const walling);
+typedef struct
+{
+    int surface;
+    float offset;
+    Point where;
+    Compass facing;
+}
+Hit;
 
+Hit cast(const Point where, const Point direction, char** const walling);

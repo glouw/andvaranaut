@@ -1,15 +1,10 @@
 #include "Sdl.h"
-
+#include "State.h"
+#include "Frame.h"
 #include "Display.h"
+#include "Scanline.h"
 #include "Sliver.h"
-#include "Sprites.h"
-#include "Surfaces.h"
-#include "Line.h"
-#include "Point.h"
-#include "Hero.h"
-#include "Util.h"
-#include "Torch.h"
-#include "Textures.h"
+#include "util.h"
 
 static void churn(const Sdl sdl)
 {
@@ -87,7 +82,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds,
     }
 }
 
-extern Sdl setup(const int res, const int fps)
+Sdl setup(const int res, const int fps)
 {
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Init(SDL_INIT_VIDEO);
@@ -108,7 +103,7 @@ extern Sdl setup(const int res, const int fps)
     return sdl;
 }
 
-extern void release(const Sdl sdl)
+void release(const Sdl sdl)
 {
     clean(sdl.surfaces);
     purge(sdl.textures);
@@ -119,7 +114,7 @@ extern void release(const Sdl sdl)
     TTF_CloseFont(sdl.font);
 }
 
-extern Sdl tick(const Sdl sdl, const int renders)
+Sdl tick(const Sdl sdl, const int renders)
 {
     Sdl temp = sdl;
     temp.renders = renders;
@@ -127,7 +122,7 @@ extern Sdl tick(const Sdl sdl, const int renders)
     return temp;
 }
 
-extern void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
+void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
 {
     // Sprite location relative to player
     const Sprites relatives = arrange(sprites, hero);

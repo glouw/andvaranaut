@@ -1,8 +1,15 @@
 #pragma once
 
-#include "Types.h"
+#include "Sdl.h"
 
-extern Display lock(const Sdl sdl);
+typedef struct
+{
+    uint32_t* pixels;
+    int width;
+}
+Display;
 
-extern void unlock(const Sdl sdl);
+Display lock(const Sdl sdl);
+
+void unlock(const Sdl sdl);
 

@@ -1,6 +1,7 @@
-#include "Input.h"
+#include <SDL2/SDL.h>
 
-#include "Util.h"
+#include "Input.h"
+#include "util.h"
 
 static Input keyboard(const Input input)
 {
@@ -18,12 +19,12 @@ static Input mouse(const Input input)
     return temp;
 }
 
-extern Input pump(const Input input)
+Input pump(const Input input)
 {
     return mouse(keyboard(input));
 }
 
-extern Input ready()
+Input ready()
 {
     Input input;
     zero(input);

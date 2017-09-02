@@ -1,8 +1,11 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
 #include "Point.h"
+#include "util.h"
 
-#include "Util.h"
-
-extern Point trn(const Point a, const float t)
+Point trn(const Point a, const float t)
 {
     Point out;
     out.x = a.x * cosf(t) - a.y * sinf(t);
@@ -10,7 +13,7 @@ extern Point trn(const Point a, const float t)
     return out;
 }
 
-extern Point rag(const Point a)
+Point rag(const Point a)
 {
     Point out;
     out.x = -a.y;
@@ -18,7 +21,7 @@ extern Point rag(const Point a)
     return out;
 }
 
-extern Point sub(const Point a, const Point b)
+Point sub(const Point a, const Point b)
 {
     Point out;
     out.x = a.x - b.x;
@@ -26,7 +29,7 @@ extern Point sub(const Point a, const Point b)
     return out;
 }
 
-extern Point add(const Point a, const Point b)
+Point add(const Point a, const Point b)
 {
     Point out;
     out.x = a.x + b.x;
@@ -34,7 +37,7 @@ extern Point add(const Point a, const Point b)
     return out;
 }
 
-extern Point mul(const Point a, const float n)
+Point mul(const Point a, const float n)
 {
     Point out;
     out.x = a.x * n;
@@ -42,12 +45,12 @@ extern Point mul(const Point a, const float n)
     return out;
 }
 
-extern float mag(const Point a)
+float mag(const Point a)
 {
     return sqrtf(a.x * a.x + a.y * a.y);
 }
 
-extern Point dvd(const Point a, const float n)
+Point dvd(const Point a, const float n)
 {
     Point out;
     out.x = a.x / n;
@@ -55,17 +58,17 @@ extern Point dvd(const Point a, const float n)
     return out;
 }
 
-extern Point unt(const Point a)
+Point unt(const Point a)
 {
     return dvd(a, mag(a));
 }
 
-extern float slp(const Point a)
+float slp(const Point a)
 {
     return a.y / a.x;
 }
 
-extern Point shr(const Point a, const Point b)
+Point shr(const Point a, const Point b)
 {
     Point out;
     out.x = b.x > 0.0 ? fl(a.x + 1.0) : cl(a.x - 1.0);
@@ -73,7 +76,7 @@ extern Point shr(const Point a, const Point b)
     return out;
 }
 
-extern Point mid(const Point a)
+Point mid(const Point a)
 {
     Point out;
     out.x = fl(a.x) + 0.5;
@@ -81,7 +84,7 @@ extern Point mid(const Point a)
     return out;
 }
 
-extern Point svr(const Point a, const Point b)
+Point svr(const Point a, const Point b)
 {
     Point out;
     out.y = b.y > 0.0 ? fl(a.y + 1.0) : cl(a.y - 1.0);
@@ -89,17 +92,17 @@ extern Point svr(const Point a, const Point b)
     return out;
 }
 
-extern int inf(const Point a)
+int inf(const Point a)
 {
     return isinf(a.x) || isinf(a.y);
 }
 
-extern Point cmp(const Point a, const Point b, const Point c)
+Point cmp(const Point a, const Point b, const Point c)
 {
     return inf(c) ? b : inf(b) ? c : mag(sub(b, a)) < mag(sub(c, a)) ? b : c;
 }
 
-extern int eql(const Point a, const Point b, const float epsilon)
+int eql(const Point a, const Point b, const float epsilon)
 {
     return a.x < b.x + (epsilon / 2.0)
         && a.x > b.x - (epsilon / 2.0)
@@ -107,12 +110,12 @@ extern int eql(const Point a, const Point b, const float epsilon)
         && a.y > b.y - (epsilon / 2.0);
 }
 
-extern int block(const Point a, char** const blocks)
+int block(const Point a, char** const blocks)
 {
     return blocks[(int) a.y][(int) a.x];
 }
 
-extern int tile(const Point a, char** const blocks)
+int tile(const Point a, char** const blocks)
 {
     return block(a, blocks) - ' ';
 }

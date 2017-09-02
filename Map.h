@@ -1,14 +1,23 @@
 #pragma once
 
-#include "Types.h"
+#include "Point.h"
 
-extern Map open(const int level);
+typedef struct
+{
+    // Clang like to break these pointers
+    char** volatile ceiling;
+    char** volatile walling;
+    char** volatile floring;
+    int rows;
+}
+Map;
 
-extern void dump(const Map map, const int level);
+Map open(const int level);
 
-extern void close(const Map map);
+void dump(const Map map, const int level);
 
-extern Map reopen(const Map map, const int level);
+void close(const Map map);
 
-extern int isportal(const Map map, const Point where);
+Map reopen(const Map map, const int level);
 
+int isportal(const Map map, const Point where);

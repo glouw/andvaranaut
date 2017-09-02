@@ -1,12 +1,21 @@
 #pragma once
 
-#include "Types.h"
+#include "Scanline.h"
+#include "Impact.h"
+#include "Torch.h"
+#include "Point.h"
 
-extern void wrend(const Sliver sliver, const Torch torch, int* const moddings);
+typedef struct
+{
+    Scanline scanline;
+    Impact impact;
+}
+Sliver;
 
-extern void frend(const Sliver sliver, char** const floring, const Torch torch, Point* const wheres, int* const moddings, const float* party);
+void wrend(const Sliver sliver, const Torch torch, int* const moddings);
 
-extern void crend(const Sliver sliver, char** const ceiling, Point* wheres);
+void frend(const Sliver sliver, char** const floring, const Torch torch, Point* const wheres, int* const moddings, const float* party);
 
-extern void light(const Sliver sliver, int* const moddings);
+void crend(const Sliver sliver, char** const ceiling, Point* wheres);
 
+void light(const Sliver sliver, int* const moddings);

@@ -1,6 +1,6 @@
 #include "Display.h"
 
-extern Display lock(const Sdl sdl)
+Display lock(const Sdl sdl)
 {
     void* screen;
     int pitch;
@@ -10,7 +10,7 @@ extern Display lock(const Sdl sdl)
     return display;
 }
 
-extern void unlock(const Sdl sdl)
+void unlock(const Sdl sdl)
 {
     SDL_UnlockTexture(sdl.texture);
 }

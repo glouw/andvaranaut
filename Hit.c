@@ -1,7 +1,6 @@
 #include "Hit.h"
-
 #include "Point.h"
-#include "Util.h"
+#include "util.h"
 
 static Compass needle(const Point where, const Point other)
 {
@@ -31,7 +30,7 @@ static Hit collision(const Point ray, const Point direction, char** const wallin
     return hit;
 }
 
-extern Hit cast(const Point where, const Point direction, char** const walling)
+Hit cast(const Point where, const Point direction, char** const walling)
 {
     const Point ray = cmp(where, shr(where, direction), svr(where, direction));
     const Hit hit = collision(ray, direction, walling);

@@ -1,21 +1,21 @@
 #include "Torch.h"
 
-#include "Util.h"
+#include "util.h"
 
-extern int illuminate(const Torch torch, const float distance)
+int illuminate(const Torch torch, const float distance)
 {
     const int luminance = torch.light / distance;
     return luminance > 0xFF ? 0xFF : luminance;
 }
 
-extern Torch burn(const Torch torch)
+Torch burn(const Torch torch)
 {
     Torch temp = torch;
     temp.light += temp.dtorch;
     return temp.light > temp.brightness ? torch : temp;
 }
 
-extern Torch out()
+Torch out()
 {
     Torch torch;
     zero(torch);

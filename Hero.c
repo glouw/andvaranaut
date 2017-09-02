@@ -1,15 +1,7 @@
-#include "Hero.h"
+#include <SDL2/SDL.h>
 
-#include "Point.h"
-#include "Hit.h"
-#include "Wall.h"
 #include "Hero.h"
-#include "Util.h"
-#include "Map.h"
-#include "Sprites.h"
-#include "Attack.h"
-#include "Torch.h"
-#include "Input.h"
+#include "util.h"
 
 static Line lens(const float scale)
 {
@@ -29,7 +21,7 @@ static Point beginning()
     return where;
 }
 
-extern Hero spawn()
+Hero spawn()
 {
     Hero hero;
     zero(hero);
@@ -54,7 +46,7 @@ static Hero spin(const Hero hero, const Input input)
     return temp;
 }
 
-extern Point touch(const Hero hero, const float reach)
+Point touch(const Hero hero, const float reach)
 {
     const Point reference = { reach, 0.0 };
     const Point direction = trn(reference, hero.theta);
@@ -107,7 +99,7 @@ static Hero zoom(const Hero hero, const Input input)
     return temp;
 }
 
-extern Impact march(const Hero hero, char** const block, const Point column, const int res)
+Impact march(const Hero hero, char** const block, const Point column, const int res)
 {
     const Hit hit = cast(hero.where, column, block);
     const Point ray = sub(hit.where, hero.where);
@@ -119,25 +111,38 @@ extern Impact march(const Hero hero, char** const block, const Point column, con
     return impact;
 }
 
-extern int teleporting(const Hero hero, const Map map, const Input input, const Sdl sdl)
+int teleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
     static int last;
     const int buffer = 3;
-    if(sdl.ticks < last + buffer)
+    if(ticks < last + buffer)
         return false;
     if(!input.key[SDL_SCANCODE_E])
         return false;
-    last = sdl.ticks;
+    last = ticks;
     return isportal(map, hero.where);
 }
 
-extern Hero teleport(const Hero hero, const Map map)
+Hero teleport(const Hero hero, const Map map)
 {
     Hero temp = hero;
     temp.torch = out();
     if(block(hero.where, map.floring) == '~') temp.floor++;
     if(block(hero.where, map.ceiling) == '~') temp.floor--;
     return temp;
+}
+
+static Attack swing(const Hero hero, const Point vect)
+{
+    Attack attack;
+    zero(attack);
+    attack.type.swing = true;
+    attack.vect = vect;
+    attack.power = power(hero.weapon) * mag(vect);
+    attack.reach = hero.arm + reach(hero.weapon);
+    attack.where = touch(hero, attack.reach);
+    attack.area = 2 * attack.reach;
+    return attack;
 }
 
 static Hero melee(const Hero hero, const Input input)
@@ -166,7 +171,7 @@ static Hero melee(const Hero hero, const Input input)
     return temp;
 }
 
-extern Hero sustain(const Hero hero, const Map map, const Input input)
+Hero sustain(const Hero hero, const Map map, const Input input)
 {
     Hero temp = hero;
     temp = spin(temp, input);

@@ -1,8 +1,8 @@
 #include "Textures.h"
 
-#include "Util.h"
+#include "util.h"
 
-extern Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer)
+Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer)
 {
     const int count = surfaces.count;
     SDL_Texture** const texture = toss(SDL_Texture*, count);
@@ -12,7 +12,7 @@ extern Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer)
     return textures;
 }
 
-extern void purge(const Textures textures)
+void purge(const Textures textures)
 {
     for(int i = 0; i < textures.count; i++)
         SDL_DestroyTexture(textures.texture[i]);

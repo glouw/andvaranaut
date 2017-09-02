@@ -1,16 +1,22 @@
 #pragma once
 
-#include "Types.h"
+#include "Point.h"
 
-extern Line rotate(const Line line, const float t);
+typedef struct
+{
+    Point a;
+    Point b;
+}
+Line;
 
-extern Point lerp(const Line line, const float n);
+Line rotate(const Line line, const float t);
 
-extern float focal(const Line line);
+Point lerp(const Line line, const float n);
 
-extern float ratio(const Line line);
+float focal(const Line line);
 
-extern float ccast(const Line fov, const int res, const int x);
+float ratio(const Line line);
 
-extern float fcast(const Line fov, const int res, const int x);
+float ccast(const Line fov, const int res, const int x);
 
+float fcast(const Line fov, const int res, const int x);

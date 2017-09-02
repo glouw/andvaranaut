@@ -1,8 +1,14 @@
 #pragma once
 
-#include "Types.h"
+#include <SDL2/SDL.h>
 
-extern Surfaces pull(const uint32_t format);
+typedef struct
+{
+    SDL_Surface** surface;
+    int count;
+}
+Surfaces;
 
-extern void clean(const Surfaces surfaces);
+Surfaces pull(const uint32_t format);
 
+void clean(const Surfaces surfaces);

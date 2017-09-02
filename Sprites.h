@@ -1,18 +1,39 @@
 #pragma once
 
-#include "Types.h"
+#include "Hero.h"
+#include "State.h"
 
-extern Sprites wake(const int level);
+typedef struct
+{
+    Point where;
+    int ascii;
+    State state;
+    int transparent;
+    float width;
+    float health;
+    int ticks;
+    int moveable;
+}
+Sprite;
 
-extern void freeze(const Sprites sprites, const int level);
+typedef struct
+{
+    Sprite* sprite;
+    int count;
+    int max;
+}
+Sprites;
 
-extern void kill(const Sprites sprites);
+Sprites wake(const int level);
 
-extern Sprites rewake(const Sprites sprites, const int level);
+void freeze(const Sprites sprites, const int level);
 
-extern Sprites arrange(const Sprites sprites, const Hero hero);
+void kill(const Sprites sprites);
 
-extern int issprite(const int ascii);
+Sprites rewake(const Sprites sprites, const int level);
 
-extern Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Sdl sdl, const Map map);
+Sprites arrange(const Sprites sprites, const Hero hero);
 
+int issprite(const int ascii);
+
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const int ticks, const Map map);

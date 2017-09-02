@@ -1,21 +1,23 @@
-#include "Util.h"
+#include "util.h"
+#include <stdarg.h>
+#include <ctype.h>
 
-extern int fl(const float x)
+int fl(const float x)
 {
     return (int) x - (x < (int) x);
 }
 
-extern int cl(const float x)
+int cl(const float x)
 {
     return (int) x + (x > (int) x);
 }
 
-extern float dec(const float x)
+float dec(const float x)
 {
     return x - (int) x;
 }
 
-extern int lns(FILE* const file)
+int lns(FILE* const file)
 {
     int ch = EOF;
     int lines = 0;
@@ -32,7 +34,7 @@ extern int lns(FILE* const file)
     return lines;
 }
 
-extern char* readln(FILE* const file)
+char* readln(FILE* const file)
 {
     int ch = EOF;
     int reads = 0;
@@ -48,7 +50,7 @@ extern char* readln(FILE* const file)
     return line;
 }
 
-extern void bomb(const char* const message, ...)
+void bomb(const char* const message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -57,12 +59,36 @@ extern void bomb(const char* const message, ...)
     exit(1);
 }
 
-extern bool odd(const int a)
+bool odd(const int a)
 {
     return a % 2;
 }
 
-extern int balance(const int a)
+int balance(const int a)
 {
     return odd(a) ? a + 1 : a;
+}
+
+char* concat(const char* const a, const char* const b)
+{
+    char* c = toss(char, strlen(a) + strlen(b) + 1);
+    strcpy(c, a);
+    strcat(c, b);
+    return c;
+}
+
+int match(const char* const a, const char* const b)
+{
+    return strcmp(a, b) == 0;
+}
+
+char* trim(char* const a)
+{
+    char* start = a;
+    while(isspace(*start))
+        start++;
+    char* end = start + strlen(start);
+    while(isspace(*--end))
+        *end = '\0';
+    return start;
 }

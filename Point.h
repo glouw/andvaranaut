@@ -1,38 +1,43 @@
 #pragma once
 
-#include "Types.h"
+typedef struct
+{
+    float x;
+    float y;
+}
+Point;
 
-extern Point trn(const Point a, const float t);
+Point trn(const Point a, const float t);
 
-extern Point rag(const Point a);
+Point rag(const Point a);
 
-extern Point sub(const Point a, const Point b);
+Point sub(const Point a, const Point b);
 
-extern Point add(const Point a, const Point b);
+Point add(const Point a, const Point b);
 
-extern Point mul(const Point a, const float n);
+Point mul(const Point a, const float n);
 
-extern float mag(const Point a);
+float mag(const Point a);
 
-extern Point dvd(const Point a, const float n);
+Point dvd(const Point a, const float n);
 
-extern Point unt(const Point a);
+Point unt(const Point a);
 
-extern float slp(const Point a);
+float slp(const Point a);
 
-extern Point shr(const Point a, const Point b);
+Point shr(const Point a, const Point b);
 
-extern Point mid(const Point a);
+Point mid(const Point a);
 
-extern Point svr(const Point a, const Point b);
+Point svr(const Point a, const Point b);
 
-extern int inf(const Point a);
+int inf(const Point a);
 
-extern Point cmp(const Point a, const Point b, const Point c);
+Point cmp(const Point a, const Point b, const Point c);
 
-extern int eql(const Point a, const Point b, const float epsilon);
+int eql(const Point a, const Point b, const float epsilon);
 
-extern int block(const Point a, char** const blocks);
+int block(const Point a, char** const blocks);
 
-extern int tile(const Point a, char** const blocks);
+int tile(const Point a, char** const blocks);
 

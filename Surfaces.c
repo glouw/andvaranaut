@@ -1,7 +1,6 @@
 #include "Surfaces.h"
 
-#include "Util.h"
-#include "String.h"
+#include "util.h"
 
 #include <SDL2/SDL_image.h>
 
@@ -31,7 +30,7 @@ static SDL_Surface* load(const char* const path, const uint32_t format)
     }
 }
 
-extern Surfaces pull(const uint32_t format)
+Surfaces pull(const uint32_t format)
 {
     FILE* const file = fopen("surfaces/surfaces.cfg", "r");
     const int lines = lns(file);
@@ -49,7 +48,7 @@ extern Surfaces pull(const uint32_t format)
     return surfaces;
 }
 
-extern void clean(const Surfaces surfaces)
+void clean(const Surfaces surfaces)
 {
     for(int i = 0; i < surfaces.count; i++)
         SDL_FreeSurface(surfaces.surface[i]);

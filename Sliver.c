@@ -2,11 +2,11 @@
 
 #include "Line.h"
 #include "Point.h"
-#include "Util.h"
+#include "util.h"
 #include "Torch.h"
 
 // Wall renderer
-extern void wrend(const Sliver sliver, const Torch torch, int* const moddings)
+void wrend(const Sliver sliver, const Torch torch, int* const moddings)
 {
     // Aliases
     const int y = sliver.scanline.y;
@@ -29,7 +29,7 @@ extern void wrend(const Sliver sliver, const Torch torch, int* const moddings)
 }
 
 // Floor renderer - precalucates some of crend()'s stuff
-extern void frend(const Sliver sliver, char** const floring, const Torch torch, Point* const wheres, int* const moddings, const float* party)
+void frend(const Sliver sliver, char** const floring, const Torch torch, Point* const wheres, int* const moddings, const float* party)
 {
     // Aliases
     const int width = sliver.scanline.display.width;
@@ -52,7 +52,7 @@ extern void frend(const Sliver sliver, char** const floring, const Torch torch, 
 }
 
 // Ceiling renderer - Saves time by using some of frend()'s calculations
-extern void crend(const Sliver sliver, char** const ceiling, Point* wheres)
+void crend(const Sliver sliver, char** const ceiling, Point* wheres)
 {
     // Aliases
     const int y = sliver.scanline.y;
@@ -77,7 +77,7 @@ static void mod(uint32_t* const pixel, const int m)
     *pixel = rm << 0x10 | gm << 0x08 | bm << 0x00;
 }
 
-extern void light(const Sliver sliver, int* const moddings)
+void light(const Sliver sliver, int* const moddings)
 {
     // Aliases
     const int y = sliver.scanline.y;

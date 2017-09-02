@@ -1,6 +1,18 @@
 #pragma once
 
-#include "Types.h"
+#include "Point.h"
 
-extern Attack swing(const Hero hero, const Point vect);
-
+typedef struct
+{
+    Point vect;
+    union
+    {
+        int swing;
+    }
+    type;
+    float power;
+    Point where;
+    float reach;
+    float area;
+}
+Attack;

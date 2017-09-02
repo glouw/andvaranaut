@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Types.h"
+#include "Sdl.h"
 
-extern void print(const Sdl sdl, const int x, const int y, char* const text);
-
+void print(const Sdl sdl, const int x, const int y, char* const text);
