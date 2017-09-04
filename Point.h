@@ -40,4 +40,3 @@ int eql(const Point a, const Point b, const float epsilon);
 int block(const Point a, char** const blocks);
 
 int tile(const Point a, char** const blocks);
-

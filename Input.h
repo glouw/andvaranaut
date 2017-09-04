@@ -22,4 +22,3 @@ Input;
 Input pump(const Input input);
 
 Input ready();
-

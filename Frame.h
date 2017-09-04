@@ -6,4 +6,3 @@ typedef enum
     FRAMES
 }
 Frame;
-

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-
 #include "Surfaces.h"
 #include "Textures.h"
 #include "Hero.h"
 #include "Sprites.h"
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 typedef struct
 {

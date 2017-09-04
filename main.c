@@ -7,7 +7,7 @@
 
 int main(const int argc, const char* argv[])
 {
-    puts("Water copyright (c) 2017 Gustav Louw, Cameron Bauer, Omar Hefnawi");
+    puts("Water copyright (c) 2017 Gustav Louw, Cameron Bauer");
     puts("This program comes with ABSOLUTELY NO WARRANTY.");
     puts("This is free software, and you are welcome to redistribute it");
     puts("under certain conditions.");

@@ -1,8 +1,9 @@
 #include "Sprites.h"
 
 #include "Point.h"
-#include "util.h"
 #include "Hero.h"
+#include "util.h"
+
 #include <ctype.h>
 #include <math.h>
 #include <SDL2/SDL.h>

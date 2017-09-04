@@ -1,7 +1,8 @@
 #pragma once
 
-#include <SDL2/SDL.h>
 #include "Surfaces.h"
+
+#include <SDL2/SDL.h>
 
 typedef struct
 {

@@ -1,6 +1,7 @@
 #include "Hero.h"
 
 #include "util.h"
+
 #include <SDL2/SDL.h>
 
 static Line lens(const float scale)
