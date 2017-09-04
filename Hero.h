@@ -8,6 +8,8 @@
 #include "Map.h"
 #include "Input.h"
 
+#include <stdbool.h>
+
 typedef struct
 {
     Line fov;
@@ -30,7 +32,7 @@ Point touch(const Hero hero, const float reach);
 
 Impact march(const Hero hero, char** const block, const Point column, const int res);
 
-int teleporting(const Hero hero, const Map map, const Input input, const int ticks);
+bool teleporting(const Hero hero, const Map map, const Input input, const int ticks);
 
 Hero teleport(const Hero hero, const Map map);
 

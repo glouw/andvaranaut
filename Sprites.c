@@ -1,11 +1,11 @@
-#include <ctype.h>
-#include <math.h>
-#include <SDL2/SDL.h>
-
 #include "Sprites.h"
+
 #include "Point.h"
 #include "util.h"
 #include "Hero.h"
+#include <ctype.h>
+#include <math.h>
+#include <SDL2/SDL.h>
 
 static Sprite generic(const Point where)
 {

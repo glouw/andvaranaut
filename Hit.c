@@ -1,4 +1,5 @@
 #include "Hit.h"
+
 #include "util.h"
 
 static Compass needle(const Point where, const Point other)

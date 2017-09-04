@@ -1,6 +1,7 @@
+#include "util.h"
+
 #include <stdarg.h>
 #include <ctype.h>
-#include "util.h"
 
 int fl(const float x)
 {

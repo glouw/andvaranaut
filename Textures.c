@@ -1,4 +1,5 @@
 #include "Textures.h"
+
 #include "util.h"
 
 Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer)

@@ -1,9 +1,9 @@
+#include "Point.h"
+
+#include "util.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdbool.h>
-
-#include "Point.h"
-#include "util.h"
 
 Point trn(const Point a, const float t)
 {

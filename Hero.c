@@ -1,7 +1,7 @@
-#include <SDL2/SDL.h>
-
 #include "Hero.h"
+
 #include "util.h"
+#include <SDL2/SDL.h>
 
 static Line lens(const float scale)
 {
@@ -111,7 +111,7 @@ Impact march(const Hero hero, char** const block, const Point column, const int 
     return impact;
 }
 
-int teleporting(const Hero hero, const Map map, const Input input, const int ticks)
+bool teleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
     static int last;
     const int buffer = 3;

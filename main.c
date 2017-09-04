@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "Hero.h"
 #include "Sprites.h"
 #include "Map.h"
 #include "Sdl.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 int main(const int argc, const char* argv[])
 {
