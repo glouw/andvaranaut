@@ -38,7 +38,7 @@ CFLAGS+= -Ofast -flto
 ARCH = -march=native -m32
 
 # Linker flags
-LDFLAGS = -Llib/linux32 -lSDL2 -lSDL2_image -lSDL2_ttf -Wl,-Rlib/linux32
+LDFLAGS = -LSDL2/linux32 -lSDL2 -lSDL2_image -lSDL2_ttf -Wl,-RSDL2/linux32
 LDFLAGS+= -lm
 
 # Linker
