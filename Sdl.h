@@ -4,9 +4,8 @@
 #include "Textures.h"
 #include "Hero.h"
 #include "Sprites.h"
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
 
 typedef struct
 {
@@ -30,3 +29,5 @@ void release(const Sdl sdl);
 Sdl tick(const Sdl sdl, const int renders);
 
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map);
+
+void version();

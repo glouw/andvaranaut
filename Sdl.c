@@ -24,15 +24,22 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     for(; seen.w > 0; seen.w--, seen.x++)
     {
         const int x = seen.x;
-        if(x < 0 || x >= res) continue;
-        if(where.x < correcteds[x].x) break;
+        if(x < 0 || x >= res)
+            continue;
+        if(where.x < correcteds[x].x)
+            break;
     }
     // Clips sprite from the right
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
-        if(x < 0 || x >= res) continue;
-        if(where.x < correcteds[x].x) { seen.w = seen.w + 1; break; }
+        if(x < 0 || x >= res)
+            continue;
+        if(where.x < correcteds[x].x)
+        {
+            seen.w = seen.w + 1;
+            break;
+        }
     }
     return seen;
 }

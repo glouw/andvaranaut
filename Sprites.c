@@ -3,10 +3,10 @@
 #include "Point.h"
 #include "Hero.h"
 #include "util.h"
+#include "SDL2/SDL.h"
 
 #include <ctype.h>
 #include <math.h>
-#include <SDL2/SDL.h>
 
 static Sprite generic(const Point where)
 {

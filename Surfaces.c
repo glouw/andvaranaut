@@ -1,8 +1,7 @@
 #include "Surfaces.h"
 
+#include "SDL2/SDL_image.h"
 #include "util.h"
-
-#include <SDL2/SDL_image.h>
 
 static SDL_Surface* load(const char* const path, const uint32_t format)
 {

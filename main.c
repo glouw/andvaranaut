@@ -2,6 +2,7 @@
 #include "Sprites.h"
 #include "Map.h"
 #include "Sdl.h"
+#include "libcheck.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,6 +12,8 @@ int main(const int argc, const char* argv[])
     puts("This program comes with ABSOLUTELY NO WARRANTY.");
     puts("This is free software, and you are welcome to redistribute it");
     puts("under certain conditions.");
+    // How broken is your link?
+    libcheck();
     // Early exit if no command line arguments
     if(argc == 1)
         return 1;

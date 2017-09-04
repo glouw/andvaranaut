@@ -5,13 +5,28 @@ CC = gcc -std=c99
 PROJ = water
 
 # Source files
-SRCS = main.c util.c print.c
-SRCS+= Point.c Hit.c Line.c Map.c Weapon.c
-SRCS+= Sdl.c Display.c Wall.c Hero.c Sprites.c
-SRCS+= Sliver.c Surfaces.c Torch.c Textures.c Input.c
+SRCS = Display.c
+SRCS+= Hero.c
+SRCS+= Hit.c
+SRCS+= Input.c
+SRCS+= libcheck.c
+SRCS+= Line.c
+SRCS+= main.c
+SRCS+= Map.c
+SRCS+= Point.c
+SRCS+= print.c
+SRCS+= Sdl.c
+SRCS+= Sliver.c
+SRCS+= Sprites.c
+SRCS+= Surfaces.c
+SRCS+= Textures.c
+SRCS+= Torch.c
+SRCS+= util.c
+SRCS+= Wall.c
+SRCS+= Weapon.c
 
 # Warnings flags
-CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wpadded
+CFLAGS = -Wshadow -Wall -Wpedantic -Wextra
 
 # Debugging flags
 CFLAGS+= -g
@@ -23,7 +38,8 @@ CFLAGS+= -Ofast -flto
 ARCH = -march=native -m32
 
 # Linker flags
-LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
+LDFLAGS = -Llib/linux32 -lSDL2 -lSDL2_image -lSDL2_ttf -Wl,-Rlib/linux32
+LDFLAGS+= -lm
 
 # Linker
 $(PROJ): $(SRCS:.c=.o)
