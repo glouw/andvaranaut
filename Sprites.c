@@ -45,6 +45,7 @@ static Sprite _l_(const Point where)
     return sprite;
 }
 
+// For testing "Missing" animation
 static Sprite _Z_(const Point where)
 {
     Sprite sprite = generic(where);
@@ -192,7 +193,7 @@ static void surrender(const Sprites sprites)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(sprite->health < 0.0)
+        if(sprite->health < 10.0)
             sprite->state = MERCY;
     }
 }
@@ -231,14 +232,14 @@ static void hurt(const Sprites sprites, const Hero hero, const int ticks)
 // Sprites moved with this function have their last location
 // logged before they are moved. This is useful for when sprites are shoved
 // or grabbed out of map bounds
-static void move(Sprite* const sprite, const Point to)
+static void place(Sprite* const sprite, const Point to)
 {
     sprite->last = sprite->where;
     sprite->where = to;
 }
 
 // Grabs the closest sprite when using hands
-static void grab(const Sprites sprites, const Hero hero, const Input input)
+static void grab(const Sprites sprites, const Hero hero, const Input input, const int ticks)
 {
     if(hero.weapon != HANDS)
         return;
@@ -253,7 +254,9 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
         if(eql(hand, sprite->where, sprite->width))
         {
             sprite->state = GRABBED;
-            move(sprite, hand);
+            // No time
+            sprite->ticks = ticks;
+            place(sprite, hand);
             return;
         }
     }
@@ -289,7 +292,7 @@ static void shove(const Sprites sprites)
         if(eql(sprite->where, grabbed->where, width))
         {
             const Point delta = sub(sprite->where, grabbed->where);
-            move(sprite, add(sprite->where, delta));
+            place(sprite, add(sprite->where, delta));
         }
     }
 }
@@ -305,14 +308,51 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
+// Sprite chases hero if hero gets close enough. Sprite will get bored and stop chasing
+static void chase(const Sprites sprites, const Hero hero, const int ticks)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        // Non-movable sprites cannot move!
+        if(!sprite->moveable)
+            continue;
+        // Sprites already in a timed state must pass
+        if(sprite->ticks > ticks)
+            continue;
+        if(mag(sub(sprite->where, hero.where)) < 4.0)
+        {
+            sprite->state = CHASING;
+            sprite->ticks = ticks + 30;
+        }
+    }
+}
+
+static void move(const Sprites sprites, const Hero hero)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(sprite->state == CHASING)
+        {
+            const Point dir = mul(unt(sub(sprite->where, hero.where)), -2e-2);
+            place(sprite, add(sprite->where, dir));
+        }
+    }
+}
+
 Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const int ticks)
 {
     rearrange(sprites, hero);
+    // Sprite states - lowest to highest priority - rest always occur after state timeout
     rest(sprites, ticks);
-    grab(sprites, hero, input);
-    shove(sprites);
+    chase(sprites, hero, ticks);
     hurt(sprites, hero, ticks);
+    grab(sprites, hero, input, ticks);
     surrender(sprites);
+    // Sprite moving
+    move(sprites, hero);
+    shove(sprites);
     bound(sprites, map);
     // Will be modified when sprites create other sprites
     return sprites;
