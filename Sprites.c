@@ -41,7 +41,16 @@ static Sprite _l_(const Point where)
 {
     Sprite sprite = generic(where);
     sprite.ascii = 'l';
+    sprite.width = 1.00;
+    return sprite;
+}
+
+static Sprite _Z_(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.ascii = 'Z';
     sprite.width = 0.66;
+    sprite.moveable = true;
     return sprite;
 }
 
@@ -53,6 +62,8 @@ static Sprite registrar(const int ascii, const Point where)
         case 'o': return _o_(where);
         case 't': return _t_(where);
         case 'l': return _l_(where);
+        // Tests the "Missing" animation for now
+        case 'Z': return _Z_(where);
     }
     return generic(where);
 }
