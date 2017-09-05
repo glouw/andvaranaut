@@ -9,12 +9,10 @@ SRCS = Display.c
 SRCS+= Hero.c
 SRCS+= Hit.c
 SRCS+= Input.c
-SRCS+= libcheck.c
 SRCS+= Line.c
 SRCS+= main.c
 SRCS+= Map.c
 SRCS+= Point.c
-SRCS+= print.c
 SRCS+= Sdl.c
 SRCS+= Sliver.c
 SRCS+= Sprites.c
@@ -38,8 +36,7 @@ CFLAGS+= -Ofast -flto
 ARCH = -march=native -m32
 
 # Linker flags
-LDFLAGS = -LSDL2/linux32 -lSDL2 -lSDL2_image -lSDL2_ttf -Wl,-RSDL2/linux32
-LDFLAGS+= -lm
+LDFLAGS = -Llib/linux32 -Wl,-Rlib/linux32 -lm -lc -lSDL2
 
 # Linker
 $(PROJ): $(SRCS:.c=.o)

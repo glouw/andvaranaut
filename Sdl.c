@@ -95,19 +95,17 @@ Sdl setup(const int res, const int fps)
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Init(SDL_INIT_VIDEO);
     SDL_SetRelativeMouseMode(SDL_TRUE);
-    TTF_Init();
     Sdl sdl;
     zero(sdl);
     sdl.window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
     if(!sdl.window)
-        bomb("Could not open window\n");
+        bomb("error: could not open window\n");
     sdl.renderer = SDL_CreateRenderer(sdl.window, -1, SDL_RENDERER_ACCELERATED);
     sdl.texture = SDL_CreateTexture(sdl.renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     sdl.surfaces = pull(format);
     sdl.textures = cache(sdl.surfaces, sdl.renderer);
     sdl.res = res;
     sdl.fps = fps;
-    sdl.font = TTF_OpenFont("fonts/alterebro-pixel-font.ttf", res / 8);
     return sdl;
 }
 
@@ -119,7 +117,6 @@ void release(const Sdl sdl)
     SDL_Quit();
     SDL_DestroyWindow(sdl.window);
     SDL_DestroyRenderer(sdl.renderer);
-    TTF_CloseFont(sdl.font);
 }
 
 Sdl tick(const Sdl sdl, const int renders)

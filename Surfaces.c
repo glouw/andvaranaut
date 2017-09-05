@@ -1,32 +1,18 @@
 #include "Surfaces.h"
 
-#include "SDL2/SDL_image.h"
 #include "util.h"
 
 static SDL_Surface* load(const char* const path, const uint32_t format)
 {
-    const char* const extension = strchr(path, '.');
-    // BMP: Wall, ceiling, and floorings
-    if(match(extension, ".bmp"))
-    {
-        SDL_Surface* const bmp = SDL_LoadBMP(path);
-        if(!bmp)
-            bomb("Could not open %s\n", path);
-        SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
-        SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);
-        SDL_FreeFormat(allocation);
-        SDL_FreeSurface(bmp);
-        return converted;
-    }
-    // PNG: Sprites
-    else
-    {
-        SDL_Surface* const img = IMG_Load(path);
-        if(!img)
-            bomb("Could not open %s\n", path);
-        SDL_SetColorKey(img, SDL_TRUE, SDL_MapRGB(img->format, 0x00, 0xFF, 0xFF));
-        return img;
-    }
+    SDL_Surface* const bmp = SDL_LoadBMP(path);
+    if(!bmp)
+        bomb("Could not open %s\n", path);
+    SDL_SetColorKey(bmp, SDL_TRUE, SDL_MapRGB(bmp->format, 0x00, 0xFF, 0xFF));
+    SDL_PixelFormat* const allocation = SDL_AllocFormat(format);
+    SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);
+    SDL_FreeFormat(allocation);
+    SDL_FreeSurface(bmp);
+    return converted;
 }
 
 Surfaces pull(const uint32_t format)

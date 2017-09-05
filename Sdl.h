@@ -5,14 +5,12 @@
 #include "Hero.h"
 #include "Sprites.h"
 #include "SDL2/SDL.h"
-#include "SDL2/SDL_ttf.h"
 
 typedef struct
 {
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
-    TTF_Font* font;
     int res;
     int fps;
     Surfaces surfaces;
@@ -29,5 +27,3 @@ void release(const Sdl sdl);
 Sdl tick(const Sdl sdl, const int renders);
 
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map);
-
-void version();
