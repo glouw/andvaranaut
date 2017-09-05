@@ -13,6 +13,7 @@ typedef struct
     float health;
     int ticks;
     int moveable;
+    Point last;
 }
 Sprite;
 
@@ -26,14 +27,12 @@ Sprites;
 
 Sprites wake(const int level);
 
-void freeze(const Sprites sprites, const int level);
-
 void kill(const Sprites sprites);
 
 Sprites rewake(const Sprites sprites, const int level);
 
 Sprites arrange(const Sprites sprites, const Hero hero);
 
-int issprite(const int ascii);
+bool issprite(const int ascii);
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const int ticks, const Map map);
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const int ticks);

@@ -44,7 +44,7 @@ $(PROJ): $(SRCS:.c=.o)
 
 # Compiler template; generates dependency targets
 %.o : %.c
-	$(CC) $(ARCH) $(CFLAGS) -MT $@ -MMD -MP -MF $*.td -c $<
+	$(CC) $(ARCH) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@mv -f $*.td $*.d
 
 # All dependency targets

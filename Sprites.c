@@ -17,7 +17,6 @@ static Sprite generic(const Point where)
     sprite.state = IDLE;
     sprite.width = 0.66;
     sprite.health = 50.0;
-    sprite.moveable = true;
     return sprite;
 }
 
@@ -26,6 +25,7 @@ static Sprite _o_(const Point where)
     Sprite sprite = generic(where);
     sprite.ascii = 'o';
     sprite.width = 0.66;
+    sprite.moveable = true;
     return sprite;
 }
 
@@ -34,7 +34,6 @@ static Sprite _t_(const Point where)
     Sprite sprite = generic(where);
     sprite.ascii = 't';
     sprite.width = 0.66;
-    sprite.moveable = false;
     return sprite;
 }
 
@@ -43,10 +42,10 @@ static Sprite _l_(const Point where)
     Sprite sprite = generic(where);
     sprite.ascii = 'l';
     sprite.width = 0.66;
-    sprite.moveable = false;
     return sprite;
 }
 
+// Sprite factory
 static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
@@ -80,22 +79,6 @@ Sprites wake(const int level)
     fclose(file);
     free(path);
     return sprites;
-}
-
-void freeze(const Sprites sprites, const int level)
-{
-    char which[MINTS];
-    sprintf(which, "%d", level);
-    char* const path = concat("sprites/lvl", which);
-    remove(path);
-    FILE* const file = fopen(path, "w");
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        fprintf(file, "%c,%f,%f\n", sprite->ascii, sprite->where.x, sprite->where.y);
-    }
-    fclose(file);
-    free(path);
 }
 
 void kill(const Sprites sprites)
@@ -203,7 +186,7 @@ static void surrender(const Sprites sprites)
     }
 }
 
-int issprite(const int ascii)
+bool issprite(const int ascii)
 {
     return isalpha(ascii);
 }
@@ -234,6 +217,15 @@ static void hurt(const Sprites sprites, const Hero hero, const int ticks)
     }
 }
 
+// Sprites moved with this function have their last location
+// logged before they are moved. This is useful for when sprites are shoved
+// or grabbed out of map bounds
+static void move(Sprite* const sprite, const Point to)
+{
+    sprite->last = sprite->where;
+    sprite->where = to;
+}
+
 // Grabs the closest sprite when using hands
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
@@ -250,7 +242,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
         if(eql(hand, sprite->where, sprite->width))
         {
             sprite->state = GRABBED;
-            sprite->where = hand;
+            move(sprite, hand);
             return;
         }
     }
@@ -286,23 +278,23 @@ static void shove(const Sprites sprites)
         if(eql(sprite->where, grabbed->where, width))
         {
             const Point delta = sub(sprite->where, grabbed->where);
-            sprite->where = add(sprite->where, delta);
+            move(sprite, add(sprite->where, delta));
         }
     }
 }
 
 // Puts a sprite in front of the hero if the sprite goes out of bounds
-static void bound(const Sprites sprites, const Hero hero, const Map map)
+static void bound(const Sprites sprites, const Map map)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         if(tile(sprite->where, map.walling))
-            sprite->where = mid(hero.where);
+            sprite->where = mid(sprite->last);
     }
 }
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const int ticks, const Map map)
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const int ticks)
 {
     rearrange(sprites, hero);
     rest(sprites, ticks);
@@ -310,7 +302,7 @@ Sprites caretake(const Sprites sprites, const Hero hero, const Input input, cons
     shove(sprites);
     hurt(sprites, hero, ticks);
     surrender(sprites);
-    bound(sprites, hero, map);
+    bound(sprites, map);
     // Will be modified when sprites create other sprites
     return sprites;
 }

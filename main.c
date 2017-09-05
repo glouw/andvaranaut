@@ -33,7 +33,7 @@ int main(const int argc, const char* argv[])
             sprites = rewake(sprites, hero.floor);
         }
         hero = sustain(hero, map, input);
-        sprites = caretake(sprites, hero, input, sdl.ticks, map);
+        sprites = caretake(sprites, hero, input, map, sdl.ticks);
         // Output
         render(sdl, hero, sprites, map);
         sdl = tick(sdl, renders);

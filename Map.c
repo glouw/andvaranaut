@@ -27,20 +27,6 @@ Map open(const int level)
     return map;
 }
 
-void dump(const Map map, const int level)
-{
-    char which[MINTS];
-    sprintf(which, "%d", level);
-    char* const path = concat("maps/lvl", which);
-    remove(path);
-    FILE* const file = fopen(path, "w");
-    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.ceiling[row]);
-    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.walling[row]);
-    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.floring[row]);
-    fclose(file);
-    free(path);
-}
-
 void close(const Map map)
 {
     for(int row = 0; row < map.rows; row++)
@@ -60,7 +46,7 @@ Map reopen(const Map map, const int level)
     return open(level);
 }
 
-int isportal(const Map map, const Point where)
+bool isportal(const Map map, const Point where)
 {
     return block(where, map.floring) == '~'
         || block(where, map.ceiling) == '~';
