@@ -21,24 +21,6 @@ static Sprite generic(const Point where)
     return sprite;
 }
 
-static Sprite _i_(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.ascii = 'i';
-    sprite.width = 0.3;
-    sprite.moveable = false;
-    return sprite;
-}
-
-static Sprite _j_(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.ascii = 'j';
-    sprite.width = 0.3;
-    sprite.moveable = false;
-    return sprite;
-}
-
 static Sprite _o_(const Point where)
 {
     Sprite sprite = generic(where);
@@ -47,13 +29,31 @@ static Sprite _o_(const Point where)
     return sprite;
 }
 
+static Sprite _t_(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.ascii = 't';
+    sprite.width = 0.66;
+    sprite.moveable = false;
+    return sprite;
+}
+
+static Sprite _l_(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.ascii = 'l';
+    sprite.width = 0.66;
+    sprite.moveable = false;
+    return sprite;
+}
+
 static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
         case 'o': return _o_(where);
-        case 'i': return _i_(where);
-        case 'j': return _j_(where);
+        case 't': return _t_(where);
+        case 'l': return _l_(where);
     }
     return generic(where);
 }
