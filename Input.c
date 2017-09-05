@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-#include "SDL2/SDL.h"
+#include "lib/SDL2/SDL.h"
 
 static Input keyboard(const Input input)
 {
