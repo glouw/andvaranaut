@@ -11,11 +11,8 @@ int main(const int argc, const char* argv[])
     puts("This program comes with ABSOLUTELY NO WARRANTY.");
     puts("This is free software, and you are welcome to redistribute it");
     puts("under certain conditions.");
-    // Early exit if no command line arguments
-    if(argc == 1)
-        return 1;
     // Rock and roll
-    const int res = strtol(argv[1], NULL, 0);
+    const int res = argc == 2 ? strtol(argv[1], NULL, 0) : 512;
     const int fps = 60;
     Hero hero = spawn();
     Map map = open(hero.floor);
