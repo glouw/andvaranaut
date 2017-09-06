@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Line.h"
-#include "Point.h"
 
 typedef struct
 {

@@ -1,6 +1,4 @@
-#include "Hero.h"
 #include "Sprites.h"
-#include "Map.h"
 #include "Sdl.h"
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Surfaces.h"
 #include "Textures.h"
-#include "Hero.h"
 #include "Sprites.h"
 #include "SDL2/SDL.h"
 

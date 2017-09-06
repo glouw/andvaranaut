@@ -1,6 +1,5 @@
 #include "Sliver.h"
 
-#include "Line.h"
 #include "util.h"
 
 // Wall renderer

@@ -1,7 +1,5 @@
 #include "Sprites.h"
 
-#include "Point.h"
-#include "Hero.h"
 #include "util.h"
 #include "SDL2/SDL.h"
 

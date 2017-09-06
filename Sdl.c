@@ -1,9 +1,6 @@
 #include "Sdl.h"
 
-#include "State.h"
 #include "Frame.h"
-#include "Display.h"
-#include "Scanline.h"
 #include "Sliver.h"
 #include "util.h"
 

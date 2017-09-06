@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Sdl.h"
 #include "Display.h"
 
 typedef struct

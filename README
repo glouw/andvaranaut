@@ -11,7 +11,9 @@ Controls:
 
 Execution:
     The first command line argument selects the resolution:
-        ./water 512
+        ./water 768
+
+    Resolution 512 is default
 
     Resolution 128 is reservered for performance testing and
     will exit after 60 rendered frames

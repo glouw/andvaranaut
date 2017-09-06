@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Scanline.h"
-#include "Impact.h"
-#include "Torch.h"
-#include "Point.h"
 
 typedef struct
 {
