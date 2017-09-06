@@ -1,4 +1,3 @@
-/* include/SDL_config.h.  Generated from SDL_config.h.in by configure.  */
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
@@ -20,70 +19,78 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef _SDL_config_h
-#define _SDL_config_h
+#ifndef _SDL_config_windows_h
+#define _SDL_config_windows_h
 
-/**
- *  \file SDL_config.h.in
- *
- *  This is a set of defines to configure the SDL features
- */
-
-/* General platform specific identifiers */
 #include "SDL_platform.h"
 
-/* Make sure that this isn't included by Visual C++ */
-#ifdef _MSC_VER
-#error You should run hg revert SDL_config.h 
-#endif
+/* This is a set of defines to configure the SDL features */
 
-/* C language features */
-/* #undef const */
-/* #undef inline */
-/* #undef volatile */
-
-/* C datatypes */
-#ifdef __LP64__
-#define SIZEOF_VOIDP 8
+#if !defined(_STDINT_H_) && (!defined(HAVE_STDINT_H) || !_HAVE_STDINT_H)
+#if defined(__GNUC__) || defined(__DMC__) || defined(__WATCOMC__)
+#define HAVE_STDINT_H   1
+#elif defined(_MSC_VER)
+typedef signed __int8 int8_t;
+typedef unsigned __int8 uint8_t;
+typedef signed __int16 int16_t;
+typedef unsigned __int16 uint16_t;
+typedef signed __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+typedef signed __int64 int64_t;
+typedef unsigned __int64 uint64_t;
+#ifndef _UINTPTR_T_DEFINED
+#ifdef  _WIN64
+typedef unsigned __int64 uintptr_t;
 #else
-#define SIZEOF_VOIDP 4
+typedef unsigned int uintptr_t;
 #endif
-#define HAVE_GCC_ATOMICS 1
-/* #undef HAVE_GCC_SYNC_LOCK_TEST_AND_SET */
+#define _UINTPTR_T_DEFINED
+#endif
+/* Older Visual C++ headers don't have the Win64-compatible typedefs... */
+#if ((_MSC_VER <= 1200) && (!defined(DWORD_PTR)))
+#define DWORD_PTR DWORD
+#endif
+#if ((_MSC_VER <= 1200) && (!defined(LONG_PTR)))
+#define LONG_PTR LONG
+#endif
+#else /* !__GNUC__ && !_MSC_VER */
+typedef signed char int8_t;
+typedef unsigned char uint8_t;
+typedef signed short int16_t;
+typedef unsigned short uint16_t;
+typedef signed int int32_t;
+typedef unsigned int uint32_t;
+typedef signed long long int64_t;
+typedef unsigned long long uint64_t;
+#ifndef _SIZE_T_DEFINED_
+#define _SIZE_T_DEFINED_
+typedef unsigned int size_t;
+#endif
+typedef unsigned int uintptr_t;
+#endif /* __GNUC__ || _MSC_VER */
+#endif /* !_STDINT_H_ && !HAVE_STDINT_H */
 
-/* #undef HAVE_DDRAW_H */
-/* #undef HAVE_DINPUT_H */
-/* #undef HAVE_DSOUND_H */
-/* #undef HAVE_DXGI_H */
-/* #undef HAVE_XINPUT_H */
+#ifdef _WIN64
+# define SIZEOF_VOIDP 8
+#else
+# define SIZEOF_VOIDP 4
+#endif
 
-/* Comment this if you want to build without any C library requirements */
-#define HAVE_LIBC 1
-#if HAVE_LIBC
+#define HAVE_DDRAW_H 1
+#define HAVE_DINPUT_H 1
+#define HAVE_DSOUND_H 1
+#define HAVE_DXGI_H 1
+#define HAVE_XINPUT_H 1
 
+/* This is disabled by default to avoid C runtime dependencies and manifest requirements */
+#ifdef HAVE_LIBC
 /* Useful headers */
-#define HAVE_ALLOCA_H 1
-#define HAVE_SYS_TYPES_H 1
 #define HAVE_STDIO_H 1
 #define STDC_HEADERS 1
-#define HAVE_STDLIB_H 1
-#define HAVE_STDARG_H 1
-#define HAVE_MALLOC_H 1
-#define HAVE_MEMORY_H 1
 #define HAVE_STRING_H 1
-#define HAVE_STRINGS_H 1
-#define HAVE_INTTYPES_H 1
-#define HAVE_STDINT_H 1
 #define HAVE_CTYPE_H 1
 #define HAVE_MATH_H 1
-#define HAVE_ICONV_H 1
 #define HAVE_SIGNAL_H 1
-/* #undef HAVE_ALTIVEC_H */
-/* #undef HAVE_PTHREAD_NP_H */
-#define HAVE_LIBUDEV_H 1
-#define HAVE_DBUS_DBUS_H 1
-#define HAVE_IBUS_IBUS_H 1
-#define HAVE_FCITX_FRONTEND_H 1
 
 /* C library functions */
 #define HAVE_MALLOC 1
@@ -91,274 +98,124 @@
 #define HAVE_REALLOC 1
 #define HAVE_FREE 1
 #define HAVE_ALLOCA 1
-#ifndef __WIN32__ /* Don't use C runtime versions of these on Windows */
-#define HAVE_GETENV 1
-#define HAVE_SETENV 1
-#define HAVE_PUTENV 1
-#define HAVE_UNSETENV 1
-#endif
 #define HAVE_QSORT 1
 #define HAVE_ABS 1
-#define HAVE_BCOPY 1
 #define HAVE_MEMSET 1
 #define HAVE_MEMCPY 1
 #define HAVE_MEMMOVE 1
 #define HAVE_MEMCMP 1
 #define HAVE_STRLEN 1
-/* #undef HAVE_STRLCPY */
-/* #undef HAVE_STRLCAT */
-#define HAVE_STRDUP 1
-/* #undef HAVE__STRREV */
-/* #undef HAVE__STRUPR */
-/* #undef HAVE__STRLWR */
-/* #undef HAVE_INDEX */
-/* #undef HAVE_RINDEX */
+#define HAVE__STRREV 1
+#define HAVE__STRUPR 1
+#define HAVE__STRLWR 1
 #define HAVE_STRCHR 1
 #define HAVE_STRRCHR 1
 #define HAVE_STRSTR 1
-/* #undef HAVE_ITOA */
-/* #undef HAVE__LTOA */
-/* #undef HAVE__UITOA */
-/* #undef HAVE__ULTOA */
+#define HAVE__LTOA 1
+#define HAVE__ULTOA 1
 #define HAVE_STRTOL 1
 #define HAVE_STRTOUL 1
-/* #undef HAVE__I64TOA */
-/* #undef HAVE__UI64TOA */
-#define HAVE_STRTOLL 1
-#define HAVE_STRTOULL 1
 #define HAVE_STRTOD 1
 #define HAVE_ATOI 1
 #define HAVE_ATOF 1
 #define HAVE_STRCMP 1
 #define HAVE_STRNCMP 1
-/* #undef HAVE__STRICMP */
-#define HAVE_STRCASECMP 1
-/* #undef HAVE__STRNICMP */
-#define HAVE_STRNCASECMP 1
-/* #undef HAVE_SSCANF */
-#define HAVE_VSSCANF 1
-/* #undef HAVE_SNPRINTF */
-#define HAVE_VSNPRINTF 1
-#define HAVE_M_PI /**/
+#define HAVE__STRICMP 1
+#define HAVE__STRNICMP 1
 #define HAVE_ATAN 1
 #define HAVE_ATAN2 1
-#define HAVE_ACOS 1
-#define HAVE_ASIN 1
+#define HAVE_ACOS  1
+#define HAVE_ASIN  1
 #define HAVE_CEIL 1
-#define HAVE_COPYSIGN 1
 #define HAVE_COS 1
 #define HAVE_COSF 1
 #define HAVE_FABS 1
 #define HAVE_FLOOR 1
 #define HAVE_LOG 1
 #define HAVE_POW 1
-#define HAVE_SCALBN 1
 #define HAVE_SIN 1
 #define HAVE_SINF 1
 #define HAVE_SQRT 1
 #define HAVE_SQRTF 1
 #define HAVE_TAN 1
 #define HAVE_TANF 1
-#define HAVE_FSEEKO 1
-#define HAVE_FSEEKO64 1
-#define HAVE_SIGACTION 1
-#define HAVE_SA_SIGACTION 1
-#define HAVE_SETJMP 1
-#define HAVE_NANOSLEEP 1
-#define HAVE_SYSCONF 1
-/* #undef HAVE_SYSCTLBYNAME */
-#define HAVE_CLOCK_GETTIME 1
-/* #undef HAVE_GETPAGESIZE */
-#define HAVE_MPROTECT 1
-#define HAVE_ICONV 1
-#define HAVE_PTHREAD_SETNAME_NP 1
-/* #undef HAVE_PTHREAD_SET_NAME_NP */
-#define HAVE_SEM_TIMEDWAIT 1
-
+#if _MSC_VER >= 1800
+#define HAVE_STRTOLL 1
+#define HAVE_VSSCANF 1
+#define HAVE_COPYSIGN 1
+#define HAVE_SCALBN 1
+#endif
+#if !defined(_MSC_VER) || defined(_USE_MATH_DEFINES)
+#define HAVE_M_PI 1
+#endif
 #else
-#define HAVE_STDARG_H 1
-#define HAVE_STDDEF_H 1
-#define HAVE_STDINT_H 1
-#endif /* HAVE_LIBC */
-
-/* SDL internal assertion support */
-/* #undef SDL_DEFAULT_ASSERT_LEVEL */
-
-/* Allow disabling of core subsystems */
-/* #undef SDL_ATOMIC_DISABLED */
-/* #undef SDL_AUDIO_DISABLED */
-/* #undef SDL_CPUINFO_DISABLED */
-/* #undef SDL_EVENTS_DISABLED */
-/* #undef SDL_FILE_DISABLED */
-/* #undef SDL_JOYSTICK_DISABLED */
-/* #undef SDL_HAPTIC_DISABLED */
-/* #undef SDL_LOADSO_DISABLED */
-/* #undef SDL_RENDER_DISABLED */
-/* #undef SDL_THREADS_DISABLED */
-/* #undef SDL_TIMERS_DISABLED */
-/* #undef SDL_VIDEO_DISABLED */
-/* #undef SDL_POWER_DISABLED */
-/* #undef SDL_FILESYSTEM_DISABLED */
+#define HAVE_STDARG_H   1
+#define HAVE_STDDEF_H   1
+#endif
 
 /* Enable various audio drivers */
-#define SDL_AUDIO_DRIVER_ALSA 1
-#define SDL_AUDIO_DRIVER_ALSA_DYNAMIC "libasound.so.2"
-/* #undef SDL_AUDIO_DRIVER_ARTS */
-/* #undef SDL_AUDIO_DRIVER_ARTS_DYNAMIC */
-#define SDL_AUDIO_DRIVER_PULSEAUDIO 1
-#define SDL_AUDIO_DRIVER_PULSEAUDIO_DYNAMIC "libpulse-simple.so.0"
-/* #undef SDL_AUDIO_DRIVER_HAIKU */
-/* #undef SDL_AUDIO_DRIVER_BSD */
-/* #undef SDL_AUDIO_DRIVER_COREAUDIO */
-#define SDL_AUDIO_DRIVER_DISK 1
-#define SDL_AUDIO_DRIVER_DUMMY 1
-/* #undef SDL_AUDIO_DRIVER_ANDROID */
-/* #undef SDL_AUDIO_DRIVER_XAUDIO2 */
-/* #undef SDL_AUDIO_DRIVER_DSOUND */
-/* #undef SDL_AUDIO_DRIVER_ESD */
-/* #undef SDL_AUDIO_DRIVER_ESD_DYNAMIC */
-/* #undef SDL_AUDIO_DRIVER_NACL */
-/* #undef SDL_AUDIO_DRIVER_NAS */
-/* #undef SDL_AUDIO_DRIVER_NAS_DYNAMIC */
-/* #undef SDL_AUDIO_DRIVER_SNDIO */
-/* #undef SDL_AUDIO_DRIVER_SNDIO_DYNAMIC */
-#define SDL_AUDIO_DRIVER_OSS 1
-/* #undef SDL_AUDIO_DRIVER_OSS_SOUNDCARD_H */
-/* #undef SDL_AUDIO_DRIVER_PAUDIO */
-/* #undef SDL_AUDIO_DRIVER_QSA */
-/* #undef SDL_AUDIO_DRIVER_SUNAUDIO */
-/* #undef SDL_AUDIO_DRIVER_WINMM */
-/* #undef SDL_AUDIO_DRIVER_FUSIONSOUND */
-/* #undef SDL_AUDIO_DRIVER_FUSIONSOUND_DYNAMIC */
-/* #undef SDL_AUDIO_DRIVER_EMSCRIPTEN */
+#define SDL_AUDIO_DRIVER_DSOUND 1
+#define SDL_AUDIO_DRIVER_XAUDIO2    1
+#define SDL_AUDIO_DRIVER_WINMM  1
+#define SDL_AUDIO_DRIVER_DISK   1
+#define SDL_AUDIO_DRIVER_DUMMY  1
 
 /* Enable various input drivers */
-#define SDL_INPUT_LINUXEV 1
-#define SDL_INPUT_LINUXKD 1
-/* #undef SDL_INPUT_TSLIB */
-/* #undef SDL_JOYSTICK_HAIKU */
-/* #undef SDL_JOYSTICK_DINPUT */
-/* #undef SDL_JOYSTICK_XINPUT */
-/* #undef SDL_JOYSTICK_DUMMY */
-/* #undef SDL_JOYSTICK_IOKIT */
-#define SDL_JOYSTICK_LINUX 1
-/* #undef SDL_JOYSTICK_ANDROID */
-/* #undef SDL_JOYSTICK_WINMM */
-/* #undef SDL_JOYSTICK_USBHID */
-/* #undef SDL_JOYSTICK_USBHID_MACHINE_JOYSTICK_H */
-/* #undef SDL_JOYSTICK_EMSCRIPTEN */
-/* #undef SDL_HAPTIC_DUMMY */
-#define SDL_HAPTIC_LINUX 1
-/* #undef SDL_HAPTIC_IOKIT */
-/* #undef SDL_HAPTIC_DINPUT */
-/* #undef SDL_HAPTIC_XINPUT */
+#define SDL_JOYSTICK_DINPUT 1
+#define SDL_JOYSTICK_XINPUT 1
+#define SDL_HAPTIC_DINPUT   1
+#define SDL_HAPTIC_XINPUT   1
 
 /* Enable various shared object loading systems */
-/* #undef SDL_LOADSO_HAIKU */
-#define SDL_LOADSO_DLOPEN 1
-/* #undef SDL_LOADSO_DUMMY */
-/* #undef SDL_LOADSO_LDG */
-/* #undef SDL_LOADSO_WINDOWS */
+#define SDL_LOADSO_WINDOWS  1
 
 /* Enable various threading systems */
-#define SDL_THREAD_PTHREAD 1
-#define SDL_THREAD_PTHREAD_RECURSIVE_MUTEX 1
-/* #undef SDL_THREAD_PTHREAD_RECURSIVE_MUTEX_NP */
-/* #undef SDL_THREAD_WINDOWS */
+#define SDL_THREAD_WINDOWS  1
 
 /* Enable various timer systems */
-/* #undef SDL_TIMER_HAIKU */
-/* #undef SDL_TIMER_DUMMY */
-#define SDL_TIMER_UNIX 1
-/* #undef SDL_TIMER_WINDOWS */
+#define SDL_TIMER_WINDOWS   1
 
 /* Enable various video drivers */
-/* #undef SDL_VIDEO_DRIVER_HAIKU */
-/* #undef SDL_VIDEO_DRIVER_COCOA */
-/* #undef SDL_VIDEO_DRIVER_DIRECTFB */
-/* #undef SDL_VIDEO_DRIVER_DIRECTFB_DYNAMIC */
-#define SDL_VIDEO_DRIVER_DUMMY 1
-/* #undef SDL_VIDEO_DRIVER_WINDOWS */
-#define SDL_VIDEO_DRIVER_WAYLAND 1
-#define SDL_VIDEO_DRIVER_WAYLAND_QT_TOUCH 1
-#define SDL_VIDEO_DRIVER_WAYLAND_DYNAMIC "libwayland-client.so.0"
-#define SDL_VIDEO_DRIVER_WAYLAND_DYNAMIC_EGL "libwayland-egl.so.1"
-#define SDL_VIDEO_DRIVER_WAYLAND_DYNAMIC_CURSOR "libwayland-cursor.so.0"
-#define SDL_VIDEO_DRIVER_WAYLAND_DYNAMIC_XKBCOMMON "libxkbcommon.so.0"
-/* #undef SDL_VIDEO_DRIVER_MIR */
-/* #undef SDL_VIDEO_DRIVER_MIR_DYNAMIC */
-/* #undef SDL_VIDEO_DRIVER_MIR_DYNAMIC_XKBCOMMON */
-#define SDL_VIDEO_DRIVER_X11 1
-/* #undef SDL_VIDEO_DRIVER_RPI */
-/* #undef SDL_VIDEO_DRIVER_ANDROID */
-/* #undef SDL_VIDEO_DRIVER_EMSCRIPTEN */
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC "libX11.so.6"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT "libXext.so.6"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XCURSOR "libXcursor.so.1"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XINERAMA "libXinerama.so.1"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XINPUT2 "libXi.so.6"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XRANDR "libXrandr.so.2"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XSS "libXss.so.1"
-#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XVIDMODE "libXxf86vm.so.1"
-#define SDL_VIDEO_DRIVER_X11_XCURSOR 1
-#define SDL_VIDEO_DRIVER_X11_XDBE 1
-#define SDL_VIDEO_DRIVER_X11_XINERAMA 1
-#define SDL_VIDEO_DRIVER_X11_XINPUT2 1
-#define SDL_VIDEO_DRIVER_X11_XINPUT2_SUPPORTS_MULTITOUCH 1
-#define SDL_VIDEO_DRIVER_X11_XRANDR 1
-#define SDL_VIDEO_DRIVER_X11_XSCRNSAVER 1
-#define SDL_VIDEO_DRIVER_X11_XSHAPE 1
-#define SDL_VIDEO_DRIVER_X11_XVIDMODE 1
-#define SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS 1
-#define SDL_VIDEO_DRIVER_X11_CONST_PARAM_XEXTADDDISPLAY 1
-#define SDL_VIDEO_DRIVER_X11_HAS_XKBKEYCODETOKEYSYM 1
-/* #undef SDL_VIDEO_DRIVER_NACL */
-/* #undef SDL_VIDEO_DRIVER_VIVANTE */
-/* #undef SDL_VIDEO_DRIVER_VIVANTE_VDK */
+#define SDL_VIDEO_DRIVER_DUMMY  1
+#define SDL_VIDEO_DRIVER_WINDOWS    1
 
-/* #undef SDL_VIDEO_RENDER_D3D */
-/* #undef SDL_VIDEO_RENDER_D3D11 */
-#define SDL_VIDEO_RENDER_OGL 1
-#define SDL_VIDEO_RENDER_OGL_ES 1
-#define SDL_VIDEO_RENDER_OGL_ES2 1
-/* #undef SDL_VIDEO_RENDER_DIRECTFB */
+#ifndef SDL_VIDEO_RENDER_D3D
+#define SDL_VIDEO_RENDER_D3D    1
+#endif
+#ifndef SDL_VIDEO_RENDER_D3D11
+#define SDL_VIDEO_RENDER_D3D11	0
+#endif
 
 /* Enable OpenGL support */
-#define SDL_VIDEO_OPENGL 1
-#define SDL_VIDEO_OPENGL_ES 1
-#define SDL_VIDEO_OPENGL_ES2 1
-/* #undef SDL_VIDEO_OPENGL_BGL */
-/* #undef SDL_VIDEO_OPENGL_CGL */
-#define SDL_VIDEO_OPENGL_EGL 1
-#define SDL_VIDEO_OPENGL_GLX 1
-/* #undef SDL_VIDEO_OPENGL_WGL */
-/* #undef SDL_VIDEO_OPENGL_OSMESA */
-/* #undef SDL_VIDEO_OPENGL_OSMESA_DYNAMIC */
+#ifndef SDL_VIDEO_OPENGL
+#define SDL_VIDEO_OPENGL    1
+#endif
+#ifndef SDL_VIDEO_OPENGL_WGL
+#define SDL_VIDEO_OPENGL_WGL    1
+#endif
+#ifndef SDL_VIDEO_RENDER_OGL
+#define SDL_VIDEO_RENDER_OGL    1
+#endif
+#ifndef SDL_VIDEO_RENDER_OGL_ES2
+#define SDL_VIDEO_RENDER_OGL_ES2    1
+#endif
+#ifndef SDL_VIDEO_OPENGL_ES2
+#define SDL_VIDEO_OPENGL_ES2    1
+#endif
+#ifndef SDL_VIDEO_OPENGL_EGL
+#define SDL_VIDEO_OPENGL_EGL    1
+#endif
+
 
 /* Enable system power support */
-#define SDL_POWER_LINUX 1
-/* #undef SDL_POWER_WINDOWS */
-/* #undef SDL_POWER_MACOSX */
-/* #undef SDL_POWER_HAIKU */
-/* #undef SDL_POWER_ANDROID */
-/* #undef SDL_POWER_EMSCRIPTEN */
-/* #undef SDL_POWER_HARDWIRED */
+#define SDL_POWER_WINDOWS 1
 
-/* Enable system filesystem support */
-/* #undef SDL_FILESYSTEM_HAIKU */
-/* #undef SDL_FILESYSTEM_COCOA */
-/* #undef SDL_FILESYSTEM_DUMMY */
-#define SDL_FILESYSTEM_UNIX 1
-/* #undef SDL_FILESYSTEM_WINDOWS */
-/* #undef SDL_FILESYSTEM_NACL */
-/* #undef SDL_FILESYSTEM_ANDROID */
-/* #undef SDL_FILESYSTEM_EMSCRIPTEN */
+/* Enable filesystem support */
+#define SDL_FILESYSTEM_WINDOWS  1
 
-/* Enable assembly routines */
-#define SDL_ASSEMBLY_ROUTINES 1
-/* #undef SDL_ALTIVEC_BLITTERS */
+/* Enable assembly routines (Win64 doesn't have inline asm) */
+#ifndef _WIN64
+#define SDL_ASSEMBLY_ROUTINES   1
+#endif
 
-/* Enable ime support */
-#define SDL_USE_IME 1
-
-#endif /* _SDL_config_h */
+#endif /* _SDL_config_windows_h */
