@@ -36,7 +36,7 @@ CFLAGS+= -Ofast -flto
 ARCH = -march=native -m32
 
 # Linker flags
-LDFLAGS = -lm -LSDL2/lin32 -Wl,-RSDL2/lin32 -lSDL2
+LDFLAGS = -lm -lSDL2
 
 # Linker
 $(PROJ): $(SRCS:.c=.o)
