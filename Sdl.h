@@ -4,7 +4,7 @@
 #include "Textures.h"
 #include "Hero.h"
 #include "Sprites.h"
-#include "lib/SDL2/SDL.h"
+#include "SDL2/SDL.h"
 
 typedef struct
 {
