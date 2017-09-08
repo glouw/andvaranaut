@@ -1,15 +1,24 @@
 Water:
-    A dungeon crawl game engine
+
+    A 2.5D dungeon crawl game engine inspired by
+    Dungeon Crawl Stone Soup
 
 Controls:
+
     move: w,a,s,d
+
     turn: h,l or mouse
+
     open: e
-    zoom: o,p
-    grab: j or left mouse
+
+    zoom: middle mouse button
+
+    grab, attack: j or left mouse
+
     exit: F1
 
 Execution:
+
     The first command line argument selects the resolution:
         ./water 768
 

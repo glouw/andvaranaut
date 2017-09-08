@@ -24,8 +24,8 @@ SRCS+= Wall.c
 SRCS+= Weapon.c
 
 # Warnings flags
-CFLAGS = -Wshadow -Wall -Wpedantic -Wextra
-
+CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wpadded -isystem lib
+ 
 # Debugging flags
 CFLAGS+= -g
 

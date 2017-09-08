@@ -4,9 +4,9 @@
 
 #include <stdbool.h>
 
+// Clang like to break these pointers, hence volatile
 typedef struct
 {
-    // Clang like to break these pointers
     char** volatile ceiling;
     char** volatile walling;
     char** volatile floring;
