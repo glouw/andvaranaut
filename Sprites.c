@@ -156,9 +156,9 @@ static void rearrange(const Sprites sprites, const Hero hero)
     push(sprites, hero);
 }
 
-// Sprites will only ever rest after their ticks have
+// Sprites will only ever idle after their ticks have
 // exceeded the universal tick counter
-static void rest(const Sprites sprites, const int ticks)
+static void idle(const Sprites sprites, const int ticks)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -168,12 +168,12 @@ static void rest(const Sprites sprites, const int ticks)
     }
 }
 
-static void surrender(const Sprites sprites)
+static void mercy(const Sprites sprites)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(sprite->health < 10.0)
+        if(sprite->health < 5.0)
             sprite->state = MERCY;
     }
 }
@@ -219,7 +219,7 @@ static void place(Sprite* const sprite, const Point to)
 }
 
 // Grabs the closest sprite when using hands
-static void grab(const Sprites sprites, const Hero hero, const Input input, const int ticks)
+static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
     if(hero.weapon != HANDS)
         return;
@@ -229,13 +229,14 @@ static void grab(const Sprites sprites, const Hero hero, const Input input, cons
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        // Cannot move immovable sprites
         if(!sprite->moveable)
             continue;
         if(eql(hand, sprite->where, sprite->width))
         {
             sprite->state = GRABBED;
-            // No time
-            sprite->ticks = ticks;
+            // Sprite ticks are reset
+            sprite->ticks = 0;
             place(sprite, hand);
             return;
         }
@@ -288,50 +289,15 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
-// Sprite chases hero if hero gets close enough. Sprite will get bored and stop chasing
-static void chase(const Sprites sprites, const Hero hero, const int ticks)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        // Non-movable sprites cannot move!
-        if(!sprite->moveable)
-            continue;
-        // Sprites already in a timed state must pass
-        if(sprite->ticks > ticks)
-            continue;
-        if(mag(sub(sprite->where, hero.where)) < 4.0)
-        {
-            sprite->state = CHASING;
-            sprite->ticks = ticks + 30;
-        }
-    }
-}
-
-static void move(const Sprites sprites, const Hero hero)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        if(sprite->state == CHASING)
-        {
-            const Point dir = mul(unt(sub(sprite->where, hero.where)), -2e-2);
-            place(sprite, add(sprite->where, dir));
-        }
-    }
-}
-
 Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const int ticks)
 {
     rearrange(sprites, hero);
     // Sprite states - lowest to highest priority - rest always occur after state timeout
-    rest(sprites, ticks);
-    chase(sprites, hero, ticks);
+    idle(sprites, ticks);
     hurt(sprites, hero, ticks);
-    grab(sprites, hero, input, ticks);
-    surrender(sprites);
-    // Sprite moving
-    move(sprites, hero);
+    grab(sprites, hero, input);
+    mercy(sprites);
+    // Sprite placement
     shove(sprites);
     bound(sprites, map);
     // Will be modified when sprites create other sprites

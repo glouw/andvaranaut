@@ -41,7 +41,7 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     return seen;
 }
 
-static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds, const Hero hero)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds, const Hero hero, const int ticks)
 {
     for(int which = 0; which < sprites.count; which++)
     {
@@ -65,7 +65,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds,
         SDL_Texture* const texture = sdl.textures.texture[selected];
         const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
-        const SDL_Rect image = { w * (sdl.ticks % FRAMES), h * sprite.state, w, h };
+        const SDL_Rect image = { w * (ticks % FRAMES), h * sprite.state, w, h };
         // Gcc likes to mess with _seen_
         const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, correcteds);
         // Moves onto the next sprite if this sprite totally behind a wall
@@ -116,15 +116,7 @@ void release(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-Sdl tick(const Sdl sdl, const int renders)
-{
-    Sdl temp = sdl;
-    temp.renders = renders;
-    temp.ticks = renders / (sdl.fps / 5);
-    return temp;
-}
-
-void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map)
+void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
     // Sprite location relative to player
     const Sprites relatives = arrange(sprites, hero);
@@ -155,7 +147,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     }
     unlock(sdl);
     churn(sdl);
-    paste(sdl, relatives, correcteds, hero);
+    paste(sdl, relatives, correcteds, hero, ticks);
     present(sdl);
     free(party);
     free(correcteds);
