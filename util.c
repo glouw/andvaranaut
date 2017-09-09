@@ -77,19 +77,3 @@ char* concat(const char* const a, const char* const b)
     strcat(c, b);
     return c;
 }
-
-int match(const char* const a, const char* const b)
-{
-    return strcmp(a, b) == 0;
-}
-
-char* trim(char* const a)
-{
-    char* start = a;
-    while(isspace(*start))
-        start++;
-    char* end = start + strlen(start);
-    while(isspace(*--end))
-        *end = '\0';
-    return start;
-}

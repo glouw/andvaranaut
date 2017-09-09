@@ -24,10 +24,6 @@ int balance(const int a);
 
 char* concat(const char* const a, const char* const b);
 
-int match(const char* const a, const char* const b);
-
-char* trim(char* const a);
-
 /*
  * Some generic macros
  */
