@@ -178,6 +178,7 @@ Hero sustain(const Hero hero, const Map map, const Input input)
     temp = move(temp, map.walling, input);
     temp = zoom(temp, input);
     temp.torch = burn(temp.torch);
+    temp.weapon = wield(temp.weapon, input);
     temp = melee(temp, input);
     return temp;
 }
