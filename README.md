@@ -1,7 +1,6 @@
 Water:
 
-    A 2.5D dungeon crawl game engine inspired by
-    Dungeon Crawl Stone Soup
+    A 2.5D dungeon crawl game engine inspired by Dungeon Crawl Stone Soup
 
 Controls:
 
@@ -24,9 +23,9 @@ Execution:
 
     Resolution 512 is default
 
-    Resolution 128 is reservered for performance testing and
-    will exit after 60 rendered frames
+    Resolution 128 is reservered for performance testing and will exit
+    after 60 rendered frames
 
 Screenshots:
 
-![Screenshot](scrots/2017-09-10-074648_512x512_scrot.png)
+!   [Screenshot](scrots/2017-09-10-074648_512x512_scrot.png)
