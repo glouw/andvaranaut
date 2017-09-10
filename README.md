@@ -26,3 +26,7 @@ Execution:
 
     Resolution 128 is reservered for performance testing and
     will exit after 60 rendered frames
+
+Screenshots:
+
+![Screenshot](scrots/2017-09-10-074648_512x512_scrot.png)
