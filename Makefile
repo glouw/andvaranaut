@@ -5,12 +5,14 @@ CC = gcc -std=c99
 PROJ = water
 
 # Source files
-SRCS = Display.c
+SRCS = main.c
+SRCS+= util.c
+SRCS+= Compass.c
+SRCS+= Display.c
 SRCS+= Hero.c
 SRCS+= Hit.c
 SRCS+= Input.c
 SRCS+= Line.c
-SRCS+= main.c
 SRCS+= Map.c
 SRCS+= Point.c
 SRCS+= Sdl.c
@@ -19,7 +21,6 @@ SRCS+= Sprites.c
 SRCS+= Surfaces.c
 SRCS+= Textures.c
 SRCS+= Torch.c
-SRCS+= util.c
 SRCS+= Wall.c
 SRCS+= Weapon.c
 

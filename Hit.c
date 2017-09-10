@@ -1,14 +1,7 @@
 #include "Hit.h"
 
+#include "Compass.h"
 #include "util.h"
-
-static Compass needle(const Point where, const Point other)
-{
-    if(where.x < other.x && (int) where.y == (int) other.y) return E;
-    if(where.x > other.x && (int) where.y == (int) other.y) return W;
-    if(where.y > other.y && (int) where.x == (int) other.x) return S;
-    return N;
-}
 
 static int inverted(const Compass face)
 {
@@ -21,7 +14,7 @@ static Hit collision(const Point ray, const Point direction, char** const wallin
     const Point where = add(ray, mul(direction, epsilon));
     const Point other = sub(ray, mul(direction, epsilon));
     const float offset = dec(ray.x + ray.y);
-    const Compass face = needle(where, other);
+    const Compass face = rneedle(where, other);
     Hit hit;
     hit.surface = tile(where, walling);
     hit.offset = inverted(face) ? 1.0 - offset : offset;

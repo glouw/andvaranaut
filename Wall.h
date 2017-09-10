@@ -6,7 +6,6 @@ typedef struct
 {
     int bot;
     int top;
-    int height;
     struct
     {
         int bot;

@@ -1,8 +1,12 @@
 #pragma once
 
+#include "Point.h"
+
 typedef enum
 {
-    E, SE, S, SW, W, NW, N, NE, DIRS
+    E, S, W, N, DIRS
 }
 Compass;
 
+Compass vneedle(const Point vect);
+Compass rneedle(const Point where, const Point other);

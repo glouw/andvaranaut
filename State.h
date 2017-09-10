@@ -1,31 +1,26 @@
 #pragma once
 
+/*
+ * The hurt directions are placed first
+ * to allow for easy typecasting from Compass to State
+ */
+
 typedef enum
 {
     // Hurt Eastwards
-    H_E,
-    // Hurt Southeastwards
-    H_SE,
+    HE,
     // Hurt Southwards
-    H_S,
-    // Hurt Southwestwards
-    H_SW,
+    HS,
     // Hurt Westwards
-    H_W,
-    // Hurt Northwestwards
-    H_NW,
+    HW,
     // Hurt Northwards
-    H_N,
-    // Hurt Northeastwards
-    H_NE,
+    HN,
     // Standing around doing nothing
     IDLE,
-    // Grabbed by the player - moves while grabbed
+    // Grabbed by the player
     GRABBED,
-    // Took such a hard blow - near death but not dead
+    // Near death but not dead
     MERCY,
-    // In hot pursuit of the player
-    CHASING,
     // Number of states present
     STATES
 }

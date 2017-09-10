@@ -24,6 +24,7 @@ static Sprite _o_(const Point where)
     sprite.ascii = 'o';
     sprite.width = 0.66;
     sprite.moveable = true;
+    sprite.health = 200.0;
     return sprite;
 }
 
@@ -73,6 +74,11 @@ Sprites wake(const int level)
     return sprites;
 }
 
+bool issprite(const int ascii)
+{
+    return isalpha(ascii);
+}
+
 void kill(const Sprites sprites)
 {
     free(sprites.sprite);
@@ -118,7 +124,8 @@ static int forewards(const void *a, const void* b)
 
 static void sort(const Sprites sprites, const int foreward)
 {
-    qsort(sprites.sprite, sprites.count, sizeof(Sprite), foreward ? forewards : backwards);
+    qsort(sprites.sprite, sprites.count, sizeof(Sprite),
+        foreward ? forewards : backwards);
 }
 
 static Sprites copy(const Sprites sprites)
@@ -156,15 +163,30 @@ static void rearrange(const Sprites sprites, const Hero hero)
     push(sprites, hero);
 }
 
+// Sets a sprite to some state with a timeout tick relative to the
+// global game tick. The sprite will turn to the idle state after
+// the timeout expires
+static void become(Sprite* const sprite, const State state, const int timeout)
+{
+    sprite->state = state;
+    sprite->ticks = timeout;
+}
+
+// Sprite is timedout when the sprite ticks is less than the global game ticks
+static bool timeout(Sprite* const sprite, const int ticks)
+{
+    return sprite->ticks < ticks;
+}
+
 // Sprites will only ever idle after their ticks have
-// exceeded the universal tick counter
+// exceeded the global game tick
 static void idle(const Sprites sprites, const int ticks)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(sprite->ticks < ticks)
-            sprite->state = IDLE;
+        if(timeout(sprite, ticks))
+            become(sprite, IDLE, 0);
     }
 }
 
@@ -174,19 +196,8 @@ static void mercy(const Sprites sprites)
     {
         Sprite* const sprite = &sprites.sprite[i];
         if(sprite->health < 5.0)
-            sprite->state = MERCY;
+            become(sprite, MERCY, 0);
     }
-}
-
-bool issprite(const int ascii)
-{
-    return isalpha(ascii);
-}
-
-static Compass needle(const Point vect)
-{
-    const float angle = atan2f(vect.y, vect.x);
-    return (Compass) ((int) roundf(DIRS * angle / (2.0 * pi) + DIRS) % DIRS);
 }
 
 // Hurts all sprites within Area of Effect (AOE)
@@ -195,16 +206,15 @@ static void hurt(const Sprites sprites, const Hero hero, const int ticks)
     // Note: all attack types must go here
     if(!hero.attack.type.swing)
         return;
-    const Compass dir = needle(hero.attack.vect);
+    const Compass dir = vneedle(hero.attack.vect);
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         const float aoe = max(hero.attack.area, sprite->width);
         if(eql(hero.attack.where, sprite->where, aoe))
         {
-            sprite->ticks = ticks + 3;
             sprite->health -= hero.attack.power;
-            sprite->state = (State) dir;
+            become(sprite, (State) dir, ticks + 3);
         }
     }
 }
@@ -234,9 +244,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
             continue;
         if(eql(hand, sprite->where, sprite->width))
         {
-            sprite->state = GRABBED;
-            // Sprite ticks are reset
-            sprite->ticks = 0;
+            become(sprite, GRABBED, 0);
             place(sprite, hand);
             return;
         }
@@ -289,17 +297,23 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const int ticks)
-{
-    rearrange(sprites, hero);
-    // Sprite states - lowest to highest priority - rest always occur after state timeout
-    idle(sprites, ticks);
-    hurt(sprites, hero, ticks);
-    grab(sprites, hero, input);
-    mercy(sprites);
-    // Sprite placement
-    shove(sprites);
-    bound(sprites, map);
-    // Will be modified when sprites create other sprites
-    return sprites;
-}
+Sprites caretake(
+    const Sprites sprites,
+    const Hero hero,
+    const Input input,
+    const Map map,
+    const int ticks)
+    {
+        rearrange(sprites, hero);
+        // Sprite states - lowest to highest priority for preemption.
+        // Idle always occur after state tick timeout
+        idle(sprites, ticks);
+        hurt(sprites, hero, ticks);
+        grab(sprites, hero, input);
+        mercy(sprites);
+        // Sprite placement
+        shove(sprites);
+        bound(sprites, map);
+        // Will be modified when sprites create other sprites
+        return sprites;
+    }
