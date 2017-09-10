@@ -28,4 +28,4 @@ Execution:
 
 Screenshots:
 
-!   [Screenshot](scrots/2017-09-10-074648_512x512_scrot.png)
+![Screenshot](scrots/2017-09-10-074648_512x512_scrot.png)
