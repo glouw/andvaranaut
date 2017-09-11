@@ -41,8 +41,8 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     return seen;
 }
 
-static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds, const Hero hero,
-const int ticks)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds,
+    const Hero hero, const int ticks)
 {
     // Go through all the sprites
     for(int which = 0; which < sprites.count; which++)
@@ -121,7 +121,8 @@ void release(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
+void render(const Sdl sdl, const Hero hero, const Sprites sprites,
+    const Map map, const int ticks)
 {
     // Sprite location relative to player
     const Sprites relatives = arrange(sprites, hero);

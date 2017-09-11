@@ -35,5 +35,5 @@ Sprites arrange(const Sprites sprites, const Hero hero);
 
 bool issprite(const int ascii);
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map,
-const int ticks);
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input,
+    const Map map, const int ticks);

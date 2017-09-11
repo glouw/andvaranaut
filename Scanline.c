@@ -21,8 +21,8 @@ void wrend(const Scanline scanline, const Ray ray, const Torch torch, int* const
         moddings[x] = modding;
 }
 
-void frend(const Scanline scanline, const Ray ray, const Map map,
-Point* const wheres, const Hero hero, int* const moddings)
+void frend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres,
+    const Hero hero, int* const moddings)
 {
     for(int x = 0; x < ray.projection.clamped.bot; x++)
     {
