@@ -4,7 +4,7 @@
 #include "Torch.h"
 #include "Weapon.h"
 #include "Attack.h"
-#include "Impact.h"
+#include "Ray.h"
 #include "Map.h"
 #include "Input.h"
 
@@ -30,7 +30,7 @@ Hero spawn();
 
 Point touch(const Hero hero, const float reach);
 
-Impact march(const Hero hero, char** const block, const Point column, const int res);
+Ray march(const Hero hero, char** const block, const Point column, const int res);
 
 bool teleporting(const Hero hero, const Map map, const Input input, const int ticks);
 

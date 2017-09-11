@@ -99,15 +99,15 @@ static Hero zoom(const Hero hero, const Input input)
     return temp;
 }
 
-Impact march(const Hero hero, char** const block, const Point column, const int res)
+Ray march(const Hero hero, char** const block, const Point column, const int res)
 {
     const Hit hit = cast(hero.where, column, block);
     const Point ray = sub(hit.where, hero.where);
     const Point corrected = trn(ray, -hero.theta);
     const Line trace = { hero.where, hit.where };
-    const Wall wall = project(res, hero.fov, corrected);
+    const Projection projection = project(res, hero.fov, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
-    const Impact impact = { traceline, wall, hit };
+    const Ray impact = { traceline, projection, hit };
     return impact;
 }
 
@@ -165,7 +165,8 @@ static Hero melee(const Hero hero, const Input input)
     {
         // Attack was a swing if there was weapon movement
         if(vect.x != 0 && vect.y != 0) temp.attack = swing(temp, vect);
-        // Reset attack vector as the reset vector is persistent across function calls
+        // Reset attack vector as the reset vector
+        // is persistent across function calls
         zero(vect);
     }
     return temp;

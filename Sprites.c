@@ -297,23 +297,19 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
-Sprites caretake(
-    const Sprites sprites,
-    const Hero hero,
-    const Input input,
-    const Map map,
-    const int ticks)
-    {
-        rearrange(sprites, hero);
-        // Sprite states - lowest to highest priority for preemption.
-        // Idle always occur after state tick timeout
-        idle(sprites, ticks);
-        hurt(sprites, hero, ticks);
-        grab(sprites, hero, input);
-        mercy(sprites);
-        // Sprite placement
-        shove(sprites);
-        bound(sprites, map);
-        // Will be modified when sprites create other sprites
-        return sprites;
-    }
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map,
+const int ticks)
+{
+    rearrange(sprites, hero);
+    // Sprite states - lowest to highest priority for preemption.
+    // Idle always occur after state tick timeout
+    idle(sprites, ticks);
+    hurt(sprites, hero, ticks);
+    grab(sprites, hero, input);
+    mercy(sprites);
+    // Sprite placement
+    shove(sprites);
+    bound(sprites, map);
+    // Will be modified when sprites create other sprites
+    return sprites;
+}

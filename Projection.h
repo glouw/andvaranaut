@@ -13,6 +13,6 @@ typedef struct
     }
     clamped;
 }
-Wall;
+Projection;
 
-Wall project(const int res, const Line fov, const Point corrected);
+Projection project(const int res, const Line fov, const Point corrected);

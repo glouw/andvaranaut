@@ -1,7 +1,7 @@
 #include "Sdl.h"
 
 #include "Frame.h"
-#include "Sliver.h"
+#include "Scanline.h"
 #include "util.h"
 
 static void churn(const Sdl sdl)
@@ -41,16 +41,18 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     return seen;
 }
 
-static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds, const Hero hero, const int ticks)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds, const Hero hero,
+const int ticks)
 {
+    // Go through all the sprites
     for(int which = 0; which < sprites.count; which++)
     {
         const Sprite sprite = sprites.sprite[which];
         // Moves onto the next sprite if this sprite is behind the player
         if(sprite.where.x < 0)
             continue;
-        // Calculates sprite size
-        // The sprite must be an even integer else the sprite will jitter with movement
+        // Calculates sprite size - the sprite must be an even
+        // integer else the sprite will jitter with movement
         const int size = balance(focal(hero.fov) * sdl.res / sprite.where.x);
         // Calculates sprite location on screen
         const int corner = (sdl.res - size) / 2;
@@ -67,7 +69,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds,
         const int h = surface->h / STATES;
         const SDL_Rect image = { w * (ticks % FRAMES), h * sprite.state, w, h };
         // Gcc likes to mess with _seen_
-        const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, correcteds);
+        const volatile SDL_Rect seen = clip(target,
+            sprite.where, sdl.res, correcteds);
         // Moves onto the next sprite if this sprite totally behind a wall
         if(seen.w <= 0)
             continue;
@@ -97,8 +100,10 @@ Sdl setup(const int res, const int fps)
     sdl.window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
     if(!sdl.window)
         bomb("error: could not open window\n");
-    sdl.renderer = SDL_CreateRenderer(sdl.window, -1, SDL_RENDERER_ACCELERATED);
-    sdl.texture = SDL_CreateTexture(sdl.renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
+    sdl.renderer = SDL_CreateRenderer(
+        sdl.window, -1, SDL_RENDERER_ACCELERATED);
+    sdl.texture = SDL_CreateTexture(sdl.renderer,
+        format, SDL_TEXTUREACCESS_STREAMING, res, res);
     sdl.surfaces = pull(format);
     sdl.textures = cache(sdl.surfaces, sdl.renderer);
     sdl.res = res;
@@ -120,12 +125,6 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
 {
     // Sprite location relative to player
     const Sprites relatives = arrange(sprites, hero);
-    // Precomputations
-    float* const party = toss(float, sdl.res);
-    const int m = sdl.res / 2;
-    const int l = sdl.res / 1;
-    for(int x = 0; x < m; x++) party[x] = fcast(hero.fov, sdl.res, x);
-    for(int x = m; x < l; x++) party[x] = ccast(hero.fov, sdl.res, x);
     // Preallocations for render computations
     Point* wheres = toss(Point, sdl.res);
     int* moddings = toss(int, sdl.res);
@@ -136,20 +135,18 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     for(int y = 0; y < sdl.res; y++)
     {
         const Point column = lerp(camera, y / (float) sdl.res);
-        const Impact impact = march(hero, map.walling, column, sdl.res);
+        const Ray ray = march(hero, map.walling, column, sdl.res);
         const Scanline scanline = { sdl, display, y };
-        const Sliver sliver = { scanline, impact };
-        wrend(sliver, hero.torch, moddings);
-        frend(sliver, map.floring, hero.torch, wheres, moddings, party);
-        crend(sliver, map.ceiling, wheres);
-        light(sliver, moddings);
-        correcteds[y] = impact.traceline.corrected;
+        wrend(scanline, ray, hero.torch, moddings);
+        frend(scanline, ray, map, wheres, hero, moddings);
+        crend(scanline, ray, map, wheres);
+        light(scanline, moddings);
+        correcteds[y] = ray.traceline.corrected;
     }
     unlock(sdl);
     churn(sdl);
     paste(sdl, relatives, correcteds, hero, ticks);
     present(sdl);
-    free(party);
     free(correcteds);
     free(wheres);
     free(moddings);

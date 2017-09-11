@@ -16,12 +16,12 @@ SRCS+= Line.c
 SRCS+= Map.c
 SRCS+= Point.c
 SRCS+= Sdl.c
-SRCS+= Sliver.c
+SRCS+= Scanline.c
 SRCS+= Sprites.c
 SRCS+= Surfaces.c
 SRCS+= Textures.c
 SRCS+= Torch.c
-SRCS+= Wall.c
+SRCS+= Projection.c
 SRCS+= Weapon.c
 
 # Warnings flags

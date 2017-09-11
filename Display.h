@@ -12,4 +12,3 @@ Display;
 Display lock(const Sdl sdl);
 
 void unlock(const Sdl sdl);
-

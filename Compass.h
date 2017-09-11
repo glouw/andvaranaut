@@ -9,4 +9,5 @@ typedef enum
 Compass;
 
 Compass vneedle(const Point vect);
+
 Compass rneedle(const Point where, const Point other);

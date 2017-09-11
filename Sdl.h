@@ -20,4 +20,5 @@ Sdl setup(const int res, const int fps);
 
 void release(const Sdl sdl);
 
-void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks);
+void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map,
+const int ticks);

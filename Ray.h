@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Traceline.h"
-#include "Wall.h"
+#include "Projection.h"
 #include "Hit.h"
 
 typedef struct
 {
     Traceline traceline;
-    Wall wall;
+    Projection projection;
     Hit hit;
 }
-Impact;
+Ray;
