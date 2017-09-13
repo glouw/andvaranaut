@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-void wrend(const Scanline scanline, const Ray ray, const Torch torch, int* const moddings)
+void wrend(const Scanline scanline, const Ray ray)
 {
     const SDL_Surface* const surface = scanline.sdl.surfaces.surface[ray.hit.surface];
     const int row = surface->h * ray.hit.offset;
@@ -12,35 +12,22 @@ void wrend(const Scanline scanline, const Ray ray, const Torch torch, int* const
     {
         const float offset = (x - ray.projection.bot) / height;
         const int col = surface->w * offset;
-        scanline.display.pixels[x + scanline.y * scanline.display.width] =
-            pixels[col + row * surface->w];
+        scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
     }
-    // Save projection light modding
-    const int modding = illuminate(torch, ray.traceline.corrected.x);
-    for(int x = ray.projection.clamped.bot; x < ray.projection.clamped.top; x++)
-        moddings[x] = modding;
 }
 
-void frend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres,
-    const Hero hero, int* const moddings)
+void frend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres, const Line fov)
 {
     for(int x = 0; x < ray.projection.clamped.bot; x++)
     {
-        const int log = scanline.sdl.res - 1 - x;
-        const float party = fcast(hero.fov, scanline.sdl.res, x);
-        const Point where = wheres[log] =
-            lerp(ray.traceline.trace, party / ray.traceline.corrected.x);
+        const float party = fcast(fov, scanline.sdl.res, x);
+        const Point where = wheres[scanline.sdl.res - 1 - x] = lerp(ray.traceline.trace, party / ray.traceline.corrected.x);
         const int seen = tile(where, map.floring);
         const SDL_Surface* const surface = scanline.sdl.surfaces.surface[seen];
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const int row = surface->h * dec(where.y);
         const int col = surface->w * dec(where.x);
-        scanline.display.pixels[x + scanline.y * scanline.display.width] =
-            pixels[col + row * surface->w];
-        // Save floor and ceiling light modding
-        const int modding = illuminate(hero.torch,
-                mag(sub(where, ray.traceline.trace.a)));
-        moddings[x] = moddings[log] = modding;
+        scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
     }
 }
 
@@ -48,13 +35,11 @@ void crend(const Scanline scanline, const Ray ray, const Map map, Point* const w
 {
     for(int x = ray.projection.clamped.top; x < scanline.sdl.res; x++)
     {
-        const Point where = wheres[x];
-        const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(where, map.ceiling)];
-        const int row = surface->h * dec(where.y);
-        const int col = surface->w * dec(where.x);
+        const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(wheres[x], map.ceiling)];
+        const int row = surface->h * dec(wheres[x].y);
+        const int col = surface->w * dec(wheres[x].x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
-        scanline.display.pixels[x + scanline.y * scanline.display.width] =
-            pixels[col + row * surface->w];
+        scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
     }
 }
 
@@ -67,8 +52,19 @@ static void mod(uint32_t* const pixel, const int m)
     *pixel = rm << 0x10 | gm << 0x08 | bm << 0x00;
 }
 
-void light(const Scanline scanline, int* const moddings)
+void light(const Scanline scanline, const Ray ray, const Torch torch, Point* const wheres, int* const moddings)
 {
+    // Flooring and ceiling (ceiling is mirrored for effeciency)
+    for(int x = 0; x < ray.projection.clamped.bot; x++)
+    {
+        int xx = scanline.sdl.res - 1 - x;
+        moddings[x] = moddings[xx] = illuminate(torch, mag(sub(wheres[xx], ray.traceline.trace.a)));
+    }
+    // Walling
+    const int modding = illuminate(torch, ray.traceline.corrected.x);
+    for(int x = ray.projection.clamped.bot; x < ray.projection.clamped.top; x++)
+        moddings[x] = modding;
+    // Apply
     for(int x = 0; x < scanline.sdl.res; x++)
         mod(&scanline.display.pixels[x + scanline.y * scanline.display.width], moddings[x]);
 }

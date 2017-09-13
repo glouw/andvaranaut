@@ -41,8 +41,7 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     return seen;
 }
 
-static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds,
-    const Hero hero, const int ticks)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds, const Hero hero, const int ticks)
 {
     // Go through all the sprites
     for(int which = 0; which < sprites.count; which++)
@@ -121,8 +120,7 @@ void release(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-void render(const Sdl sdl, const Hero hero, const Sprites sprites,
-    const Map map, const int ticks)
+void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
     // Sprite location relative to player
     const Sprites relatives = arrange(sprites, hero);
@@ -138,10 +136,10 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites,
         const Point column = lerp(camera, y / (float) sdl.res);
         const Ray ray = march(hero, map.walling, column, sdl.res);
         const Scanline scanline = { sdl, display, y };
-        wrend(scanline, ray, hero.torch, moddings);
-        frend(scanline, ray, map, wheres, hero, moddings);
+        wrend(scanline, ray);
+        frend(scanline, ray, map, wheres, hero.fov);
         crend(scanline, ray, map, wheres);
-        light(scanline, moddings);
+        light(scanline, ray, hero.torch, wheres, moddings);
         correcteds[y] = ray.traceline.corrected;
     }
     unlock(sdl);

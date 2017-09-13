@@ -53,6 +53,8 @@ $(PROJ): $(SRCS:.c=.o)
 -include *.d
 
 clean:
+	rm -f vgcore.*
+	rm -f cachegrind.out.*
 	rm -f $(PROJ)
 	rm -f $(SRCS:.c=.o)
 	rm -f $(SRCS:.c=.d)

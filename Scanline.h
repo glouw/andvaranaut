@@ -10,11 +10,10 @@ typedef struct
 }
 Scanline;
 
-void wrend(const Scanline scanline, const Ray ray, const Torch torch, int* const moddings);
+void wrend(const Scanline scanline, const Ray ray);
 
-void frend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres,
-    const Hero hero, int* const moddings);
+void frend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres, const Line fov);
 
 void crend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres);
 
-void light(const Scanline scanline, int* const moddings);
+void light(const Scanline scanline, const Ray ray, const Torch torch, Point* const wheres, int* const moddings);
