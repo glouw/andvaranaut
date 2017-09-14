@@ -1,8 +1,14 @@
 #include "Sdl.h"
 
-#include "Frame.h"
 #include "Scanline.h"
 #include "util.h"
+
+typedef enum
+{
+    A, B,
+    FRAMES
+}
+Frame;
 
 static void churn(const Sdl sdl)
 {
