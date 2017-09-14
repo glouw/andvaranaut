@@ -4,7 +4,7 @@ typedef struct
 {
     float light;
     float brightness;
-    float dtorch;
+    float dlight;
 }
 Torch;
 

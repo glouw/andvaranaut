@@ -11,7 +11,7 @@ int illuminate(const Torch torch, const float distance)
 Torch burn(const Torch torch)
 {
     Torch temp = torch;
-    temp.light += temp.dtorch;
+    temp.light += temp.dlight;
     return temp.light > temp.brightness ? torch : temp;
 }
 
@@ -21,6 +21,6 @@ Torch out()
     zero(torch);
     torch.light = 0.0;
     torch.brightness = 500.0;
-    torch.dtorch = torch.brightness / 20.0;
+    torch.dlight = torch.brightness / 20.0;
     return torch;
 }
