@@ -297,8 +297,7 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input,
-    const Map map, const int ticks)
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const int ticks)
 {
     rearrange(sprites, hero);
     // Sprite states - lowest to highest priority for preemption.

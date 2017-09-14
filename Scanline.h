@@ -12,8 +12,8 @@ Scanline;
 
 void wrend(const Scanline scanline, const Ray ray);
 
-void frend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres, const Line fov);
+void frend(const Scanline scanline, const Ray ray, Point* const wheres, const Map map, const Line fov);
 
-void crend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres);
+void crend(const Scanline scanline, const Ray ray, Point* const wheres, const Map map);
 
-void light(const Scanline scanline, const Ray ray, const Torch torch, Point* const wheres, int* const moddings);
+void light(const Scanline scanline, const Ray ray, Point* const wheres, const Torch torch, int* const moddings);

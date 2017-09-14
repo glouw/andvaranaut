@@ -20,7 +20,7 @@ Torch out()
     Torch torch;
     zero(torch);
     torch.light = 0.0;
-    torch.brightness = 300.0;
+    torch.brightness = 500.0;
     torch.dtorch = torch.brightness / 20.0;
     return torch;
 }

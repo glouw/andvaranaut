@@ -7,23 +7,21 @@ void wrend(const Scanline scanline, const Ray ray)
     const SDL_Surface* const surface = scanline.sdl.surfaces.surface[ray.hit.surface];
     const int row = surface->h * ray.hit.offset;
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
-    const float height = ray.projection.top - ray.projection.bot;
     for(int x = ray.projection.clamped.bot; x < ray.projection.clamped.top; x++)
     {
-        const float offset = (x - ray.projection.bot) / height;
+        const float offset = (x - ray.projection.bot) / (float) (ray.projection.top - ray.projection.bot);
         const int col = surface->w * offset;
         scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
     }
 }
 
-void frend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres, const Line fov)
+void frend(const Scanline scanline, const Ray ray, Point* const wheres, const Map map, const Line fov)
 {
     for(int x = 0; x < ray.projection.clamped.bot; x++)
     {
-        const float party = fcast(fov, scanline.sdl.res, x);
-        const Point where = wheres[scanline.sdl.res - 1 - x] = lerp(ray.traceline.trace, party / ray.traceline.corrected.x);
-        const int seen = tile(where, map.floring);
-        const SDL_Surface* const surface = scanline.sdl.surfaces.surface[seen];
+        const Point where = wheres[scanline.sdl.res - 1 - x] =
+            lerp(ray.traceline.trace, fcast(fov, scanline.sdl.res, x) / ray.traceline.corrected.x);
+        const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(where, map.floring)];
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const int row = surface->h * dec(where.y);
         const int col = surface->w * dec(where.x);
@@ -31,7 +29,7 @@ void frend(const Scanline scanline, const Ray ray, const Map map, Point* const w
     }
 }
 
-void crend(const Scanline scanline, const Ray ray, const Map map, Point* const wheres)
+void crend(const Scanline scanline, const Ray ray, Point* const wheres, const Map map)
 {
     for(int x = ray.projection.clamped.top; x < scanline.sdl.res; x++)
     {
@@ -52,9 +50,9 @@ static void mod(uint32_t* const pixel, const int m)
     *pixel = rm << 0x10 | gm << 0x08 | bm << 0x00;
 }
 
-void light(const Scanline scanline, const Ray ray, const Torch torch, Point* const wheres, int* const moddings)
+void light(const Scanline scanline, const Ray ray, Point* const wheres, const Torch torch, int* const moddings)
 {
-    // Flooring and ceiling (ceiling is mirrored for effeciency)
+    // Flooring and ceiling
     for(int x = 0; x < ray.projection.clamped.bot; x++)
     {
         int xx = scanline.sdl.res - 1 - x;

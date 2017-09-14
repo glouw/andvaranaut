@@ -14,7 +14,7 @@ static void present(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
-static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const correcteds)
+static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Point* const zbuff)
 {
     SDL_Rect seen = frame;
     // Clips sprite from the left
@@ -23,7 +23,7 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
         const int x = seen.x;
         if(x < 0 || x >= res)
             continue;
-        if(where.x < correcteds[x].x)
+        if(where.x < zbuff[x].x)
             break;
     }
     // Clips sprite from the right
@@ -32,7 +32,7 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
         const int x = seen.x + seen.w;
         if(x < 0 || x >= res)
             continue;
-        if(where.x < correcteds[x].x)
+        if(where.x < zbuff[x].x)
         {
             seen.w = seen.w + 1;
             break;
@@ -41,45 +41,45 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
     return seen;
 }
 
-static void paste(const Sdl sdl, const Sprites sprites, Point* const correcteds, const Hero hero, const int ticks)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, const Hero hero, const int ticks)
 {
     // Go through all the sprites
     for(int which = 0; which < sprites.count; which++)
     {
         const Sprite sprite = sprites.sprite[which];
-        // Moves onto the next sprite if this sprite is behind the player
+        // Move onto the next sprite if this sprite is behind the player
         if(sprite.where.x < 0)
             continue;
-        // Calculates sprite size - the sprite must be an even
-        // integer else the sprite will jitter with movement
+        // Calculate sprite size - the sprite must be an even integer else the sprite will jitter
         const int size = balance(focal(hero.fov) * sdl.res / sprite.where.x);
-        // Calculates sprite location on screen
+        // Calculate sprite location on screen
         const int corner = (sdl.res - size) / 2;
         const int slider = (sdl.res / 2) * ratio(hero.fov) * slp(sprite.where);
         const SDL_Rect target = { corner + slider, corner, size, size };
-        // Moves onto the next sprite if this sprite is off screen
+        // Move onto the next sprite if this sprite is off screen
         if(target.x + target.w < 0 || target.x >= sdl.res)
             continue;
-        // Selects sprite
+        // Get sprite surface and texture
         const int selected = sprite.ascii - ' ';
         SDL_Surface* const surface = sdl.surfaces.surface[selected];
         SDL_Texture* const texture = sdl.textures.texture[selected];
         const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
+        // Determine sprite animation based on ticks
         const SDL_Rect image = { w * (ticks % FRAMES), h * sprite.state, w, h };
-        // Gcc likes to mess with _seen_
-        const volatile SDL_Rect seen = clip(target,
-            sprite.where, sdl.res, correcteds);
-        // Moves onto the next sprite if this sprite totally behind a wall
+        // Calculate how much of the sprite is seen
+        // Note: gcc likes to mess with this SDL_Rect - ban optimizations
+        const volatile SDL_Rect seen = clip(target, sprite.where, sdl.res, zbuff);
+        // Move onto the next sprite if this totally behind a wall and cannot be seen
         if(seen.w <= 0)
             continue;
-        // Applies lighting to the sprite
+        // Apply lighting to the sprite
         const int modding = illuminate(hero.torch, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
-        // Applies transperancy to the sprite
+        // Apply transperancy to the sprite, if required
         if(sprite.transparent)
             SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
-        // Buffers the sprite
+        // Renders the sprite
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
@@ -99,10 +99,8 @@ Sdl setup(const int res, const int fps)
     sdl.window = SDL_CreateWindow("water", 0, 0, res, res, SDL_WINDOW_SHOWN);
     if(!sdl.window)
         bomb("error: could not open window\n");
-    sdl.renderer = SDL_CreateRenderer(
-        sdl.window, -1, SDL_RENDERER_ACCELERATED);
-    sdl.texture = SDL_CreateTexture(sdl.renderer,
-        format, SDL_TEXTUREACCESS_STREAMING, res, res);
+    sdl.renderer = SDL_CreateRenderer(sdl.window, -1, SDL_RENDERER_ACCELERATED);
+    sdl.texture = SDL_CreateTexture(sdl.renderer, format, SDL_TEXTUREACCESS_STREAMING, res, res);
     sdl.surfaces = pull(format);
     sdl.textures = cache(sdl.surfaces, sdl.renderer);
     sdl.res = res;
@@ -122,32 +120,44 @@ void release(const Sdl sdl)
 
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
-    // Sprite location relative to player
+    // Arrange sprite location relative to player
     const Sprites relatives = arrange(sprites, hero);
-    // Preallocations for render computations
+    // Preallocate for render computations
     Point* wheres = toss(Point, sdl.res);
     int* moddings = toss(int, sdl.res);
-    Point* const correcteds = toss(Point, sdl.res);
-    // Raycaster: buffers with lighting walls, ceilings, floors, and sprites
-    const Line camera = rotate(hero.fov, hero.theta);
+    Point* const zbuff = toss(Point, sdl.res);
+    // Lock the display for manual pixel painting
     const Display display = lock(sdl);
+    // For each horizontal scanline of the screen...
+    const Line camera = rotate(hero.fov, hero.theta);
     for(int y = 0; y < sdl.res; y++)
     {
+        // Cast a ray...
         const Point column = lerp(camera, y / (float) sdl.res);
         const Ray ray = march(hero, map.walling, column, sdl.res);
         const Scanline scanline = { sdl, display, y };
+        // Render the wall...
         wrend(scanline, ray);
-        frend(scanline, ray, map, wheres, hero.fov);
-        crend(scanline, ray, map, wheres);
-        light(scanline, ray, hero.torch, wheres, moddings);
-        correcteds[y] = ray.traceline.corrected;
+        // Render the floor...
+        frend(scanline, ray, wheres, map, hero.fov);
+        // Render the ceilling...
+        crend(scanline, ray, wheres, map);
+        // Apply lighting to the walls, floor, and ceilling...
+        light(scanline, ray, wheres, hero.torch, moddings);
+        // And save the ray traces corrected to the screen for the sprite zbuffer
+        zbuff[y] = ray.traceline.corrected;
     }
+    // Pixel painting is now done - unlock the display
     unlock(sdl);
+    // The scene was rendered on its side for cache effeciency. Rotate the scene upwards
     churn(sdl);
-    paste(sdl, relatives, correcteds, hero, ticks);
+    // Use the sprite zbuffer to render sprites
+    paste(sdl, relatives, zbuff, hero, ticks);
+    // Update the screen with the final rendered frame
     present(sdl);
-    free(correcteds);
+    // Cleanup all local heap allocations
+    kill(relatives);
     free(wheres);
     free(moddings);
-    kill(relatives);
+    free(zbuff);
 }
