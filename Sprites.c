@@ -231,9 +231,10 @@ static void place(Sprite* const sprite, const Point to)
 // Grabs the closest sprite when using hands
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
+    // Only hero hands can grab sprites
     if(hero.weapon != HANDS)
         return;
-    if(!(input.key[SDL_SCANCODE_J] || input.l))
+    if(!input.l)
         return;
     const Point hand = touch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)

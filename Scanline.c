@@ -52,17 +52,21 @@ static void mod(uint32_t* const pixel, const int m)
 
 void light(const Scanline scanline, const Ray ray, Point* const wheres, const Torch torch, int* const moddings)
 {
-    // Flooring and ceiling
     for(int x = 0; x < ray.projection.clamped.bot; x++)
     {
-        int xx = scanline.sdl.res - 1 - x;
-        moddings[x] = moddings[xx] = illuminate(torch, mag(sub(wheres[xx], ray.traceline.trace.a)));
+        const int xx = scanline.sdl.res - 1 - x;
+        // Flooring
+        moddings[x] = illuminate(torch, mag(sub(wheres[xx], ray.traceline.trace.a)));
+        // Ceiling
+        moddings[xx] = moddings[x];
     }
     // Walling
-    const int modding = illuminate(torch, ray.traceline.corrected.x);
     for(int x = ray.projection.clamped.bot; x < ray.projection.clamped.top; x++)
-        moddings[x] = modding;
+        moddings[x] = illuminate(torch, ray.traceline.corrected.x);
     // Apply
     for(int x = 0; x < scanline.sdl.res; x++)
-        mod(&scanline.display.pixels[x + scanline.y * scanline.display.width], moddings[x]);
+    {
+        uint32_t* const pixel = &scanline.display.pixels[x + scanline.y * scanline.display.width];
+        mod(pixel, moddings[x]);
+    }
 }

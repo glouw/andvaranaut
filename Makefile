@@ -26,7 +26,7 @@ SRCS+= Weapon.c
 
 # Warnings flags
 CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wpadded -isystem lib
- 
+
 # Debugging flags
 CFLAGS+= -g
 
@@ -34,7 +34,7 @@ CFLAGS+= -g
 CFLAGS+= -Ofast -flto
 
 # Architecture flags
-ARCH = -march=native -m32
+ARCH = -march=native
 
 # Linker flags
 LDFLAGS = -lm -lSDL2

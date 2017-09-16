@@ -5,7 +5,6 @@
 
 int main(const int argc, const char* argv[])
 {
-    puts("Water copyright (c) 2017 Gustav Louw, Cameron Bauer");
     puts("This program comes with ABSOLUTELY NO WARRANTY.");
     puts("This is free software, and you are welcome to redistribute it");
     puts("under certain conditions.");
@@ -39,6 +38,7 @@ int main(const int argc, const char* argv[])
         const int ms = 1000.0 / fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
+    // Cleanup
     release(sdl);
     close(map);
     kill(sprites);

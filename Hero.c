@@ -38,10 +38,6 @@ Hero spawn()
 static Hero spin(const Hero hero, const Input input)
 {
     Hero temp = hero;
-    // Keyboard
-    if(input.key[SDL_SCANCODE_H]) temp.theta -= 0.1;
-    if(input.key[SDL_SCANCODE_L]) temp.theta += 0.1;
-    // Mouse
     temp.theta += input.dx * input.sx;
     return temp;
 }
@@ -94,8 +90,8 @@ static Hero move(const Hero hero, char** const walling, const Input input)
 static Hero zoom(const Hero hero, const Input input)
 {
     Hero temp = hero;
-    if(input.key[SDL_SCANCODE_P] ||  input.m) temp.fov = lens(0.25);
-    if(input.key[SDL_SCANCODE_O] || !input.m) temp.fov = lens(1.00);
+    if( input.m) temp.fov = lens(0.25);
+    if(!input.m) temp.fov = lens(1.00);
     return temp;
 }
 

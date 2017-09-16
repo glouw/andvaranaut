@@ -149,9 +149,9 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
     }
     // Pixel painting is now done - unlock the display
     unlock(sdl);
-    // The scene was rendered on its side for cache effeciency. Rotate the scene upwards
+    // The scene was rendered on its side for cache effeciency. Rotate the scene
     churn(sdl);
-    // Use the sprite zbuffer to render sprites
+    // Use the sprite zbuffer to render the sprites
     paste(sdl, relatives, zbuff, hero, ticks);
     // Update the screen with the final rendered frame
     present(sdl);
