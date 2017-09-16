@@ -6,13 +6,17 @@ Controls:
 
     move: w,a,s,d
 
-    turn: h,l or mouse
+    turn: mouse
 
     open: e
 
     zoom: middle mouse button
 
-    grab, attack: j or left mouse
+    grab: left mouse button
+
+    attack: left mouse button with mouse movement
+
+    weapon select: [1] hands, [2] sword
 
     exit: F1
 
