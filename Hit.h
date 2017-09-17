@@ -12,4 +12,4 @@ typedef struct
 }
 Hit;
 
-Hit cast(const Point where, const Point direction, char** const walling);
+Hit march(const Point where, const Point direction, char** const walling);

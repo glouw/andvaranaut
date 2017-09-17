@@ -30,7 +30,7 @@ Hero spawn();
 
 Point touch(const Hero hero, const float reach);
 
-Ray march(const Hero hero, char** const block, const Point column, const int res);
+Ray cast(const Hero hero, char** const block, const Point column, const int res);
 
 bool teleporting(const Hero hero, const Map map, const Input input, const int ticks);
 

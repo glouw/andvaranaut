@@ -22,9 +22,9 @@ void frend(const Scanline scanline, const Ray ray, Point* const wheres, const Ma
         const Point where = wheres[scanline.sdl.res - 1 - x] =
             lerp(ray.traceline.trace, fcast(fov, scanline.sdl.res, x) / ray.traceline.corrected.x);
         const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(where, map.floring)];
-        const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const int row = surface->h * dec(where.y);
         const int col = surface->w * dec(where.x);
+        const uint32_t* const pixels = (uint32_t*) surface->pixels;
         scanline.display.pixels[x + scanline.y * scanline.display.width] = pixels[col + row * surface->w];
     }
 }

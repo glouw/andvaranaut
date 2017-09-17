@@ -23,9 +23,9 @@ static Hit collision(const Point ray, const Point direction, char** const wallin
     return hit;
 }
 
-Hit cast(const Point where, const Point direction, char** const walling)
+Hit march(const Point where, const Point direction, char** const walling)
 {
     const Point ray = cmp(where, shr(where, direction), svr(where, direction));
     const Hit hit = collision(ray, direction, walling);
-    return hit.surface ? hit : cast(ray, direction, walling);
+    return hit.surface ? hit : march(ray, direction, walling);
 }
