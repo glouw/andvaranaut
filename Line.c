@@ -21,12 +21,7 @@ float ratio(const Line line)
     return line.a.x / line.b.y;
 }
 
-float ccast(const Line fov, const int res, const int x)
+float fcast(const Line fov, const int res, const int x, const float xx)
 {
-    return focal(fov) * res / (2 * x - (res - 1));
-}
-
-float fcast(const Line fov, const int res, const int x)
-{
-    return -ccast(fov, res, x);
+    return -focal(fov) * res / (2 * x - (res - 1)) / xx;
 }

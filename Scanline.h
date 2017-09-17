@@ -12,7 +12,7 @@ Scanline;
 
 void wrend(const Scanline scanline, const Ray ray);
 
-void frend(const Scanline scanline, const Ray ray, Point* const wheres, const Map map, const Line fov);
+void frend(const Scanline scanline, const Ray ray, Point* const wheres, const Map map);
 
 void crend(const Scanline scanline, const Ray ray, Point* const wheres, const Map map);
 

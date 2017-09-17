@@ -77,14 +77,6 @@ Point shr(const Point a, const Point b)
     return out;
 }
 
-Point mid(const Point a)
-{
-    Point out;
-    out.x = fl(a.x) + 0.5;
-    out.y = fl(a.y) + 0.5;
-    return out;
-}
-
 Point svr(const Point a, const Point b)
 {
     Point out;
@@ -93,7 +85,15 @@ Point svr(const Point a, const Point b)
     return out;
 }
 
-int inf(const Point a)
+Point mid(const Point a)
+{
+    Point out;
+    out.x = fl(a.x) + 0.5;
+    out.y = fl(a.y) + 0.5;
+    return out;
+}
+
+bool inf(const Point a)
 {
     return isinf(a.x) || isinf(a.y);
 }
@@ -103,7 +103,7 @@ Point cmp(const Point a, const Point b, const Point c)
     return inf(c) ? b : inf(b) ? c : mag(sub(b, a)) < mag(sub(c, a)) ? b : c;
 }
 
-int eql(const Point a, const Point b, const float epsilon)
+bool eql(const Point a, const Point b, const float epsilon)
 {
     return a.x < b.x + (epsilon / 2.0)
         && a.x > b.x - (epsilon / 2.0)
