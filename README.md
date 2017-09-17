@@ -1,6 +1,4 @@
-Water:
-
-    A 2.5D dungeon crawl game engine inspired by Dungeon Crawl Stone Soup
+A 2.5D dungeon crawl game engine inspired by Dungeon Crawl Stone Soup
 
 Controls:
 
