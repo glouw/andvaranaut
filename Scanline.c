@@ -56,13 +56,17 @@ void light(const Scanline scanline, const Ray ray, Point* const wheres, const To
     {
         const int xx = scanline.sdl.res - 1 - x;
         // Flooring
-        moddings[x] = illuminate(torch, mag(sub(wheres[xx], ray.traceline.trace.a)));
+        const float distance = mag(sub(wheres[xx], ray.traceline.trace.a));
+        moddings[x] = illuminate(torch, distance);
         // Ceiling
         moddings[xx] = moddings[x];
     }
     // Walling
     for(int x = ray.projection.clamped.bot; x < ray.projection.clamped.top; x++)
-        moddings[x] = illuminate(torch, ray.traceline.corrected.x);
+    {
+        const float distance = ray.traceline.corrected.x;
+        moddings[x] = illuminate(torch, distance);
+    }
     // Apply
     for(int x = 0; x < scanline.sdl.res; x++)
     {
