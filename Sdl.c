@@ -38,6 +38,11 @@ static SDL_Rect clip(const SDL_Rect frame, const Point where, const int res, Poi
             break;
         }
     }
+    // Vertical clamping
+    if(seen.y < 0)
+        seen.y = 0;
+    if(seen.h > res)
+        seen.h = res;
     return seen;
 }
 
