@@ -190,35 +190,6 @@ static void idle(const Sprites sprites, const int ticks)
     }
 }
 
-static void mercy(const Sprites sprites)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        if(sprite->health < 5.0)
-            become(sprite, MERCY, 0);
-    }
-}
-
-// Hurts all sprites within Area of Effect (AOE)
-static void hurt(const Sprites sprites, const Hero hero, const int ticks)
-{
-    // Note: all attack types must go here
-    if(!hero.attack.type.swing)
-        return;
-    const Compass dir = vneedle(hero.attack.vect);
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        const float aoe = max(hero.attack.area, sprite->width);
-        if(eql(hero.attack.where, sprite->where, aoe))
-        {
-            sprite->health -= hero.attack.power;
-            become(sprite, (State) dir, ticks + 3);
-        }
-    }
-}
-
 // Sprites moved with this function have their last location
 // logged before they are moved. This is useful for when sprites are shoved
 // or grabbed out of map bounds
@@ -231,9 +202,6 @@ static void place(Sprite* const sprite, const Point to)
 // Grabs the closest sprite when using hands
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
-    // Only hero hands can grab sprites
-    if(hero.weapon != HANDS)
-        return;
     if(!input.l)
         return;
     const Point hand = touch(hero, hero.arm);
@@ -304,9 +272,7 @@ Sprites caretake(const Sprites sprites, const Hero hero, const Input input, cons
     // Sprite states - lowest to highest priority for preemption.
     // Idle always occur after state tick timeout
     idle(sprites, ticks);
-    hurt(sprites, hero, ticks);
     grab(sprites, hero, input);
-    mercy(sprites);
     // Sprite placement
     shove(sprites);
     bound(sprites, map);

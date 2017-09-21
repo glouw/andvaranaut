@@ -2,8 +2,6 @@
 
 #include "Line.h"
 #include "Torch.h"
-#include "Weapon.h"
-#include "Attack.h"
 #include "Ray.h"
 #include "Map.h"
 #include "Input.h"
@@ -21,8 +19,6 @@ typedef struct
     Torch torch;
     float arm;
     int floor;
-    Weapon weapon;
-    Attack attack;
 }
 Hero;
 

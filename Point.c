@@ -113,7 +113,9 @@ bool eql(const Point a, const Point b, const float epsilon)
 
 int block(const Point a, char** const blocks)
 {
-    return blocks[(int) a.y][(int) a.x];
+    const int y = a.y;
+    const int x = a.x;
+    return blocks[y][x];
 }
 
 int tile(const Point a, char** const blocks)

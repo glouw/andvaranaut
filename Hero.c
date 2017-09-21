@@ -30,7 +30,6 @@ Hero spawn()
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
     hero.torch = out();
-    hero.weapon = HANDS;
     hero.arm = 0.75;
     return hero;
 }
@@ -128,50 +127,6 @@ Hero teleport(const Hero hero, const Map map)
     return temp;
 }
 
-static Attack swing(const Hero hero, const Point vect)
-{
-    Attack attack;
-    zero(attack);
-    attack.type.swing = true;
-    attack.vect = vect;
-    attack.power = power(hero.weapon) * mag(vect);
-    attack.reach = hero.arm + reach(hero.weapon);
-    attack.where = touch(hero, attack.reach);
-    attack.area = 2 * attack.reach;
-    return attack;
-}
-
-static Hero melee(const Hero hero, const Input input)
-{
-    // Cannot attack with hands - hands are for grabbing
-    if(hero.weapon == HANDS)
-        return hero;
-    Hero temp = hero;
-    zero(temp.attack);
-    // Attack vector (persistent across function calls)
-    static Point vect;
-    // Held down mouse button, grow attack vector
-    if(input.l)
-    {
-        vect.x += input.dx;
-        vect.y += input.dy;
-        // Can cancel attack if left and right mouse buttons are held
-        if(input.r)
-            zero(vect);
-    }
-    // Mouse button let go, calculate attack power from attack vector
-    else
-    {
-        // Attack was a swing if there was weapon movement
-        if(vect.x != 0 && vect.y != 0)
-            temp.attack = swing(temp, vect);
-        // Reset attack vector as the reset vector
-        // is persistent across function calls
-        zero(vect);
-    }
-    return temp;
-}
-
 Hero sustain(const Hero hero, const Map map, const Input input)
 {
     Hero temp = hero;
@@ -179,7 +134,5 @@ Hero sustain(const Hero hero, const Map map, const Input input)
     temp = move(temp, map.walling, input);
     temp = zoom(temp, input);
     temp.torch = burn(temp.torch);
-    temp.weapon = wield(temp.weapon, input);
-    temp = melee(temp, input);
     return temp;
 }

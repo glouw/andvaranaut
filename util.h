@@ -37,6 +37,8 @@ char* concat(const char* const a, const char* const b);
  * Some macros
  */
 
+#define len(a) ((int) (sizeof(a) / sizeof(*a)))
+
 // Type safe ease of use malloc
 #define toss(t, n) ((t*) malloc((n) * sizeof(t)))
 
@@ -51,9 +53,6 @@ char* concat(const char* const a, const char* const b);
 
 // Generic type macro for finding min of two type values
 #define min(a, b) ((a) < (b) ? (a) : (b))
-
-// Cake
-#define pi (3.14159265358979323846)
 
 // Minimum array size needed for an integer to be converted to a string
 #define MINTS ((CHAR_BIT * sizeof(int) - 1) / 3 + 2)

@@ -8,6 +8,7 @@ PROJ = water
 SRCS = main.c
 SRCS+= util.c
 SRCS+= Compass.c
+SRCS+= Path.c
 SRCS+= Display.c
 SRCS+= Hero.c
 SRCS+= Hit.c
@@ -22,7 +23,6 @@ SRCS+= Surfaces.c
 SRCS+= Textures.c
 SRCS+= Torch.c
 SRCS+= Projection.c
-SRCS+= Weapon.c
 
 # Warnings flags
 CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wpadded -isystem lib
