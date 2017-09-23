@@ -30,7 +30,7 @@ int main(const int argc, const char* argv[])
             path = redo(path, map);
         }
         hero = sustain(hero, map, input);
-        sprites = caretake(sprites, hero, input, map, ticks);
+        sprites = caretake(sprites, hero, input, map);
         find(path, map, hero, sprites);
         // Video output
         render(sdl, hero, sprites, map, ticks);

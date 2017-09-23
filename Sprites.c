@@ -163,36 +163,15 @@ static void rearrange(const Sprites sprites, const Hero hero)
     push(sprites, hero);
 }
 
-// Sets a sprite to some state with a timeout tick relative to the
-// global game tick. The sprite will turn to the idle state after
-// the timeout expires
-static void become(Sprite* const sprite, const State state, const int timeout)
-{
-    sprite->state = state;
-    sprite->ticks = timeout;
-}
-
-// Sprite is timedout when the sprite ticks is less than the global game ticks
-static bool timeout(Sprite* const sprite, const int ticks)
-{
-    return sprite->ticks < ticks;
-}
-
-// Sprites will only ever idle after their ticks have
-// exceeded the global game tick
-static void idle(const Sprites sprites, const int ticks)
+static void idle(const Sprites sprites)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(timeout(sprite, ticks))
-            become(sprite, IDLE, 0);
+        sprite->state = IDLE;
     }
 }
 
-// Sprites moved with this function have their last location
-// logged before they are moved. This is useful for when sprites are shoved
-// or grabbed out of map bounds
 static void place(Sprite* const sprite, const Point to)
 {
     sprite->last = sprite->where;
@@ -213,7 +192,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
             continue;
         if(eql(hand, sprite->where, sprite->width))
         {
-            become(sprite, GRABBED, 0);
+            sprite->state = GRABBED;
             place(sprite, hand);
             return;
         }
@@ -266,12 +245,12 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const int ticks)
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
 {
     rearrange(sprites, hero);
     // Sprite states - lowest to highest priority for preemption.
     // Idle always occur after state tick timeout
-    idle(sprites, ticks);
+    idle(sprites);
     grab(sprites, hero, input);
     // Sprite placement
     shove(sprites);

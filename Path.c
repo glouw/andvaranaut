@@ -24,6 +24,7 @@ static void examine(const Path path)
     }
 }
 
+#if 0
 static float sum(const Path path, const int x, const int y)
 {
     return 0.0;
@@ -32,6 +33,7 @@ static float sum(const Path path, const int x, const int y)
 static void box(const Path path, const int x, const int y)
 {
 }
+#endif
 
 // Collaborative diffusion
 void find(const Path path, const Map map, const Hero hero, const Sprites sprites)
