@@ -231,7 +231,7 @@ static void move(const Sprites sprites, const Path path, const Point where)
     {
         Sprite* const sprite = &sprites.sprite[i];
         const Point dir = way(path, where, sprite->where);
-        const Point delta = mul(dir, 0.043);
+        const Point delta = mul(dir, 0.05);
         place(sprite, add(sprite->where, delta));
     }
 }

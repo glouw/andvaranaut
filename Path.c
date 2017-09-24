@@ -86,6 +86,7 @@ void diffuse(const Path path, const int y, const int x)
         boxrun(path, y, x, w);
 }
 
+// Needs some sort of spline calculations for a litle more realism
 Point way(const Path path, const Point to, const Point from)
 {
     // Reached
