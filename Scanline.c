@@ -15,13 +15,13 @@ void wrend(const Scanline scanline, const Ray ray)
     }
 }
 
-void frend(const Scanline scanline, const Ray ray, Point* const wheres, const Map map)
+void frend(const Scanline scanline, const Ray ray, Point* const wheres, char** const floring)
 {
     for(int x = 0; x < ray.projection.clamped.bot; x++)
     {
         const Point where = wheres[scanline.sdl.res - 1 - x] =
             lerp(ray.traceline.trace, fcast(ray.traceline.fov, scanline.sdl.res, x, ray.traceline.corrected.x));
-        const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(where, map.floring)];
+        const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(where, floring)];
         const int row = surface->h * dec(where.y);
         const int col = surface->w * dec(where.x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
@@ -29,11 +29,11 @@ void frend(const Scanline scanline, const Ray ray, Point* const wheres, const Ma
     }
 }
 
-void crend(const Scanline scanline, const Ray ray, Point* const wheres, const Map map)
+void crend(const Scanline scanline, const Ray ray, Point* const wheres, char** const ceiling)
 {
     for(int x = ray.projection.clamped.top; x < scanline.sdl.res; x++)
     {
-        const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(wheres[x], map.ceiling)];
+        const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(wheres[x], ceiling)];
         const int row = surface->h * dec(wheres[x].y);
         const int col = surface->w * dec(wheres[x].x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
