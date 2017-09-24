@@ -17,15 +17,15 @@ static Point beginning()
 {
     Point where;
     where.x = 5.5;
-    where.y = 5.5;
+    where.y = 4.5;
     return where;
 }
 
-Hero spawn()
+Hero spawn(const float scale)
 {
     Hero hero;
     zero(hero);
-    hero.fov = lens(1.33);
+    hero.fov = lens(scale);
     hero.where = beginning();
     hero.speed = 0.12;
     hero.acceleration = 0.0150;

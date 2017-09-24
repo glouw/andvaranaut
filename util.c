@@ -77,3 +77,10 @@ char* concat(const char* const a, const char* const b)
     strcat(c, b);
     return c;
 }
+
+void license()
+{
+    puts("This program comes with ABSOLUTELY NO WARRANTY.");
+    puts("This is free software, and you are welcome to redistribute it");
+    puts("under certain conditions.");
+}

@@ -33,6 +33,9 @@ int balance(const int a);
 // Takes two strings and returns a concatenated string
 char* concat(const char* const a, const char* const b);
 
+// Prints the license
+void license();
+
 /*
  * Some macros
  */

@@ -1,26 +1,23 @@
 #include "Sdl.h"
+#include "Args.h"
 #include "Path.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "util.h"
 
 int main(const int argc, const char* argv[])
 {
-    puts("This program comes with ABSOLUTELY NO WARRANTY.");
-    puts("This is free software, and you are welcome to redistribute it");
-    puts("under certain conditions.");
-    const int res = argc == 2 ? strtol(argv[1], NULL, 0) : 512;
-    const int fps = 60;
+    license();
+    const Args args = parse(argc, argv);
     // Data init
-    Hero hero = spawn();
+    Hero hero = spawn(args.scale);
     Map map = open(hero.floor);
     Path path = prepare(map);
     Sprites sprites = wake(hero.floor);
-    Sdl sdl = setup(res, fps);
+    Sdl sdl = setup(args.res, args.fps);
     Input input = ready();
-    for(int renders = 0; res == 128 ? renders < fps : !input.key[SDL_SCANCODE_F1]; renders++)
+    for(int renders = 0; args.res == 128 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
     {
         const int t0 = SDL_GetTicks();
-        const int ticks = renders / (fps / 5);
+        const int ticks = renders / (args.fps / 5);
         // Data update
         if(teleporting(hero, map, input, ticks))
         {
@@ -30,15 +27,14 @@ int main(const int argc, const char* argv[])
             path = redo(path, map);
         }
         hero = sustain(hero, map, input);
-        sprites = caretake(sprites, hero, input, map);
-        find(path, map, hero, sprites);
+        sprites = caretake(sprites, hero, input, map, path);
         // Video output
         render(sdl, hero, sprites, map, ticks);
         // User input
         input = pump(input);
         // FPS lock
         const int t1 = SDL_GetTicks();
-        const int ms = 1000.0 / fps - (t1 - t0);
+        const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
     // Cleanup

@@ -11,10 +11,7 @@ static Sprite generic(const Point where)
     Sprite sprite;
     zero(sprite);
     sprite.where = where;
-    sprite.ascii = 'o';
-    sprite.state = IDLE;
-    sprite.width = 0.66;
-    sprite.health = 50.0;
+    sprite.ascii = 'Z';
     return sprite;
 }
 
@@ -24,28 +21,14 @@ static Sprite _o_(const Point where)
     sprite.ascii = 'o';
     sprite.width = 0.66;
     sprite.moveable = true;
-    sprite.health = 200.0;
     return sprite;
 }
 
-// For testing "Missing" animation
-static Sprite _Z_(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.ascii = 'Z';
-    sprite.width = 0.66;
-    sprite.moveable = true;
-    return sprite;
-}
-
-// Sprite factory
 static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
         case 'o': return _o_(where);
-        // Tests the "Missing" animation for now
-        case 'Z': return _Z_(where);
     }
     return generic(where);
 }
@@ -72,11 +55,6 @@ Sprites wake(const int level)
     fclose(file);
     free(path);
     return sprites;
-}
-
-bool issprite(const int ascii)
-{
-    return isalpha(ascii);
 }
 
 void kill(const Sprites sprites)
@@ -245,8 +223,31 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
+// Collaborative diffusion
+static void route(const Sprites sprites, const Path path, const Map map, const Hero hero)
 {
+    // Mark walls as 1.0. Mark free space as 0.0
+    for(int i = 0; i < path.rows; i++)
+        for(int j = 0; j < path.cols; j++)
+            path.density[i][j] = map.walling[i][j] - ' ' > 0 ? 1.0 : 0.0;
+    // Subtract sprite widths on tiles to create anti object densities.
+    // Sprites try to avoid high density tiles when moving
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        const int x = sprite->where.x;
+        const int y = sprite->where.y;
+        path.density[y][x] -= sprite->width;
+    }
+    // Mark the hero object as a postive value other than +1.0
+    const int x = hero.where.x;
+    const int y = hero.where.y;
+    path.density[y][x] = 2.0;
+}
+
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const Path path)
+{
+    route(sprites, path, map, hero);
     rearrange(sprites, hero);
     // Sprite states - lowest to highest priority for preemption.
     idle(sprites);

@@ -7,6 +7,7 @@ PROJ = water
 # Source files
 SRCS = main.c
 SRCS+= util.c
+SRCS+= Args.c
 SRCS+= Compass.c
 SRCS+= Path.c
 SRCS+= Display.c
