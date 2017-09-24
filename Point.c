@@ -103,12 +103,12 @@ Point cmp(const Point a, const Point b, const Point c)
     return inf(c) ? b : inf(b) ? c : mag(sub(b, a)) < mag(sub(c, a)) ? b : c;
 }
 
-bool eql(const Point a, const Point b, const float epsilon)
+bool eql(const Point a, const Point b, const float e)
 {
-    return a.x < b.x + (epsilon / 2.0)
-        && a.x > b.x - (epsilon / 2.0)
-        && a.y < b.y + (epsilon / 2.0)
-        && a.y > b.y - (epsilon / 2.0);
+    return a.x < b.x + (e / 2.0)
+        && a.x > b.x - (e / 2.0)
+        && a.y < b.y + (e / 2.0)
+        && a.y > b.y - (e / 2.0);
 }
 
 int block(const Point a, char** const blocks)

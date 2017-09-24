@@ -32,4 +32,4 @@ Sprites rewake(const Sprites sprites, const int level);
 
 Sprites arrange(const Sprites sprites, const Hero hero);
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map);
+void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map);

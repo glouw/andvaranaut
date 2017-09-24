@@ -12,6 +12,8 @@ typedef struct
 }
 Path;
 
+void diffuse(const Path path, const int y, const int x);
+
 Path prepare(const Map map);
 
 void ruin(const Path path);

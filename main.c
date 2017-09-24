@@ -24,7 +24,7 @@ int main(const int argc, const char* argv[])
             sprites = rewake(sprites, hero.floor);
         }
         hero = sustain(hero, map, input);
-        sprites = caretake(sprites, hero, input, map);
+        caretake(sprites, hero, input, map);
         // Video output
         render(sdl, hero, sprites, map, ticks);
         // User input

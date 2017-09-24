@@ -224,6 +224,11 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
+// Moves sprite along path towards the hero player scent
+static void move(const Sprites sprites, const Path path)
+{
+}
+
 // Collaborative diffusion
 static void route(const Sprites sprites, const Path path, const Map map, const Hero hero)
 {
@@ -240,30 +245,27 @@ static void route(const Sprites sprites, const Path path, const Map map, const H
         const int y = sprite->where.y;
         path.density[y][x] -= sprite->width;
     }
-    // Mark the hero object as a postive value
+    // Place a scent at the hero location
     const int x = hero.where.x;
     const int y = hero.where.y;
     path.density[y][x] = hero.scent;
+    // Diffuse the scent across the map
+    diffuse(path, y, x);
+    // Sprites follow scent
+    move(sprites, path);
 }
 
-static void move(const Sprites sprites)
-{
-}
-
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
+void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
 {
     rearrange(sprites, hero);
     // Path finding and movement
     const Path path = prepare(map);
     route(sprites, path, map, hero);
-    move(sprites);
+    ruin(path);
     // Sprite states - lowest to highest priority for preemption.
     idle(sprites);
     grab(sprites, hero, input);
     // Sprite placement
     shove(sprites);
     bound(sprites, map);
-    ruin(path);
-    // Will be modified when sprites create other sprites
-    return sprites;
 }

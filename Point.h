@@ -52,7 +52,7 @@ bool inf(const Point a);
 Point cmp(const Point a, const Point b, const Point c);
 
 // Returns true if a is within b with some epsilon width
-bool eql(const Point a, const Point b, const float epsilon);
+bool eql(const Point a, const Point b, const float e);
 
 // Returns the block at point a
 int block(const Point a, char** const blocks);
