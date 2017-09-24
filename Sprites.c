@@ -1,8 +1,9 @@
 #include "Sprites.h"
 
+#include "Path.h"
 #include "util.h"
-#include "SDL2/SDL.h"
 
+#include "SDL2/SDL.h"
 #include <ctype.h>
 #include <math.h>
 
@@ -226,10 +227,10 @@ static void bound(const Sprites sprites, const Map map)
 // Collaborative diffusion
 static void route(const Sprites sprites, const Path path, const Map map, const Hero hero)
 {
-    // Mark walls as 1.0. Mark free space as 0.0
-    for(int i = 0; i < path.rows; i++)
-        for(int j = 0; j < path.cols; j++)
-            path.density[i][j] = map.walling[i][j] - ' ' > 0 ? 1.0 : 0.0;
+    // Mark clear parts of the path (eg. tiles that are not walls)
+    for(int j = 0; j < path.rows; j++)
+    for(int i = 0; i < path.cols; i++)
+        path.clear[j][i] = map.walling[j][i] - ' ' == 0;
     // Subtract sprite widths on tiles to create anti object densities.
     // Sprites try to avoid high density tiles when moving
     for(int i = 0; i < sprites.count; i++)
@@ -239,22 +240,30 @@ static void route(const Sprites sprites, const Path path, const Map map, const H
         const int y = sprite->where.y;
         path.density[y][x] -= sprite->width;
     }
-    // Mark the hero object as a postive value other than +1.0
+    // Mark the hero object as a postive value
     const int x = hero.where.x;
     const int y = hero.where.y;
-    path.density[y][x] = 2.0;
+    path.density[y][x] = hero.scent;
 }
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const Path path)
+static void move(const Sprites sprites)
 {
-    route(sprites, path, map, hero);
+}
+
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
+{
     rearrange(sprites, hero);
+    // Path finding and movement
+    const Path path = prepare(map);
+    route(sprites, path, map, hero);
+    move(sprites);
     // Sprite states - lowest to highest priority for preemption.
     idle(sprites);
     grab(sprites, hero, input);
     // Sprite placement
     shove(sprites);
     bound(sprites, map);
+    ruin(path);
     // Will be modified when sprites create other sprites
     return sprites;
 }

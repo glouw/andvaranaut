@@ -19,6 +19,7 @@ typedef struct
     Torch torch;
     float arm;
     int floor;
+    float scent;
 }
 Hero;
 

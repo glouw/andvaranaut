@@ -10,8 +10,12 @@ Path prepare(const Map map)
     path.rows = map.rows;
     path.cols = strlen(map.walling[0]);
     path.density = toss(float*, path.rows);
+    path.clear = toss(int*, path.rows);
     for(int i = 0; i < path.rows; i++)
-        path.density[i] = toss(float, path.cols);
+    {
+        path.density[i] = wipe(float, path.cols);
+        path.clear[i] = wipe(int, path.cols);
+    }
     return path;
 }
 
@@ -30,12 +34,10 @@ void ruin(const Path path)
 {
     examine(path);
     for(int i = 0; i < path.rows; i++)
+    {
         free(path.density[i]);
+        free(path.clear[i]);
+    }
     free(path.density);
-}
-
-Path redo(const Path path, const Map map)
-{
-    ruin(path);
-    return prepare(map);
+    free(path.clear);
 }

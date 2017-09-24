@@ -1,6 +1,5 @@
 #include "Sdl.h"
 #include "Args.h"
-#include "Path.h"
 #include "util.h"
 
 int main(const int argc, const char* argv[])
@@ -10,7 +9,6 @@ int main(const int argc, const char* argv[])
     // Data init
     Hero hero = spawn(args.scale);
     Map map = open(hero.floor);
-    Path path = prepare(map);
     Sprites sprites = wake(hero.floor);
     Sdl sdl = setup(args.res, args.fps);
     Input input = ready();
@@ -24,10 +22,9 @@ int main(const int argc, const char* argv[])
             hero = teleport(hero, map);
             map = reopen(map, hero.floor);
             sprites = rewake(sprites, hero.floor);
-            path = redo(path, map);
         }
         hero = sustain(hero, map, input);
-        sprites = caretake(sprites, hero, input, map, path);
+        sprites = caretake(sprites, hero, input, map);
         // Video output
         render(sdl, hero, sprites, map, ticks);
         // User input
@@ -39,7 +36,6 @@ int main(const int argc, const char* argv[])
     }
     // Cleanup
     release(sdl);
-    ruin(path);
     close(map);
     kill(sprites);
 }

@@ -42,6 +42,9 @@ void license();
 
 #define len(a) ((int) (sizeof(a) / sizeof(*a)))
 
+// Type safe ease of use calloc
+#define wipe(t, n) ((t*) calloc((n), sizeof(t)))
+
 // Type safe ease of use malloc
 #define toss(t, n) ((t*) malloc((n) * sizeof(t)))
 

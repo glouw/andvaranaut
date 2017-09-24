@@ -2,7 +2,6 @@
 
 #include "Hero.h"
 #include "State.h"
-#include "Path.h"
 
 typedef struct
 {
@@ -33,4 +32,4 @@ Sprites rewake(const Sprites sprites, const int level);
 
 Sprites arrange(const Sprites sprites, const Hero hero);
 
-Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map, const Path path);
+Sprites caretake(const Sprites sprites, const Hero hero, const Input input, const Map map);

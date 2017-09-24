@@ -5,7 +5,8 @@
 
 typedef struct
 {
-    float** volatile density;
+    float** density;
+    int** clear;
     int rows;
     int cols;
 }
@@ -14,5 +15,3 @@ Path;
 Path prepare(const Map map);
 
 void ruin(const Path path);
-
-Path redo(const Path path, const Map map);
