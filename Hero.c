@@ -25,7 +25,7 @@ Hero spawn()
 {
     Hero hero;
     zero(hero);
-    hero.fov = lens(1.0);
+    hero.fov = lens(1.33);
     hero.where = beginning();
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
@@ -86,14 +86,6 @@ static Hero move(const Hero hero, char** const walling, const Input input)
     return temp;
 }
 
-static Hero zoom(const Hero hero, const Input input)
-{
-    Hero temp = hero;
-    if( input.m) temp.fov = lens(0.25);
-    if(!input.m) temp.fov = lens(1.00);
-    return temp;
-}
-
 Ray cast(const Hero hero, char** const block, const Point column, const int res)
 {
     const Hit hit = march(hero.where, column, block);
@@ -132,7 +124,6 @@ Hero sustain(const Hero hero, const Map map, const Input input)
     Hero temp = hero;
     temp = spin(temp, input);
     temp = move(temp, map.walling, input);
-    temp = zoom(temp, input);
     temp.torch = burn(temp.torch);
     return temp;
 }

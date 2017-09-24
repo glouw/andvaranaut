@@ -249,7 +249,6 @@ Sprites caretake(const Sprites sprites, const Hero hero, const Input input, cons
 {
     rearrange(sprites, hero);
     // Sprite states - lowest to highest priority for preemption.
-    // Idle always occur after state tick timeout
     idle(sprites);
     grab(sprites, hero, input);
     // Sprite placement
