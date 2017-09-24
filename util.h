@@ -40,6 +40,7 @@ void license();
  * Some macros
  */
 
+// Get the lenght of an array
 #define len(a) ((int) (sizeof(a) / sizeof(*a)))
 
 // Type safe ease of use calloc

@@ -4,7 +4,7 @@
 
 typedef enum
 {
-    E, S, W, N, DIRS
+    E, SE, S, SW, W, NW, N, NE, DIRS
 }
 Compass;
 

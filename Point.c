@@ -6,6 +6,14 @@
 #include <math.h>
 #include <stdbool.h>
 
+Point pt(const float x, const float y)
+{
+    Point out;
+    out.x = x;
+    out.y = y;
+    return out;
+}
+
 Point trn(const Point a, const float t)
 {
     Point out;

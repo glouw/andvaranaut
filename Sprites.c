@@ -225,8 +225,15 @@ static void bound(const Sprites sprites, const Map map)
 }
 
 // Moves sprite along path towards the hero player scent
-static void move(const Sprites sprites, const Path path)
+static void move(const Sprites sprites, const Path path, const Point where)
 {
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        const Point dir = way(path, where, sprite->where);
+        const Point delta = mul(dir, 0.043);
+        place(sprite, add(sprite->where, delta));
+    }
 }
 
 // Collaborative diffusion
@@ -252,7 +259,7 @@ static void route(const Sprites sprites, const Path path, const Map map, const H
     // Diffuse the scent across the map
     diffuse(path, y, x);
     // Sprites follow scent
-    move(sprites, path);
+    move(sprites, path, hero.where);
 }
 
 void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)

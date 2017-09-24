@@ -91,7 +91,39 @@ void diffuse(const Path path, const int y, const int x)
         boxrun(path, y, x, w);
 }
 
-static void examine(const Path path)
+Point way(const Path path, const Point to, const Point from)
+{
+    // Reached
+    if(eql(to, from, 1.0))
+        return pt(0, 0);
+    // Else, try all immediate directions
+    const Point points[] = {
+        add(from, pt(+1, -0)), // E
+        add(from, pt(+1, +1)), // SE
+        add(from, pt(+0, +1)), // S
+        add(from, pt(-1, +1)), // SW
+        add(from, pt(-1, +0)), // W
+        add(from, pt(-1, -1)), // NW
+        add(from, pt(+0, -1)), // N
+        add(from, pt(+1, -1)), // NE
+    };
+    float max = 0.0;
+    int index = 0;
+    for(int i = 0; i < len(points); i++)
+    {
+        const int yy = points[i].y, y = from.y;
+        const int xx = points[i].x, x = from.x;
+        const float gradient = path.density[yy][xx] - path.density[y][x];
+        if(path.clear[yy][xx] && gradient > max)
+        {
+            max = gradient;
+            index = i;
+        }
+    }
+    return unt(sub(points[index], from));
+}
+
+void examine(const Path path)
 {
     for(int i = 0; i < path.rows; i++)
     {

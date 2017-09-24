@@ -16,4 +16,8 @@ void diffuse(const Path path, const int y, const int x);
 
 Path prepare(const Map map);
 
+Point way(const Path path, const Point to, const Point from);
+
+void examine(const Path path);
+
 void ruin(const Path path);
