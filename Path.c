@@ -41,11 +41,6 @@ static float boxavg(const Path path, const int y, const int x)
     return sum / 8.0;
 }
 
-static bool diffusable(const Path path, const int j, const int i)
-{
-    return path.density[j][i] == 0.0;
-}
-
 typedef struct
 {
     int y; // Notice y and x are in reverse
@@ -76,7 +71,7 @@ static void boxrun(const Path path, const int y, const int x, const int w)
         // And on a walkable part of the path...
         && on(path, j, i)
         // And no antiobject is in the way...
-        && diffusable(path, j, i))
+        && path.density[j][i] == 0.0)
             // Then materialize an atom with the diffusion box average
             atoms[count++] = materialize(path, j, i);
     // Transfer diffused atoms in one go

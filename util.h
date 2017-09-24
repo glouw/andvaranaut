@@ -63,3 +63,6 @@ void license();
 
 // Minimum array size needed for an integer to be converted to a string
 #define MINTS ((CHAR_BIT * sizeof(int) - 1) / 3 + 2)
+
+// Random float between 0.0 and 1.0
+#define randf ((float) rand() / (float) (RAND_MAX))

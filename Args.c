@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 Args parse(const int argc, const char* argv[])
 {
@@ -25,5 +26,6 @@ Args parse(const int argc, const char* argv[])
         argc == 4 ?
         strtol(argv[3], NULL, 0)
         : 60;
+    srand(time(0));
     return args;
 }
