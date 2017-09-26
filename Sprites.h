@@ -13,6 +13,9 @@ typedef struct
     int dead;
     int moveable;
     Point last;
+    Point velocity;
+    float speed;
+    float acceleration;
 }
 Sprite;
 

@@ -13,6 +13,8 @@ static Sprite generic(const Point where)
     zero(sprite);
     sprite.where = where;
     sprite.ascii = 'Z';
+    sprite.speed = 0.09;
+    sprite.acceleration = 0.0132;
     return sprite;
 }
 
@@ -231,9 +233,12 @@ static void move(const Sprites sprites, const Path path, const Point where)
     {
         Sprite* const sprite = &sprites.sprite[i];
         const Point dir = force(path.field, where, sprite->where);
-        const Point delta = mul(dir, 0.05);
-        printf("%f %f\n", delta.x, delta.y);
-        place(sprite, add(sprite->where, delta));
+        const Point acc = mul(dir, sprite->acceleration);
+        sprite->velocity = add(sprite->velocity, acc);
+        // Top speed check
+        if(mag(sprite->velocity) > sprite->speed)
+            sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
+        place(sprite, add(sprite->where, sprite->velocity));
     }
 }
 
