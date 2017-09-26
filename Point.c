@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdbool.h>
+#include <float.h>
 
 Point pt(const float x, const float y)
 {
@@ -129,4 +130,44 @@ int block(const Point a, char** const blocks)
 int tile(const Point a, char** const blocks)
 {
     return block(a, blocks) - ' ';
+}
+
+Point force(float** const field, const Point to, const Point from)
+{
+    // Target reached
+    if(eql(to, from, 1.0))
+    {
+        Point z;
+        zero(z);
+        return z;
+    }
+    // Try all immediate directions
+    const Point points[] = {
+        {  1, -0 }, // E
+        {  1,  1 }, // SE
+        {  0,  1 }, // S
+        { -1,  1 }, // SW
+        { -1,  0 }, // W
+        { -1, -1 }, // NW
+        {  0, -1 }, // N
+        {  1, -1 }, // NE
+    };
+    float max = FLT_MIN;
+    int index = 0;
+    // Find the direction with the largest gradient
+    for(int i = 0; i < len(points); i++)
+    {
+        const Point dir = add(points[i], from);
+        const int x = from.x;
+        const int y = from.y;
+        const int yy = dir.y;
+        const int xx = dir.x;
+        const float gradient = field[yy][xx] - field[y][x];
+        if(gradient > max)
+        {
+            max = gradient;
+            index = i;
+        }
+    }
+    return points[index];
 }

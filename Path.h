@@ -5,8 +5,7 @@
 
 typedef struct
 {
-    float** density;
-    int** clear;
+    float** field;
     int rows;
     int cols;
 }
@@ -15,8 +14,6 @@ Path;
 void diffuse(const Path path, const int y, const int x);
 
 Path prepare(const Map map);
-
-Point way(const Path path, const Point to, const Point from);
 
 void examine(const Path path);
 

@@ -7,21 +7,18 @@
 Path prepare(const Map map)
 {
     Path path;
+    zero(path);
     path.rows = map.rows;
     path.cols = strlen(map.walling[0]);
-    path.density = toss(float*, path.rows);
-    path.clear = toss(int*, path.rows);
+    path.field = toss(float*, path.rows);
     for(int i = 0; i < path.rows; i++)
-    {
-        path.density[i] = wipe(float, path.cols);
-        path.clear[i] = wipe(int, path.cols);
-    }
+        path.field[i] = wipe(float, path.cols);
     return path;
 }
 
 static bool on(const Path path, const int y, const int x)
 {
-    return y >= 0 && x >= 0 && y < path.rows && x < path.cols && path.clear[y][x];
+    return y >= 0 && x >= 0 && y < path.rows && x < path.cols;
 }
 
 static float boxavg(const Path path, const int y, const int x)
@@ -36,7 +33,7 @@ static float boxavg(const Path path, const int y, const int x)
         // Do not sum middle of box
         if(j == y && i == x)
             continue;
-        sum += path.density[j][i];
+        sum += path.field[j][i];
     }
     return sum / 8.0;
 }
@@ -71,12 +68,12 @@ static void boxrun(const Path path, const int y, const int x, const int w)
         // And on a walkable part of the path...
         && on(path, j, i)
         // And no antiobject is in the way...
-        && path.density[j][i] == 0.0)
+        && path.field[j][i] == 0.0)
             // Then materialize an atom with the diffusion box average
             atoms[count++] = materialize(path, j, i);
     // Transfer diffused atoms in one go
     for(int a = 0; a < count; a++)
-        path.density[atoms[a].y][atoms[a].x] = atoms[a].val;
+        path.field[atoms[a].y][atoms[a].x] = atoms[a].val;
     free(atoms);
 }
 
@@ -86,45 +83,12 @@ void diffuse(const Path path, const int y, const int x)
         boxrun(path, y, x, w);
 }
 
-// Needs some sort of spline calculations for a litle more realism
-Point way(const Path path, const Point to, const Point from)
-{
-    // Reached
-    if(eql(to, from, 1.0))
-        return pt(0, 0);
-    // Else, try all immediate directions
-    const Point points[] = {
-        add(from, pt(+1, -0)), // E
-        add(from, pt(+1, +1)), // SE
-        add(from, pt(+0, +1)), // S
-        add(from, pt(-1, +1)), // SW
-        add(from, pt(-1, +0)), // W
-        add(from, pt(-1, -1)), // NW
-        add(from, pt(+0, -1)), // N
-        add(from, pt(+1, -1)), // NE
-    };
-    float max = 0.0;
-    int index = 0;
-    for(int i = 0; i < len(points); i++)
-    {
-        const int yy = points[i].y, y = from.y;
-        const int xx = points[i].x, x = from.x;
-        const float gradient = path.density[yy][xx] - path.density[y][x];
-        if(path.clear[yy][xx] && gradient > max)
-        {
-            max = gradient;
-            index = i;
-        }
-    }
-    return unt(sub(points[index], from));
-}
-
 void examine(const Path path)
 {
     for(int i = 0; i < path.rows; i++)
     {
         for(int j = 0; j < path.cols; j++)
-            printf("%7.4f", path.density[i][j]);
+            printf("%7.4f", path.field[i][j]);
         putchar('\n');
     }
     putchar('\n');
@@ -133,10 +97,6 @@ void examine(const Path path)
 void ruin(const Path path)
 {
     for(int i = 0; i < path.rows; i++)
-    {
-        free(path.density[i]);
-        free(path.clear[i]);
-    }
-    free(path.density);
-    free(path.clear);
+        free(path.field[i]);
+    free(path.field);
 }

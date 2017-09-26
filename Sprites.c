@@ -230,8 +230,9 @@ static void move(const Sprites sprites, const Path path, const Point where)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        const Point dir = way(path, where, sprite->where);
+        const Point dir = force(path.field, where, sprite->where);
         const Point delta = mul(dir, 0.05);
+        printf("%f %f\n", delta.x, delta.y);
         place(sprite, add(sprite->where, delta));
     }
 }
@@ -239,26 +240,26 @@ static void move(const Sprites sprites, const Path path, const Point where)
 // Collaborative diffusion
 static void route(const Sprites sprites, const Path path, const Map map, const Hero hero)
 {
-    // Mark clear parts of the path (eg. tiles that are not walls)
+    // Wall anti-objects
     for(int j = 0; j < path.rows; j++)
     for(int i = 0; i < path.cols; i++)
-        path.clear[j][i] = map.walling[j][i] - ' ' == 0;
-    // Subtract sprite widths on tiles to create anti object densities.
-    // Sprites try to avoid high density tiles when moving
+        if(map.walling[j][i] != ' ') path.field[j][i] = -1.0;
+    // Sprite anti-objects
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        const int x = sprite->where.x;
         const int y = sprite->where.y;
-        path.density[y][x] -= sprite->width;
+        const int x = sprite->where.x;
+        path.field[y][x] -= sprite->width;
     }
     // Place a scent at the hero location
-    const int x = hero.where.x;
     const int y = hero.where.y;
-    path.density[y][x] = hero.scent;
-    // Diffuse the scent across the map
+    const int x = hero.where.x;
+    path.field[y][x] = hero.scent;
+    // Diffuse the scent across the path towards the anti-objects
     diffuse(path, y, x);
-    // Sprites follow scent
+    // Anti-objects now follow the scent
+    //examine(path);
     move(sprites, path, hero.where);
 }
 
