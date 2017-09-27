@@ -144,15 +144,6 @@ static void rearrange(const Sprites sprites, const Hero hero)
     push(sprites, hero);
 }
 
-static void idle(const Sprites sprites)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        sprite->state = IDLE;
-    }
-}
-
 static void place(Sprite* const sprite, const Point to)
 {
     sprite->last = sprite->where;
@@ -235,22 +226,21 @@ static void move(const Sprites sprites, const Path path, const Map map, const Po
         Sprite* const sprite = &sprites.sprite[i];
         const Point dir = force(path.field, where, sprite->where);
         const Point acc = mul(dir, sprite->acceleration);
-        printf("%f %f\n", acc.x, acc.y);
+        // Slow down if zero vector...
         if(acc.x == 0.0 && acc.y == 0.0)
-        {
-            puts("slowing down");
+            // With a mass spring damper
             sprite->velocity = mul(sprite->velocity, 1.0 - sprite->acceleration / sprite->speed);
-        }
         else
         {
-            puts("\tspeeding up");
-            // Accelerate...
+            // Speed up...
             sprite->velocity = add(sprite->velocity, acc);
             // And then check top speed...
             if(mag(sprite->velocity) > sprite->speed)
                 // And cap speed if the top speed is surpassed
                 sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
         }
+        // If the sprite is slow enough they will idle instead of chase
+        sprite->state = mag(sprite->velocity) < 0.01 ? IDLE : CHASING;
         // Place the sprite at their new location...
         place(sprite, add(sprite->where, sprite->velocity));
         // If the sprite is out of bounds then set velocity to zero
@@ -284,8 +274,6 @@ static void route(const Sprites sprites, const Path path, const Map map, const H
     path.field[y][x] = hero.scent;
     // Diffuse the scent across the path towards the anti-objects
     diffuse(path, y, x);
-    // Anti-objects now follow the scent
-    move(sprites, path, map, hero.where);
 }
 
 void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
@@ -295,10 +283,9 @@ void caretake(const Sprites sprites, const Hero hero, const Input input, const M
     const Path path = prepare(map);
     route(sprites, path, map, hero);
     ruin(path);
-    // Sprite states - lowest to highest priority for preemption.
-    idle(sprites);
-    grab(sprites, hero, input);
+    move(sprites, path, map, hero.where);
     // Sprite placement
+    grab(sprites, hero, input);
     shove(sprites);
     bound(sprites, map);
 }

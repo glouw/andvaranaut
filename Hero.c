@@ -71,7 +71,7 @@ static Hero move(const Hero hero, char** const walling, const Input input)
         if(input.key[SDL_SCANCODE_D]) temp.velocity = add(temp.velocity, rag(acceleration));
         if(input.key[SDL_SCANCODE_A]) temp.velocity = sub(temp.velocity, rag(acceleration));
     }
-    // Mass-spring damping system
+    // Mass spring damping system
     else temp.velocity = mul(temp.velocity, 1.0 - temp.acceleration / temp.speed);
     // Top speed check
     if(mag(temp.velocity) > temp.speed)
