@@ -135,7 +135,7 @@ int tile(const Point a, char** const blocks)
 Point force(float** const field, const Point to, const Point from)
 {
     // Target reached
-    if(eql(to, from, 1.0))
+    if(eql(to, from, 2.0))
     {
         Point z;
         zero(z);
@@ -144,15 +144,15 @@ Point force(float** const field, const Point to, const Point from)
     // Try all immediate directions
     const Point points[] = {
         {  1, -0 }, // E
-        {  1,  1 }, // SE
+        //{  1,  1 }, // SE
         {  0,  1 }, // S
-        { -1,  1 }, // SW
+        //{ -1,  1 }, // SW
         { -1,  0 }, // W
-        { -1, -1 }, // NW
+        //{ -1, -1 }, // NW
         {  0, -1 }, // N
-        {  1, -1 }, // NE
+        //{  1, -1 }, // NE
     };
-    float max = FLT_MIN;
+    float max = -FLT_MAX;
     int index = 0;
     // Find the direction with the largest gradient
     for(int i = 0; i < len(points); i++)

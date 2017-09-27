@@ -13,8 +13,8 @@ static Sprite generic(const Point where)
     zero(sprite);
     sprite.where = where;
     sprite.ascii = 'Z';
-    sprite.speed = 0.09;
-    sprite.acceleration = 0.0132;
+    sprite.speed = 0.06;
+    sprite.acceleration = 0.004;
     return sprite;
 }
 
@@ -174,6 +174,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
         if(eql(hand, sprite->where, sprite->width))
         {
             sprite->state = GRABBED;
+            zero(sprite->velocity);
             place(sprite, hand);
             return;
         }
@@ -215,7 +216,7 @@ static void shove(const Sprites sprites)
     }
 }
 
-// Puts a sprite in front of the hero if the sprite goes out of bounds
+// Puts a sprite in the last good spot if it goes out of bounds
 static void bound(const Sprites sprites, const Map map)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -227,7 +228,7 @@ static void bound(const Sprites sprites, const Map map)
 }
 
 // Moves sprite along path towards the hero player scent
-static void move(const Sprites sprites, const Path path, const Point where)
+static void move(const Sprites sprites, const Path path, const Map map, const Point where)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -237,8 +238,17 @@ static void move(const Sprites sprites, const Path path, const Point where)
         sprite->velocity = add(sprite->velocity, acc);
         // Top speed check
         if(mag(sprite->velocity) > sprite->speed)
+            // Top speed cap
             sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
+        // Place the sprite at their new location...
         place(sprite, add(sprite->where, sprite->velocity));
+        // If the sprite is out of bounds then set velocity to zero
+        // and place the sprite at their last good spot
+        if(tile(sprite->where, map.walling))
+        {
+            sprite->where = sprite->last;
+            zero(sprite->velocity);
+        }
     }
 }
 
@@ -248,7 +258,7 @@ static void route(const Sprites sprites, const Path path, const Map map, const H
     // Wall anti-objects
     for(int j = 0; j < path.rows; j++)
     for(int i = 0; i < path.cols; i++)
-        if(map.walling[j][i] != ' ') path.field[j][i] = -1.0;
+        if(map.walling[j][i] != ' ') path.field[j][i] = -0.66;
     // Sprite anti-objects
     for(int i = 0; i < sprites.count; i++)
     {
@@ -264,8 +274,7 @@ static void route(const Sprites sprites, const Path path, const Map map, const H
     // Diffuse the scent across the path towards the anti-objects
     diffuse(path, y, x);
     // Anti-objects now follow the scent
-    //examine(path);
-    move(sprites, path, hero.where);
+    move(sprites, path, map, hero.where);
 }
 
 void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
