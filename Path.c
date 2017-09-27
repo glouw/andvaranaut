@@ -9,6 +9,7 @@ Path prepare(const Map map)
     Path path;
     zero(path);
     path.rows = map.rows;
+    // cols must equal rows
     path.cols = strlen(map.walling[0]);
     path.field = toss(float*, path.rows);
     for(int i = 0; i < path.rows; i++)

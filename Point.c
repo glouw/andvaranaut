@@ -7,14 +7,6 @@
 #include <stdbool.h>
 #include <float.h>
 
-Point pt(const float x, const float y)
-{
-    Point out;
-    out.x = x;
-    out.y = y;
-    return out;
-}
-
 Point trn(const Point a, const float t)
 {
     Point out;
@@ -144,13 +136,13 @@ Point force(float** const field, const Point to, const Point from)
     // Try all immediate directions
     const Point points[] = {
         {  1, -0 }, // E
-        //{  1,  1 }, // SE
+        {  1,  1 }, // SE
         {  0,  1 }, // S
-        //{ -1,  1 }, // SW
+        { -1,  1 }, // SW
         { -1,  0 }, // W
-        //{ -1, -1 }, // NW
+        { -1, -1 }, // NW
         {  0, -1 }, // N
-        //{  1, -1 }, // NE
+        {  1, -1 }, // NE
     };
     float max = -FLT_MAX;
     int index = 0;

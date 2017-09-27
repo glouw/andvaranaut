@@ -9,9 +9,6 @@ typedef struct
 }
 Point;
 
-// Builds a new point
-Point pt(const float x, const float y);
-
 // Returns a point rotated about the origin by t radians
 Point trn(const Point a, const float t);
 
