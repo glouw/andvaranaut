@@ -258,7 +258,7 @@ static void route(const Sprites sprites, const Path path, const Map map, const H
     // Wall anti-objects
     for(int j = 0; j < path.rows; j++)
     for(int i = 0; i < path.cols; i++)
-        if(map.walling[j][i] != ' ') path.field[j][i] = -0.66;
+        if(map.walling[j][i] != ' ') path.field[j][i] = -1.0;
     // Sprite anti-objects
     for(int i = 0; i < sprites.count; i++)
     {
