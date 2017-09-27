@@ -235,15 +235,26 @@ static void move(const Sprites sprites, const Path path, const Map map, const Po
         Sprite* const sprite = &sprites.sprite[i];
         const Point dir = force(path.field, where, sprite->where);
         const Point acc = mul(dir, sprite->acceleration);
-        sprite->velocity = add(sprite->velocity, acc);
-        // Top speed check
-        if(mag(sprite->velocity) > sprite->speed)
-            // Top speed cap
-            sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
+        printf("%f %f\n", acc.x, acc.y);
+        if(acc.x == 0.0 && acc.y == 0.0)
+        {
+            puts("slowing down");
+            sprite->velocity = mul(sprite->velocity, 1.0 - sprite->acceleration / sprite->speed);
+        }
+        else
+        {
+            puts("\tspeeding up");
+            // Accelerate...
+            sprite->velocity = add(sprite->velocity, acc);
+            // And then check top speed...
+            if(mag(sprite->velocity) > sprite->speed)
+                // And cap speed if the top speed is surpassed
+                sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
+        }
         // Place the sprite at their new location...
         place(sprite, add(sprite->where, sprite->velocity));
         // If the sprite is out of bounds then set velocity to zero
-        // and place the sprite at their last good spot
+        // and place the sprite at their last good position
         if(tile(sprite->where, map.walling))
         {
             sprite->where = sprite->last;

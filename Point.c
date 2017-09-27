@@ -127,7 +127,7 @@ int tile(const Point a, char** const blocks)
 Point force(float** const field, const Point to, const Point from)
 {
     // Target reached
-    if(eql(to, from, 2.0))
+    if(eql(to, from, 2.5))
     {
         Point z;
         zero(z);
