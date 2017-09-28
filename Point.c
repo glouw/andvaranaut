@@ -123,31 +123,3 @@ int tile(const Point a, char** const blocks)
 {
     return block(a, blocks) - ' ';
 }
-
-// Returns an acceleration vector from a point given
-// a 2D array of an acceleration field
-Point force(float** const field, const Point p)
-{
-    const Point points[] = {
-        {  1, -0 }, // E
-        {  1,  1 }, // SE
-        {  0,  1 }, // S
-        { -1,  1 }, // SW
-        { -1,  0 }, // W
-        { -1, -1 }, // NW
-        {  0, -1 }, // N
-        {  1, -1 }, // NE
-    };
-    float max = -FLT_MAX;
-    int index = 0;
-    for(int i = 0; i < len(points); i++)
-    {
-        const Point dir = add(points[i], p);
-        const int y = p.y, yy = dir.y;
-        const int x = p.x, xx = dir.x;
-        const float gradient = field[yy][xx] - field[y][x];
-        if(gradient > max)
-            max = gradient, index = i;
-    }
-    return points[index];
-}

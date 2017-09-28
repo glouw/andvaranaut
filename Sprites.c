@@ -1,6 +1,6 @@
 #include "Sprites.h"
 
-#include "Path.h"
+#include "Field.h"
 #include "util.h"
 
 #include "SDL2/SDL.h"
@@ -219,12 +219,12 @@ static void bound(const Sprites sprites, const Map map)
 }
 
 // Moves sprite along path towards the hero player scent
-static void move(const Sprites sprites, const Path path, const Map map)
+static void move(const Sprites sprites, const Field field, const Map map)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        const Point dir = force(path.field, sprite->where);
+        const Point dir = force(field, sprite->where);
         const Point acc = mul(dir, sprite->acceleration);
         // Speed up...
         sprite->velocity = add(sprite->velocity, acc);
@@ -237,42 +237,41 @@ static void move(const Sprites sprites, const Path path, const Map map)
         // Place the sprite at their new location...
         place(sprite, add(sprite->where, sprite->velocity));
         // If the sprite is out of bounds then set velocity to zero
-        if(tile(sprite->where, map.walling))
-            zero(sprite->velocity);
+        if(tile(sprite->where, map.walling)) zero(sprite->velocity);
     }
 }
 
 // Collaborative diffusion
-static void route(const Sprites sprites, const Path path, const Map map, const Hero hero)
+static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
     // Wall anti-objects
-    for(int j = 0; j < path.rows; j++)
-    for(int i = 0; i < path.cols; i++)
-        if(map.walling[j][i] != ' ') path.field[j][i] = -1.0;
+    for(int j = 0; j < field.rows; j++)
+    for(int i = 0; i < field.cols; i++)
+        if(map.walling[j][i] != ' ') field.mesh[j][i] = -1.0;
     // Sprite anti-objects
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         const int y = sprite->where.y;
         const int x = sprite->where.x;
-        path.field[y][x] -= sprite->width;
+        field.mesh[y][x] -= sprite->width;
     }
     // Place a scent at the hero location
     const int y = hero.where.y;
     const int x = hero.where.x;
-    path.field[y][x] = hero.scent;
+    field.mesh[y][x] = hero.scent;
     // Diffuse the scent across the path towards the anti-objects
-    diffuse(path, y, x);
+    diffuse(field, y, x);
 }
 
 void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
 {
     arrange(sprites, hero);
     // Path finding and movement
-    const Path path = prepare(map);
-    route(sprites, path, map, hero);
-    move(sprites, path, map);
-    ruin(path);
+    const Field field = prepare(map);
+    route(sprites, field, map, hero);
+    move(sprites, field, map);
+    ruin(field);
     // Sprite placement
     grab(sprites, hero, input);
     shove(sprites);

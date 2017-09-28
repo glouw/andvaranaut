@@ -59,6 +59,3 @@ int block(const Point a, char** const blocks);
 
 // Returns the tile number at point a
 int tile(const Point a, char** const blocks);
-
-//
-Point force(float** const field, const Point from);
