@@ -4,20 +4,24 @@
 
 #include <stdbool.h>
 
-// Clang like to break these pointers, hence volatile
 typedef struct
 {
-    char** volatile ceiling;
-    char** volatile walling;
-    char** volatile floring;
+    char** ceiling;
+    char** walling;
+    char** floring;
     int rows;
 }
 Map;
 
-Map open(const int level);
+struct mapper
+{
+    Map (*open)(const int level);
 
-void close(const Map map);
+    void (*close)(const Map map);
 
-Map reopen(const Map map, const int level);
+    Map (*reopen)(const Map map, const int level);
 
-bool isportal(const Map map, const Point where);
+    bool (*isportal)(const Map map, const Point where);
+};
+
+extern const struct mapper mapper;

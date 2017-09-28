@@ -108,7 +108,7 @@ bool teleporting(const Hero hero, const Map map, const Input input, const int ti
     if(!input.key[SDL_SCANCODE_E])
         return false;
     last = ticks;
-    return isportal(map, hero.where);
+    return mapper.isportal(map, hero.where);
 }
 
 Hero teleport(const Hero hero, const Map map)
