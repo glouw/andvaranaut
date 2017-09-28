@@ -7,13 +7,11 @@
 Path prepare(const Map map)
 {
     Path path;
-    zero(path);
     path.rows = map.rows;
-    // cols must equal rows
-    path.cols = strlen(map.walling[0]);
+    path.cols = map.cols;
     path.field = toss(float*, path.rows);
-    for(int i = 0; i < path.rows; i++)
-        path.field[i] = wipe(float, path.cols);
+    for(int j = 0; j < path.rows; j++)
+        path.field[j] = wipe(float, path.cols);
     return path;
 }
 
@@ -86,10 +84,10 @@ void diffuse(const Path path, const int y, const int x)
 
 void examine(const Path path)
 {
-    for(int i = 0; i < path.rows; i++)
+    for(int j = 0; j < path.rows; j++)
     {
-        for(int j = 0; j < path.cols; j++)
-            printf("%7.4f", path.field[i][j]);
+        for(int i = 0; i < path.cols; i++)
+            printf("%7.4f", path.field[j][i]);
         putchar('\n');
     }
     putchar('\n');
@@ -97,7 +95,7 @@ void examine(const Path path)
 
 void ruin(const Path path)
 {
-    for(int i = 0; i < path.rows; i++)
-        free(path.field[i]);
+    for(int j = 0; j < path.rows; j++)
+        free(path.field[j]);
     free(path.field);
 }

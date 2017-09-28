@@ -124,16 +124,10 @@ int tile(const Point a, char** const blocks)
     return block(a, blocks) - ' ';
 }
 
-Point force(float** const field, const Point to, const Point from)
+// Returns an acceleration vector from a point given
+// a 2D array of an acceleration field
+Point force(float** const field, const Point p)
 {
-    // Target reached
-    if(eql(to, from, 2.5))
-    {
-        Point z;
-        zero(z);
-        return z;
-    }
-    // Try all immediate directions
     const Point points[] = {
         {  1, -0 }, // E
         {  1,  1 }, // SE
@@ -146,20 +140,14 @@ Point force(float** const field, const Point to, const Point from)
     };
     float max = -FLT_MAX;
     int index = 0;
-    // Find the direction with the largest gradient
     for(int i = 0; i < len(points); i++)
     {
-        const Point dir = add(points[i], from);
-        const int x = from.x;
-        const int y = from.y;
-        const int yy = dir.y;
-        const int xx = dir.x;
+        const Point dir = add(points[i], p);
+        const int y = p.y, yy = dir.y;
+        const int x = p.x, xx = dir.x;
         const float gradient = field[yy][xx] - field[y][x];
         if(gradient > max)
-        {
-            max = gradient;
-            index = i;
-        }
+            max = gradient, index = i;
     }
     return points[index];
 }

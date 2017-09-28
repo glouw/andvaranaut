@@ -125,8 +125,8 @@ void release(const Sdl sdl)
 
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
-    // Arrange sprite location relative to player
-    const Sprites relatives = arrange(sprites, hero);
+    // Orient sprite location and theta relative to player
+    const Sprites relatives = orient(sprites, hero);
     // Preallocate for render computations
     Point* wheres = toss(Point, sdl.res);
     int* moddings = toss(int, sdl.res);

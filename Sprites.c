@@ -128,7 +128,7 @@ static void turn(const Sprites sprites, const Hero hero)
     }
 }
 
-Sprites arrange(const Sprites sprites, const Hero hero)
+Sprites orient(const Sprites sprites, const Hero hero)
 {
     const Sprites copied = copy(sprites);
     pull(copied, hero);
@@ -137,7 +137,7 @@ Sprites arrange(const Sprites sprites, const Hero hero)
     return copied;
 }
 
-static void rearrange(const Sprites sprites, const Hero hero)
+static void arrange(const Sprites sprites, const Hero hero)
 {
     pull(sprites, hero);
     sort(sprites, true);
@@ -219,37 +219,26 @@ static void bound(const Sprites sprites, const Map map)
 }
 
 // Moves sprite along path towards the hero player scent
-static void move(const Sprites sprites, const Path path, const Map map, const Point where)
+static void move(const Sprites sprites, const Path path, const Map map)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        const Point dir = force(path.field, where, sprite->where);
+        const Point dir = force(path.field, sprite->where);
         const Point acc = mul(dir, sprite->acceleration);
-        // Slow down if zero vector...
-        if(acc.x == 0.0 && acc.y == 0.0)
-            // With a mass spring damper
-            sprite->velocity = mul(sprite->velocity, 1.0 - sprite->acceleration / sprite->speed);
-        else
-        {
-            // Speed up...
-            sprite->velocity = add(sprite->velocity, acc);
-            // And then check top speed...
-            if(mag(sprite->velocity) > sprite->speed)
-                // And cap speed if the top speed is surpassed
-                sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
-        }
+        // Speed up...
+        sprite->velocity = add(sprite->velocity, acc);
+        // And then check top speed...
+        if(mag(sprite->velocity) > sprite->speed)
+            // And cap speed if the top speed is surpassed
+            sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
         // If the sprite is slow enough they will idle instead of chase
         sprite->state = mag(sprite->velocity) < 0.01 ? IDLE : CHASING;
         // Place the sprite at their new location...
         place(sprite, add(sprite->where, sprite->velocity));
         // If the sprite is out of bounds then set velocity to zero
-        // and place the sprite at their last good position
         if(tile(sprite->where, map.walling))
-        {
-            sprite->where = sprite->last;
             zero(sprite->velocity);
-        }
     }
 }
 
@@ -278,12 +267,12 @@ static void route(const Sprites sprites, const Path path, const Map map, const H
 
 void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
 {
-    rearrange(sprites, hero);
+    arrange(sprites, hero);
     // Path finding and movement
     const Path path = prepare(map);
     route(sprites, path, map, hero);
+    move(sprites, path, map);
     ruin(path);
-    move(sprites, path, map, hero.where);
     // Sprite placement
     grab(sprites, hero, input);
     shove(sprites);

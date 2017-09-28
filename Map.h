@@ -10,6 +10,7 @@ typedef struct
     char** walling;
     char** floring;
     int rows;
+    int cols;
 }
 Map;
 

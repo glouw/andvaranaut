@@ -33,6 +33,6 @@ void kill(const Sprites sprites);
 
 Sprites rewake(const Sprites sprites, const int level);
 
-Sprites arrange(const Sprites sprites, const Hero hero);
+Sprites orient(const Sprites sprites, const Hero hero);
 
 void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map);
