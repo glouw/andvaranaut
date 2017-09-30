@@ -11,6 +11,7 @@ Field prepare(const Map map)
     field.rows = map.rows;
     field.cols = map.cols;
     field.mesh = toss(float*, field.rows);
+    field.anti = -1000.0;
     for(int j = 0; j < field.rows; j++)
         field.mesh[j] = wipe(float, field.cols);
     return field;
@@ -29,6 +30,9 @@ static float boxavg(const Field field, const int y, const int x)
     {
         // Out of bounds check
         if(!on(field, j, i))
+            continue;
+        // Do not sum wall anti objects
+        if(field.mesh[j][i] == field.anti)
             continue;
         // Do not sum middle of box
         if(j == y && i == x)
@@ -77,12 +81,37 @@ static void boxrun(const Field field, const int y, const int x, const int w)
     free(atoms);
 }
 
-void diffuse(const Field field, const int y, const int x)
+static bool peak(float* const gradients, const int size)
 {
-    for(int w = 1; w < max(field.rows, field.cols); w++) boxrun(field, y, x, w);
+    bool peaking = true;
+    for(int i = 0; i < size - 1; i++)
+    {
+        // Do not compare zero gradients
+        if(gradients[i + 0] == 0.0
+        || gradients[i + 1] == 0.0)
+            continue;
+        if(gradients[i + 0] != gradients[i + 1])
+            peaking = false;
+    }
+    return peaking;
 }
 
-Point force(const Field field, const Point p)
+static int largest(float* const gradients, const int size)
+{
+    float max = FLT_MIN;
+    int index = 0;
+    for(int i = 0; i < size; i++)
+    {
+        // Do not check zero gradients
+        if(gradients[i] == 0.0)
+            continue;
+        if(gradients[i] > max)
+            max = gradients[i], index = i;
+    }
+    return index;
+}
+
+Point force(const Field field, const Point from, const Point to)
 {
     const Point points[] = {
         {  1, -0 }, // E
@@ -94,17 +123,27 @@ Point force(const Field field, const Point p)
         {  0, -1 }, // N
         {  1, -1 }, // NE
     };
-    float max = -FLT_MAX;
-    int index = 0;
-    for(int i = 0; i < len(points); i++)
+    const int size = len(points);
+    float gradients[size];
+    zero(gradients);
+    for(int i = 0; i < size; i++)
     {
-        const Point dir = add(points[i], p);
-        const int y = p.y, yy = dir.y;
-        const int x = p.x, xx = dir.x;
-        const float gradient = field.mesh[yy][xx] - field.mesh[y][x];
-        if(gradient > max) max = gradient, index = i;
+        const Point dir = add(points[i], from);
+        const int y = from.y, yy = dir.y;
+        const int x = from.x, xx = dir.x;
+        // Do not worry about calculating the gradients for anti objects
+        if(field.mesh[yy][xx] == field.anti)
+            continue;
+        // 
+        gradients[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
-    return points[index];
+    const Point z = { 0.0, 0.0 };
+    return peak(gradients, size) || eql(to, from, 2.0) ? z : points[largest(gradients, size)];
+}
+
+void diffuse(const Field field, const int y, const int x)
+{
+    for(int w = 1; w < max(field.rows, field.cols); w++) boxrun(field, y, x, w);
 }
 
 void examine(const Field field)
@@ -112,7 +151,7 @@ void examine(const Field field)
     for(int j = 0; j < field.rows; j++)
     {
         for(int i = 0; i < field.cols; i++)
-            printf("%7.4f", field.mesh[j][i]);
+            printf("%10.4f", field.mesh[j][i]);
         putchar('\n');
     }
     putchar('\n');

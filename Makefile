@@ -32,21 +32,18 @@ CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wpadded -isystem lib
 CFLAGS+= -g
 
 # Optimization flags
-CFLAGS+= -Ofast -flto
-
-# Architecture flags
-ARCH = -march=native
+CFLAGS+= -Ofast -flto -march=native
 
 # Linker flags
 LDFLAGS = -lm -lSDL2
 
 # Linker
 $(PROJ): $(SRCS:.c=.o)
-	$(CC) $(ARCH) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(PROJ)
+	$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(PROJ)
 
 # Compiler template; generates dependency targets
 %.o : %.c
-	$(CC) $(ARCH) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
+	$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@mv -f $*.td $*.d
 
 # All dependency targets

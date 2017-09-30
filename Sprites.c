@@ -13,8 +13,8 @@ static Sprite generic(const Point where)
     zero(sprite);
     sprite.where = where;
     sprite.ascii = 'Z';
-    sprite.speed = 0.06;
-    sprite.acceleration = 0.004;
+    sprite.speed = 0.035;
+    sprite.acceleration = 0.002;
     return sprite;
 }
 
@@ -219,19 +219,29 @@ static void bound(const Sprites sprites, const Map map)
 }
 
 // Moves sprite along path towards the hero player scent
-static void move(const Sprites sprites, const Field field, const Map map)
+static void move(const Sprites sprites, const Field field, const Map map, const Point to)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        const Point dir = force(field, sprite->where);
-        const Point acc = mul(dir, sprite->acceleration);
-        // Speed up...
-        sprite->velocity = add(sprite->velocity, acc);
-        // And then check top speed...
-        if(mag(sprite->velocity) > sprite->speed)
-            // And cap speed if the top speed is surpassed
-            sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
+        // Do not move the sprite if the sprite is immovable
+        if(!sprite->moveable)
+            continue;
+        const Point dir = force(field, sprite->where, to);
+        // No force of direction...
+        if(dir.x == 0.0 && dir.y == 0.0)
+            // Then slow down
+            sprite->velocity = mul(sprite->velocity, 1.0 - sprite->acceleration / sprite->speed);
+        // Otherwise speed up
+        else
+        {
+            const Point acc = mul(dir, sprite->acceleration);
+            sprite->velocity = add(sprite->velocity, acc);
+            // And then check top speed...
+            if(mag(sprite->velocity) > sprite->speed)
+                // And cap speed if the top speed is surpassed
+                sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
+        }
         // If the sprite is slow enough they will idle instead of chase
         sprite->state = mag(sprite->velocity) < 0.01 ? IDLE : CHASING;
         // Place the sprite at their new location...
@@ -247,7 +257,8 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     // Wall anti-objects
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
-        if(map.walling[j][i] != ' ') field.mesh[j][i] = -1.0;
+        if(map.walling[j][i] != ' ')
+            field.mesh[j][i] = field.anti;
     // Sprite anti-objects
     for(int i = 0; i < sprites.count; i++)
     {
@@ -259,7 +270,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     // Place a scent at the hero location
     const int y = hero.where.y;
     const int x = hero.where.x;
-    field.mesh[y][x] = hero.scent;
+    field.mesh[y][x] += hero.scent;
     // Diffuse the scent across the path towards the anti-objects
     diffuse(field, y, x);
 }
@@ -270,7 +281,7 @@ void caretake(const Sprites sprites, const Hero hero, const Input input, const M
     // Path finding and movement
     const Field field = prepare(map);
     route(sprites, field, map, hero);
-    move(sprites, field, map);
+    move(sprites, field, map, hero.where);
     ruin(field);
     // Sprite placement
     grab(sprites, hero, input);

@@ -14,7 +14,7 @@ Args parse(const int argc, const char* argv[])
     args.res =
         argc == 2 ?
         strtol(argv[1], NULL, 0)
-        : 512;
+        : 600;
     // Field of view scale
     args.scale =
         argc == 3 ?

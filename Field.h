@@ -8,14 +8,15 @@ typedef struct
     float** mesh;
     int rows;
     int cols;
+    float anti;
 }
 Field;
 
 void diffuse(const Field field, const int y, const int x);
 
-Point force(const Field field, const Point p);
-
 Field prepare(const Map map);
+
+Point force(const Field field, const Point from, const Point to);
 
 void examine(const Field field);
 

@@ -17,7 +17,7 @@ static Point beginning()
 {
     Point where;
     where.x = 5.5;
-    where.y = 4.5;
+    where.y = 3.5;
     return where;
 }
 
