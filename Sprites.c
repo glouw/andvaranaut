@@ -247,43 +247,46 @@ static void move(const Sprites sprites, const Field field, const Map map, const 
         // Place the sprite at their new location...
         place(sprite, add(sprite->where, sprite->velocity));
         // If the sprite is out of bounds then set velocity to zero
-        if(tile(sprite->where, map.walling)) zero(sprite->velocity);
+        if(tile(sprite->where, map.walling))
+        {
+            // TODO: Add a sprite head bong animation to make it look like the sprite hit
+            // their head when they ran into the wall. Will flag is immovable too!
+            zero(sprite->velocity);
+        }
     }
 }
 
 // Collaborative diffusion
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
-    // Wall anti-objects
+    // Anti-objects are walls and do not affect scent calculations
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
         if(map.walling[j][i] != ' ')
-            field.mesh[j][i] = field.anti;
-    // Sprite anti-objects
+        {
+            const Point wall = { i, j };
+            deposit(field, wall, field.anti);
+        }
+    // Sprite scent is negative, but will never reach the magnitude of the wall anti-objects
     for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        const int y = sprite->where.y;
-        const int x = sprite->where.x;
-        field.mesh[y][x] -= sprite->width;
-    }
-    // Place a scent at the hero location
-    const int y = hero.where.y;
-    const int x = hero.where.x;
-    field.mesh[y][x] += hero.scent;
-    // Diffuse the scent across the path towards the anti-objects
-    diffuse(field, y, x);
+        deposit(field, sprites.sprite[i].where, -sprites.sprite[i].width);
+    // Hero scent is positive and adds to sprite scent. If several sprites are on the same
+    // tile as the hero, the tile scent will become negative, repelling other sprites
+    deposit(field, hero.where, hero.scent);
+    // Diffuse the culminated scent across the field
+    diffuse(field, hero.where);
 }
 
 void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
 {
+    // Sprites need to be arrange closest to hero first
     arrange(sprites, hero);
-    // Path finding and movement
+    // Sprite path finding and movement
     const Field field = prepare(map);
     route(sprites, field, map, hero);
     move(sprites, field, map, hero.where);
     ruin(field);
-    // Sprite placement
+    // Sprite placement - interactive and out of bounds
     grab(sprites, hero, input);
     shove(sprites);
     bound(sprites, map);

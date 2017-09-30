@@ -56,7 +56,7 @@ static Atom materialize(const Field field, const int j, const int i)
     return atom;
 }
 
-static void boxrun(const Field field, const int y, const int x, const int w)
+static void box(const Field field, const int y, const int x, const int w)
 {
     Atom* const atoms = toss(Atom, 8 * w);
     int count = 0;
@@ -78,6 +78,7 @@ static void boxrun(const Field field, const int y, const int x, const int w)
     // Transfer diffused atoms in one go
     for(int a = 0; a < count; a++)
         field.mesh[atoms[a].y][atoms[a].x] = atoms[a].val;
+    // Cleanup
     free(atoms);
 }
 
@@ -113,7 +114,10 @@ static int largest(float* const gradients, const int size)
 
 Point force(const Field field, const Point from, const Point to)
 {
-    const Point points[] = {
+    // Zero acceleration vector
+    const Point dead = { 0.0, 0.0 };
+    // Accleration vectors by direction
+    const Point vectors[] = {
         {  1, -0 }, // E
         {  1,  1 }, // SE
         {  0,  1 }, // S
@@ -123,27 +127,41 @@ Point force(const Field field, const Point from, const Point to)
         {  0, -1 }, // N
         {  1, -1 }, // NE
     };
-    const int size = len(points);
+    const int size = len(vectors);
+    // Acceleration field gradients, one for each acceleration vector
     float gradients[size];
     zero(gradients);
     for(int i = 0; i < size; i++)
     {
-        const Point dir = add(points[i], from);
+        const Point dir = add(vectors[i], from);
         const int y = from.y, yy = dir.y;
         const int x = from.x, xx = dir.x;
         // Do not worry about calculating the gradients for anti objects
         if(field.mesh[yy][xx] == field.anti)
             continue;
-        // 
         gradients[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
-    const Point z = { 0.0, 0.0 };
-    return peak(gradients, size) || eql(to, from, 2.0) ? z : points[largest(gradients, size)];
+    // Once all gradients are found, return the zero acceleration vector
+    // if <from> is at a a peak of the acceleration mesh,
+    // or if <from> is close enough to the <to> destination
+    return peak(gradients, size) || eql(to, from, 2.5) ? dead
+        // Otherwise, return the acceleration vector of the largest gradient
+        : vectors[largest(gradients, size)];
 }
 
-void diffuse(const Field field, const int y, const int x)
+void diffuse(const Field field, const Point where)
 {
-    for(int w = 1; w < max(field.rows, field.cols); w++) boxrun(field, y, x, w);
+    const int y = where.y;
+    const int x = where.x;
+    for(int w = 1; w < max(field.rows, field.cols); w++)
+        box(field, y, x, w);
+}
+
+void deposit(const Field field, const Point p, const float val)
+{
+    const int y = p.y;
+    const int x = p.x;
+    field.mesh[y][x] += val;
 }
 
 void examine(const Field field)

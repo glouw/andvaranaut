@@ -12,12 +12,14 @@ typedef struct
 }
 Field;
 
-void diffuse(const Field field, const int y, const int x);
+void diffuse(const Field field, const Point where);
 
 Field prepare(const Map map);
 
 Point force(const Field field, const Point from, const Point to);
 
 void examine(const Field field);
+
+void deposit(const Field field, const Point p, const float val);
 
 void ruin(const Field field);
