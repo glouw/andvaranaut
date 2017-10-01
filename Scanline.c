@@ -2,6 +2,17 @@
 
 #include "util.h"
 
+//      yres
+//  +----------+
+//  |          |
+//  |          |
+//  |          |
+//  |          | xres
+//  |          |
+//  |          |
+//  |          |
+//  +----------+
+
 void wrend(const Scanline scanline, const Ray ray)
 {
     const SDL_Surface* const surface = scanline.sdl.surfaces.surface[ray.hit.surface];
@@ -19,8 +30,8 @@ void frend(const Scanline scanline, const Ray ray, Point* const wheres, char** c
 {
     for(int x = 0; x < ray.projection.clamped.bot; x++)
     {
-        const Point where = wheres[scanline.sdl.res - 1 - x] =
-            lerp(ray.traceline.trace, fcast(ray.traceline.fov, scanline.sdl.res, x, ray.traceline.corrected.x));
+        const Point where = wheres[scanline.sdl.yres - 1 - x] =
+            lerp(ray.traceline.trace, fcast(ray.traceline.fov, scanline.sdl.yres, x, ray.traceline.corrected.x));
         const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(where, floring)];
         const int row = surface->h * dec(where.y);
         const int col = surface->w * dec(where.x);
@@ -31,7 +42,7 @@ void frend(const Scanline scanline, const Ray ray, Point* const wheres, char** c
 
 void crend(const Scanline scanline, const Ray ray, Point* const wheres, char** const ceiling)
 {
-    for(int x = ray.projection.clamped.top; x < scanline.sdl.res; x++)
+    for(int x = ray.projection.clamped.top; x < scanline.sdl.yres; x++)
     {
         const SDL_Surface* const surface = scanline.sdl.surfaces.surface[tile(wheres[x], ceiling)];
         const int row = surface->h * dec(wheres[x].y);
@@ -41,7 +52,7 @@ void crend(const Scanline scanline, const Ray ray, Point* const wheres, char** c
     }
 }
 
-// Software version of SDL_SetTextureColorMod
+//// Software version of SDL_SetTextureColorMod
 static void mod(uint32_t* const pixel, const int m)
 {
     const int rm = m / (float) 0xFF * (*pixel >> 0x10 & 0xFF);
@@ -54,7 +65,7 @@ void light(const Scanline scanline, const Ray ray, Point* const wheres, const To
 {
     for(int x = 0; x < ray.projection.clamped.bot; x++)
     {
-        const int xx = scanline.sdl.res - 1 - x;
+        const int xx = scanline.sdl.yres - 1 - x;
         // Flooring
         const float distance = mag(sub(wheres[xx], ray.traceline.trace.a));
         moddings[x] = illuminate(torch, distance);
@@ -68,7 +79,7 @@ void light(const Scanline scanline, const Ray ray, Point* const wheres, const To
         moddings[x] = illuminate(torch, distance);
     }
     // Apply
-    for(int x = 0; x < scanline.sdl.res; x++)
+    for(int x = 0; x < scanline.sdl.yres; x++)
     {
         uint32_t* const pixel = &scanline.display.pixels[x + scanline.y * scanline.display.width];
         mod(pixel, moddings[x]);

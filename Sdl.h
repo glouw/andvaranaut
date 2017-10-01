@@ -9,15 +9,15 @@ typedef struct
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* texture;
-    int res;
+    int xres;
+    int yres;
     int fps;
     Surfaces surfaces;
     Textures textures;
 }
 Sdl;
 
-// Resolution is 1:1. FPS is best set at 60
-Sdl setup(const int res, const int fps);
+Sdl setup(const int xres, const int yres, const int fps);
 
 void release(const Sdl sdl);
 

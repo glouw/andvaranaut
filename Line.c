@@ -13,11 +13,6 @@ Point lerp(const Line line, const float n)
 
 float focal(const Line line)
 {
-    return line.a.x / (line.b.y - line.a.y);
-}
-
-float ratio(const Line line)
-{
     return line.a.x / line.b.y;
 }
 
