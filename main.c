@@ -10,9 +10,9 @@ int main(const int argc, const char* argv[])
     Hero hero = spawn(args.scale);
     Map map = mapper.open(hero.floor);
     Sprites sprites = wake(hero.floor);
-    Sdl sdl = setup(800, 450, args.fps);
+    Sdl sdl = setup(args.xres, args.yres, args.fps);
     Input input = ready();
-    for(int renders = 0; args.res == 128 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
+    for(int renders = 0; args.xres == 128 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 5);

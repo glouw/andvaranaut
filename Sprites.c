@@ -270,8 +270,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     // Sprite scent is negative, but will never reach the magnitude of the wall anti-objects
     for(int i = 0; i < sprites.count; i++)
         deposit(field, sprites.sprite[i].where, -sprites.sprite[i].width);
-    // Hero scent is positive and adds to sprite scent. If several sprites are on the same
-    // tile as the hero, the tile scent will become negative, repelling other sprites
+    // Hero scent is positive
     deposit(field, hero.where, hero.scent);
     // Diffuse the culminated scent across the field
     diffuse(field, hero.where);

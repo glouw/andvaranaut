@@ -1,12 +1,12 @@
 #include "Projection.h"
 
-Projection project(const int res, const Line fov, const Point corrected)
+Projection project(const int yres, const Line fov, const Point corrected)
 {
-    const int height = focal(fov) * res / corrected.x;
-    const int bot = (res - height) / 2;
-    const int top = (res - bot);
+    const int height = focal(fov) * yres / corrected.x;
+    const int bot = (yres - height) / 2;
+    const int top = (yres - bot);
     const Projection projection = {
-        bot, top, { bot < 0 ? 0 : bot, top > res ? res : top }
+        bot, top, { bot < 0 ? 0 : bot, top > yres ? yres : top }
     };
     return projection;
 }

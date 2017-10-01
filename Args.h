@@ -2,7 +2,8 @@
 
 typedef struct
 {
-    int res;
+    int xres;
+    int yres;
     float scale;
     int fps;
 }

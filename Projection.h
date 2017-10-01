@@ -15,4 +15,4 @@ typedef struct
 }
 Projection;
 
-Projection project(const int res, const Line fov, const Point corrected);
+Projection project(const int yres, const Line fov, const Point corrected);

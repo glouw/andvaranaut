@@ -25,6 +25,7 @@ static bool on(const Field field, const int y, const int x)
 static float boxavg(const Field field, const int y, const int x)
 {
     float sum = 0.0;
+    int sums = 0;
     for(int j = y - 1; j <= y + 1; j++)
     for(int i = x - 1; i <= x + 1; i++)
     {
@@ -38,8 +39,9 @@ static float boxavg(const Field field, const int y, const int x)
         if(j == y && i == x)
             continue;
         sum += field.mesh[j][i];
+        sums++;
     }
-    return sum / 8.0;
+    return sum / sums;
 }
 
 typedef struct
@@ -80,21 +82,6 @@ static void box(const Field field, const int y, const int x, const int w)
         field.mesh[atoms[a].y][atoms[a].x] = atoms[a].val;
     // Cleanup
     free(atoms);
-}
-
-static bool peak(float* const gradients, const int size)
-{
-    bool peaking = true;
-    for(int i = 0; i < size - 1; i++)
-    {
-        // Do not compare zero gradients
-        if(gradients[i + 0] == 0.0
-        || gradients[i + 1] == 0.0)
-            continue;
-        if(gradients[i + 0] != gradients[i + 1])
-            peaking = false;
-    }
-    return peaking;
 }
 
 static int largest(float* const gradients, const int size)
@@ -141,12 +128,7 @@ Point force(const Field field, const Point from, const Point to)
             continue;
         gradients[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
-    // Once all gradients are found, return the zero acceleration vector
-    // if <from> is at a a peak of the acceleration mesh,
-    // or if <from> is close enough to the <to> destination
-    return peak(gradients, size) || eql(to, from, 2.5) ? dead
-        // Otherwise, return the acceleration vector of the largest gradient
-        : vectors[largest(gradients, size)];
+    return eql(to, from, 2.5) ? dead : vectors[largest(gradients, size)];
 }
 
 void diffuse(const Field field, const Point where)

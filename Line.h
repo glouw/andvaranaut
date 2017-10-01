@@ -21,4 +21,4 @@ float focal(const Line line);
 // Returns the percentage of a line given screen resolution,
 // screen x coordinate, normal vector distance xx from the player
 // to the point of interest, and player field of view
-float fcast(const Line fov, const int res, const int x, const float xx);
+float fcast(const Line fov, const int yres, const int x, const float xx);

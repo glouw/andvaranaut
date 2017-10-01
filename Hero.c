@@ -31,7 +31,7 @@ Hero spawn(const float scale)
     hero.acceleration = 0.0150;
     hero.torch = out();
     hero.arm = 0.75;
-    hero.scent = 1.0;
+    hero.scent = 1000.0;
     return hero;
 }
 
@@ -87,13 +87,13 @@ static Hero move(const Hero hero, char** const walling, const Input input)
     return temp;
 }
 
-Ray cast(const Hero hero, char** const block, const Point column, const int res)
+Ray cast(const Hero hero, char** const block, const Point column, const int yres)
 {
     const Hit hit = march(hero.where, column, block);
     const Point end = sub(hit.where, hero.where);
     const Point corrected = trn(end, -hero.theta);
     const Line trace = { hero.where, hit.where };
-    const Projection projection = project(res, hero.fov, corrected);
+    const Projection projection = project(yres, hero.fov, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
     const Ray ray = { traceline, projection, hit };
     return ray;

@@ -16,7 +16,7 @@ float focal(const Line line)
     return line.a.x / line.b.y;
 }
 
-float fcast(const Line fov, const int res, const int x, const float xx)
+float fcast(const Line fov, const int yres, const int x, const float xx)
 {
-    return -focal(fov) * res / (2 * x - (res - 1)) / xx;
+    return -focal(fov) * yres / (2 * x - (yres - 1)) / xx;
 }
