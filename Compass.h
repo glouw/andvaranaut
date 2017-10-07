@@ -8,4 +8,6 @@ typedef enum
 }
 Compass;
 
+int inverted(const Compass face);
+
 Compass needle(const Point where, const Point other);

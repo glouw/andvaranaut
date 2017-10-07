@@ -2,6 +2,11 @@
 
 #include "util.h"
 
+int inverted(const Compass face)
+{
+    return face == E || face == S;
+}
+
 Compass needle(const Point where, const Point other)
 {
     if(where.x < other.x && (int) where.y == (int) other.y) return E;

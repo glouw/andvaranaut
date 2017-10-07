@@ -3,11 +3,6 @@
 #include "Compass.h"
 #include "util.h"
 
-static int inverted(const Compass face)
-{
-    return face == E || face == S;
-}
-
 static Hit collision(const Point ray, const Point direction, char** const walling)
 {
     const float epsilon = 1e-3;

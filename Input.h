@@ -19,6 +19,6 @@ typedef struct
 }
 Input;
 
-Input pump(const Input input);
+Input pump(Input input);
 
 Input ready();
