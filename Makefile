@@ -1,5 +1,5 @@
 # Compiler and standard
-CC = gcc -std=c99
+CC = g++ -std=c++98
 
 # Project name
 PROJ = water
@@ -53,6 +53,7 @@ $(PROJ): $(SRCS:.c=.o)
 clean:
 	rm -f vgcore.*
 	rm -f cachegrind.out.*
+	rm -f callgrind.out.*
 	rm -f $(PROJ)
 	rm -f $(SRCS:.c=.o)
 	rm -f $(SRCS:.c=.d)

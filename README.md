@@ -25,7 +25,7 @@ Execution:
 
     Resolution 512 is default
 
-    Resolution 128 is reservered for performance testing and will exit
+    Resolution 256 is reservered for performance testing and will exit
     after 60 rendered frames
 
 Screenshots:

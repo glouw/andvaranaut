@@ -264,7 +264,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     for(int i = 0; i < field.cols; i++)
         if(map.walling[j][i] != ' ')
         {
-            const Point wall = { i, j };
+            const Point wall = { (float) i, (float) j };
             deposit(field, wall, field.anti);
         }
     // Sprite scent is negative, but will never reach the magnitude of the wall anti-objects
