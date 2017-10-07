@@ -8,7 +8,7 @@ int main(const int argc, const char* argv[])
     const Args args = parse(argc, argv);
     // Data init
     Hero hero = spawn(args.scale);
-    Map map = mapper.open(hero.floor);
+    Map map = xopen(hero.floor);
     Sprites sprites = wake(hero.floor);
     Sdl sdl = setup(args.xres, args.yres, args.fps);
     Input input = ready();
@@ -20,7 +20,7 @@ int main(const int argc, const char* argv[])
         if(teleporting(hero, map, input, ticks))
         {
             hero = teleport(hero, map);
-            map = mapper.reopen(map, hero.floor);
+            map = xreopen(map, hero.floor);
             sprites = rewake(sprites, hero.floor);
         }
         hero = sustain(hero, map, input);
@@ -36,6 +36,6 @@ int main(const int argc, const char* argv[])
     }
     // Cleanup
     release(sdl);
-    mapper.close(map);
+    xclose(map);
     kill(sprites);
 }

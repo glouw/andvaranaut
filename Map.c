@@ -10,7 +10,7 @@ static char** get(FILE* const file, const int rows)
     return block;
 }
 
-static Map open(const int level)
+Map xopen(const int level)
 {
     char which[MINTS];
     sprintf(which, "%d", level);
@@ -28,7 +28,7 @@ static Map open(const int level)
     return map;
 }
 
-static void close(const Map map)
+void xclose(const Map map)
 {
     for(int row = 0; row < map.rows; row++)
     {
@@ -41,16 +41,14 @@ static void close(const Map map)
     free(map.floring);
 }
 
-static Map reopen(const Map map, const int level)
+Map xreopen(const Map map, const int level)
 {
-    close(map);
-    return open(level);
+    xclose(map);
+    return xopen(level);
 }
 
-static bool isportal(const Map map, const Point where)
+bool xisportal(const Map map, const Point where)
 {
     return block(where, map.floring) == '~'
         || block(where, map.ceiling) == '~';
 }
-
-const struct mapper mapper = { open, close, reopen, isportal };

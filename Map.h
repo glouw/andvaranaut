@@ -14,15 +14,10 @@ typedef struct
 }
 Map;
 
-struct mapper
-{
-    Map (*open)(const int level);
+Map xopen(const int level);
 
-    void (*close)(const Map map);
+void xclose(const Map map);
 
-    Map (*reopen)(const Map map, const int level);
+Map xreopen(const Map map, const int level);
 
-    bool (*isportal)(const Map map, const Point where);
-};
-
-extern const struct mapper mapper;
+bool xisportal(const Map map, const Point where);
