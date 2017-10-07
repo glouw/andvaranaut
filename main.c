@@ -5,7 +5,7 @@
 int main(const int argc, const char* argv[])
 {
     license();
-    const Args args = parse(argc, argv);
+    const Args args = xparse(argc, argv);
     // Data init
     Hero hero = spawn(args.scale);
     Map map = xopen(hero.floor);

@@ -9,4 +9,4 @@ typedef struct
 }
 Args;
 
-Args parse(const int argc, const char* argv[]);
+Args xparse(const int argc, const char* argv[]);

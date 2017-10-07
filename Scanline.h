@@ -11,10 +11,10 @@ typedef struct
 }
 Scanline;
 
-void xwrend(const Scanline* scanline, const Ray* ray);
-
-void xfrend(const Scanline* scanline, const Ray* ray, Point* wheres, char** floring);
-
-void xcrend(const Scanline* scanline, const Ray* ray, Point* wheres, char** ceiling);
-
-void xlight(const Scanline* scanline, const Ray* ray, Point* wheres, Torch torch, int* moddings);
+void xrend(
+    const Scanline* const scanline,
+    const Ray* const ray,
+    Point* const wheres,
+    const Map map,
+    const Torch torch,
+    int* const moddings);

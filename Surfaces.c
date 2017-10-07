@@ -15,7 +15,7 @@ static SDL_Surface* load(const char* const path, const uint32_t format)
     return converted;
 }
 
-Surfaces pull(const uint32_t format)
+Surfaces xpull(const uint32_t format)
 {
     FILE* const file = fopen("surfaces/surfaces.cfg", "r");
     const int lines = lns(file);
@@ -33,7 +33,7 @@ Surfaces pull(const uint32_t format)
     return surfaces;
 }
 
-void clean(const Surfaces surfaces)
+void xclean(const Surfaces surfaces)
 {
     for(int i = 0; i < surfaces.count; i++)
         SDL_FreeSurface(surfaces.surface[i]);

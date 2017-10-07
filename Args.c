@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-Args parse(const int argc, const char* argv[])
+Args xparse(const int argc, const char* argv[])
 {
     Args args;
     zero(args);

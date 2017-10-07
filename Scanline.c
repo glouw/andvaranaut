@@ -2,7 +2,9 @@
 
 #include "util.h"
 
-void xwrend(const Scanline* scanline, const Ray* ray)
+static void wrend(
+    const Scanline* const scanline,
+    const Ray* const ray)
 {
     const SDL_Surface* const surface = scanline->sdl.surfaces.surface[ray->hit.surface];
     const int row = surface->h * ray->hit.offset;
@@ -15,7 +17,11 @@ void xwrend(const Scanline* scanline, const Ray* ray)
     }
 }
 
-void xfrend(const Scanline* scanline, const Ray* ray, Point* wheres, char** floring)
+static void frend(
+    const Scanline* const scanline,
+    const Ray* const ray,
+    Point* const wheres,
+    char** const floring)
 {
     for(int x = 0; x < ray->projection.clamped.bot; x++)
     {
@@ -29,7 +35,11 @@ void xfrend(const Scanline* scanline, const Ray* ray, Point* wheres, char** flor
     }
 }
 
-void xcrend(const Scanline* scanline, const Ray* ray, Point* wheres, char** ceiling)
+static void crend(
+    const Scanline* const scanline,
+    const Ray* const ray,
+    const Point* const wheres,
+    char** const ceiling)
 {
     for(int x = ray->projection.clamped.top; x < scanline->sdl.yres; x++)
     {
@@ -49,7 +59,12 @@ static void mod(uint32_t* const pixel, const int m)
     *pixel = rm << 0x10 | gm << 0x08 | bm << 0x00;
 }
 
-void xlight(const Scanline* scanline, const Ray* ray, Point* wheres, Torch torch, int* moddings)
+static void light(
+    const Scanline* const scanline,
+    const Ray* const ray,
+    Point* const wheres, // Modified
+    const Torch torch,
+    int* const moddings) // Modified
 {
     for(int x = 0; x < ray->projection.clamped.bot; x++)
     {
@@ -72,4 +87,18 @@ void xlight(const Scanline* scanline, const Ray* ray, Point* wheres, Torch torch
         uint32_t* const pixel = &scanline->display.pixels[x + scanline->y * scanline->display.width];
         mod(pixel, moddings[x]);
     }
+}
+
+void xrend(
+    const Scanline* const scanline,
+    const Ray* const ray,
+    Point* const wheres,
+    const Map map,
+    const Torch torch,
+    int* const moddings)
+{
+    wrend(scanline, ray);
+    frend(scanline, ray, wheres, map.floring);
+    crend(scanline, ray, wheres, map.ceiling);
+    light(scanline, ray, wheres, torch, moddings);
 }

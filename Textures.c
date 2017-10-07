@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer)
+Textures xcache(const Surfaces surfaces, SDL_Renderer* const renderer)
 {
     const int count = surfaces.count;
     SDL_Texture** const texture = toss(SDL_Texture*, count);
@@ -12,7 +12,7 @@ Textures cache(const Surfaces surfaces, SDL_Renderer* const renderer)
     return textures;
 }
 
-void purge(const Textures textures)
+void xpurge(const Textures textures)
 {
     for(int i = 0; i < textures.count; i++)
         SDL_DestroyTexture(textures.texture[i]);

@@ -109,8 +109,8 @@ Sdl setup(const int xres, const int yres, const int fps)
     sdl.renderer = SDL_CreateRenderer(sdl.window, -1, SDL_RENDERER_ACCELERATED);
     // Notice the flip between yres and xres
     sdl.texture = SDL_CreateTexture(sdl.renderer, format, SDL_TEXTUREACCESS_STREAMING, yres, xres);
-    sdl.surfaces = pull(format);
-    sdl.textures = cache(sdl.surfaces, sdl.renderer);
+    sdl.surfaces = xpull(format);
+    sdl.textures = xcache(sdl.surfaces, sdl.renderer);
     sdl.xres = xres;
     sdl.yres = yres;
     sdl.fps = fps;
@@ -119,8 +119,8 @@ Sdl setup(const int xres, const int yres, const int fps)
 
 void release(const Sdl sdl)
 {
-    clean(sdl.surfaces);
-    purge(sdl.textures);
+    xclean(sdl.surfaces);
+    xpurge(sdl.textures);
     SDL_DestroyTexture(sdl.texture);
     SDL_Quit();
     SDL_DestroyWindow(sdl.window);
@@ -129,41 +129,29 @@ void release(const Sdl sdl)
 
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
-    // Orient sprite location and theta relative to player
-    const Sprites relatives = orient(sprites, hero);
     // Preallocate for render computations
     Point* const wheres = toss(Point, sdl.yres);
     Point* const zbuff = toss(Point, sdl.xres);
     int* const moddings = toss(int, sdl.yres);
-    // Lock the display for manual pixel painting
-    const Display display = lock(sdl);
     // For each column of the screen...
+    const Display display = lock(sdl);
     const Line camera = rotate(hero.fov, hero.theta);
     for(int x = 0; x < sdl.xres; x++)
     {
-        // Cast a ray along the camera field of fov...
+        // Cast a ray...
         const Point column = lerp(camera, x / (float) sdl.xres);
         const Ray ray = cast(hero, map.walling, column, sdl.yres);
-        // Construct a virtual scanline...
-        // Note that the Scanline struct uses <y> as its struct member and not <x>
-        // Virtual scanlines pertain to renderers and are 90 degrees rotated from screen columns
+        // Render the scanline...
         const Scanline scanline = { sdl, display, x };
-        // Render the wall...
-        xwrend(&scanline, &ray);
-        // Render the floor...
-        xfrend(&scanline, &ray, wheres, map.floring);
-        // Render the ceilling...
-        xcrend(&scanline, &ray, wheres, map.ceiling);
-        // Apply lighting to the walls, floor, and ceilling
-        xlight(&scanline, &ray, wheres, hero.torch, moddings);
-        // The columns yield the corrected tracelines of the rays. Save these for
-        // the sprite zbuffer to know when to cover a sprite with wall edges
+        xrend(&scanline, &ray, wheres, map, hero.torch, moddings);
+        // And zbuffer the wall for the sprites
         zbuff[x] = ray.traceline.corrected;
     }
-    // Pixel painting is now done - unlock the display
     unlock(sdl);
-    // The scene was rendered on its side for cache effeciency. Rotate the scene
+    // The scene was rendered on its side for fast caching. Rotate the scene
     churn(sdl);
+    // Orient sprite location and theta relative to player
+    const Sprites relatives = orient(sprites, hero);
     // Use the wall zbuffer to render the sprites
     paste(sdl, relatives, zbuff, hero, ticks);
     // Update the screen with the final rendered frame
