@@ -4,9 +4,9 @@
 
 static char** get(FILE* const file, const int rows)
 {
-    char** block = toss(char*, rows);
+    char** block = xtoss(char*, rows);
     for(int row = 0; row < rows; row++)
-        block[row] = readln(file);
+        block[row] = xreadln(file);
     return block;
 }
 
@@ -14,11 +14,11 @@ Map xopen(const int level)
 {
     char which[MINTS];
     sprintf(which, "%d", level);
-    char* const path = concat("maps/lvl", which);
+    char* const path = xconcat("maps/lvl", which);
     FILE* const file = fopen(path, "r");
     Map map;
-    zero(map);
-    map.rows = lns(file) / 3;
+    xzero(map);
+    map.rows = xlns(file) / 3;
     map.ceiling = get(file, map.rows);
     map.walling = get(file, map.rows);
     map.floring = get(file, map.rows);

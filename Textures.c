@@ -5,7 +5,7 @@
 Textures xcache(const Surfaces surfaces, SDL_Renderer* const renderer)
 {
     const int count = surfaces.count;
-    SDL_Texture** const texture = toss(SDL_Texture*, count);
+    SDL_Texture** const texture = xtoss(SDL_Texture*, count);
     for(int i = 0; i < count; i++)
         texture[i] = SDL_CreateTextureFromSurface(renderer, surfaces.surface[i]);
     const Textures textures = { texture, count };

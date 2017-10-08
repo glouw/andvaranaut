@@ -12,6 +12,7 @@ typedef struct
         int top;
     }
     clamped;
+    int height;
 }
 Projection;
 

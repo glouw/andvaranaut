@@ -4,7 +4,7 @@
 
 int main(const int argc, const char* argv[])
 {
-    license();
+    xlicense();
     const Args args = xparse(argc, argv);
     // Data init
     Hero hero = spawn(args.scale);

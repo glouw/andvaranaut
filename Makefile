@@ -1,5 +1,5 @@
 # Compiler and standard
-CC = g++ -std=c++98
+CC = gcc -std=c99
 
 # Project name
 PROJ = water

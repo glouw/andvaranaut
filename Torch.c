@@ -18,7 +18,7 @@ Torch burn(const Torch torch)
 Torch out()
 {
     Torch torch;
-    zero(torch);
+    xzero(torch);
     torch.light = 0.0;
     torch.brightness = 500.0;
     torch.dlight = torch.brightness / 20.0;

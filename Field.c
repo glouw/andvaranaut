@@ -5,15 +5,18 @@
 #include <string.h>
 #include <float.h>
 
-Field prepare(const Map map)
+// TODO: Higher path resolution
+
+Field xprepare(const Map map)
 {
     Field field;
-    field.rows = map.rows;
-    field.cols = map.cols;
-    field.mesh = toss(float*, field.rows);
+    field.res = 2;
+    field.rows = field.res * map.rows;
+    field.cols = field.res * map.cols;
     field.anti = -1000.0;
+    field.mesh = xtoss(float*, field.rows);
     for(int j = 0; j < field.rows; j++)
-        field.mesh[j] = wipe(float, field.cols);
+        field.mesh[j] = xwipe(float, field.cols);
     return field;
 }
 
@@ -52,15 +55,15 @@ typedef struct
 }
 Atom;
 
-static Atom materialize(const Field field, const int j, const int i)
+static Atom materialize(const Field field, const int y, const int x)
 {
-    Atom atom = { j, i, boxavg(field, j, i) };
+    const Atom atom = { y, x, boxavg(field, y, x) };
     return atom;
 }
 
 static void box(const Field field, const int y, const int x, const int w)
 {
-    Atom* const atoms = toss(Atom, 8 * w);
+    Atom* const atoms = xtoss(Atom, 8 * w);
     int count = 0;
     const int t = y - w; // Top
     const int b = y + w; // Bottom
@@ -84,7 +87,7 @@ static void box(const Field field, const int y, const int x, const int w)
     free(atoms);
 }
 
-static int largest(float* const gradients, const int size)
+static int largest(float* gradients, const int size)
 {
     float max = FLT_MIN;
     int index = 0;
@@ -99,7 +102,7 @@ static int largest(float* const gradients, const int size)
     return index;
 }
 
-Point force(const Field field, const Point from, const Point to)
+Point xforce(const Field field, const Point from, const Point to)
 {
     // Zero acceleration vector
     const Point dead = { 0.0, 0.0 };
@@ -114,15 +117,15 @@ Point force(const Field field, const Point from, const Point to)
         {  0, -1 }, // N
         {  1, -1 }, // NE
     };
-    const int size = len(vectors);
+    const int size = xlen(vectors);
     // Acceleration field gradients, one for each acceleration vector
     float gradients[size];
-    zero(gradients);
+    xzero(gradients);
     for(int i = 0; i < size; i++)
     {
         const Point dir = add(vectors[i], from);
-        const int y = from.y, yy = dir.y;
-        const int x = from.x, xx = dir.x;
+        const int y = field.res * from.y, yy = field.res * dir.y;
+        const int x = field.res * from.x, xx = field.res * dir.x;
         // Do not worry about calculating the gradients for anti objects
         if(field.mesh[yy][xx] == field.anti)
             continue;
@@ -131,22 +134,15 @@ Point force(const Field field, const Point from, const Point to)
     return eql(to, from, 2.5) ? dead : vectors[largest(gradients, size)];
 }
 
-void diffuse(const Field field, const Point where)
+void xdiffuse(const Field field, const Point where)
 {
-    const int y = where.y;
-    const int x = where.x;
-    for(int w = 1; w < max(field.rows, field.cols); w++)
+    const int y = field.res * where.y;
+    const int x = field.res * where.x;
+    for(int w = 1; w < xmax(field.rows, field.cols); w++)
         box(field, y, x, w);
 }
 
-void deposit(const Field field, const Point p, const float val)
-{
-    const int y = p.y;
-    const int x = p.x;
-    field.mesh[y][x] += val;
-}
-
-void examine(const Field field)
+void xexamine(const Field field)
 {
     for(int j = 0; j < field.rows; j++)
     {
@@ -157,7 +153,7 @@ void examine(const Field field)
     putchar('\n');
 }
 
-void ruin(const Field field)
+void xruin(const Field field)
 {
     for(int j = 0; j < field.rows; j++)
         free(field.mesh[j]);

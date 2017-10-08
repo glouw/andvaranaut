@@ -10,7 +10,7 @@
 static Sprite generic(const Point where)
 {
     Sprite sprite;
-    zero(sprite);
+    xzero(sprite);
     sprite.where = where;
     sprite.ascii = 'Z';
     sprite.speed = 0.035;
@@ -40,15 +40,15 @@ Sprites wake(const int level)
 {
     char which[MINTS];
     sprintf(which, "%d", level);
-    char* const path = concat("sprites/lvl", which);
+    char* const path = xconcat("sprites/lvl", which);
     FILE* const file = fopen(path, "r");
     Sprites sprites;
-    sprites.count = lns(file);
-    sprites.sprite = toss(Sprite, sprites.count);
+    sprites.count = xlns(file);
+    sprites.sprite = xtoss(Sprite, sprites.count);
     sprites.max = sprites.count;
     for(int i = 0; i < sprites.count; i++)
     {
-        char* const line = readln(file);
+        char* const line = xreadln(file);
         char ascii = 0;
         Point where = { 0.0, 0.0 };
         sscanf(line, "%c,%f,%f\n", &ascii, &where.x, &where.y);
@@ -114,7 +114,7 @@ static Sprites copy(const Sprites sprites)
     Sprites temps;
     temps.count = sprites.count;
     temps.max = sprites.max;
-    temps.sprite = toss(Sprite, sprites.count);
+    temps.sprite = xtoss(Sprite, sprites.count);
     memcpy(temps.sprite, sprites.sprite, sprites.count * sizeof(Sprite));
     return temps;
 }
@@ -165,7 +165,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
         if(eql(hand, sprite->where, sprite->width))
         {
             sprite->state = GRABBED;
-            zero(sprite->velocity);
+            xzero(sprite->velocity);
             place(sprite, hand);
             return;
         }
@@ -198,7 +198,7 @@ static void shove(const Sprites sprites)
         // Do not shove a sprite that is not moveable
         if(!sprite->moveable)
             continue;
-        const float width = max(sprite->width, grabbed->width);
+        const float width = xmax(sprite->width, grabbed->width);
         if(eql(sprite->where, grabbed->where, width))
         {
             const Point delta = sub(sprite->where, grabbed->where);
@@ -227,7 +227,7 @@ static void move(const Sprites sprites, const Field field, const Map map, const 
         // Do not move the sprite if the sprite is immovable
         if(!sprite->moveable)
             continue;
-        const Point dir = force(field, sprite->where, to);
+        const Point dir = xforce(field, sprite->where, to);
         // No force of direction...
         if(dir.x == 0.0 && dir.y == 0.0)
             // Then slow down
@@ -251,7 +251,7 @@ static void move(const Sprites sprites, const Field field, const Map map, const 
         {
             // TODO: Add a sprite head bong animation to make it look like the sprite hit
             // their head when they ran into the wall. Will flag is immovable too!
-            zero(sprite->velocity);
+            xzero(sprite->velocity);
         }
     }
 }
@@ -262,18 +262,26 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     // Anti-objects are walls and do not affect scent calculations
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
-        if(map.walling[j][i] != ' ')
-        {
-            const Point wall = { (float) i, (float) j };
-            deposit(field, wall, field.anti);
-        }
+    {
+        const int y = j / field.res;
+        const int x = i / field.res;
+        if(map.walling[y][x] != ' ')
+            field.mesh[j][i] += field.anti;
+    }
     // Sprite scent is negative, but will never reach the magnitude of the wall anti-objects
-    for(int i = 0; i < sprites.count; i++)
-        deposit(field, sprites.sprite[i].where, -sprites.sprite[i].width);
+    for(int s = 0; s < sprites.count; s++)
+    {
+        Sprite* const sprite = &sprites.sprite[s];
+        const int j = field.res * sprite->where.y;
+        const int i = field.res * sprite->where.x;
+        field.mesh[j][i] -= sprite->width;
+    }
     // Hero scent is positive
-    deposit(field, hero.where, hero.scent);
+    const int j = field.res * hero.where.y;
+    const int i = field.res * hero.where.x;
+    field.mesh[j][i] = hero.scent;
     // Diffuse the culminated scent across the field
-    diffuse(field, hero.where);
+    xdiffuse(field, hero.where);
 }
 
 void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
@@ -281,10 +289,11 @@ void caretake(const Sprites sprites, const Hero hero, const Input input, const M
     // Sprites need to be arrange closest to hero first
     arrange(sprites, hero);
     // Sprite path finding and movement
-    const Field field = prepare(map);
+    const Field field = xprepare(map);
     route(sprites, field, map, hero);
     move(sprites, field, map, hero.where);
-    ruin(field);
+    xexamine(field);
+    xruin(field);
     // Sprite placement - interactive and out of bounds
     grab(sprites, hero, input);
     shove(sprites);

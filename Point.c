@@ -73,7 +73,7 @@ float slp(const Point a)
 Point shr(const Point a, const Point b)
 {
     Point out;
-    out.x = b.x > 0.0 ? fl(a.x + 1.0) : cl(a.x - 1.0);
+    out.x = b.x > 0.0 ? xfl(a.x + 1.0) : xcl(a.x - 1.0);
     out.y = slp(b) * (out.x - a.x) + a.y;
     return out;
 }
@@ -81,7 +81,7 @@ Point shr(const Point a, const Point b)
 Point svr(const Point a, const Point b)
 {
     Point out;
-    out.y = b.y > 0.0 ? fl(a.y + 1.0) : cl(a.y - 1.0);
+    out.y = b.y > 0.0 ? xfl(a.y + 1.0) : xcl(a.y - 1.0);
     out.x = (out.y - a.y) / slp(b) + a.x;
     return out;
 }
@@ -89,8 +89,8 @@ Point svr(const Point a, const Point b)
 Point mid(const Point a)
 {
     Point out;
-    out.x = fl(a.x) + 0.5;
-    out.y = fl(a.y) + 0.5;
+    out.x = xfl(a.x) + 0.5;
+    out.y = xfl(a.y) + 0.5;
     return out;
 }
 

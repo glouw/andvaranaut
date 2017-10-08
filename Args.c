@@ -9,7 +9,7 @@
 Args xparse(const int argc, const char* argv[])
 {
     Args args;
-    zero(args);
+    xzero(args);
     // Screen resolution
     args.xres =
         argc == 2 ?

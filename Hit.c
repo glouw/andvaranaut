@@ -8,7 +8,7 @@ static Hit collision(const Point ray, const Point direction, char** const wallin
     const float epsilon = 1e-3;
     const Point where = add(ray, mul(direction, epsilon));
     const Point other = sub(ray, mul(direction, epsilon));
-    const float offset = dec(ray.x + ray.y);
+    const float offset = xdec(ray.x + ray.y);
     const Compass face = needle(where, other);
     Hit hit;
     hit.surface = tile(where, walling);

@@ -3,22 +3,22 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-int fl(const float x)
+int xfl(const float x)
 {
     return (int) x - (x < (int) x);
 }
 
-int cl(const float x)
+int xcl(const float x)
 {
     return (int) x + (x > (int) x);
 }
 
-float dec(const float x)
+float xdec(const float x)
 {
     return x - (int) x;
 }
 
-int lns(FILE* const file)
+int xlns(FILE* const file)
 {
     int ch = EOF;
     int lines = 0;
@@ -35,23 +35,23 @@ int lns(FILE* const file)
     return lines;
 }
 
-char* readln(FILE* const file)
+char* xreadln(FILE* const file)
 {
     int ch = EOF;
     int reads = 0;
     int size = 128;
-    char* line = toss(char, size);
+    char* line = xtoss(char, size);
     while((ch = getc(file)) != '\n' && ch != EOF)
     {
         line[reads++] = ch;
         if(reads + 1 == size)
-            retoss(line, char, size *= 2);
+            xretoss(line, char, size *= 2);
     }
     line[reads] = '\0';
     return line;
 }
 
-void bomb(const char* const message, ...)
+void xbomb(const char* const message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -60,25 +60,25 @@ void bomb(const char* const message, ...)
     exit(1);
 }
 
-bool odd(const int a)
+bool xodd(const int a)
 {
     return a % 2;
 }
 
-int balance(const int a)
+int xbalance(const int a)
 {
-    return odd(a) ? a + 1 : a;
+    return xodd(a) ? a + 1 : a;
 }
 
-char* concat(const char* const a, const char* const b)
+char* xconcat(const char* const a, const char* const b)
 {
-    char* c = toss(char, strlen(a) + strlen(b) + 1);
+    char* c = xtoss(char, strlen(a) + strlen(b) + 1);
     strcpy(c, a);
     strcat(c, b);
     return c;
 }
 
-void license()
+void xlicense()
 {
     puts("This program comes with ABSOLUTELY NO WARRANTY.");
     puts("This is free software, and you are welcome to redistribute it");

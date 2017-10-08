@@ -9,17 +9,18 @@ typedef struct
     int rows;
     int cols;
     float anti;
+    int res;
 }
 Field;
 
-void diffuse(const Field field, const Point where);
+void xdiffuse(const Field field, const Point where);
 
-Field prepare(const Map map);
+Field xprepare(const Map map);
 
-Point force(const Field field, const Point from, const Point to);
+Point xforce(const Field field, const Point from, const Point to);
 
-void examine(const Field field);
+void xexamine(const Field field);
 
-void deposit(const Field field, const Point p, const float val);
+void xdeposit(const Field field, const Point p, const float val);
 
-void ruin(const Field field);
+void xruin(const Field field);

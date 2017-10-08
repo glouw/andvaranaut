@@ -24,14 +24,14 @@ static Point beginning()
 Hero spawn(const float scale)
 {
     Hero hero;
-    zero(hero);
+    xzero(hero);
     hero.fov = lens(scale);
     hero.where = beginning();
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
     hero.torch = out();
     hero.arm = 0.75;
-    hero.scent = 1000.0;
+    hero.scent = 1.0;
     return hero;
 }
 
@@ -81,7 +81,7 @@ static Hero move(const Hero hero, char** const walling, const Input input)
     // Reset hero if collision
     if(tile(temp.where, walling))
     {
-        zero(temp.velocity);
+        xzero(temp.velocity);
         temp.where = hero.where;
     }
     return temp;

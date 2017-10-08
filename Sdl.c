@@ -57,7 +57,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         if(sprite.where.x < 0)
             continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter
-        const int size = balance(focal(hero.fov) * sdl.yres / sprite.where.x);
+        const int size = xbalance(focal(hero.fov) * sdl.yres / sprite.where.x);
         // Calculate sprite location on screen
         const int l = (sdl.xres - size) / 2;
         const int t = (sdl.yres - size) / 2;
@@ -102,10 +102,10 @@ Sdl setup(const int xres, const int yres, const int fps)
     SDL_Init(SDL_INIT_VIDEO);
     SDL_SetRelativeMouseMode(SDL_TRUE);
     Sdl sdl;
-    zero(sdl);
+    xzero(sdl);
     sdl.window = SDL_CreateWindow("water", 0, 0, xres, yres, SDL_WINDOW_SHOWN);
     if(!sdl.window)
-        bomb("error: could not open window\n");
+        xbomb("error: could not open window\n");
     sdl.renderer = SDL_CreateRenderer(sdl.window, -1, SDL_RENDERER_ACCELERATED);
     // Notice the flip between yres and xres
     sdl.texture = SDL_CreateTexture(sdl.renderer, format, SDL_TEXTUREACCESS_STREAMING, yres, xres);
@@ -130,9 +130,9 @@ void release(const Sdl sdl)
 void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
     // Preallocate for render computations
-    Point* const wheres = toss(Point, sdl.yres);
-    Point* const zbuff = toss(Point, sdl.xres);
-    int* const moddings = toss(int, sdl.yres);
+    Point* const wheres = xtoss(Point, sdl.yres);
+    Point* const zbuff = xtoss(Point, sdl.xres);
+    int* const moddings = xtoss(int, sdl.yres);
     // For each column of the screen...
     const Display display = lock(sdl);
     const Line camera = rotate(hero.fov, hero.theta);

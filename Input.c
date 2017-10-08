@@ -16,7 +16,7 @@ Input pump(Input input)
 Input ready()
 {
     Input input;
-    zero(input);
+    xzero(input);
     // Mouse
     input.sx = 0.01;
     input.sy = 0.10;
