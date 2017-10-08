@@ -292,7 +292,6 @@ void caretake(const Sprites sprites, const Hero hero, const Input input, const M
     const Field field = xprepare(map);
     route(sprites, field, map, hero);
     move(sprites, field, map, hero.where);
-    xexamine(field);
     xruin(field);
     // Sprite placement - interactive and out of bounds
     grab(sprites, hero, input);
