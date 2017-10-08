@@ -11,10 +11,4 @@ typedef struct
 }
 Scanline;
 
-void xrend(
-    const Scanline* const scanline,
-    const Ray* const ray,
-    Point* const wheres,
-    const Map map,
-    const Torch torch,
-    int* const moddings);
+void xrend(const Scanline sl, const Ray ray, Point* wheres, const Map m, const Torch t, int* moddings);

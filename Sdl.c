@@ -143,7 +143,7 @@ void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map
         const Ray ray = cast(hero, map.walling, column, sdl.yres);
         // Render the scanline...
         const Scanline scanline = { sdl, display, x };
-        xrend(&scanline, &ray, wheres, map, hero.torch, moddings);
+        xrend(scanline, ray, wheres, map, hero.torch, moddings);
         // And zbuffer the wall for the sprites
         zbuff[x] = ray.traceline.corrected;
     }
