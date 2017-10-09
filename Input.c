@@ -3,7 +3,7 @@
 #include "util.h"
 #include "SDL2/SDL.h"
 
-Input pump(Input input)
+Input xpump(Input input)
 {
     SDL_PumpEvents();
     const uint32_t buttons = SDL_GetRelativeMouseState(&input.dx, &input.dy);
@@ -13,7 +13,7 @@ Input pump(Input input)
     return input;
 }
 
-Input ready()
+Input xready()
 {
     Input input;
     xzero(input);
@@ -22,5 +22,5 @@ Input ready()
     input.sy = 0.10;
     // Keyboard
     input.key = SDL_GetKeyboardState(NULL);
-    return pump(input);
+    return xpump(input);
 }

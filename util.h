@@ -57,5 +57,9 @@ void xlicense();
 // Generic type macro for finding min of two type values
 #define xmin(a, b) ((a) < (b) ? (a) : (b))
 
-// Minimum array size needed for an integer to be converted to a string
-#define MINTS ((CHAR_BIT * sizeof(int) - 1) / 3 + 2)
+// Misc constants
+enum
+{
+    // Minimum array size needed for an integer to be converted to a string
+    MINTS = (CHAR_BIT * sizeof(int) - 1) / 3 + 2
+};

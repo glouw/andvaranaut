@@ -17,9 +17,9 @@ typedef struct
 }
 Sdl;
 
-Sdl setup(const int xres, const int yres, const int fps);
+Sdl xsetup(const int xres, const int yres, const int fps);
 
-void release(const Sdl sdl);
+void xrelease(const Sdl sdl);
 
 // Renders one one frame with SDL using hero, sprite, and map data. Ticks determine animation
-void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks);
+void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks);

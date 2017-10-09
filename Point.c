@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <float.h>
 
-Point trn(const Point a, const float t)
+Point xtrn(const Point a, const float t)
 {
     Point out;
     out.x = a.x * cosf(t) - a.y * sinf(t);
@@ -15,7 +15,7 @@ Point trn(const Point a, const float t)
     return out;
 }
 
-Point rag(const Point a)
+Point xrag(const Point a)
 {
     Point out;
     out.x = -a.y;
@@ -23,7 +23,7 @@ Point rag(const Point a)
     return out;
 }
 
-Point sub(const Point a, const Point b)
+Point xsub(const Point a, const Point b)
 {
     Point out;
     out.x = a.x - b.x;
@@ -31,7 +31,7 @@ Point sub(const Point a, const Point b)
     return out;
 }
 
-Point add(const Point a, const Point b)
+Point xadd(const Point a, const Point b)
 {
     Point out;
     out.x = a.x + b.x;
@@ -39,7 +39,7 @@ Point add(const Point a, const Point b)
     return out;
 }
 
-Point mul(const Point a, const float n)
+Point xmul(const Point a, const float n)
 {
     Point out;
     out.x = a.x * n;
@@ -47,12 +47,12 @@ Point mul(const Point a, const float n)
     return out;
 }
 
-float mag(const Point a)
+float xmag(const Point a)
 {
     return sqrtf(a.x * a.x + a.y * a.y);
 }
 
-Point dvd(const Point a, const float n)
+Point xdiv(const Point a, const float n)
 {
     Point out;
     out.x = a.x / n;
@@ -60,33 +60,33 @@ Point dvd(const Point a, const float n)
     return out;
 }
 
-Point unt(const Point a)
+Point xunt(const Point a)
 {
-    return dvd(a, mag(a));
+    return xdiv(a, xmag(a));
 }
 
-float slp(const Point a)
+float xslp(const Point a)
 {
     return a.y / a.x;
 }
 
-Point shr(const Point a, const Point b)
+Point xshr(const Point a, const Point b)
 {
     Point out;
     out.x = b.x > 0.0 ? xfl(a.x + 1.0) : xcl(a.x - 1.0);
-    out.y = slp(b) * (out.x - a.x) + a.y;
+    out.y = xslp(b) * (out.x - a.x) + a.y;
     return out;
 }
 
-Point svr(const Point a, const Point b)
+Point xsvr(const Point a, const Point b)
 {
     Point out;
     out.y = b.y > 0.0 ? xfl(a.y + 1.0) : xcl(a.y - 1.0);
-    out.x = (out.y - a.y) / slp(b) + a.x;
+    out.x = (out.y - a.y) / xslp(b) + a.x;
     return out;
 }
 
-Point mid(const Point a)
+Point xmid(const Point a)
 {
     Point out;
     out.x = xfl(a.x) + 0.5;
@@ -94,17 +94,17 @@ Point mid(const Point a)
     return out;
 }
 
-bool inf(const Point a)
+bool xinf(const Point a)
 {
     return isinf(a.x) || isinf(a.y);
 }
 
-Point cmp(const Point a, const Point b, const Point c)
+Point xcmp(const Point a, const Point b, const Point c)
 {
-    return inf(c) ? b : inf(b) ? c : mag(sub(b, a)) < mag(sub(c, a)) ? b : c;
+    return xinf(c) ? b : xinf(b) ? c : xmag(xsub(b, a)) < xmag(xsub(c, a)) ? b : c;
 }
 
-bool eql(const Point a, const Point b, const float e)
+bool xeql(const Point a, const Point b, const float e)
 {
     return a.x < b.x + (e / 2.0)
         && a.x > b.x - (e / 2.0)
@@ -112,14 +112,14 @@ bool eql(const Point a, const Point b, const float e)
         && a.y > b.y - (e / 2.0);
 }
 
-int block(const Point a, char** const blocks)
+int xblok(const Point a, char** const blocks)
 {
     const int y = a.y;
     const int x = a.x;
     return blocks[y][x];
 }
 
-int tile(const Point a, char** const blocks)
+int xtile(const Point a, char** const blocks)
 {
-    return block(a, blocks) - ' ';
+    return xblok(a, blocks) - ' ';
 }

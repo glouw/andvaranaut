@@ -49,6 +49,6 @@ Map xreopen(const Map map, const int level)
 
 bool xisportal(const Map map, const Point where)
 {
-    return block(where, map.floring) == '~'
-        || block(where, map.ceiling) == '~';
+    return xblok(where, map.floring) == '~'
+        || xblok(where, map.ceiling) == '~';
 }

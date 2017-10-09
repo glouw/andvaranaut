@@ -27,12 +27,12 @@ typedef struct
 }
 Sprites;
 
-Sprites wake(const int level);
+Sprites xwake(const int level);
 
-void kill(const Sprites sprites);
+void xkill(const Sprites sprites);
 
-Sprites rewake(const Sprites sprites, const int level);
+Sprites xrewake(const Sprites sprites, const int level);
 
-Sprites orient(const Sprites sprites, const Hero hero);
+Sprites xorient(const Sprites sprites, const Hero hero);
 
-void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map);
+void xcaretake(const Sprites sprites, const Hero hero, const Input input, const Map map);

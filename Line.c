@@ -1,22 +1,22 @@
 #include "Line.h"
 
-Line rotate(const Line line, const float t)
+Line xrotate(const Line line, const float t)
 {
-    const Line rotated = { trn(line.a, t), trn(line.b, t) };
+    const Line rotated = { xtrn(line.a, t), xtrn(line.b, t) };
     return rotated;
 }
 
-Point lerp(const Line line, const float n)
+Point xlerp(const Line line, const float n)
 {
-    return add(line.a, mul(sub(line.b, line.a), n));
+    return xadd(line.a, xmul(xsub(line.b, line.a), n));
 }
 
-float focal(const Line line)
+float xfocal(const Line line)
 {
     return line.a.x / line.b.y;
 }
 
-float fcast(const Line fov, const int yres, const int x, const float xx)
+float xfcast(const Line fov, const int yres, const int x, const float xx)
 {
-    return -focal(fov) * yres / (2 * x - (yres - 1)) / xx;
+    return -xfocal(fov) * yres / (2 * x - (yres - 1)) / xx;
 }

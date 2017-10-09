@@ -12,4 +12,4 @@ typedef struct
 }
 Hit;
 
-Hit march(const Point where, const Point direction, char** const walling);
+Hit xmarch(const Point where, const Point direction, char** const walling);

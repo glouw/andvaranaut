@@ -57,11 +57,11 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         if(sprite.where.x < 0)
             continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter
-        const int size = xbalance(focal(hero.fov) * sdl.yres / sprite.where.x);
+        const int size = xbalance(xfocal(hero.fov) * sdl.yres / sprite.where.x);
         // Calculate sprite location on screen
         const int l = (sdl.xres - size) / 2;
         const int t = (sdl.yres - size) / 2;
-        const int slider = focal(hero.fov) * (sdl.xres / 2) * slp(sprite.where);
+        const int slider = xfocal(hero.fov) * (sdl.xres / 2) * xslp(sprite.where);
         const SDL_Rect target = { l + slider, t, size, size };
         // Move onto the next sprite if this sprite is off screen
         if(target.x + target.w < 0 || target.x >= sdl.xres)
@@ -81,7 +81,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         if(seen.w <= 0)
             continue;
         // Apply lighting to the sprite
-        const int modding = illuminate(hero.torch, sprite.where.x);
+        const int modding = xilluminate(hero.torch, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Apply transperancy to the sprite, if required
         if(sprite.transparent)
@@ -96,7 +96,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
     }
 }
 
-Sdl setup(const int xres, const int yres, const int fps)
+Sdl xsetup(const int xres, const int yres, const int fps)
 {
     const uint32_t format = SDL_PIXELFORMAT_ARGB8888;
     SDL_Init(SDL_INIT_VIDEO);
@@ -117,7 +117,7 @@ Sdl setup(const int xres, const int yres, const int fps)
     return sdl;
 }
 
-void release(const Sdl sdl)
+void xrelease(const Sdl sdl)
 {
     xclean(sdl.surfaces);
     xpurge(sdl.textures);
@@ -127,37 +127,37 @@ void release(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-void render(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
+void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
     // Preallocate for render computations
     Point* const wheres = xtoss(Point, sdl.yres);
     Point* const zbuff = xtoss(Point, sdl.xres);
     int* const moddings = xtoss(int, sdl.yres);
     // For each column of the screen...
-    const Display display = lock(sdl);
-    const Line camera = rotate(hero.fov, hero.theta);
+    const Display display = xlock(sdl);
+    const Line camera = xrotate(hero.fov, hero.theta);
     for(int x = 0; x < sdl.xres; x++)
     {
         // Cast a ray...
-        const Point column = lerp(camera, x / (float) sdl.xres);
-        const Ray ray = cast(hero, map.walling, column, sdl.yres);
+        const Point column = xlerp(camera, x / (float) sdl.xres);
+        const Ray ray = xcast(hero, map.walling, column, sdl.yres);
         // Render the scanline...
         const Scanline scanline = { sdl, display, x };
-        xrend(scanline, ray, wheres, map, hero.torch, moddings);
+        xraster(scanline, ray, wheres, map, hero.torch, moddings);
         // And zbuffer the wall for the sprites
         zbuff[x] = ray.traceline.corrected;
     }
-    unlock(sdl);
+    xunlock(sdl);
     // The scene was rendered on its side for fast caching. Rotate the scene
     churn(sdl);
     // Orient sprite location and theta relative to player
-    const Sprites relatives = orient(sprites, hero);
+    const Sprites relatives = xorient(sprites, hero);
     // Use the wall zbuffer to render the sprites
     paste(sdl, relatives, zbuff, hero, ticks);
     // Update the screen with the final rendered frame
     present(sdl);
     // Cleanup all local heap allocations
-    kill(relatives);
+    xkill(relatives);
     free(wheres);
     free(zbuff);
     free(moddings);

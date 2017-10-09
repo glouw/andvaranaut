@@ -7,35 +7,35 @@ int main(const int argc, const char* argv[])
     xlicense();
     const Args args = xparse(argc, argv);
     // Data init
-    Hero hero = spawn(args.scale);
+    Hero hero = xspawn(args.scale);
     Map map = xopen(hero.floor);
-    Sprites sprites = wake(hero.floor);
-    Sdl sdl = setup(args.xres, args.yres, args.fps);
-    Input input = ready();
+    Sprites sprites = xwake(hero.floor);
+    Sdl sdl = xsetup(args.xres, args.yres, args.fps);
+    Input input = xready();
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 5);
         // Data update
-        if(teleporting(hero, map, input, ticks))
+        if(xteleporting(hero, map, input, ticks))
         {
-            hero = teleport(hero, map);
+            hero = xteleport(hero, map);
             map = xreopen(map, hero.floor);
-            sprites = rewake(sprites, hero.floor);
+            sprites = xrewake(sprites, hero.floor);
         }
-        hero = sustain(hero, map, input);
-        caretake(sprites, hero, input, map);
+        hero = xsustain(hero, map, input);
+        xcaretake(sprites, hero, input, map);
         // Video output
-        render(sdl, hero, sprites, map, ticks);
+        xrender(sdl, hero, sprites, map, ticks);
         // User input
-        input = pump(input);
+        input = xpump(input);
         // FPS lock
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
     // Cleanup
-    release(sdl);
+    xrelease(sdl);
     xclose(map);
-    kill(sprites);
+    xkill(sprites);
 }

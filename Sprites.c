@@ -36,7 +36,7 @@ static Sprite registrar(const int ascii, const Point where)
     return generic(where);
 }
 
-Sprites wake(const int level)
+Sprites xwake(const int level)
 {
     char which[MINTS];
     sprintf(which, "%d", level);
@@ -60,15 +60,15 @@ Sprites wake(const int level)
     return sprites;
 }
 
-void kill(const Sprites sprites)
+void xkill(const Sprites sprites)
 {
     free(sprites.sprite);
 }
 
-Sprites rewake(const Sprites sprites, const int level)
+Sprites xrewake(const Sprites sprites, const int level)
 {
-    kill(sprites);
-    return wake(level);
+    xkill(sprites);
+    return xwake(level);
 }
 
 static void pull(const Sprites sprites, const Hero hero)
@@ -76,7 +76,7 @@ static void pull(const Sprites sprites, const Hero hero)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        sprite->where = sub(sprite->where, hero.where);
+        sprite->where = xsub(sprite->where, hero.where);
     }
 }
 
@@ -85,7 +85,7 @@ static void push(const Sprites sprites, const Hero hero)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        sprite->where = add(sprite->where, hero.where);
+        sprite->where = xadd(sprite->where, hero.where);
     }
 }
 
@@ -93,14 +93,14 @@ static int backwards(const void *a, const void* b)
 {
     const Point pa = *(const Point *) a;
     const Point pb = *(const Point *) b;
-    return mag(pa) < mag(pb) ? +1 : mag(pa) > mag(pb) ? -1 : 0;
+    return xmag(pa) < xmag(pb) ? +1 : xmag(pa) > xmag(pb) ? -1 : 0;
 }
 
 static int forewards(const void *a, const void* b)
 {
     const Point pa = *(const Point *) a;
     const Point pb = *(const Point *) b;
-    return mag(pa) < mag(pb) ? -1 : mag(pa) > mag(pb) ? +1 : 0;
+    return xmag(pa) < xmag(pb) ? -1 : xmag(pa) > xmag(pb) ? +1 : 0;
 }
 
 static void sort(const Sprites sprites, const int foreward)
@@ -124,11 +124,11 @@ static void turn(const Sprites sprites, const Hero hero)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        sprite->where = trn(sprite->where, -hero.theta);
+        sprite->where = xtrn(sprite->where, -hero.theta);
     }
 }
 
-Sprites orient(const Sprites sprites, const Hero hero)
+Sprites xorient(const Sprites sprites, const Hero hero)
 {
     const Sprites copied = copy(sprites);
     pull(copied, hero);
@@ -155,14 +155,14 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
     if(!input.l)
         return;
-    const Point hand = touch(hero, hero.arm);
+    const Point hand = xtouch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         // Cannot move immovable sprites
         if(!sprite->moveable)
             continue;
-        if(eql(hand, sprite->where, sprite->width))
+        if(xeql(hand, sprite->where, sprite->width))
         {
             sprite->state = GRABBED;
             xzero(sprite->velocity);
@@ -199,10 +199,10 @@ static void shove(const Sprites sprites)
         if(!sprite->moveable)
             continue;
         const float width = xmax(sprite->width, grabbed->width);
-        if(eql(sprite->where, grabbed->where, width))
+        if(xeql(sprite->where, grabbed->where, width))
         {
-            const Point delta = sub(sprite->where, grabbed->where);
-            place(sprite, add(sprite->where, delta));
+            const Point delta = xsub(sprite->where, grabbed->where);
+            place(sprite, xadd(sprite->where, delta));
         }
     }
 }
@@ -213,8 +213,8 @@ static void bound(const Sprites sprites, const Map map)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(tile(sprite->where, map.walling))
-            sprite->where = mid(sprite->last);
+        if(xtile(sprite->where, map.walling))
+            sprite->where = xmid(sprite->last);
     }
 }
 
@@ -231,23 +231,23 @@ static void move(const Sprites sprites, const Field field, const Map map, const 
         // No force of direction...
         if(dir.x == 0.0 && dir.y == 0.0)
             // Then slow down
-            sprite->velocity = mul(sprite->velocity, 1.0 - sprite->acceleration / sprite->speed);
+            sprite->velocity = xmul(sprite->velocity, 1.0 - sprite->acceleration / sprite->speed);
         // Otherwise speed up
         else
         {
-            const Point acc = mul(dir, sprite->acceleration);
-            sprite->velocity = add(sprite->velocity, acc);
+            const Point acc = xmul(dir, sprite->acceleration);
+            sprite->velocity = xadd(sprite->velocity, acc);
             // And then check top speed...
-            if(mag(sprite->velocity) > sprite->speed)
+            if(xmag(sprite->velocity) > sprite->speed)
                 // And cap speed if the top speed is surpassed
-                sprite->velocity = mul(unt(sprite->velocity), sprite->speed);
+                sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
         // If the sprite is slow enough they will idle instead of chase
-        sprite->state = mag(sprite->velocity) < 0.01 ? IDLE : CHASING;
+        sprite->state = xmag(sprite->velocity) < 0.01 ? IDLE : CHASING;
         // Place the sprite at their new location...
-        place(sprite, add(sprite->where, sprite->velocity));
+        place(sprite, xadd(sprite->where, sprite->velocity));
         // If the sprite is out of bounds then set velocity to zero
-        if(tile(sprite->where, map.walling))
+        if(xtile(sprite->where, map.walling))
         {
             // TODO: Add a sprite head bong animation to make it look like the sprite hit
             // their head when they ran into the wall. Will flag is immovable too!
@@ -284,7 +284,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     xdiffuse(field, hero.where);
 }
 
-void caretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
+void xcaretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
 {
     // Sprites need to be arrange closest to hero first
     arrange(sprites, hero);

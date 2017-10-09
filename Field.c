@@ -123,7 +123,7 @@ Point xforce(const Field field, const Point from, const Point to)
     xzero(gradients);
     for(int i = 0; i < size; i++)
     {
-        const Point dir = add(vectors[i], from);
+        const Point dir = xadd(vectors[i], from);
         const int y = field.res * from.y, yy = field.res * dir.y;
         const int x = field.res * from.x, xx = field.res * dir.x;
         // Do not worry about calculating the gradients for anti objects
@@ -131,7 +131,7 @@ Point xforce(const Field field, const Point from, const Point to)
             continue;
         gradients[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
-    return eql(to, from, 2.5) ? dead : vectors[largest(gradients, size)];
+    return xeql(to, from, 2.5) ? dead : vectors[largest(gradients, size)];
 }
 
 void xdiffuse(const Field field, const Point where)

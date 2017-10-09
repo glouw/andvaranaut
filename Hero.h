@@ -23,14 +23,14 @@ typedef struct
 }
 Hero;
 
-Hero spawn(const float scale);
+Hero xspawn(const float scale);
 
-Point touch(const Hero hero, const float reach);
+Point xtouch(const Hero hero, const float reach);
 
-Ray cast(const Hero hero, char** const block, const Point column, const int yres);
+Ray xcast(const Hero hero, char** const block, const Point column, const int yres);
 
-bool teleporting(const Hero hero, const Map map, const Input input, const int ticks);
+bool xteleporting(const Hero hero, const Map map, const Input input, const int ticks);
 
-Hero teleport(const Hero hero, const Map map);
+Hero xteleport(const Hero hero, const Map map);
 
-Hero sustain(const Hero hero, const Map map, const Input input);
+Hero xsustain(const Hero hero, const Map map, const Input input);

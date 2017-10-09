@@ -2,20 +2,20 @@
 
 #include "util.h"
 
-int illuminate(const Torch torch, const float distance)
+int xilluminate(const Torch torch, const float distance)
 {
     const int luminance = torch.light / distance;
     return luminance > 0xFF ? 0xFF : luminance;
 }
 
-Torch burn(const Torch torch)
+Torch xburn(const Torch torch)
 {
     Torch temp = torch;
     temp.light += temp.dlight;
     return temp.light > temp.brightness ? torch : temp;
 }
 
-Torch out()
+Torch xout()
 {
     Torch torch;
     xzero(torch);
