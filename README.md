@@ -20,7 +20,7 @@ Execution:
 
 Screenshots:
 
-![Screenshot](scrots/2017-09-10-074648_512x512_scrot.png)
+![Screenshot](scrots/2017-10-14-155456_800x450_scrot.png)
 
 As for the source:
 - Files are sorted by related struct typedefs
