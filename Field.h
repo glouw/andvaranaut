@@ -9,6 +9,7 @@ typedef struct
     int rows;
     int cols;
     int res;
+    int aura;
 }
 Field;
 

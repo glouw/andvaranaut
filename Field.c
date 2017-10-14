@@ -12,6 +12,7 @@ Field xprepare(const Map map)
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
     field.mesh = xtoss(float*, field.rows);
+    field.aura = field.res * 8;
     for(int j = 0; j < field.rows; j++)
         field.mesh[j] = xwipe(float, field.cols);
     return field;
@@ -81,14 +82,6 @@ static void box(const Field field, const int y, const int x, const int w)
     free(atoms);
 }
 
-static bool same(float* const gradients, const int size)
-{
-    for(int i = 0; i < size - 1; i++)
-        if(gradients[i] != gradients[i + 1])
-            return false;
-    return true;
-}
-
 static int largest(float* gradients, const int size)
 {
     float max = -FLT_MAX;
@@ -101,9 +94,13 @@ static int largest(float* gradients, const int size)
 
 Point xforce(const Field field, const Point from, const Point to)
 {
-    // Zero acceleration vector
+    // Return the zero acceleration vector if the <from> point
+    // is close enough to the destination <to> point or if it is far enough away
     const Point dead = { 0.0, 0.0 };
-    // Accleration vectors by direction
+    const float dist = xmag(xsub(from, to));
+    if(dist < 1.33 || dist > field.aura / field.res)
+        return dead;
+    // Otherwise, calculate the accleration vectors by direction
     const Point vectors[] = {
         {  1, -0 }, // E
         {  1,  1 }, // SE
@@ -115,7 +112,7 @@ Point xforce(const Field field, const Point from, const Point to)
         {  1, -1 }, // NE
     };
     const int size = xlen(vectors);
-    // Acceleration field gradients, one for each acceleration vector
+    // And calculate the acceleration field gradients
     float gradients[size];
     xzero(gradients);
     for(int i = 0; i < size; i++)
@@ -125,14 +122,14 @@ Point xforce(const Field field, const Point from, const Point to)
         const int x = field.res * from.x, xx = field.res * dir.x;
         gradients[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
-    return xeql(to, from, 2.5) || same(gradients, size) ? dead : vectors[largest(gradients, size)];
+    return vectors[largest(gradients, size)];
 }
 
 void xdiffuse(const Field field, const Point where)
 {
     const int y = field.res * where.y;
     const int x = field.res * where.x;
-    for(int w = 1; w < xmax(field.rows, field.cols); w++)
+    for(int w = 1; w <= field.aura; w++)
         box(field, y, x, w);
 }
 

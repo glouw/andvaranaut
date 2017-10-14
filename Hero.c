@@ -17,7 +17,7 @@ static Point beginning()
 {
     Point where;
     where.x = 1.5;
-    where.y = 1.5;
+    where.y = 3.5;
     return where;
 }
 
@@ -31,7 +31,7 @@ Hero xspawn(const float scale)
     hero.acceleration = 0.0150;
     hero.torch = xout();
     hero.arm = 0.75;
-    hero.scent = 1e5;
+    hero.scent = 1e7;
     return hero;
 }
 

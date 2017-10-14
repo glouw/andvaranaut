@@ -183,6 +183,15 @@ static Sprite* find(const Sprites sprites, const State state)
     return NULL;
 }
 
+static void idle(const Sprites sprites)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        sprite->state = IDLE;
+    }
+}
+
 // Shoves the closest sprite away if a sprite is grabbed
 static void shove(const Sprites sprites)
 {
@@ -217,6 +226,7 @@ static void bound(const Sprites sprites, const Map map)
         {
             place(sprite, xmid(sprite->last));
             xzero(sprite->velocity);
+            // TODO: add a dizzy animation
         }
     }
 }
@@ -245,8 +255,8 @@ static void move(const Sprites sprites, const Field field, const Point to)
                 // And cap speed if the top speed is surpassed
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
-        // If the sprite is slow enough they will idle instead of chase
-        sprite->state = xmag(sprite->velocity) < 0.01 ? IDLE : CHASING;
+        // If the sprite is fast enough they will animate chase
+        if(xmag(sprite->velocity) > 0.01) sprite->state = CHASING;
         // Place the sprite at their new location...
         place(sprite, xadd(sprite->where, sprite->velocity));
     }
@@ -261,8 +271,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     {
         const int y = j / field.res;
         const int x = i / field.res;
-        if(map.walling[y][x] != ' ')
-            field.mesh[j][i] = -1e2; // Good enough?
+        if(map.walling[y][x] != ' ') field.mesh[j][i] = -1e3;
     }
     // Sprite scents stack
     for(int s = 0; s < sprites.count; s++)
@@ -287,6 +296,8 @@ void xcaretake(const Sprites sprites, const Hero hero, const Input input, const 
 {
     // Sprites need to be arrange closest to hero first
     arrange(sprites, hero);
+    // Default state for all sprites per iteration is idle - this will be overwritten
+    idle(sprites);
     // Sprite path finding and movement
     const Field field = xprepare(map);
     route(sprites, field, map, hero);
