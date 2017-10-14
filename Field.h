@@ -8,7 +8,6 @@ typedef struct
     float** mesh;
     int rows;
     int cols;
-    float anti;
     int res;
 }
 Field;

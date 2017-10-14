@@ -214,12 +214,15 @@ static void bound(const Sprites sprites, const Map map)
     {
         Sprite* const sprite = &sprites.sprite[i];
         if(xtile(sprite->where, map.walling))
-            sprite->where = xmid(sprite->last);
+        {
+            place(sprite, xmid(sprite->last));
+            xzero(sprite->velocity);
+        }
     }
 }
 
 // Moves sprite along path towards the hero player scent
-static void move(const Sprites sprites, const Field field, const Map map, const Point to)
+static void move(const Sprites sprites, const Field field, const Point to)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -246,37 +249,33 @@ static void move(const Sprites sprites, const Field field, const Map map, const 
         sprite->state = xmag(sprite->velocity) < 0.01 ? IDLE : CHASING;
         // Place the sprite at their new location...
         place(sprite, xadd(sprite->where, sprite->velocity));
-        // If the sprite is out of bounds then set velocity to zero
-        if(xtile(sprite->where, map.walling))
-        {
-            // TODO: Add a sprite head bong animation to make it look like the sprite hit
-            // their head when they ran into the wall. Will flag is immovable too!
-            xzero(sprite->velocity);
-        }
     }
 }
 
 // Collaborative diffusion
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
-    // Anti-objects are walls and do not affect scent calculations
+    // Wall scents
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
     {
         const int y = j / field.res;
         const int x = i / field.res;
         if(map.walling[y][x] != ' ')
-            field.mesh[j][i] += field.anti;
+            field.mesh[j][i] = -1e2; // Good enough?
     }
-    // Sprite scent is negative, but will never reach the magnitude of the wall anti-objects
+    // Sprite scents stack
     for(int s = 0; s < sprites.count; s++)
     {
         Sprite* const sprite = &sprites.sprite[s];
         const int j = field.res * sprite->where.y;
         const int i = field.res * sprite->where.x;
+        // If the tile is already scented then a sprite is already there
+        if(field.mesh[j][i] < 0.0)
+            xzero(sprite->velocity);
         field.mesh[j][i] -= sprite->width;
     }
-    // Hero scent is positive
+    // Hero scent
     const int j = field.res * hero.where.y;
     const int i = field.res * hero.where.x;
     field.mesh[j][i] = hero.scent;
@@ -291,7 +290,7 @@ void xcaretake(const Sprites sprites, const Hero hero, const Input input, const 
     // Sprite path finding and movement
     const Field field = xprepare(map);
     route(sprites, field, map, hero);
-    move(sprites, field, map, hero.where);
+    move(sprites, field, hero.where);
     xruin(field);
     // Sprite placement - interactive and out of bounds
     grab(sprites, hero, input);

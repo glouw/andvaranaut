@@ -16,8 +16,8 @@ static Line lens(const float scale)
 static Point beginning()
 {
     Point where;
-    where.x = 5.5;
-    where.y = 3.5;
+    where.x = 1.5;
+    where.y = 1.5;
     return where;
 }
 
@@ -31,7 +31,7 @@ Hero xspawn(const float scale)
     hero.acceleration = 0.0150;
     hero.torch = xout();
     hero.arm = 0.75;
-    hero.scent = 1.0;
+    hero.scent = 1e5;
     return hero;
 }
 
