@@ -10,7 +10,6 @@ typedef struct
     State state;
     int transparent;
     float width;
-    int dead;
     int moveable;
     Point last;
     Point velocity;
