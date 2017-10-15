@@ -138,7 +138,7 @@ void xexamine(const Field field)
     for(int j = 0; j < field.rows; j++)
     {
         for(int i = 0; i < field.cols; i++)
-            printf("%10.4f", field.mesh[j][i]);
+            printf("%13.3f", field.mesh[j][i]);
         putchar('\n');
     }
     putchar('\n');
