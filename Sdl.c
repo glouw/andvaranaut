@@ -75,7 +75,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Determine sprite animation based on ticks
         const SDL_Rect image = { w * (ticks % FRAMES), h * sprite.state, w, h };
         // Calculate how much of the sprite is seen
-        const SDL_Rect seen = clip(sdl, target, sprite.where, zbuff);
+        volatile const SDL_Rect seen = clip(sdl, target, sprite.where, zbuff);
         // Move onto the next sprite if this totally behind a wall and cannot be seen
         if(seen.w <= 0)
             continue;

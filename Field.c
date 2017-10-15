@@ -8,11 +8,11 @@
 Field xprepare(const Map map)
 {
     Field field;
-    field.res = 2;
+    field.res = 3;
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
     field.mesh = xtoss(float*, field.rows);
-    field.aura = field.res * 8;
+    field.aura = field.res * 16;
     for(int j = 0; j < field.rows; j++)
         field.mesh[j] = xwipe(float, field.cols);
     return field;
@@ -98,7 +98,7 @@ Point xforce(const Field field, const Point from, const Point to)
     // is close enough to the destination <to> point or if it is far enough away
     const Point dead = { 0.0, 0.0 };
     const float dist = xmag(xsub(from, to));
-    if(dist < 1.33 || dist > field.aura / field.res)
+    if(dist < 1.33 || dist > (field.aura / field.res) - 1)
         return dead;
     // Otherwise, calculate the accleration vectors by direction
     const Point vectors[] = {

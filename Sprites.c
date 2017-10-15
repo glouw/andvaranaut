@@ -266,13 +266,12 @@ static void move(const Sprites sprites, const Field field, const Point to)
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
     // Wall scents are repel
-    const float scent = -1e3;
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
     {
         const int y = j / field.res;
         const int x = i / field.res;
-        if(map.walling[y][x] != ' ') field.mesh[j][i] = scent;
+        if(map.walling[y][x] != ' ') field.mesh[j][i] = -1e3;
     }
     // Sprite scents stack on one another
     for(int s = 0; s < sprites.count; s++)
