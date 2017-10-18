@@ -82,8 +82,8 @@ static void lraster(const Scanline sl, const Ray r, Point* wheres, const Torch t
 // Raster wall, floor, ceiling, and lighting, all for one scanline
 void xraster(const Scanline sl, const Ray r, Point* wheres, const Map m, const Torch t, int* moddings)
 {
-    wraster(sl, r);
     fraster(sl, r, wheres, m.floring);
+    wraster(sl, r);
     craster(sl, r, wheres, m.ceiling);
     lraster(sl, r, wheres, t, moddings);
 }

@@ -8,11 +8,11 @@
 Field xprepare(const Map map)
 {
     Field field;
-    field.res = 3;
+    field.res = 2;
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
     field.mesh = xtoss(float*, field.rows);
-    field.aura = field.res * 16;
+    field.aura = field.res * 8;
     for(int j = 0; j < field.rows; j++)
         field.mesh[j] = xwipe(float, field.cols);
     return field;
