@@ -31,7 +31,7 @@ Hero xspawn(const float scale)
     hero.acceleration = 0.0150;
     hero.torch = xout();
     hero.arm = 0.75;
-    hero.scent = 1e4;
+    hero.scent = 1e3;
     return hero;
 }
 
