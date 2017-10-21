@@ -22,8 +22,7 @@ Screenshots:
 
 ![Screenshot](scrots/2017-10-14-155456_800x450_scrot.png)
 
-As for the source:
+Source hints:
 - Files are sorted by related struct typedefs
-- No global variables
+- Global variables avoided
 - Externed functions prefixed with 'x'
-- Compatible with c++ for easy forking
