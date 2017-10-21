@@ -9,6 +9,6 @@ typedef struct
 }
 Surfaces;
 
-Surfaces xpull(const uint32_t format);
+Surfaces xpull();
 
 void xclean(const Surfaces surfaces);
