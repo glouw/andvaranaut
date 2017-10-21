@@ -27,11 +27,20 @@ static Sprite _o_(const Point where)
     return sprite;
 }
 
+static Sprite _g_(const Point where)
+{
+    Sprite sprite = generic(where);
+    sprite.ascii = 'g';
+    sprite.width = 0.22;
+    return sprite;
+}
+
 static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
         case 'o': return _o_(where);
+        case 'g': return _g_(where);
     }
     return generic(where);
 }
