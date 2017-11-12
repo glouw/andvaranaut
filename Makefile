@@ -33,6 +33,8 @@ CFLAGS+= -g
 
 # Optimization flags
 CFLAGS+= -Ofast -flto -march=native
+CFLAGS+= -fassociative-math -freciprocal-math -fno-signed-zeros
+CFLAGS+= -frename-registers -funroll-loops -fno-trapping-math
 
 # Linker flags
 LDFLAGS = -lm -lSDL2

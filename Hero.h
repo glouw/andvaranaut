@@ -17,9 +17,12 @@ typedef struct
     float acceleration;
     float theta;
     Torch torch;
+    // The longer the arm, the further the hero can grab and hit things
     float arm;
+    // Dungeon floor hero is currently on
     int floor;
-    float scent;
+    // Stronger scent will have sprites chase hero from further away
+    int scent;
 }
 Hero;
 

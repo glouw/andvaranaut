@@ -5,14 +5,14 @@
 #include <string.h>
 #include <float.h>
 
-Field xprepare(const Map map)
+Field xprepare(const Map map, const float scent)
 {
     Field field;
     field.res = 1;
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
     field.mesh = xtoss(float*, field.rows);
-    field.aura = field.res * 6;
+    field.aura = field.res * scent;
     for(int j = 0; j < field.rows; j++)
         field.mesh[j] = xwipe(float, field.cols);
     return field;
@@ -23,7 +23,7 @@ static bool on(const Field field, const int y, const int x)
     return y >= 0 && x >= 0 && y < field.rows && x < field.cols;
 }
 
-static float boxavg(const Field field, const int y, const int x)
+static float average(const Field field, const int y, const int x)
 {
     float sum = 0.0;
     int sums = 0;
@@ -52,7 +52,7 @@ Atom;
 
 static Atom materialize(const Field field, const int y, const int x)
 {
-    const Atom atom = { y, x, boxavg(field, y, x) };
+    const Atom atom = { y, x, average(field, y, x) };
     return atom;
 }
 

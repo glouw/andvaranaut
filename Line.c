@@ -6,8 +6,6 @@ Line xrotate(const Line line, const float t)
     return rotated;
 }
 
-// Used in floor renderer for almost half the screens pixels.
-// Needs to be optimized like crazy
 Point xlerp(const Line line, const float n)
 {
     return xadd(line.a, xmul(xsub(line.b, line.a), n));

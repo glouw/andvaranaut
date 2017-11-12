@@ -10,7 +10,7 @@ static void wraster(const Scanline sl, const Ray r)
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     for(int x = r.projection.clamped.bot; x < r.projection.clamped.top; x++)
     {
-        const float offset = (float) (x - r.projection.bot) / (float) (r.projection.height);
+        const float offset = (x - r.projection.bot) / (float) r.projection.height;
         const int col = surface->w * offset;
         sl.display.pixels[x + sl.y * sl.display.width] = pixels[col + row * surface->w];
     }

@@ -54,8 +54,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
     {
         const Sprite sprite = sprites.sprite[which];
         // Move onto the next sprite if this sprite is behind the player
-        if(sprite.where.x < 0)
-            continue;
+        if(sprite.where.x < 0) continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter
         const int size = xbalance(hero.fov.a.x * sdl.yres / sprite.where.x);
         // Calculate sprite location on screen
@@ -64,8 +63,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const int slider = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite.where);
         const SDL_Rect target = { l + slider, t, size, size };
         // Move onto the next sprite if this sprite is off screen
-        if(target.x + target.w < 0 || target.x >= sdl.xres)
-            continue;
+        if(target.x + target.w < 0 || target.x >= sdl.xres) continue;
         // Get sprite surface and texture
         const int selected = sprite.ascii - ' ';
         SDL_Surface* const surface = sdl.surfaces.surface[selected];
@@ -77,21 +75,18 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Calculate how much of the sprite is seen
         volatile const SDL_Rect seen = clip(sdl, target, sprite.where, zbuff);
         // Move onto the next sprite if this totally behind a wall and cannot be seen
-        if(seen.w <= 0)
-            continue;
+        if(seen.w <= 0) continue;
         // Apply lighting to the sprite
         const int modding = xilluminate(hero.torch, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Apply transperancy to the sprite, if required
-        if(sprite.transparent)
-            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
+        if(sprite.transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
         // Renders the sprite
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
         // Removes transperancy from the sprite
-        if(sprite.transparent)
-            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+        if(sprite.transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
     }
 }
 
@@ -102,8 +97,7 @@ Sdl xsetup(const int xres, const int yres, const int fps)
     Sdl sdl;
     xzero(sdl);
     sdl.window = SDL_CreateWindow("water", 0, 0, xres, yres, SDL_WINDOW_SHOWN);
-    if(!sdl.window)
-        xbomb("error: could not open window\n");
+    if(!sdl.window) xbomb("error: could not open window\n");
     sdl.renderer = SDL_CreateRenderer(sdl.window, -1, SDL_RENDERER_ACCELERATED);
     // The canvas texture will be used for per pixel drawings. This will be used to the walls, floors, and ceiling.
     // Notice the flip between yres and xres in the following call for the sdl canvas texture.

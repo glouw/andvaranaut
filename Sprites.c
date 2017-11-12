@@ -274,13 +274,14 @@ static void move(const Sprites sprites, const Field field, const Point to)
 // Collaborative diffusion with various scents
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
+    const float scent = 1e3;
     // Wall scents are repel
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
     {
         const int y = j / field.res;
         const int x = i / field.res;
-        if(map.walling[y][x] != ' ') field.mesh[j][i] = -1e3;
+        if(map.walling[y][x] != ' ') field.mesh[j][i] = -scent;
     }
     // Sprite scents stack on one another
     for(int s = 0; s < sprites.count; s++)
@@ -292,10 +293,10 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         if(field.mesh[j][i] < 0.0) xzero(sprite->velocity);
         field.mesh[j][i] -= sprite->width;
     }
-    // Hero scent
+    // Hero scent attracts
     const int j = field.res * hero.where.y;
     const int i = field.res * hero.where.x;
-    field.mesh[j][i] = hero.scent;
+    field.mesh[j][i] = scent;
     // Diffuse the culminated scent across the field
     xdiffuse(field, hero.where);
 }
@@ -307,7 +308,7 @@ void xcaretake(const Sprites sprites, const Hero hero, const Input input, const 
     // Default state for all sprites per iteration is idle - this will be overwritten
     idle(sprites);
     // Sprite path finding and movement
-    const Field field = xprepare(map);
+    const Field field = xprepare(map, hero.scent);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where);
     xruin(field);

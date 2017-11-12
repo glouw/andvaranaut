@@ -9,7 +9,7 @@ static Line lens(const float focal)
     fov.a.x = focal;
     fov.a.y = -1.0;
     fov.b.x = focal;
-    fov.b.y = 1.0;
+    fov.b.y = +1.0;
     return fov;
 }
 
@@ -31,7 +31,7 @@ Hero xspawn(const float focal)
     hero.acceleration = 0.0150;
     hero.torch = xout();
     hero.arm = 0.75;
-    hero.scent = 1e3;
+    hero.scent = 6;
     return hero;
 }
 
