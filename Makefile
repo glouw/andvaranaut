@@ -26,7 +26,7 @@ SRCS+= Torch.c
 SRCS+= Projection.c
 
 # Warnings flags
-CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wpadded -isystem lib
+CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -isystem lib
 
 # Debugging flags
 CFLAGS+= -g

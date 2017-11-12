@@ -19,10 +19,12 @@ static void wraster(const Scanline sl, const Ray r)
 // Floor rasterer for one scanline
 static void fraster(const Scanline sl, const Ray r, Point* wheres, char** floring)
 {
+    const float weight = r.traceline.fov.a.x / r.traceline.corrected.x;
     for(int x = 0; x < r.projection.clamped.bot; x++)
     {
-        const Point where = wheres[sl.sdl.yres - 1 - x] =
-            xlerp(r.traceline.trace, xfcast(r.traceline.fov, sl.sdl.yres, x, r.traceline.corrected.x));
+        // Ceiling casting
+        const float offset = weight / (1.0 - (float) x / r.projection.mid);
+        const Point where = wheres[sl.sdl.yres - 1 - x] = xlerp(r.traceline.trace, offset);
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[xtile(where, floring)];
         const int row = surface->h * xdec(where.y);
         const int col = surface->w * xdec(where.x);

@@ -23,7 +23,7 @@ typedef struct
 }
 Hero;
 
-Hero xspawn(const float scale);
+Hero xspawn(const float focal);
 
 Point xtouch(const Hero hero, const float reach);
 

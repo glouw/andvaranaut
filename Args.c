@@ -19,8 +19,8 @@ Args xparse(const int argc, const char* argv[])
         argc == 3 ?
         strtol(argv[2], NULL, 0)
         : args.xres * 9.0 / 16.0;
-    // Field of view scale
-    args.scale =
+    // Field of view focal length
+    args.focal =
         argc == 4 ?
         strtof(argv[3], NULL)
         // 100 degrees
@@ -30,6 +30,5 @@ Args xparse(const int argc, const char* argv[])
         argc == 5 ?
         strtol(argv[4], NULL, 0)
         : 60;
-    srand(time(0));
     return args;
 }

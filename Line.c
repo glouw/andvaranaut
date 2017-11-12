@@ -6,17 +6,9 @@ Line xrotate(const Line line, const float t)
     return rotated;
 }
 
+// Used in floor renderer for almost half the screens pixels.
+// Needs to be optimized like crazy
 Point xlerp(const Line line, const float n)
 {
     return xadd(line.a, xmul(xsub(line.b, line.a), n));
-}
-
-float xfocal(const Line line)
-{
-    return line.a.x / line.b.y;
-}
-
-float xfcast(const Line fov, const int yres, const int x, const float xx)
-{
-    return -xfocal(fov) * yres / (2 * x - (yres - 1)) / xx;
 }

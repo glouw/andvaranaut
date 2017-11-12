@@ -6,12 +6,8 @@ typedef struct
 {
     int bot;
     int top;
-    struct
-    {
-        int bot;
-        int top;
-    }
-    clamped;
+    int mid;
+    struct { int bot, top; } clamped;
     int height;
 }
 Projection;

@@ -57,11 +57,11 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         if(sprite.where.x < 0)
             continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter
-        const int size = xbalance(xfocal(hero.fov) * sdl.yres / sprite.where.x);
+        const int size = xbalance(hero.fov.a.x * sdl.yres / sprite.where.x);
         // Calculate sprite location on screen
         const int l = (sdl.xres - size) / 2;
         const int t = (sdl.yres - size) / 2;
-        const int slider = xfocal(hero.fov) * (sdl.xres / 2) * xslp(sprite.where);
+        const int slider = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite.where);
         const SDL_Rect target = { l + slider, t, size, size };
         // Move onto the next sprite if this sprite is off screen
         if(target.x + target.w < 0 || target.x >= sdl.xres)

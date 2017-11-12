@@ -3,13 +3,13 @@
 #include "util.h"
 #include "SDL2/SDL.h"
 
-static Line lens(const float scale)
+static Line lens(const float focal)
 {
     Line fov;
-    fov.a.x = 1.0;
-    fov.a.y = -scale;
-    fov.b.x = 1.0;
-    fov.b.y = scale;
+    fov.a.x = focal;
+    fov.a.y = -1.0;
+    fov.b.x = focal;
+    fov.b.y = 1.0;
     return fov;
 }
 
@@ -21,11 +21,11 @@ static Point beginning()
     return where;
 }
 
-Hero xspawn(const float scale)
+Hero xspawn(const float focal)
 {
     Hero hero;
     xzero(hero);
-    hero.fov = lens(scale);
+    hero.fov = lens(focal);
     hero.where = beginning();
     hero.speed = 0.12;
     hero.acceleration = 0.0150;

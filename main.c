@@ -7,7 +7,7 @@ int main(const int argc, const char* argv[])
     xlicense();
     const Args args = xparse(argc, argv);
     // Data init
-    Hero hero = xspawn(args.scale);
+    Hero hero = xspawn(args.focal);
     Map map = xopen(hero.floor);
     Sprites sprites = xwake(hero.floor);
     Sdl sdl = xsetup(args.xres, args.yres, args.fps);
