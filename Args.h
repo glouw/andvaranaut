@@ -5,6 +5,7 @@ typedef struct
     int xres;
     int yres;
     float focal;
+    int vsync;
     int fps;
 }
 Args;

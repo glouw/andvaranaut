@@ -3,6 +3,7 @@
 #include "Textures.h"
 #include "Sprites.h"
 #include "SDL2/SDL.h"
+#include "Args.h"
 
 typedef struct
 {
@@ -17,7 +18,7 @@ typedef struct
 }
 Sdl;
 
-Sdl xsetup(const int xres, const int yres, const int fps);
+Sdl xsetup(const Args args);
 
 void xrelease(const Sdl sdl);
 

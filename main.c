@@ -1,5 +1,4 @@
 #include "Sdl.h"
-#include "Args.h"
 #include "util.h"
 
 int main(const int argc, const char* argv[])
@@ -10,8 +9,9 @@ int main(const int argc, const char* argv[])
     Hero hero = xspawn(args.focal);
     Map map = xopen(hero.floor);
     Sprites sprites = xwake(hero.floor);
-    Sdl sdl = xsetup(args.xres, args.yres, args.fps);
+    Sdl sdl = xsetup(args);
     Input input = xready();
+    // Game loop - Data, output, input
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
     {
         const int t0 = SDL_GetTicks();
@@ -30,6 +30,8 @@ int main(const int argc, const char* argv[])
         // User input
         input = xpump(input);
         // FPS lock
+        // The renderer will most likely be using VSYNC.
+        // If the renderer is not using VSYNC, this software time delay will create a soft VSYNC effect
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);

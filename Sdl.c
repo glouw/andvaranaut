@@ -47,6 +47,7 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
     return seen;
 }
 
+// Pastes all visible sprites on screen. The wall z-buffer will determine when to partially or fully hide a sprite
 static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, const Hero hero, const int ticks)
 {
     // Go through all the sprites
@@ -90,24 +91,26 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
     }
 }
 
-Sdl xsetup(const int xres, const int yres, const int fps)
+Sdl xsetup(const Args args)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_SetRelativeMouseMode(SDL_TRUE);
     Sdl sdl;
     xzero(sdl);
-    sdl.window = SDL_CreateWindow("water", 0, 0, xres, yres, SDL_WINDOW_SHOWN);
+    sdl.window = SDL_CreateWindow("water", 0, 0, args.xres, args.yres, SDL_WINDOW_SHOWN);
     if(!sdl.window) xbomb("error: could not open window\n");
-    sdl.renderer = SDL_CreateRenderer(sdl.window, -1, SDL_RENDERER_ACCELERATED);
+    sdl.renderer = SDL_CreateRenderer(sdl.window, -1,
+        SDL_RENDERER_ACCELERATED |
+        (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0));
     // The canvas texture will be used for per pixel drawings. This will be used to the walls, floors, and ceiling.
     // Notice the flip between yres and xres in the following call for the sdl canvas texture.
     // Notice how ARGB8888 is used for the hardware. This is the fastest option for a GPU
-    sdl.canvas = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, yres, xres);
+    sdl.canvas = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, args.yres, args.xres);
     sdl.surfaces = xpull();
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
-    sdl.xres = xres;
-    sdl.yres = yres;
-    sdl.fps = fps;
+    sdl.xres = args.xres;
+    sdl.yres = args.yres;
+    sdl.fps = args.fps;
     return sdl;
 }
 

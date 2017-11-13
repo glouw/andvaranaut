@@ -20,7 +20,7 @@ static SDL_Surface* load(const char* const path)
 
 Surfaces xpull()
 {
-    FILE* const file = fopen("surfaces/surfaces.cfg", "r");
+    FILE* const file = fopen("art/art.cfg", "r");
     const int lines = xlns(file);
     SDL_Surface** const surface = xtoss(SDL_Surface*, lines);
     for(int i = 0; i < lines; i++)
