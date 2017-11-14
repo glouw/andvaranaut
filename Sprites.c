@@ -23,7 +23,6 @@ static Sprite _o_(const Point where)
     Sprite sprite = generic(where);
     sprite.ascii = 'o';
     sprite.width = 0.66;
-    sprite.moveable = true;
     return sprite;
 }
 
@@ -31,7 +30,8 @@ static Sprite _g_(const Point where)
 {
     Sprite sprite = generic(where);
     sprite.ascii = 'g';
-    sprite.width = 0.22;
+    // Grass sprites do not have a width so that other sprites can walk over them
+    sprite.width = 0.00;
     return sprite;
 }
 
@@ -169,7 +169,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     {
         Sprite* const sprite = &sprites.sprite[i];
         // Cannot move immovable sprites
-        if(!sprite->moveable)
+        if(sprite->width == 0.0)
             continue;
         if(xeql(hand, sprite->where, sprite->width))
         {
@@ -214,7 +214,7 @@ static void shove(const Sprites sprites)
         if(sprite == grabbed)
             continue;
         // Do not shove a sprite that is not moveable
-        if(!sprite->moveable)
+        if(sprite->width == 0.0)
             continue;
         const float width = xmax(sprite->width, grabbed->width);
         if(xeql(sprite->where, grabbed->where, width))
@@ -247,7 +247,7 @@ static void move(const Sprites sprites, const Field field, const Point to)
     {
         Sprite* const sprite = &sprites.sprite[i];
         // Do not move the sprite if the sprite is immovable
-        if(!sprite->moveable)
+        if(sprite->width == 0.0)
             continue;
         const Point dir = xforce(field, sprite->where, to);
         // No force of direction...
