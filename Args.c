@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-
 Args xparse(const int argc, const char* argv[])
 {
     // TODO: Build a proper string token parser.

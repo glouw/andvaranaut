@@ -31,7 +31,7 @@ static Sprite _b_(const Point where)
     Sprite sprite = born(where);
     sprite.ascii = 'b';
     sprite.speed = 0.033;
-    sprite.acceleration = 0.01;
+    sprite.acceleration = 0.0025;
     sprite.width = 0.66;
     return sprite;
 }
@@ -117,8 +117,7 @@ static int forewards(const void *a, const void* b)
 
 static void sort(const Sprites sprites, const int foreward)
 {
-    qsort(sprites.sprite, sprites.count, sizeof(Sprite),
-        foreward ? forewards : backwards);
+    qsort(sprites.sprite, sprites.count, sizeof(Sprite), foreward ? forewards : backwards);
 }
 
 static Sprites copy(const Sprites sprites)
@@ -184,12 +183,19 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     }
 }
 
-static Sprite* find(const Sprites sprites, const State state, const char exclude)
+// The following find function linearly searches a sprite for a state.
+// Function call backs can exclude sprites from the linear search based on sprite properties.
+typedef bool (*Excluding)(const Sprite* const);
+
+static bool width(const Sprite* const sprite) { return sprite->width == 0.0; }
+
+static Sprite* find(const Sprites sprites, const State state, Excluding excluding)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(sprite->ascii == exclude)
+        // Function call back exclusion.
+        if(excluding(sprite))
             continue;
         if(sprite->state == state)
             return sprite;
@@ -202,25 +208,25 @@ static void shove(const Sprites sprites)
 {
     // Find the grabbed sprite.
     // Exclude searching for sprites that are clutter sprites.
-    Sprite* const grabbed = find(sprites, GRABBED, 'a');
+    Sprite* const grabbed = find(sprites, GRABBED, width);
     if(!grabbed)
         return;
     // Use the grabbed sprite to shove other sprites.
     for(int i = 0; i < sprites.count; i++)
     {
-        Sprite* const sprite = &sprites.sprite[i];
+        Sprite* const other = &sprites.sprite[i];
         // Ensure the other sprite is not the previously grabbed sprite.
-        if(sprite == grabbed)
+        if(other == grabbed)
             continue;
         // Do not shove other sprite if other sprite is immovable.
-        if(sprite->width == 0.0)
+        if(other->width == 0.0)
             continue;
         // Shove.
-        const float width = xmax(sprite->width, grabbed->width);
-        if(xeql(sprite->where, grabbed->where, width))
+        const float width = xmax(other ->width, grabbed->width);
+        if(xeql(other ->where, grabbed->where, width))
         {
-            const Point delta = xsub(sprite->where, grabbed->where);
-            place(sprite, xadd(sprite->where, delta));
+            const Point delta = xsub(other ->where, grabbed->where);
+            place(other , xadd(other ->where, delta));
         }
     }
 }
@@ -266,7 +272,7 @@ static void move(const Sprites sprites, const Field field, const Point to)
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
         // If the sprite is fast enough they will animate chase.
-        sprite->state = xmag(sprite->velocity) > 0.01 ? CHASING : IDLE;
+        sprite->state = xmag(sprite->velocity) > 0.005 ? CHASING : IDLE;
         // Place the sprite at their new location...
         place(sprite, xadd(sprite->where, sprite->velocity));
     }
