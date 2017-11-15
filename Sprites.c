@@ -40,6 +40,8 @@ static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
+        // If the ASCII sprite is not found then default to
+        // clutter sprite, though this should never ever happen.
         default:
         case 'a': return _a_(where);
         case 'b': return _b_(where);
