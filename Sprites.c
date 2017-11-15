@@ -15,7 +15,7 @@ static Sprite born(const Point where)
     return sprite;
 }
 
-/* The clutter sprite */
+/* Clutter Sprite */
 // This sprite has no intrinstric properties. States are repurposed for skins.
 // The skin is randomly selected.
 static Sprite _a_(const Point where)
@@ -23,7 +23,6 @@ static Sprite _a_(const Point where)
     Sprite sprite = born(where);
     sprite.ascii = 'a';
     sprite.state = rand() % STATES;
-    printf("%d\n", sprite.state);
     return sprite;
 }
 
@@ -161,7 +160,7 @@ static void place(Sprite* const sprite, const Point to)
     sprite->where = to;
 }
 
-// Grabs the closest sprite when using hands
+// Grabs the closest sprite when using hands.
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
     if(!input.l)
@@ -170,7 +169,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        // Cannot move immovable sprites
+        // Cannot move immovable sprites.
         if(sprite->width == 0.0)
             continue;
         if(xeql(hand, sprite->where, sprite->width))
@@ -183,32 +182,38 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     }
 }
 
-static Sprite* find(const Sprites sprites, const State state)
+static Sprite* find(const Sprites sprites, const State state, const char exclude)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        if(sprite->ascii == exclude)
+            continue;
         if(sprite->state == state)
             return sprite;
     }
     return NULL;
 }
 
-// Shoves the closest sprite away if a sprite is grabbed
+// Shoves the closest sprite away if a sprite is grabbed.
 static void shove(const Sprites sprites)
 {
-    Sprite* const grabbed = find(sprites, GRABBED);
+    // Find the grabbed sprite.
+    // Exclude searching for sprites that are clutter sprites.
+    Sprite* const grabbed = find(sprites, GRABBED, 'a');
     if(!grabbed)
         return;
+    // Use the grabbed sprite to shove other sprites.
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        // Do not count the sprite that is currently grabbed
+        // Ensure the other sprite is not the previously grabbed sprite.
         if(sprite == grabbed)
             continue;
-        // Do not shove a sprite that is not moveable
+        // Do not shove other sprite if other sprite is immovable.
         if(sprite->width == 0.0)
             continue;
+        // Shove.
         const float width = xmax(sprite->width, grabbed->width);
         if(xeql(sprite->where, grabbed->where, width))
         {
@@ -218,7 +223,8 @@ static void shove(const Sprites sprites)
     }
 }
 
-// Puts a sprite in the last good spot if it goes out of bounds
+// Puts a sprite in the last good spot if the sprite goes into a wall.
+// The sprite is stunned and put into a dizzy state.
 static void bound(const Sprites sprites, const Map map)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -228,18 +234,18 @@ static void bound(const Sprites sprites, const Map map)
         {
             place(sprite, xmid(sprite->last));
             xzero(sprite->velocity);
-            // TODO: add a dizzy animation
+            // TODO: add a dizzy animation.
         }
     }
 }
 
-// Moves sprite along path towards the hero player scent
+// Moves sprite along force field towards the hero player scent.
 static void move(const Sprites sprites, const Field field, const Point to)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        // Do not move the sprite if the sprite is immovable
+        // Do not move the sprite if the sprite is immovable.
         if(sprite->width == 0.0)
             continue;
         const Point dir = xforce(field, sprite->where, to);
@@ -247,28 +253,28 @@ static void move(const Sprites sprites, const Field field, const Point to)
         if(dir.x == 0.0 && dir.y == 0.0)
             // Then slow down
             sprite->velocity = xmul(sprite->velocity, 1.0 - sprite->acceleration / sprite->speed);
-        // Otherwise speed up
+        // Otherwise speed up.
         else
         {
             const Point acc = xmul(dir, sprite->acceleration);
             sprite->velocity = xadd(sprite->velocity, acc);
             // And then check top speed...
             if(xmag(sprite->velocity) > sprite->speed)
-                // And cap speed if the top speed is surpassed
+                // And cap speed if the top speed is surpassed.
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
-        // If the sprite is fast enough they will animate chase
+        // If the sprite is fast enough they will animate chase.
         sprite->state = xmag(sprite->velocity) > 0.01 ? CHASING : IDLE;
         // Place the sprite at their new location...
         place(sprite, xadd(sprite->where, sprite->velocity));
     }
 }
 
-// Collaborative diffusion with various scents
+// Collaborative diffusion with various scents.
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
     const float scent = 1e3;
-    // Wall scents are repel
+    // Wall scents are repel.
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
     {
@@ -276,34 +282,34 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         const int x = i / field.res;
         if(map.walling[y][x] != ' ') field.mesh[j][i] = -scent;
     }
-    // Sprite scents stack on one another
+    // Sprite scents stack on one another.
     for(int s = 0; s < sprites.count; s++)
     {
         Sprite* const sprite = &sprites.sprite[s];
         const int j = field.res * sprite->where.y;
         const int i = field.res * sprite->where.x;
-        // If the tile is already scented then a sprite is already there
+        // If the tile is already scented then a sprite is already there.
         if(field.mesh[j][i] < 0.0) xzero(sprite->velocity);
         field.mesh[j][i] -= sprite->width;
     }
-    // Hero scent attracts
+    // Hero scent attracts.
     const int j = field.res * hero.where.y;
     const int i = field.res * hero.where.x;
     field.mesh[j][i] = scent;
-    // Diffuse the culminated scent across the field
+    // Diffuse the culminated scent across the field.
     xdiffuse(field, hero.where);
 }
 
 void xcaretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
 {
-    // Sprites need to be arrange closest to hero first
+    // Sprites need to be arrange closest to hero first.
     arrange(sprites, hero);
-    // Sprite path finding and movement
+    // Sprite path finding and movement.
     const Field field = xprepare(map, hero.scent);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where);
     xruin(field);
-    // Sprite placement - interactive and out of bounds
+    // Sprite placement - interactive and out of bounds.
     grab(sprites, hero, input);
     shove(sprites);
     bound(sprites, map);
