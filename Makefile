@@ -32,7 +32,7 @@ CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -isystem lib
 CFLAGS+= -g
 
 # Optimization flags
-CFLAGS+= -Ofast -flto -march=native
+CFLAGS+= -Ofast -march=native -flto
 CFLAGS+= -fassociative-math -freciprocal-math -fno-signed-zeros
 CFLAGS+= -frename-registers -funroll-loops -fno-trapping-math
 

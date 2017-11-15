@@ -3,35 +3,37 @@
 #include "Field.h"
 #include "util.h"
 
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 #include <ctype.h>
 #include <math.h>
 
-static Sprite generic(const Point where)
+static Sprite born(const Point where)
 {
     Sprite sprite;
     xzero(sprite);
     sprite.where = where;
-    sprite.ascii = 'Z';
-    sprite.speed = 0.035;
-    sprite.acceleration = 0.002;
     return sprite;
 }
 
-static Sprite _o_(const Point where)
+/* The clutter sprite */
+// This sprite has no intrinstric properties. States are repurposed for skins.
+// The skin is randomly selected.
+static Sprite _a_(const Point where)
 {
-    Sprite sprite = generic(where);
-    sprite.ascii = 'o';
+    Sprite sprite = born(where);
+    sprite.ascii = 'a';
+    sprite.state = rand() % STATES;
+    printf("%d\n", sprite.state);
+    return sprite;
+}
+
+static Sprite _b_(const Point where)
+{
+    Sprite sprite = born(where);
+    sprite.ascii = 'b';
+    sprite.speed = 0.033;
+    sprite.acceleration = 0.01;
     sprite.width = 0.66;
-    return sprite;
-}
-
-static Sprite _g_(const Point where)
-{
-    Sprite sprite = generic(where);
-    sprite.ascii = 'g';
-    // Grass sprites do not have a width so that other sprites can walk over them
-    sprite.width = 0.00;
     return sprite;
 }
 
@@ -39,10 +41,10 @@ static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
-        case 'o': return _o_(where);
-        case 'g': return _g_(where);
+        default:
+        case 'a': return _a_(where);
+        case 'b': return _b_(where);
     }
-    return generic(where);
 }
 
 Sprites xwake(const int level)
@@ -192,15 +194,6 @@ static Sprite* find(const Sprites sprites, const State state)
     return NULL;
 }
 
-static void idle(const Sprites sprites)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        sprite->state = IDLE;
-    }
-}
-
 // Shoves the closest sprite away if a sprite is grabbed
 static void shove(const Sprites sprites)
 {
@@ -265,7 +258,7 @@ static void move(const Sprites sprites, const Field field, const Point to)
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
         // If the sprite is fast enough they will animate chase
-        if(xmag(sprite->velocity) > 0.01) sprite->state = CHASING;
+        sprite->state = xmag(sprite->velocity) > 0.01 ? CHASING : IDLE;
         // Place the sprite at their new location...
         place(sprite, xadd(sprite->where, sprite->velocity));
     }
@@ -305,8 +298,6 @@ void xcaretake(const Sprites sprites, const Hero hero, const Input input, const 
 {
     // Sprites need to be arrange closest to hero first
     arrange(sprites, hero);
-    // Default state for all sprites per iteration is idle - this will be overwritten
-    idle(sprites);
     // Sprite path finding and movement
     const Field field = xprepare(map, hero.scent);
     route(sprites, field, map, hero);

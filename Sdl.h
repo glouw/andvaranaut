@@ -2,8 +2,9 @@
 
 #include "Textures.h"
 #include "Sprites.h"
-#include "SDL2/SDL.h"
 #include "Args.h"
+
+#include <SDL2/SDL.h>
 
 typedef struct
 {
