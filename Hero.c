@@ -36,11 +36,10 @@ Hero xspawn(const float focal)
     return hero;
 }
 
-static Hero spin(const Hero hero, const Input input)
+static Hero spin(Hero hero, const Input input)
 {
-    Hero temp = hero;
-    temp.theta += input.dx * input.sx;
-    return temp;
+    hero.theta += input.dx * input.sx;
+    return hero;
 }
 
 Point xtouch(const Hero hero, const float reach)
@@ -57,35 +56,34 @@ static Point accelerate(const Hero hero)
     return xmul(direction, hero.acceleration);
 }
 
-static Hero move(const Hero hero, char** const walling, const Input input)
+static Hero move(Hero hero, char** const walling, const Input input)
 {
-    Hero temp = hero;
+    const Point last = hero.where;
     // Acceleration.
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
     || input.key[SDL_SCANCODE_D]
     || input.key[SDL_SCANCODE_A])
     {
-        const Point acceleration = accelerate(temp);
-        if(input.key[SDL_SCANCODE_W]) temp.velocity = xadd(temp.velocity, acceleration);
-        if(input.key[SDL_SCANCODE_S]) temp.velocity = xsub(temp.velocity, acceleration);
-        if(input.key[SDL_SCANCODE_D]) temp.velocity = xadd(temp.velocity, xrag(acceleration));
-        if(input.key[SDL_SCANCODE_A]) temp.velocity = xsub(temp.velocity, xrag(acceleration));
+        const Point acceleration = accelerate(hero);
+        if(input.key[SDL_SCANCODE_W]) hero.velocity = xadd(hero.velocity, acceleration);
+        if(input.key[SDL_SCANCODE_S]) hero.velocity = xsub(hero.velocity, acceleration);
+        if(input.key[SDL_SCANCODE_D]) hero.velocity = xadd(hero.velocity, xrag(acceleration));
+        if(input.key[SDL_SCANCODE_A]) hero.velocity = xsub(hero.velocity, xrag(acceleration));
     }
     // Mass spring damping system.
-    else temp.velocity = xmul(temp.velocity, 1.0 - temp.acceleration / temp.speed);
+    else hero.velocity = xmul(hero.velocity, 1.0 - hero.acceleration / hero.speed);
     // Top speed check.
-    if(xmag(temp.velocity) > temp.speed)
-        temp.velocity = xmul(xunt(temp.velocity), temp.speed);
+    if(xmag(hero.velocity) > hero.speed) hero.velocity = xmul(xunt(hero.velocity), hero.speed);
     // Moves and checks for a collision.
-    temp.where = xadd(temp.where, temp.velocity);
+    hero.where = xadd(hero.where, hero.velocity);
     // Reset hero if collision.
-    if(xtile(temp.where, walling))
+    if(xtile(hero.where, walling))
     {
-        xzero(temp.velocity);
-        temp.where = hero.where;
+        xzero(hero.velocity);
+        hero.where = last;
     }
-    return temp;
+    return hero;
 }
 
 Ray xcast(const Hero hero, char** const block, const Point column, const int yres)
@@ -103,7 +101,6 @@ Ray xcast(const Hero hero, char** const block, const Point column, const int yre
 bool xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
     static int last;
-    // Arbitrary wait time - whatever has the best feel.
     if(ticks < last + 3)
         return false;
     if(!input.key[SDL_SCANCODE_E])
@@ -112,20 +109,18 @@ bool xteleporting(const Hero hero, const Map map, const Input input, const int t
     return xisportal(map, hero.where);
 }
 
-Hero xteleport(const Hero hero, const Map map)
+Hero xteleport(Hero hero, const Map map)
 {
-    Hero temp = hero;
-    temp.torch = xout();
-    if(xblok(hero.where, map.floring) == '~') temp.floor++;
-    if(xblok(hero.where, map.ceiling) == '~') temp.floor--;
-    return temp;
+    hero.torch = xout();
+    if(xblok(hero.where, map.floring) == '~') hero.floor++;
+    if(xblok(hero.where, map.ceiling) == '~') hero.floor--;
+    return hero;
 }
 
-Hero xsustain(const Hero hero, const Map map, const Input input)
+Hero xsustain(Hero hero, const Map map, const Input input)
 {
-    Hero temp = hero;
-    temp = spin(temp, input);
-    temp = move(temp, map.walling, input);
-    temp.torch = xburn(temp.torch);
-    return temp;
+    hero = spin(hero, input);
+    hero = move(hero, map.walling, input);
+    hero.torch = xburn(hero.torch);
+    return hero;
 }

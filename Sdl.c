@@ -15,7 +15,7 @@ static void churn(const Sdl sdl)
     SDL_RenderCopyEx(sdl.renderer, sdl.canvas, NULL, &dst, -90, NULL, SDL_FLIP_NONE);
 }
 
-static void present(const Sdl sdl)
+void xpresent(const Sdl sdl)
 {
     SDL_RenderPresent(sdl.renderer);
 }
@@ -94,13 +94,14 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
 Sdl xsetup(const Args args)
 {
     SDL_Init(SDL_INIT_VIDEO);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
     Sdl sdl;
     xzero(sdl);
     sdl.window = SDL_CreateWindow("water", 0, 0, args.xres, args.yres, SDL_WINDOW_SHOWN);
     if(!sdl.window) xbomb("error: could not open window\n");
     sdl.renderer = SDL_CreateRenderer(sdl.window, -1,
+        // Hardware acceleration
         SDL_RENDERER_ACCELERATED |
+        // Screen Vertical Sync
         (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0));
     // The canvas texture will be used for per pixel drawings. This will be used to the walls, floors, and ceiling.
     // Notice the flip between yres and xres in the following call for the sdl canvas texture.
@@ -151,11 +152,42 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     const Sprites relatives = xorient(sprites, hero);
     // Use the wall zbuffer to render the sprites.
     paste(sdl, relatives, zbuff, hero, ticks);
-    // Update the screen with the final rendered frame.
-    present(sdl);
     // Cleanup all local heap allocations.
     xkill(relatives);
     free(wheres);
     free(zbuff);
     free(moddings);
+}
+
+void xoverview(const Sdl sdl, const Map map, const Sprites sprites, const Input input)
+{
+    SDL_RenderClear(sdl.renderer);
+    static int x;
+    static int y;
+    static enum { floring, walling, ceiling } party = walling;
+    if(input.l)
+    {
+        x += input.dx;
+        y += input.dy;
+    }
+    if(input.key[SDL_SCANCODE_1]) party = floring;
+    if(input.key[SDL_SCANCODE_2]) party = walling;
+    if(input.key[SDL_SCANCODE_3]) party = ceiling;
+    for(int j = 0; j < map.rows; j++)
+    for(int i = 0; i < map.cols; i++)
+    {
+        const int w = 16;
+        const int h = 16;
+        const SDL_Rect tile = {
+            w * i + x,
+            h * j + y,
+            w,
+            h
+        };
+        const int ch =
+            party == floring ? map.floring[j][i] - ' ' :
+            party == walling ? map.walling[j][i] - ' ' :
+            party == ceiling ? map.ceiling[j][i] - ' ' : map.walling[j][i] - ' ';
+        if(ch) SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &tile);
+    }
 }

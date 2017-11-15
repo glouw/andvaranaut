@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct
 {
@@ -18,6 +19,8 @@ typedef struct
     int r;
 }
 Input;
+
+void xmouse(const bool show);
 
 Input xpump(Input input);
 

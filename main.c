@@ -12,22 +12,41 @@ int main(const int argc, const char* argv[])
     Sprites sprites = xwake(hero.floor);
     Sdl sdl = xsetup(args);
     Input input = xready();
-    // Game loop - Data, output, input.
+    // A level editor ships with the engine. The level editor will swap the player's renderering
+    // view with an overhead view of the sprites and the map. The user can lay down floor, wall,
+    // and ceiling tiles while moving and adding new sprites.
+    bool editing = false;
+    // Game loop.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 5);
-        // Data update.
-        if(xteleporting(hero, map, input, ticks))
+        // Edit mode.
+        if(input.key[SDL_SCANCODE_F2]) editing = true;
+        if(input.key[SDL_SCANCODE_F3]) editing = false;
+        if(editing)
         {
-            hero = xteleport(hero, map);
-            map = xreopen(map, hero.floor);
-            sprites = xrewake(sprites, hero.floor);
+            xmouse(true);
+            xoverview(sdl, map, sprites, input);
         }
-        hero = xsustain(hero, map, input);
-        xcaretake(sprites, hero, input, map);
-        // Video output.
-        xrender(sdl, hero, sprites, map, ticks);
+        // Play mode.
+        else
+        {
+            xmouse(false);
+            // Data update.
+            if(xteleporting(hero, map, input, ticks))
+            {
+                hero = xteleport(hero, map);
+                map = xreopen(map, hero.floor);
+                sprites = xrewake(sprites, hero.floor);
+            }
+            hero = xsustain(hero, map, input);
+            xcaretake(sprites, hero, input, map);
+            // Video output.
+            xrender(sdl, hero, sprites, map, ticks);
+        }
+        // Update the screen with the final rendered frame.
+        xpresent(sdl);
         // User input.
         input = xpump(input);
         // FPS lock.

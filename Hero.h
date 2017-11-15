@@ -34,6 +34,6 @@ Ray xcast(const Hero hero, char** const block, const Point column, const int yre
 
 bool xteleporting(const Hero hero, const Map map, const Input input, const int ticks);
 
-Hero xteleport(const Hero hero, const Map map);
+Hero xteleport(Hero hero, const Map map);
 
-Hero xsustain(const Hero hero, const Map map, const Input input);
+Hero xsustain(Hero hero, const Map map, const Input input);

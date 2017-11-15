@@ -25,3 +25,8 @@ Input xready()
     input.key = SDL_GetKeyboardState(NULL);
     return xpump(input);
 }
+
+void xmouse(const bool show)
+{
+    SDL_SetRelativeMouseMode(show ? SDL_FALSE : SDL_TRUE);
+}
