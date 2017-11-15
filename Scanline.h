@@ -6,7 +6,7 @@ typedef struct
 {
     Sdl sdl;
     Display display;
-    // Scanlines are rotated 90 degrees. An x argument would be passed here
+    // Scanlines are rotated 90 degrees. An x argument would be passed here.
     int y;
 }
 Scanline;

@@ -30,10 +30,10 @@ static float average(const Field field, const int y, const int x)
     for(int j = y - 1; j <= y + 1; j++)
     for(int i = x - 1; i <= x + 1; i++)
     {
-        // Out of bounds check
+        // Out of bounds check.
         if(!on(field, j, i))
             continue;
-        // Do not sum middle of box
+        // Do not sum middle of box.
         if(j == y && i == x)
             continue;
         sum += field.mesh[j][i];
@@ -60,11 +60,11 @@ static void box(const Field field, const int y, const int x, const int w)
 {
     Atom* const atoms = xtoss(Atom, 8 * w);
     int count = 0;
-    const int t = y - w; // Top
-    const int b = y + w; // Bottom
-    const int l = x - w; // Left
-    const int r = x + w; // Right
-    // Calculate diffusable atoms
+    const int t = y - w; // Top.
+    const int b = y + w; // Bottom.
+    const int l = x - w; // Left.
+    const int r = x + w; // Right.
+    // Calculate diffusable atoms.
     for(int j = t; j <= b; j++)
     for(int i = l; i <= r; i++)
         // If on outside of box...
@@ -73,12 +73,11 @@ static void box(const Field field, const int y, const int x, const int w)
         && on(field, j, i)
         // And no antiobject is in the way...
         && field.mesh[j][i] == 0.0)
-            // Then materialize an atom with the diffusion box average
+            // Then materialize an atom with the diffusion box average.
             atoms[count++] = materialize(field, j, i);
-    // Transfer diffused atoms in one go
+    // Transfer diffused atoms in one go.
     for(int a = 0; a < count; a++)
         field.mesh[atoms[a].y][atoms[a].x] = atoms[a].val;
-    // Cleanup
     free(atoms);
 }
 
@@ -95,12 +94,12 @@ static int largest(float* gradients, const int size)
 Point xforce(const Field field, const Point from, const Point to)
 {
     // Return the zero acceleration vector if the <from> point
-    // is close enough to the destination <to> point or if it is far enough away
+    // is close enough to the destination <to> point or if it is far enough away.
     const Point dead = { 0.0, 0.0 };
     const float dist = xmag(xsub(from, to));
     if(dist < 1.33 || dist > (field.aura / field.res) - 1)
         return dead;
-    // Otherwise, calculate the accleration vectors by direction
+    // Otherwise, calculate the accleration vectors by direction.
     const Point vectors[] = {
         {  1, -0 }, // E
         {  1,  1 }, // SE
@@ -112,7 +111,7 @@ Point xforce(const Field field, const Point from, const Point to)
         {  1, -1 }, // NE
     };
     const int size = xlen(vectors);
-    // And calculate the acceleration field gradients
+    // And calculate the acceleration field gradients.
     float gradients[size];
     xzero(gradients);
     for(int i = 0; i < size; i++)

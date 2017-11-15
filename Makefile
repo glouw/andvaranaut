@@ -1,10 +1,10 @@
-# Compiler and standard
+# Compiler and standard.
 CC = gcc -std=c99
 
-# Project name
+# Project name.
 PROJ = water
 
-# Source files
+# Source files.
 SRCS = main.c
 SRCS+= util.c
 SRCS+= Args.c
@@ -25,30 +25,30 @@ SRCS+= Textures.c
 SRCS+= Torch.c
 SRCS+= Projection.c
 
-# Warnings flags
+# Warnings flags.
 CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -isystem lib
 
-# Debugging flags
+# Debugging flags.
 CFLAGS+= -g
 
-# Optimization flags
+# Optimization flags.
 CFLAGS+= -Ofast -march=native -flto
 CFLAGS+= -fassociative-math -freciprocal-math -fno-signed-zeros
 CFLAGS+= -frename-registers -funroll-loops -fno-trapping-math
 
-# Linker flags
+# Linker flags.
 LDFLAGS = -lm -lSDL2
 
-# Linker
+# Linker.
 $(PROJ): $(SRCS:.c=.o)
 	$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(PROJ)
 
-# Compiler template; generates dependency targets
+# Compiler template; generates dependency targets.
 %.o : %.c
 	$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@mv -f $*.td $*.d
 
-# All dependency targets
+# All dependency targets.
 %.d: ;
 -include *.d
 

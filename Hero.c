@@ -60,7 +60,7 @@ static Point accelerate(const Hero hero)
 static Hero move(const Hero hero, char** const walling, const Input input)
 {
     Hero temp = hero;
-    // Acceleration
+    // Acceleration.
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
     || input.key[SDL_SCANCODE_D]
@@ -72,14 +72,14 @@ static Hero move(const Hero hero, char** const walling, const Input input)
         if(input.key[SDL_SCANCODE_D]) temp.velocity = xadd(temp.velocity, xrag(acceleration));
         if(input.key[SDL_SCANCODE_A]) temp.velocity = xsub(temp.velocity, xrag(acceleration));
     }
-    // Mass spring damping system
+    // Mass spring damping system.
     else temp.velocity = xmul(temp.velocity, 1.0 - temp.acceleration / temp.speed);
-    // Top speed check
+    // Top speed check.
     if(xmag(temp.velocity) > temp.speed)
         temp.velocity = xmul(xunt(temp.velocity), temp.speed);
-    // Moves and checks for a collision
+    // Moves and checks for a collision.
     temp.where = xadd(temp.where, temp.velocity);
-    // Reset hero if collision
+    // Reset hero if collision.
     if(xtile(temp.where, walling))
     {
         xzero(temp.velocity);
@@ -103,7 +103,7 @@ Ray xcast(const Hero hero, char** const block, const Point column, const int yre
 bool xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
     static int last;
-    // Arbitrary wait time - whatever has the best feel
+    // Arbitrary wait time - whatever has the best feel.
     if(ticks < last + 3)
         return false;
     if(!input.key[SDL_SCANCODE_E])

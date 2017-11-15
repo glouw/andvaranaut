@@ -22,7 +22,7 @@ Map xopen(const int level)
     map.ceiling = get(file, map.rows);
     map.walling = get(file, map.rows);
     map.floring = get(file, map.rows);
-    map.cols = strlen(map.walling[0]); // Assumes all row columns are same size
+    map.cols = strlen(map.walling[0]); // Assumes all row columns are same size.
     fclose(file);
     free(path);
     return map;

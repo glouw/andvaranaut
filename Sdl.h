@@ -23,5 +23,5 @@ Sdl xsetup(const Args args);
 
 void xrelease(const Sdl sdl);
 
-// Renders one one frame with SDL using hero, sprite, and map data. Ticks determine animation
+// Renders one one frame with SDL using hero, sprite, and map data. Ticks determine animation.
 void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks);
