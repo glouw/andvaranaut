@@ -22,7 +22,8 @@ Map xopen(const int level)
     map.ceiling = get(file, map.rows);
     map.walling = get(file, map.rows);
     map.floring = get(file, map.rows);
-    map.cols = strlen(map.walling[0]); // Assumes all row columns are same size.
+    // Assumes all row columns are same size.
+    map.cols = strlen(map.walling[0]);
     fclose(file);
     free(path);
     return map;
@@ -49,6 +50,22 @@ Map xreopen(const Map map, const int level)
 
 bool xisportal(const Map map, const Point where)
 {
-    return xblok(where, map.floring) == '~'
-        || xblok(where, map.ceiling) == '~';
+    return xblok(where, map.floring) == '~' || xblok(where, map.ceiling) == '~';
+}
+
+static bool out(const Map map, const int x, const int y)
+{
+    return x >= map.cols || x < 0 || y >= map.rows || y < 0;
+}
+
+void xedit(const Map map, const Overview ov)
+{
+    if(ov.x == -1 && ov.y == -1)
+        return;
+    if(out(map, ov.x, ov.y))
+        return;
+    const int ascii = ov.selected + ' ';
+    if(ov.party == FLORING) map.floring[ov.y][ov.x] = ascii;
+    if(ov.party == WALLING) map.walling[ov.y][ov.x] = ascii;
+    if(ov.party == CEILING) map.ceiling[ov.y][ov.x] = ascii;
 }

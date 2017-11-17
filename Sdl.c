@@ -12,6 +12,7 @@ static void churn(const Sdl sdl)
         sdl.yres,
         sdl.xres
     };
+    // Does a 90 degree flip upon copy.
     SDL_RenderCopyEx(sdl.renderer, sdl.canvas, NULL, &dst, -90, NULL, SDL_FLIP_NONE);
 }
 
@@ -159,35 +160,28 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     free(moddings);
 }
 
-void xoverview(const Sdl sdl, const Map map, const Sprites sprites, const Input input)
+void xview(const Sdl sdl, const Overview ov, const Map map)
 {
+    // Clear renderer...
     SDL_RenderClear(sdl.renderer);
-    static int x;
-    static int y;
-    static enum { floring, walling, ceiling } party = walling;
-    if(input.l)
-    {
-        x += input.dx;
-        y += input.dy;
-    }
-    if(input.key[SDL_SCANCODE_1]) party = floring;
-    if(input.key[SDL_SCANCODE_2]) party = walling;
-    if(input.key[SDL_SCANCODE_3]) party = ceiling;
+    // and copy over overview tiles,
     for(int j = 0; j < map.rows; j++)
     for(int i = 0; i < map.cols; i++)
     {
-        const int w = 16;
-        const int h = 16;
-        const SDL_Rect tile = {
-            w * i + x,
-            h * j + y,
-            w,
-            h
-        };
-        const int ch =
-            party == floring ? map.floring[j][i] - ' ' :
-            party == walling ? map.walling[j][i] - ' ' :
-            party == ceiling ? map.ceiling[j][i] - ' ' : map.walling[j][i] - ' ';
+        const SDL_Rect tile = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
+        // Walling will default if anything other 1, 2, or 3 is selected.
+        const int ascii =
+            ov.party == FLORING ? map.floring[j][i] :
+            ov.party == CEILING ? map.ceiling[j][i] : map.walling[j][i];
+        const int ch = ascii - ' ';
+        // If ch is zero, then it is empty space. Just skip the render.
         if(ch) SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &tile);
+    }
+    // And finally copy over the selection tiles.
+    // This will be done on the left most column of the screen.
+    for(int j = 0; j < map.rows; j++)
+    {
+        const SDL_Rect tile = { 0, ov.h * j, ov.w, ov.h };
+        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[j], NULL, &tile);
     }
 }

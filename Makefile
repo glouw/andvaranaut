@@ -24,6 +24,7 @@ SRCS+= Surfaces.c
 SRCS+= Textures.c
 SRCS+= Torch.c
 SRCS+= Projection.c
+SRCS+= Overview.c
 
 # Warnings flags.
 CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -isystem lib

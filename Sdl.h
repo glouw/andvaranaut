@@ -3,6 +3,7 @@
 #include "Textures.h"
 #include "Sprites.h"
 #include "Args.h"
+#include "Overview.h" 
 
 #include <SDL2/SDL.h>
 
@@ -28,4 +29,5 @@ void xpresent(const Sdl sdl);
 // Renders one one frame with SDL using hero, sprite, and map data. Ticks determine animation.
 void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks);
 
-void xoverview(const Sdl sdl, const Map map, const Sprites sprites, const Input input);
+// Renders the overview of the map and sprites for editing purposes.
+void xview(const Sdl sdl, const Overview ov, const Map map);

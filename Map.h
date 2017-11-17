@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Point.h"
+#include "Overview.h"
 
 #include <stdbool.h>
 
@@ -21,3 +22,5 @@ void xclose(const Map map);
 Map xreopen(const Map map, const int level);
 
 bool xisportal(const Map map, const Point where);
+
+void xedit(const Map map, const Overview ov);

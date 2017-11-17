@@ -10,6 +10,9 @@ typedef struct
     // Mouse sensitivity.
     float sx;
     float sy;
+    // Mouse position.
+    int x;
+    int y;
     // Mouse deltas.
     int dx;
     int dy;
@@ -19,8 +22,6 @@ typedef struct
     int r;
 }
 Input;
-
-void xmouse(const bool show);
 
 Input xpump(Input input);
 

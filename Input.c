@@ -8,6 +8,7 @@ Input xpump(Input input)
 {
     SDL_PumpEvents();
     const uint32_t buttons = SDL_GetRelativeMouseState(&input.dx, &input.dy);
+    SDL_GetMouseState(&input.x, &input.y);
     input.l = (buttons >> 0) & 0x1; // Left.
     input.m = (buttons >> 1) & 0x1; // Middle.
     input.r = (buttons >> 2) & 0x1; // Right.
@@ -24,9 +25,4 @@ Input xready()
     // Keyboard.
     input.key = SDL_GetKeyboardState(NULL);
     return xpump(input);
-}
-
-void xmouse(const bool show)
-{
-    SDL_SetRelativeMouseMode(show ? SDL_FALSE : SDL_TRUE);
 }
