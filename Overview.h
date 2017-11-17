@@ -2,6 +2,7 @@
 
 #include "Party.h"
 #include "Input.h"
+#include "Point.h"
 
 typedef struct
 {
@@ -18,6 +19,10 @@ typedef struct
     int selected;
     // Overview party display, either walling, floring, or ceiling.
     Party party;
+    // Scroll velocity with WASD keys.
+    Point velocity;
+    float acceleration;
+    float speed;
 }
 Overview;
 
