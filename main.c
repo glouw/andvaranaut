@@ -12,7 +12,7 @@ int main(const int argc, const char* argv[])
     Sprites sprites = xwake(hero.floor);
     Sdl sdl = xsetup(args);
     Input input = xready();
-    Overview overview = xinit();
+    Overview overview = xinit(sdl.xres, sdl.yres);
     // A level editor ships with the engine. The level editor will swap the player's renderering
     // view with an overhead view of the sprites and the map. The user can lay down floor, wall,
     // and ceiling tiles while moving and adding new sprites.
@@ -27,14 +27,16 @@ int main(const int argc, const char* argv[])
         if(input.key[SDL_SCANCODE_F3]) editing = false;
         if(editing)
         {
+            // The mouse cursor must shown when editing.
             SDL_SetRelativeMouseMode(SDL_FALSE);
-            overview = xupdate(overview, input);
-            xview(sdl, overview, map);
+            overview = xupdate(overview, input, sdl.xres, sdl.textures.count);
+            xview(sdl, overview, map, ticks);
             xedit(map, overview);
         }
         // Play mode.
         else
         {
+            // The mouse cursor must be removed when playing.
             SDL_SetRelativeMouseMode(SDL_TRUE);
             // Data update.
             if(xteleporting(hero, map, input, ticks))

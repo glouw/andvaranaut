@@ -30,4 +30,4 @@ void xpresent(const Sdl sdl);
 void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks);
 
 // Renders the overview of the map and sprites for editing purposes.
-void xview(const Sdl sdl, const Overview ov, const Map map);
+void xview(const Sdl sdl, const Overview ov, const Map map, const int ticks);

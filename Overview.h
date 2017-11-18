@@ -23,9 +23,11 @@ typedef struct
     Point velocity;
     float acceleration;
     float speed;
+    // The wheel is used for scrolling through all available tiles.
+    int wheel;
 }
 Overview;
 
 Overview xinit();
 
-Overview xupdate(Overview ov, const Input input);
+Overview xupdate(Overview ov, const Input input, const int xres, const int textures);

@@ -6,12 +6,15 @@
 
 Input xpump(Input input)
 {
+    // Keyboard events.
     SDL_PumpEvents();
+    // Relative mouse state and buttons.
     const uint32_t buttons = SDL_GetRelativeMouseState(&input.dx, &input.dy);
-    SDL_GetMouseState(&input.x, &input.y);
     input.l = (buttons >> 0) & 0x1; // Left.
     input.m = (buttons >> 1) & 0x1; // Middle.
     input.r = (buttons >> 2) & 0x1; // Right.
+    // Absolute mouse state.
+    SDL_GetMouseState(&input.x, &input.y);
     return input;
 }
 

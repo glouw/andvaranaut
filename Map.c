@@ -1,5 +1,7 @@
 #include "Map.h"
 
+#include "Sprites.h"
+
 #include "util.h"
 
 static char** get(FILE* const file, const int rows)
@@ -60,11 +62,12 @@ static bool out(const Map map, const int x, const int y)
 
 void xedit(const Map map, const Overview ov)
 {
-    if(ov.x == -1 && ov.y == -1)
-        return;
     if(out(map, ov.x, ov.y))
         return;
     const int ascii = ov.selected + ' ';
+    // If the ascii is an alpha character then it is a sprite
+    if(xissprite(ascii)) return;
+    // Otherwise place the ascii character.
     if(ov.party == FLORING) map.floring[ov.y][ov.x] = ascii;
     if(ov.party == WALLING) map.walling[ov.y][ov.x] = ascii;
     if(ov.party == CEILING) map.ceiling[ov.y][ov.x] = ascii;

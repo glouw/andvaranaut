@@ -33,4 +33,6 @@ Sprites xrewake(const Sprites sprites, const int level);
 
 Sprites xorient(const Sprites sprites, const Hero hero);
 
+bool xissprite(const int ascii);
+
 void xcaretake(const Sprites sprites, const Hero hero, const Input input, const Map map);
