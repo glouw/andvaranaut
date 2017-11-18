@@ -12,6 +12,10 @@ Controls:
 
     exit: F1
 
+    edit: F2
+
+    play: F3
+
 Execution:
 
     ./water
