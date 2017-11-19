@@ -1,6 +1,7 @@
 #include "Sprites.h"
 
 #include "Field.h"
+#include "Excluding.h"
 #include "util.h"
 
 #include <SDL2/SDL.h>
@@ -181,26 +182,6 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
             return;
         }
     }
-}
-
-// The following find function linearly searches a sprite for a state.
-// Function call backs can exclude sprites from the linear search based on sprite properties.
-typedef bool (*Excluding)(const Sprite* const);
-
-static bool width(const Sprite* const sprite) { return sprite->width == 0.0; }
-
-static Sprite* find(const Sprites sprites, const State state, Excluding excluding)
-{
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        // Function call back exclusion.
-        if(excluding(sprite))
-            continue;
-        if(sprite->state == state)
-            return sprite;
-    }
-    return NULL;
 }
 
 // Shoves the closest sprite away if a sprite is grabbed.
