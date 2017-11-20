@@ -87,8 +87,11 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
+        /* Cleanup */
         // Removes transperancy from the sprite.
         if(sprite.transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+        // Revert lighting to the sprite.
+        SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
     }
 }
 
@@ -160,62 +163,73 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     free(moddings);
 }
 
-// Copy over all tiles for the overview layout.
-// This includes sprites and blocks.
-static void layout(const Sdl sdl, const Overview ov, const Map map)
+static bool clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
+{
+    return (to.x > sdl.xres || to.x < -ov.w)
+        && (to.y > sdl.yres || to.y < -ov.h);
+}
+
+// Copy over all tiles for the grid layout.
+static void gridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {
     // Clear renderer and copy over block overview tiles.
+    // The block overview tile will snap to the grid.
     SDL_RenderClear(sdl.renderer);
     for(int j = 0; j < map.rows; j++)
     for(int i = 0; i < map.cols; i++)
     {
-        const SDL_Rect to = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
         // Walling will default if anything other 1, 2, or 3 is selected.
         const int ascii =
             ov.party == FLORING ? map.floring[j][i] :
             ov.party == CEILING ? map.ceiling[j][i] : map.walling[j][i];
-        const int ch = ascii - ' ';
         // If ch is zero, then it is empty space. Skip the render.
+        const int ch = ascii - ' ';
         if(ch == 0) continue;
         // Otherwise, render the tile.
-        const int w = sdl.surfaces.surface[ch]->w;
-        const int h = sdl.surfaces.surface[ch]->h;
-        const SDL_Rect from = { 0, 0, w, h };
-        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], &from, &to);
+        const SDL_Rect to = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
+        if(clipping(sdl, ov, to)) continue;
+        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &to);
+    }
+    // Put down sprites. Sprites will not snap to the grid.
+    for(int s = 0; s < sprites.count; s++)
+    {
+        Sprite* const sprite = &sprites.sprite[s];
+        const int index = sprite->ascii - ' ';
+        const int w = sdl.surfaces.surface[index]->w / FRAMES;
+        const int h = sdl.surfaces.surface[index]->h / STATES;
+        const SDL_Rect from = { w * (ticks % FRAMES), h * IDLE, w, h };
+        const SDL_Rect to = { ov.w * sprite->where.x + ov.px, ov.h * sprite->where.y + ov.py, ov.w, ov.h };
+        if(clipping(sdl, ov, to)) continue;
+        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[index], &from, &to);
     }
 }
 
 // Copy over the selection tiles.
 // This will be done on the top row of the screen.
-static void select(const Sdl sdl, const Overview ov, const int ticks)
+static void panel(const Sdl sdl, const Overview ov, const int ticks)
 {
     for(int i = ov.wheel; i < sdl.textures.count; i++)
     {
-        const int row = 0;
-        const SDL_Rect to = { ov.w * (i - ov.wheel), row, ov.w, ov.h };
-        // Sprites
-        const int ascii = i + ' ';
-        if(xissprite(ascii))
+        const SDL_Rect to = { ov.w * (i - ov.wheel), 0, ov.w, ov.h };
+        // Sprites.
+        if(xissprite(i + ' '))
         {
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
             const int h = sdl.surfaces.surface[i]->h / STATES;
-            // Copy over the tile. Make animation idle
+            // Copy over the tile. Make animation idle.
             const SDL_Rect from = { w * (ticks % FRAMES), h * IDLE, w, h };
+            if(clipping(sdl, ov, to)) continue;
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
         }
-        // Blocks
-        else
-        {
-            const int w = sdl.surfaces.surface[i]->w;
-            const int h = sdl.surfaces.surface[i]->h;
-            // Copy over the tile.
-            const SDL_Rect from = { 0, 0, w, h };
-            SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
-        }
+        // Blocks.
+        else SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], NULL, &to);
     }
 }
-void xview(const Sdl sdl, const Overview ov, const Map map, const int ticks)
+
+void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {
-    layout(sdl, ov, map);
-    select(sdl, ov, ticks);
+    // All blocks and sprites.
+    gridl(sdl, ov, sprites, map, ticks);
+    // Block and sprite selection panel.
+    panel(sdl, ov, ticks);
 }

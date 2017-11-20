@@ -35,4 +35,6 @@ Sprites xorient(const Sprites sprites, const Hero hero);
 
 bool xissprite(const int ascii);
 
-void xcaretake(const Sprites sprites, const Hero hero, const Input input, const Map map);
+Sprites xlay(Sprites sprites, const Map map, const Overview ov, const int ticks);
+
+void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map);

@@ -15,7 +15,7 @@ Torch xburn(const Torch torch)
     return temp.light > temp.brightness ? torch : temp;
 }
 
-Torch xout()
+Torch xsnuff()
 {
     Torch torch;
     xzero(torch);

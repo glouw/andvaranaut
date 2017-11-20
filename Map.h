@@ -24,3 +24,5 @@ Map xreopen(const Map map, const int level);
 bool xisportal(const Map map, const Point where);
 
 void xedit(const Map map, const Overview ov);
+
+bool xout(const Map map, const float x, const float y);

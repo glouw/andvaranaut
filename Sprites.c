@@ -41,11 +41,9 @@ static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
-        // If the ASCII sprite is not found then default to
-        // clutter sprite, though this should never ever happen.
         default:
-        case 'a': return _a_(where);
-        case 'b': return _b_(where);
+        case 'a': return _a_(where); // If the ASCII sprite is not found then default to
+        case 'b': return _b_(where); // clutter sprite, though this should never ever happen.
     }
 }
 
@@ -82,6 +80,31 @@ Sprites xrewake(const Sprites sprites, const int level)
 {
     xkill(sprites);
     return xwake(level);
+}
+
+Sprites xlay(Sprites sprites, const Map map, const Overview ov, const int ticks)
+{
+    // Time delay check. Time dela is arbitrary to feel.
+    static int last;
+    const int delay = 1;
+    if(ticks < last + delay) return sprites;
+    last = ticks;
+    // Out of bounds check.
+    if(xout(map, ov.x, ov.y)) return sprites;
+    // Ascii sprite check.
+    const int ascii = ov.selected + ' ';
+    if(xissprite(ascii))
+    {
+        // If the sprite list is empty, resize to one big.
+        if(sprites.count == 0)
+            xretoss(sprites.sprite, Sprite, sprites.max = 1);
+        // If the new sprite cannot fit in the sprite list, resize twice as big.
+        if(sprites.count >= sprites.max)
+            xretoss(sprites.sprite, Sprite, sprites.max *= 2);
+        const Point where = { ov.x, ov.y };
+        sprites.sprite[sprites.count++] = registrar(ascii, where);
+    }
+    return sprites;
 }
 
 static void pull(const Sprites sprites, const Hero hero)
@@ -190,18 +213,15 @@ static void shove(const Sprites sprites)
     // Find the grabbed sprite.
     // Exclude searching for sprites that are clutter sprites.
     Sprite* const grabbed = find(width, sprites, GRABBED);
-    if(!grabbed)
-        return;
+    if(!grabbed) return;
     // Use the grabbed sprite to shove other sprites.
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const other = &sprites.sprite[i];
         // Ensure the other sprite is not the previously grabbed sprite.
-        if(other == grabbed)
-            continue;
+        if(other == grabbed) continue;
         // Do not shove other sprite if other sprite is immovable.
-        if(other->width == 0.0)
-            continue;
+        if(other->width == 0.0) continue;
         // Shove.
         const float width = xmax(other ->width, grabbed->width);
         if(xeql(other ->where, grabbed->where, width))
@@ -235,8 +255,7 @@ static void move(const Sprites sprites, const Field field, const Point to)
     {
         Sprite* const sprite = &sprites.sprite[i];
         // Do not move the sprite if the sprite is immovable.
-        if(sprite->width == 0.0)
-            continue;
+        if(sprite->width == 0.0) continue;
         const Point dir = xforce(field, sprite->where, to);
         // No force of direction...
         if(dir.x == 0.0 && dir.y == 0.0)
@@ -294,7 +313,7 @@ bool xissprite(const int ascii)
     return isalpha(ascii);
 }
 
-void xcaretake(const Sprites sprites, const Hero hero, const Input input, const Map map)
+void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map)
 {
     // Sprites need to be arrange closest to hero first.
     arrange(sprites, hero);

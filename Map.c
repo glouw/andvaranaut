@@ -55,20 +55,22 @@ bool xisportal(const Map map, const Point where)
     return xblok(where, map.floring) == '~' || xblok(where, map.ceiling) == '~';
 }
 
-static bool out(const Map map, const int x, const int y)
+bool xout(const Map map, const float x, const float y)
 {
-    return x >= map.cols || x < 0 || y >= map.rows || y < 0;
+    return x >= map.cols || x < 0.0
+        || y >= map.rows || y < 0.0;
 }
 
 void xedit(const Map map, const Overview ov)
 {
-    if(out(map, ov.x, ov.y))
-        return;
+    if(xout(map, ov.x, ov.y)) return;
     const int ascii = ov.selected + ' ';
     // If the ascii is an alpha character then it is a sprite
     if(xissprite(ascii)) return;
     // Otherwise place the ascii character.
-    if(ov.party == FLORING) map.floring[ov.y][ov.x] = ascii;
-    if(ov.party == WALLING) map.walling[ov.y][ov.x] = ascii;
-    if(ov.party == CEILING) map.ceiling[ov.y][ov.x] = ascii;
+    const int x = ov.x;
+    const int y = ov.y;
+    if(ov.party == FLORING) map.floring[y][x] = ascii;
+    if(ov.party == WALLING) map.walling[y][x] = ascii;
+    if(ov.party == CEILING) map.ceiling[y][x] = ascii;
 }

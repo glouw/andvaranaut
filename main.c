@@ -21,7 +21,7 @@ int main(const int argc, const char* argv[])
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
     {
         const int t0 = SDL_GetTicks();
-        const int ticks = renders / (args.fps / 5);
+        const int ticks = renders / (args.fps / 6);
         // Edit mode.
         if(input.key[SDL_SCANCODE_F2]) editing = true;
         if(input.key[SDL_SCANCODE_F3]) editing = false;
@@ -30,8 +30,10 @@ int main(const int argc, const char* argv[])
             // The mouse cursor must shown when editing.
             SDL_SetRelativeMouseMode(SDL_FALSE);
             overview = xupdate(overview, input, sdl.xres, sdl.textures.count);
-            xview(sdl, overview, map, ticks);
+            xview(sdl, overview, sprites, map, ticks);
+            // Map editing
             xedit(map, overview);
+            sprites = xlay(sprites, map, overview, ticks);
         }
         // Play mode.
         else

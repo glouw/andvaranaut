@@ -30,7 +30,7 @@ Hero xspawn(const float focal)
     hero.where = beginning();
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
-    hero.torch = xout();
+    hero.torch = xsnuff();
     hero.arm = 0.75;
     hero.scent = 6;
     return hero;
@@ -100,8 +100,10 @@ Ray xcast(const Hero hero, char** const block, const Point column, const int yre
 
 bool xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
+    // Time delay is arbitrary to feel;
     static int last;
-    if(ticks < last + 3)
+    const int delay = 3;
+    if(ticks < last + delay)
         return false;
     if(!input.key[SDL_SCANCODE_E])
         return false;
@@ -111,7 +113,7 @@ bool xteleporting(const Hero hero, const Map map, const Input input, const int t
 
 Hero xteleport(Hero hero, const Map map)
 {
-    hero.torch = xout();
+    hero.torch = xsnuff();
     if(xblok(hero.where, map.floring) == '~') hero.floor++;
     if(xblok(hero.where, map.ceiling) == '~') hero.floor--;
     return hero;
