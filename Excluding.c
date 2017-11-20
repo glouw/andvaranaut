@@ -7,7 +7,7 @@ bool width(const Sprite* const sprite)
     return sprite->width == 0.0;
 }
 
-Sprite* find(const Sprites sprites, const State state, Excluding excluding)
+Sprite* find(const Excluding excluding, const Sprites sprites, const State state)
 {
     for(int i = 0; i < sprites.count; i++)
     {

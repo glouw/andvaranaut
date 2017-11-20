@@ -2,8 +2,8 @@
 
 #include "Sprites.h"
 
-typedef bool (*Excluding)(const Sprite* const);
+typedef bool (*const Excluding)(const Sprite* const);
 
 bool width(const Sprite* const sprite);
 
-Sprite* find(const Sprites sprites, const State state, Excluding excluding);
+Sprite* find(const Excluding excluding, const Sprites sprites, const State state);

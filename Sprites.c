@@ -189,7 +189,7 @@ static void shove(const Sprites sprites)
 {
     // Find the grabbed sprite.
     // Exclude searching for sprites that are clutter sprites.
-    Sprite* const grabbed = find(sprites, GRABBED, width);
+    Sprite* const grabbed = find(width, sprites, GRABBED);
     if(!grabbed)
         return;
     // Use the grabbed sprite to shove other sprites.
