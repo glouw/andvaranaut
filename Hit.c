@@ -18,7 +18,8 @@ static Hit collision(const Point ray, const Point direction, char** const wallin
     return hit;
 }
 
-// TODO: Collect hits on ceillings
+// TODO: Collect hits on ceillings.
+// Make this a linked list FIFO to draw in reverse.
 Hit xmarch(const Point where, const Point direction, const Map map)
 {
     const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));
