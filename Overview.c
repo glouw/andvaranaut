@@ -8,8 +8,8 @@ Overview xinit()
 {
     Overview ov;
     xzero(ov);
-    ov.x = -1.0;
-    ov.y = -1.0;
+    ov.where.x = -1.0;
+    ov.where.y = -1.0;
     ov.w = 32;
     ov.h = 32;
     ov.party = WALLING;
@@ -21,7 +21,8 @@ Overview xinit()
 // When x and y are both -1 then then the left mouse is not pressed.
 static Overview reset(Overview ov)
 {
-    ov.x = ov.y = -1.0;
+    ov.where.x = -1.0;
+    ov.where.y = -1.0;
     return ov;
 }
 
@@ -44,8 +45,8 @@ Overview xupdate(Overview ov, const Input input, const int xres, const int textu
     if(input.l)
     {
         // Overview global tiles.
-        ov.x = (input.x - ov.px) / (float) ov.w;
-        ov.y = (input.y - ov.py) / (float) ov.h;
+        ov.where.x = (input.x - ov.px) / (float) ov.w;
+        ov.where.y = (input.y - ov.py) / (float) ov.h;
         // Overview relative tiles.
         const int x = input.x / ov.w;
         const int y = input.y / ov.h;
