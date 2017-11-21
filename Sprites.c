@@ -91,7 +91,7 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov, const int ticks)
     if(ticks < last + delay) return sprites;
     last = ticks;
     // Out of bounds check.
-    if(xout(map, ov.x, ov.y)) return sprites;
+    if(xout(map, ov.where)) return sprites;
     // Ascii sprite check.
     const int ascii = ov.selected + ' ';
     if(xissprite(ascii))
@@ -102,8 +102,7 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov, const int ticks)
         // If the new sprite cannot fit in the sprite list, resize twice as big.
         if(sprites.count >= sprites.max)
             xretoss(sprites.sprite, Sprite, sprites.max *= 2);
-        const Point where = { ov.x, ov.y };
-        sprites.sprite[sprites.count++] = registrar(ascii, where);
+        sprites.sprite[sprites.count++] = registrar(ascii, ov.where);
     }
     return sprites;
 }

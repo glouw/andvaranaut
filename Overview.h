@@ -10,8 +10,7 @@ typedef struct
     int px;
     int py;
     // x and y tile selected. Stays -1 if nothing was selected.
-    float x;
-    float y;
+    Point where;
     // Tile width and height pixels.
     int w;
     int h;
