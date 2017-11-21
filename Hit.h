@@ -2,6 +2,7 @@
 
 #include "Point.h"
 #include "Compass.h"
+#include "Map.h"
 
 typedef struct
 {
@@ -12,4 +13,4 @@ typedef struct
 }
 Hit;
 
-Hit xmarch(const Point where, const Point direction, char** const walling);
+Hit xmarch(const Point where, const Point direction, const Map map);

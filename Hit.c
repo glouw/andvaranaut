@@ -18,9 +18,10 @@ static Hit collision(const Point ray, const Point direction, char** const wallin
     return hit;
 }
 
-Hit xmarch(const Point where, const Point direction, char** const walling)
+// TODO: Collect hits on ceillings
+Hit xmarch(const Point where, const Point direction, const Map map)
 {
     const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));
-    const Hit hit = collision(ray, direction, walling);
-    return hit.surface ? hit : xmarch(ray, direction, walling);
+    const Hit hit = collision(ray, direction, map.walling);
+    return hit.surface ? hit : xmarch(ray, direction, map);
 }

@@ -86,9 +86,9 @@ static Hero move(Hero hero, char** const walling, const Input input)
     return hero;
 }
 
-Ray xcast(const Hero hero, char** const block, const Point column, const int yres)
+Ray xcast(const Hero hero, const Map map, const Point column, const int yres)
 {
-    const Hit hit = xmarch(hero.where, column, block);
+    const Hit hit = xmarch(hero.where, column, map);
     const Point end = xsub(hit.where, hero.where);
     const Point corrected = xtrn(end, -hero.theta);
     const Line trace = { hero.where, hit.where };

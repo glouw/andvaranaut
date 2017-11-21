@@ -142,7 +142,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     {
         // Cast a ray...
         const Point column = xlerp(camera, x / (float) sdl.xres);
-        const Ray ray = xcast(hero, map.walling, column, sdl.yres);
+        const Ray ray = xcast(hero, map, column, sdl.yres);
         // Render the scanline...
         const Scanline scanline = { sdl, display, x };
         xraster(scanline, ray, wheres, map, hero.torch, moddings);

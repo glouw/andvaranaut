@@ -30,7 +30,7 @@ Hero xspawn(const float focal);
 
 Point xtouch(const Hero hero, const float reach);
 
-Ray xcast(const Hero hero, char** const block, const Point column, const int yres);
+Ray xcast(const Hero hero, const Map map, const Point column, const int yres);
 
 bool xteleporting(const Hero hero, const Map map, const Input input, const int ticks);
 
