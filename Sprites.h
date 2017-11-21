@@ -19,6 +19,8 @@ Sprite;
 
 typedef struct
 {
+    // TODO: This needs to be a linked list to facilitate removoals.
+    // FIFO, as the most recent push will probably be removed.
     Sprite* sprite;
     int count;
     int max;

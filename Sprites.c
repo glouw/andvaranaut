@@ -13,6 +13,7 @@ static Sprite born(const Point where)
     Sprite sprite;
     xzero(sprite);
     sprite.where = where;
+    sprite.state = IDLE;
     return sprite;
 }
 
@@ -223,11 +224,11 @@ static void shove(const Sprites sprites)
         // Do not shove other sprite if other sprite is immovable.
         if(other->width == 0.0) continue;
         // Shove.
-        const float width = xmax(other ->width, grabbed->width);
-        if(xeql(other ->where, grabbed->where, width))
+        const float width = xmax(other->width, grabbed->width);
+        if(xeql(other->where, grabbed->where, width))
         {
-            const Point delta = xsub(other ->where, grabbed->where);
-            place(other , xadd(other ->where, delta));
+            const Point delta = xsub(other->where, grabbed->where);
+            place(other, xadd(other->where, delta));
         }
     }
 }
@@ -317,13 +318,13 @@ void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map ma
 {
     // Sprites need to be arrange closest to hero first.
     arrange(sprites, hero);
-    // Sprite path finding and movement.
-    const Field field = xprepare(map, hero.scent);
-    route(sprites, field, map, hero);
-    move(sprites, field, hero.where);
-    xruin(field);
-    // Sprite placement - interactive and out of bounds.
-    grab(sprites, hero, input);
-    shove(sprites);
-    bound(sprites, map);
+    //// Sprite path finding and movement.
+    //const Field field = xprepare(map, hero.scent);
+    //route(sprites, field, map, hero);
+    //move(sprites, field, hero.where);
+    //xruin(field);
+    //// Sprite placement - interactive and out of bounds.
+    //grab(sprites, hero, input);
+    //shove(sprites);
+    //bound(sprites, map);
 }
