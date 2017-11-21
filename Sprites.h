@@ -14,6 +14,7 @@ typedef struct
     Point velocity;
     float speed;
     float acceleration;
+    int immovable;
 }
 Sprite;
 
