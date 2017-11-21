@@ -197,8 +197,15 @@ static void gridl(const Sdl sdl, const Overview ov, const Sprites sprites, const
         const int index = sprite->ascii - ' ';
         const int w = sdl.surfaces.surface[index]->w / FRAMES;
         const int h = sdl.surfaces.surface[index]->h / STATES;
-        const SDL_Rect from = { w * (ticks % FRAMES), h * IDLE, w, h };
-        const SDL_Rect to = { ov.w * sprite->where.x + ov.px, ov.h * sprite->where.y + ov.py, ov.w, ov.h };
+        const SDL_Rect from = { w * (ticks % FRAMES), h * sprite->state, w, h };
+        const SDL_Rect to = {
+            // Middle of cursor.
+            (ov.w * sprite->where.x - ov.w / 2) + ov.px,
+            // Right above cursor.
+            (ov.h * sprite->where.y - ov.h / 1) + ov.py,
+            // Size.
+            ov.w, ov.h,
+        };
         if(clipping(sdl, ov, to)) continue;
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[index], &from, &to);
     }
