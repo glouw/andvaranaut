@@ -4,6 +4,8 @@
 
 #include "util.h"
 
+// TODO: Add functionality to expand (retoss) map when editing.
+
 static char** get(FILE* const file, const int rows)
 {
     char** block = xtoss(char*, rows);

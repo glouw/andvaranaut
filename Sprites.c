@@ -8,6 +8,9 @@
 #include <ctype.h>
 #include <math.h>
 
+// TODO: Everything must be rewritten to facilitate
+// link lists for adding / removing sprites.
+
 static Sprite born(const Point where)
 {
     Sprite sprite;
