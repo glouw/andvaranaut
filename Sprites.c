@@ -21,14 +21,12 @@ static Sprite born(const Point where)
     return sprite;
 }
 
-/* Clutter Sprite */
-// This sprite has no intrinstric properties. States are repurposed for skins.
-// The skin is randomly selected.
 static Sprite _a_(const Point where)
 {
     Sprite sprite = born(where);
     sprite.ascii = 'a';
     sprite.scent = 0.0;
+    sprite.width = 0.30;
     return sprite;
 }
 
