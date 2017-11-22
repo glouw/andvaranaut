@@ -17,6 +17,7 @@ static Sprite born(const Point where)
     xzero(sprite);
     sprite.where = where;
     sprite.state = IDLE;
+    sprite.scent = 0.5;
     return sprite;
 }
 
@@ -27,8 +28,7 @@ static Sprite _a_(const Point where)
 {
     Sprite sprite = born(where);
     sprite.ascii = 'a';
-    sprite.immovable = true;
-    sprite.state = rand() % STATES;
+    sprite.scent = 0.0;
     return sprite;
 }
 
@@ -57,10 +57,7 @@ static Sprite _d_(const Point where)
 {
     Sprite sprite = born(where);
     sprite.ascii = 'd';
-    sprite.speed = 0.053;
-    sprite.acceleration = 0.0010;
     sprite.width = 1.00;
-    sprite.immovable = true;
     return sprite;
 }
 
@@ -233,9 +230,6 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        // Cannot move immovable sprites.
-        if(sprite->immovable)
-            continue;
         if(xeql(hand, sprite->where, sprite->width))
         {
             sprite->state = GRABBED;
@@ -294,7 +288,11 @@ static void move(const Sprites sprites, const Field field, const Point to)
     {
         Sprite* const sprite = &sprites.sprite[i];
         // Do not move the sprite if the sprite is immovable.
-        if(sprite->immovable) continue;
+        if(sprite->speed == 0.0)
+        {
+            sprite->state = IDLE;
+            continue;
+        }
         const Point dir = xforce(field, sprite->where, to);
         // No force of direction...
         if(dir.x == 0.0 && dir.y == 0.0)
@@ -337,7 +335,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         const int i = field.res * sprite->where.x;
         // If the tile is already scented then a sprite is already there.
         if(field.mesh[j][i] < 0.0) xzero(sprite->velocity);
-        field.mesh[j][i] -= sprite->width;
+        field.mesh[j][i] -= sprite->scent;
     }
     // Hero scent attracts.
     const int j = field.res * hero.where.y;

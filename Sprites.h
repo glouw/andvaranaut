@@ -15,6 +15,7 @@ typedef struct
     float speed;
     float acceleration;
     int immovable;
+    float scent;
 }
 Sprite;
 
