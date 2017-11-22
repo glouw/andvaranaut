@@ -321,13 +321,13 @@ void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map ma
 {
     // Sprites need to be arrange closest to hero first.
     arrange(sprites, hero);
-    //// Sprite path finding and movement.
-    //const Field field = xprepare(map, hero.scent);
-    //route(sprites, field, map, hero);
-    //move(sprites, field, hero.where);
-    //xruin(field);
-    //// Sprite placement - interactive and out of bounds.
-    //grab(sprites, hero, input);
-    //shove(sprites);
-    //bound(sprites, map);
+    // Sprite path finding and movement.
+    const Field field = xprepare(map, hero.scent);
+    route(sprites, field, map, hero);
+    move(sprites, field, hero.where);
+    xruin(field);
+    // Sprite placement - interactive and out of bounds.
+    grab(sprites, hero, input);
+    shove(sprites);
+    bound(sprites, map);
 }

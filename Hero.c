@@ -86,18 +86,6 @@ static Hero move(Hero hero, char** const walling, const Input input)
     return hero;
 }
 
-Ray xcast(const Hero hero, const Map map, const Point column, const int yres)
-{
-    const Hit hit = xmarch(hero.where, column, map);
-    const Point end = xsub(hit.where, hero.where);
-    const Point corrected = xtrn(end, -hero.theta);
-    const Line trace = { hero.where, hit.where };
-    const Projection projection = xproject(yres, hero.fov, corrected);
-    const Traceline traceline = { trace, corrected, hero.fov };
-    const Ray ray = { traceline, projection, hit };
-    return ray;
-}
-
 bool xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
     // Time delay is arbitrary to feel;

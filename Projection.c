@@ -12,8 +12,7 @@ Projection xproject(const int yres, const Line fov, const Point corrected)
         mid,
         // Clamped top and bot.
         { bot < 0 ? 0 : bot, top > yres ? yres : top },
-        // True integer height is recalculated here to avoid floating point error.
-        top - bot
+        height
     };
     return projection;
 }

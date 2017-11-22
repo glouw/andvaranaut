@@ -11,4 +11,10 @@ typedef struct
 }
 Scanline;
 
-void xraster(const Scanline sl, const Ray ray, Point* wheres, const Map m, const Torch t, int* moddings);
+void xwraster(const Scanline sl, const Ray r, const Torch t);
+
+void xfraster(const Scanline sl, const Ray r, const Torch t, Point* wheres, char** floring, int* moddings);
+
+void xcraster(const Scanline sl, const Ray r, Point* wheres, char** ceiling, int* moddings);
+
+void xsraster(const Scanline sl);

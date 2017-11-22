@@ -129,6 +129,17 @@ void xrelease(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
+static Ray cast(const Hit hit, const Sdl sdl, const Hero hero)
+{
+    const Point end = xsub(hit.where, hero.where);
+    const Point corrected = xtrn(end, -hero.theta);
+    const Line trace = { hero.where, hit.where };
+    const Projection projection = xproject(sdl.yres, hero.fov, corrected);
+    const Traceline traceline = { trace, corrected, hero.fov };
+    const Ray ray = { traceline, projection, hit };
+    return ray;
+}
+
 void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
     // Preallocate for render computations.
@@ -140,14 +151,27 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     const Line camera = xrotate(hero.fov, hero.theta);
     for(int x = 0; x < sdl.xres; x++)
     {
+        const Scanline scanline = { sdl, display, x };
         // Cast a ray...
         const Point column = xlerp(camera, x / (float) sdl.xres);
-        const Ray ray = xcast(hero, map, column, sdl.yres);
-        // Render the scanline...
-        const Scanline scanline = { sdl, display, x };
-        xraster(scanline, ray, wheres, map, hero.torch, moddings);
+        Hits hits;
+        xzero(hits);
+        hits = xmarch(hits, hero.where, column, map);
+        xsraster(scanline);
+        // Upper via linked list.
+        for(Hit* hit = hits.ceiling; hit != NULL; hit = hit->next)
+        {
+            const Ray ray = xraise(cast(*hit, sdl, hero), sdl.yres);
+            xwraster(scanline, ray, hero.torch);
+        }
+        // Lower.
+        const Ray ray = cast(hits.walling, sdl, hero);
+        xwraster(scanline, ray, hero.torch);
+        xfraster(scanline, ray, hero.torch, wheres, map.floring, moddings);
+        xcraster(scanline, ray, wheres, map.ceiling, moddings);
         // And z-buffer the wall distance for the sprites.
         zbuff[x] = ray.traceline.corrected;
+        xbreak(hits);
     }
     xunlock(sdl);
     // The scene was rendered on its side for fast caching. Rotate the scene.
