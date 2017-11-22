@@ -42,6 +42,38 @@ static Sprite _b_(const Point where)
     return sprite;
 }
 
+static Sprite _c_(const Point where)
+{
+    Sprite sprite = born(where);
+    sprite.ascii = 'c';
+    sprite.speed = 0.053;
+    sprite.acceleration = 0.0010;
+    sprite.width = 0.80;
+    return sprite;
+}
+
+// Loot bag.
+static Sprite _d_(const Point where)
+{
+    Sprite sprite = born(where);
+    sprite.ascii = 'd';
+    sprite.speed = 0.053;
+    sprite.acceleration = 0.0010;
+    sprite.width = 1.00;
+    sprite.immovable = true;
+    return sprite;
+}
+
+static Sprite _e_(const Point where)
+{
+    Sprite sprite = born(where);
+    sprite.ascii = 'e';
+    sprite.speed = 0.02;
+    sprite.acceleration = 0.0005;
+    sprite.width = 0.4;
+    return sprite;
+}
+
 static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
@@ -49,6 +81,9 @@ static Sprite registrar(const int ascii, const Point where)
         default:
         case 'a': return _a_(where); // If the ASCII sprite is not found then default to
         case 'b': return _b_(where); // clutter sprite, though this should never ever happen.
+        case 'c': return _c_(where);
+        case 'd': return _d_(where);
+        case 'e': return _e_(where);
     }
 }
 

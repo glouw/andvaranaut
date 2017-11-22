@@ -2,7 +2,6 @@
 
 Ray xraise(Ray ray, const int yres)
 {
-    const int height = ray.projection.top - ray.projection.bot;
     // Raise.
     ray.projection.top += ray.projection.height;
     ray.projection.bot += ray.projection.height;
