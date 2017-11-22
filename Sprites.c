@@ -8,8 +8,8 @@
 #include <ctype.h>
 #include <math.h>
 
-// TODO: Everything must be rewritten to facilitate
-// link lists for adding / removing sprites.
+// TODO: Arrays are fine as is. Make a STATE for nulled (where the sprites go red).
+// On a map reload, these sprites will be removed.
 
 static Sprite born(const Point where)
 {
