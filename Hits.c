@@ -27,16 +27,6 @@ static Hit* push(Hit* ceiling, const Hit hit)
     return temp;
 }
 
-void xbreak(const Hits hits)
-{
-    for(Hit* hit = hits.ceiling; hit != NULL;)
-    {
-        Hit* next = hit->next;
-        free(hit);
-        hit = next;
-    }
-}
-
 static Hits step(Hits hits, const Point where, const Point direction, const Map map)
 {
     const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));

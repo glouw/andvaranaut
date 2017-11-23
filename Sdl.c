@@ -131,22 +131,26 @@ void xrelease(const Sdl sdl)
 
 void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
-    // Preallocate for render computations.
     Point* const wheres = xtoss(Point, sdl.yres);
     Point* const zbuff = xtoss(Point, sdl.xres);
     int* const moddings = xtoss(int, sdl.yres);
-    // For each column of the screen...
+    // The map, that is, the walls, ceiling, and floor, are drawn by software;
+    // for each column of the screen, a ray is cast, and a line projected
+    // to the screen is drawn. The projected line is raised for the upper ceiling walls.
     const Display display = xlock(sdl);
     const Line camera = xrotate(hero.fov, hero.theta);
     for(int x = 0; x < sdl.xres; x++)
     {
         const Scanline scanline = { sdl, display, x };
-        // Cast a ray...
         const Point column = xlerp(camera, x / (float) sdl.xres);
         const Hits hits = xmarch(hero.where, column, map);
+        // The ceiing walls are rendered first.
+        // Due to the nature of ceiling walls, the sky will show as gaps are left in the ceiling.
+        // A sky renderer is required above the furthest ceiling wall; this is simply just the
+        // zeroth link the ceiling hits link list.
+        // The link list is cleaned up as it is traversed.
         int link = 0;
-        // Ceiling walls via linked list.
-        for(Hit* hit = hits.ceiling; hit != NULL; hit = hit->next)
+        for(Hit* hit = hits.ceiling, *next; hit != NULL; next = hit->next, free(hit), hit = next)
         {
             const Hit* const behind = hit;
             const Hit* const before = hit->next;
@@ -154,8 +158,8 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
             a.proj = xraise(a.proj, sdl.yres);
             // Sky renderer.
             if(link++ == 0) xsraster(scanline, a);
-            // If a ceiling wall is before the behind wall,
-            // overlay the two to prevent drawing the behind wall.
+            // If a ceiling wall is before another ceiling wall,
+            // overlay the two to prevent drawing unecessary parts of the behind wall.
             if(before)
             {
                 Ray b = xcalc(hero, *before, sdl.yres);
@@ -164,14 +168,18 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
             }
             xwraster(scanline, a, hero.torch);
         }
-        xbreak(hits);
         // Eye level walls. No linked list is needed as leading
-        // eye level wall will always overlap eye level walls from behind.
+        // eye level wall will always overlap behind eye level walls.
+        // Note that this style of rendering will not permit ceiling level walls
+        // to be behind eye level walls. The two must either be flush, or the ceiling
+        // level walls in front of the eye level walls. Ceiling level walls
+        // will artifact if they are behind eye levels walls.
         const Ray ray = xcalc(hero, hits.walling, sdl.yres);
         xwraster(scanline, ray, hero.torch);
+        // The floor and ceiling are renderered here.
         xfraster(scanline, ray, hero.torch, wheres, map.floring, moddings);
         xcraster(scanline, ray, wheres, map.ceiling, moddings);
-        // And z-buffer the wall distance for the sprites.
+        // A z-buffer is populated on the eye level walls and stored later for the sprite renderer.
         zbuff[x] = ray.traceline.corrected;
     }
     xunlock(sdl);
@@ -190,7 +198,8 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
 
 static bool clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 {
-    return (to.x > sdl.xres || to.x < -ov.w) && (to.y > sdl.yres || to.y < -ov.h);
+    return (to.x > sdl.xres || to.x < -ov.w)
+        && (to.y > sdl.yres || to.y < -ov.h);
 }
 
 // Copy over all tiles for the grid layout.
