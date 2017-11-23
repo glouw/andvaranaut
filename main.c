@@ -12,7 +12,7 @@ int main(const int argc, const char* argv[])
     Sprites sprites = xwake(hero.floor);
     Sdl sdl = xsetup(args);
     Input input = xready();
-    Overview overview = xinit(sdl.xres, sdl.yres);
+    Overview overview = xinit();
     // A level editor ships with the engine. The level editor will swap the player's renderering
     // view with an overhead view of the sprites and the map. The user can lay down floor, wall,
     // and ceiling tiles while moving and adding new sprites.

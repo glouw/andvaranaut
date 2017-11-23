@@ -233,9 +233,9 @@ static void gridl(const Sdl sdl, const Overview ov, const Sprites sprites, const
         const SDL_Rect from = { w * (ticks % FRAMES), h * sprite->state, w, h };
         const SDL_Rect to = {
             // Middle of cursor.
-            (ov.w * sprite->where.x - ov.w / 2) + ov.px,
+            (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
             // Right above cursor.
-            (ov.h * sprite->where.y - ov.h / 1) + ov.py,
+            (int) ((ov.h * sprite->where.y - ov.h / 1) + ov.py),
             // Size.
             ov.w, ov.h,
         };
