@@ -141,30 +141,28 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     for(int x = 0; x < sdl.xres; x++)
     {
         const Scanline scanline = { sdl, display, x };
-        xsraster(scanline);
         // Cast a ray...
         const Point column = xlerp(camera, x / (float) sdl.xres);
         const Hits hits = xmarch(hero.where, column, map);
+        int link = 0;
         // Ceiling walls via linked list.
         for(Hit* hit = hits.ceiling; hit != NULL; hit = hit->next)
         {
             const Hit* const behind = hit;
             const Hit* const before = hit->next;
-            if(behind && before)
+            Ray a = xcalc(hero, *behind, sdl.yres);
+            a.proj = xraise(a.proj, sdl.yres);
+            // Sky renderer.
+            if(link++ == 0) xsraster(scanline, a);
+            // If a ceiling wall is before the behind wall,
+            // overlay the two to prevent drawing the behind wall.
+            if(before)
             {
-                Ray a = xcalc(hero, *behind, sdl.yres);
                 Ray b = xcalc(hero, *before, sdl.yres);
-                a.proj = xraise(a.proj, sdl.yres);
                 b.proj = xraise(b.proj, sdl.yres);
                 a.proj = xoverlay(a.proj, b.proj);
-                xwraster(scanline, a, hero.torch);
             }
-            else
-            {
-                Ray a = xcalc(hero, *behind, sdl.yres);
-                a.proj = xraise(a.proj, sdl.yres);
-                xwraster(scanline, a, hero.torch);
-            }
+            xwraster(scanline, a, hero.torch);
         }
         xbreak(hits);
         // Eye level walls. No linked list is needed as leading

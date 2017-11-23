@@ -63,7 +63,8 @@ void xcraster(const Scanline sl, const Ray r, Point* wheres, char** ceiling, int
     }
 }
 
-void xsraster(const Scanline sl)
+void xsraster(const Scanline sl, const Ray r)
 {
-    for(int x = sl.sdl.yres / 2; x < sl.sdl.yres; x++) sl.display.pixels[x + sl.y * sl.display.width] = 0x0F0F0F;
+    for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
+        sl.display.pixels[x + sl.y * sl.display.width] = 0x0F0F0F;
 }

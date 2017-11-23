@@ -42,9 +42,9 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));
     // Walling.
     hits.walling = collision(ray, direction, map.walling);
-    //// Ceiling trail appending.
+    // Ceiling trail appending.
     const Hit ceiling = collision(ray, direction, map.ceiling);
-    //// Linked list.
+    // Linked list.
     if(ceiling.changed) hits.ceiling = push(hits.ceiling, ceiling);
     return hits.walling.surface ? hits : step(hits, ray, direction, map);
 }

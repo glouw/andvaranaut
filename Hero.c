@@ -120,7 +120,7 @@ Ray xcalc(const Hero hero, const Hit hit, const int yres)
     const Point end = xsub(hit.where, hero.where);
     const Point corrected = xtrn(end, -hero.theta);
     const Line trace = { hero.where, hit.where };
-    const Projection projection = xproject(yres, hero.fov, corrected);
+    const Projection projection = xproject(yres, hero.fov.a.x, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
     const Ray ray = { traceline, projection, hit };
     return ray;

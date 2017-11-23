@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Line.h"
+#include "Point.h"
 
 typedef struct
 {
@@ -18,7 +18,9 @@ typedef struct
 }
 Projection;
 
-Projection xproject(const int yres, const Line fov, const Point corrected);
+// Creates a line projection suited for the display based on the focal distance
+// and corrected normal distance from the hero to the wall.
+Projection xproject(const int yres, const float focal, const Point corrected);
 
 Projection xraise(const Projection p, const int yres);
 

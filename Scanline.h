@@ -21,4 +21,4 @@ void xfraster(const Scanline sl, const Ray r, const Torch t, Point* wheres, char
 void xcraster(const Scanline sl, const Ray r, Point* wheres, char** ceiling, int* moddings);
 
 // Sky raster for one scanline.
-void xsraster(const Scanline sl);
+void xsraster(const Scanline sl, const Ray r);
