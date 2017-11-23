@@ -144,9 +144,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         xsraster(scanline);
         // Cast a ray...
         const Point column = xlerp(camera, x / (float) sdl.xres);
-        Hits hits;
-        xzero(hits);
-        hits = xmarch(hits, hero.where, column, map);
+        const Hits hits = xmarch(hero.where, column, map);
         // Ceiling walls via linked list.
         for(Hit* hit = hits.ceiling; hit != NULL; hit = hit->next)
         {
@@ -168,6 +166,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
                 xwraster(scanline, a, hero.torch);
             }
         }
+        xbreak(hits);
         // Eye level walls. No linked list is needed as leading
         // eye level wall will always overlap eye level walls from behind.
         const Ray ray = xcalc(hero, hits.walling, sdl.yres);
@@ -176,7 +175,6 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         xcraster(scanline, ray, wheres, map.ceiling, moddings);
         // And z-buffer the wall distance for the sprites.
         zbuff[x] = ray.traceline.corrected;
-        xbreak(hits);
     }
     xunlock(sdl);
     // The scene was rendered on its side for fast caching. Rotate the scene.

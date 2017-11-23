@@ -37,9 +37,7 @@ void xbreak(const Hits hits)
     }
 }
 
-// TODO: Collect hits on ceillings.
-// Make this a linked list FIFO to draw in reverse.
-Hits xmarch(Hits hits, const Point where, const Point direction, const Map map)
+static Hits step(Hits hits, const Point where, const Point direction, const Map map)
 {
     const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));
     // Walling.
@@ -48,5 +46,12 @@ Hits xmarch(Hits hits, const Point where, const Point direction, const Map map)
     const Hit ceiling = collision(ray, direction, map.ceiling);
     //// Linked list.
     if(ceiling.changed) hits.ceiling = push(hits.ceiling, ceiling);
-    return hits.walling.surface ? hits : xmarch(hits, ray, direction, map);
+    return hits.walling.surface ? hits : step(hits, ray, direction, map);
+}
+
+Hits xmarch(const Point where, const Point direction, const Map map)
+{
+    Hits hits;
+    xzero(hits);
+    return step(hits, where, direction, map);
 }

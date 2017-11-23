@@ -31,6 +31,7 @@ void xfraster(const Scanline sl, const Ray r, const Torch t, Point* wheres, char
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         const int xx = sl.sdl.yres - 1 - x;
+        // Floor casting.
         const float offset = (r.traceline.fov.a.x / r.traceline.corrected.x) / (1.0 - (float) x / (sl.sdl.yres / 2));
         const Point where = wheres[xx] = xlerp(r.traceline.trace, offset);
         const int tile = xtile(where, floring);
@@ -49,6 +50,7 @@ void xcraster(const Scanline sl, const Ray r, Point* wheres, char** ceiling, int
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
+        // Borrows from floor caster.
         const int tile = xtile(wheres[x], ceiling);
         if(!tile) continue;
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
