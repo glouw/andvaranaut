@@ -15,8 +15,8 @@ Projection xproject(const int yres, const Line fov, const Point corrected)
 Projection xraise(const Projection p, const int yres)
 {
     const float height = p.height;
-    const float bot = p.top;
-    const float top = p.top + height;
+    const float bot = p.top - 1.0;
+    const float top = p.top - 1.0 + height;
     const Clamped clamped = { (int) bot < 0 ? 0 : xcl(bot), (int) top > yres ? yres : xfl(top) };
     const Projection projection = { bot, top, clamped, height };
     return projection;

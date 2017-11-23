@@ -141,17 +141,17 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     for(int x = 0; x < sdl.xres; x++)
     {
         const Scanline scanline = { sdl, display, x };
+        xsraster(scanline);
         // Cast a ray...
         const Point column = xlerp(camera, x / (float) sdl.xres);
         Hits hits;
         xzero(hits);
         hits = xmarch(hits, hero.where, column, map);
-        xsraster(scanline);
         // Ceiling walls via linked list.
         for(Hit* hit = hits.ceiling; hit != NULL; hit = hit->next)
         {
-            const Hit* behind = hit;
-            const Hit* before = hit->next;
+            const Hit* const behind = hit;
+            const Hit* const before = hit->next;
             if(behind && before)
             {
                 Ray a = xcalc(hero, *behind, sdl.yres);
@@ -194,8 +194,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
 
 static bool clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 {
-    return (to.x > sdl.xres || to.x < -ov.w)
-        && (to.y > sdl.yres || to.y < -ov.h);
+    return (to.x > sdl.xres || to.x < -ov.w) && (to.y > sdl.yres || to.y < -ov.h);
 }
 
 // Copy over all tiles for the grid layout.

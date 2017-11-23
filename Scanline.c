@@ -11,7 +11,6 @@ static uint32_t mod(uint32_t pixel, const float m)
     return rm << 0x10 | gm << 0x08 | bm << 0x00;
 }
 
-// Wall rasterer for one scanline.
 void xwraster(const Scanline sl, const Ray r, const Torch t)
 {
     const SDL_Surface* const surface = sl.sdl.surfaces.surface[r.hit.surface];
@@ -27,7 +26,6 @@ void xwraster(const Scanline sl, const Ray r, const Torch t)
     }
 }
 
-// Floor rasterer for one scanline.
 void xfraster(const Scanline sl, const Ray r, const Torch t, Point* wheres, char** floring, int* moddings)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
@@ -47,7 +45,6 @@ void xfraster(const Scanline sl, const Ray r, const Torch t, Point* wheres, char
     }
 }
 
-// Ceiling rasterer for one scanline.
 void xcraster(const Scanline sl, const Ray r, Point* wheres, char** ceiling, int* moddings)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
@@ -66,6 +63,5 @@ void xcraster(const Scanline sl, const Ray r, Point* wheres, char** ceiling, int
 
 void xsraster(const Scanline sl)
 {
-    for(int x = sl.sdl.yres / 2; x < sl.sdl.yres; x++)
-        sl.display.pixels[x + sl.y * sl.display.width] = 0x0;
+    for(int x = sl.sdl.yres / 2; x < sl.sdl.yres; x++) sl.display.pixels[x + sl.y * sl.display.width] = 0x0F0F0F;
 }
