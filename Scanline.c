@@ -20,8 +20,7 @@ void xwraster(const Scanline sl, const Ray r, const Torch t)
     const int m = xilluminate(t, r.traceline.corrected.x);
     for(int x = r.projection.clamped.bot; x < r.projection.clamped.top; x++)
     {
-        const float height = r.projection.top - r.projection.bot;
-        const float offset = (x - r.projection.bot) / height;
+        const float offset = (x - r.projection.bot) / r.projection.height;
         const int col = surface->w * offset;
         const uint32_t pixel = pixels[col + row * surface->w];
         sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, m);
@@ -31,12 +30,10 @@ void xwraster(const Scanline sl, const Ray r, const Torch t)
 // Floor rasterer for one scanline.
 void xfraster(const Scanline sl, const Ray r, const Torch t, Point* wheres, char** floring, int* moddings)
 {
-    const float weight = r.traceline.fov.a.x / r.traceline.corrected.x;
     for(int x = 0; x < r.projection.clamped.bot; x++)
     {
-        // Floor casting.
         const int xx = sl.sdl.yres - 1 - x;
-        const float offset = weight / (1.0 - (float) x / r.projection.mid);
+        const float offset = (r.traceline.fov.a.x / r.traceline.corrected.x) / (1.0 - (float) x / (sl.sdl.yres / 2));
         const Point where = wheres[xx] = xlerp(r.traceline.trace, offset);
         const int tile = xtile(where, floring);
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
@@ -55,7 +52,6 @@ void xcraster(const Scanline sl, const Ray r, Point* wheres, char** ceiling, int
 {
     for(int x = r.projection.clamped.top; x < sl.sdl.yres; x++)
     {
-        // Borrows calculations from the floor rasterer.
         const int tile = xtile(wheres[x], ceiling);
         if(!tile) continue;
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];

@@ -11,5 +11,3 @@ typedef struct
     Hit hit;
 }
 Ray;
-
-Ray xraise(Ray ray, const int yres);

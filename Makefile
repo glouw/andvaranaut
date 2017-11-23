@@ -13,7 +13,6 @@ SRCS+= Field.c
 SRCS+= Display.c
 SRCS+= Hero.c
 SRCS+= Hits.c
-SRCS+= Ray.c
 SRCS+= Input.c
 SRCS+= Line.c
 SRCS+= Map.c

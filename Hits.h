@@ -19,7 +19,6 @@ struct hit
 typedef struct
 {
     Hit walling;
-    // Linked list.
     Hit* ceiling;
 }
 Hits;
