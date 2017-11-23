@@ -8,14 +8,13 @@ typedef struct
     Point where;
     int ascii;
     State state;
-    int transparent;
     float width;
     Point last;
     Point velocity;
     float speed;
     float acceleration;
-    int immovable;
     float scent;
+    bool transparent;
 }
 Sprite;
 

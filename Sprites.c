@@ -1,7 +1,7 @@
 #include "Sprites.h"
 
 #include "Field.h"
-#include "Excluding.h"
+#include "Found.h"
 #include "util.h"
 
 #include <SDL2/SDL.h>
@@ -238,21 +238,18 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     }
 }
 
-// Shoves the closest sprite away if a sprite is grabbed.
+// Shoves the closest sprite away when holding a grabbed sprite.
 static void shove(const Sprites sprites)
 {
     // Find the grabbed sprite.
-    // Exclude searching for sprites that are clutter sprites.
-    Sprite* const grabbed = find(width, sprites, GRABBED);
+    Sprite* const grabbed = find(xgrabbed, sprites);
     if(!grabbed) return;
     // Use the grabbed sprite to shove other sprites.
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const other = &sprites.sprite[i];
-        // Ensure the other sprite is not the previously grabbed sprite.
+        // Ensure the other sprite is not the sprite in hand.
         if(other == grabbed) continue;
-        // Do not shove other sprite if other sprite is immovable.
-        if(other->width == 0.0) continue;
         // Shove.
         const float width = xmax(other->width, grabbed->width);
         if(xeql(other->where, grabbed->where, width))
