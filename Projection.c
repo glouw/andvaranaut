@@ -21,3 +21,9 @@ Projection xraise(const Projection p, const int yres)
     const Projection projection = { bot, top, clamped, height };
     return projection;
 }
+
+Projection xoverlay(Projection a, const Projection b)
+{
+    if(a.clamped.top > b.clamped.bot) a.clamped.top = b.clamped.bot;
+    return a;
+}

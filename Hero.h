@@ -35,3 +35,5 @@ bool xteleporting(const Hero hero, const Map map, const Input input, const int t
 Hero xteleport(Hero hero, const Map map);
 
 Hero xsustain(Hero hero, const Map map, const Input input);
+
+Ray xcalc(const Hero hero, const Hit hit, const int yres);

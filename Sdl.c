@@ -129,17 +129,6 @@ void xrelease(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-static Ray cast(const Hit hit, const Sdl sdl, const Hero hero)
-{
-    const Point end = xsub(hit.where, hero.where);
-    const Point corrected = xtrn(end, -hero.theta);
-    const Line trace = { hero.where, hit.where };
-    const Projection projection = xproject(sdl.yres, hero.fov, corrected);
-    const Traceline traceline = { trace, corrected, hero.fov };
-    const Ray ray = { traceline, projection, hit };
-    return ray;
-}
-
 void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
 {
     // Preallocate for render computations.
@@ -158,28 +147,30 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         xzero(hits);
         hits = xmarch(hits, hero.where, column, map);
         xsraster(scanline);
-        // Upper via linked list.
+        // Ceiling walls via linked list.
         for(Hit* hit = hits.ceiling; hit != NULL; hit = hit->next)
         {
-            const Hit front = *hit;
-            Ray ray = cast(front, sdl, hero);
-            ray.projection = xraise(ray.projection, sdl.yres);
-            xwraster(scanline, ray, hero.torch);
-            //// Front and back.
-            //else
-            //{
-            //    const Hit b = *(hit);
-            //    const Hit f = *(hit->next);
-            //    Ray rb = xraise(cast(b, sdl, hero), sdl.yres);
-            //    Ray rf = xraise(cast(f, sdl, hero), sdl.yres);
-            //    // Clamp.
-            //    if(rf.projection.clamped.bot < rb.projection.clamped.top)
-            //        rb.projection.clamped.top = rf.projection.clamped.bot;
-            //    xwraster(scanline, rb, hero.torch);
-            //}
+            const Hit* behind = hit;
+            const Hit* before = hit->next;
+            if(behind && before)
+            {
+                Ray a = xcalc(hero, *behind, sdl.yres);
+                Ray b = xcalc(hero, *before, sdl.yres);
+                a.proj = xraise(a.proj, sdl.yres);
+                b.proj = xraise(b.proj, sdl.yres);
+                a.proj = xoverlay(a.proj, b.proj);
+                xwraster(scanline, a, hero.torch);
+            }
+            else
+            {
+                Ray a = xcalc(hero, *behind, sdl.yres);
+                a.proj = xraise(a.proj, sdl.yres);
+                xwraster(scanline, a, hero.torch);
+            }
         }
-        // Lower.
-        const Ray ray = cast(hits.walling, sdl, hero);
+        // Eye level walls. No linked list is needed as leading
+        // eye level wall will always overlap eye level walls from behind.
+        const Ray ray = xcalc(hero, hits.walling, sdl.yres);
         xwraster(scanline, ray, hero.torch);
         xfraster(scanline, ray, hero.torch, wheres, map.floring, moddings);
         xcraster(scanline, ray, wheres, map.ceiling, moddings);

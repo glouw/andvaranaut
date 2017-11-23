@@ -7,7 +7,7 @@
 typedef struct
 {
     Traceline traceline;
-    Projection projection;
+    Projection proj;
     Hit hit;
 }
 Ray;
