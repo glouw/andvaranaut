@@ -15,13 +15,13 @@ Scanline;
 void xwraster(const Scanline sl, const Ray r, const Torch t);
 
 // Floor rasterer for one scanline.
-void xfraster(const Scanline sl, const Ray r, const Torch t, const float height, const Map map);
+void xfraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map);
 
 // Ceiling rasterer for one scanline.
-void xcraster(const Scanline sl, const Ray r, const Torch t, const float height, const Map map);
+void xcraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map);
 
 // Sky raster for one scanline.
-void xsraster(const Scanline sl, const Ray r, const Torch t, const float height, const Clouds clouds);
+void xsraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Clouds clouds);
 
 // Backdrop sky rasterer
 void xbraster(const Scanline sl);

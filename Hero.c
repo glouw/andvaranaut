@@ -33,13 +33,21 @@ Hero xspawn(const float focal)
     hero.torch = xsnuff();
     hero.arm = 0.75;
     hero.scent = 6;
-    hero.height = 1.0;
+    hero.yaw = 1.0;
     return hero;
 }
 
 static Hero spin(Hero hero, const Input input)
 {
     hero.theta += input.dx * input.sx;
+    return hero;
+}
+
+static Hero yaw(Hero hero, const Input input)
+{
+    hero.yaw += input.dy * input.sy;
+    if(hero.yaw > 1.9) hero.yaw = 1.9;
+    if(hero.yaw < 0.1) hero.yaw = 0.1;
     return hero;
 }
 
@@ -108,20 +116,12 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-static Hero crouch(Hero hero, const Input input)
-{
-    hero.height =
-        input.key[SDL_SCANCODE_Q] ? 1.50 :
-        input.key[SDL_SCANCODE_E] ? 0.50 : 1.0;
-    return hero;
-}
-
 Ray xcalc(const Hero hero, const Hit hit, const int yres)
 {
     const Point end = xsub(hit.where, hero.where);
     const Point corrected = xtrn(end, -hero.theta);
     const Line trace = { hero.where, hit.where };
-    const Projection projection = xproject(yres, hero.fov.a.x, hero.height, corrected);
+    const Projection projection = xproject(yres, hero.fov.a.x, hero.yaw , corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
     const Ray ray = { traceline, projection, hit };
     return ray;
@@ -131,7 +131,7 @@ Hero xsustain(Hero hero, const Map map, const Input input)
 {
     hero = spin(hero, input);
     hero = move(hero, map.walling, input);
-    hero = crouch(hero, input);
+    hero = yaw(hero, input);
     hero.torch = xburn(hero.torch);
     return hero;
 }

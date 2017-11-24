@@ -59,11 +59,13 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         if(sprite.where.x < 0) continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
         const int size = xbalance(hero.fov.a.x * sdl.yres / sprite.where.x), half = size / 2;
+        // Only shift sprites for the yaw that are grabbed.
+        const float shift = sprite.state == GRABBED ? 1.0 : (2.0 - hero.yaw);
         // Calculate sprite location on screen.
         const int mx = sdl.xres / 2;
         const int my = sdl.yres / 2;
         const int l = -half + mx;
-        const int t = -half + my * (2.0 - hero.height);
+        const int t = -half + my * shift;
         const int slider = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite.where);
         const SDL_Rect target = { l + slider, t, size, size };
         // Move onto the next sprite if this sprite is off screen.
@@ -156,7 +158,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
             const Hit* const before = hit->next;
             Ray a = xcalc(hero, *behind, sdl.yres);
             // Sky renderer.
-            if(link++ == 0) xsraster(scanline, a, hero.torch, hero.height, clouds);
+            if(link++ == 0) xsraster(scanline, a, hero.torch, hero.yaw, clouds);
             // If a ceiling wall is before another ceiling wall,
             // overlay the two to prevent drawing unecessary parts of the behind wall.
             a.proj = xstack(a.proj, sdl.yres);
@@ -177,8 +179,8 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         const Ray ray = xcalc(hero, hits.walling, sdl.yres);
         xwraster(scanline, ray, hero.torch);
         //// The floor and ceiling are renderered here.
-        xfraster(scanline, ray, hero.torch, hero.height, map);
-        xcraster(scanline, ray, hero.torch, hero.height, map);
+        xfraster(scanline, ray, hero.torch, hero.yaw, map);
+        xcraster(scanline, ray, hero.torch, hero.yaw, map);
         // A z-buffer is populated on the eye level walls and stored later for the sprite renderer.
         zbuff[x] = ray.traceline.corrected;
     }

@@ -24,7 +24,7 @@ Input xready()
     xzero(input);
     // Mouse.
     input.sx = 0.01;
-    input.sy = 0.10;
+    input.sy = 0.01;
     // Keyboard.
     input.key = SDL_GetKeyboardState(NULL);
     return xpump(input);

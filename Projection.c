@@ -14,10 +14,10 @@ static Clamped clamp(const int yres, const float bot, const float top)
     return clamp;
 }
 
-Projection xproject(const int yres, const float focal, const float shift, const Point corrected)
+Projection xproject(const int yres, const float focal, const float yaw, const Point corrected)
 {
     const float height = focal * yres / corrected.x, half = height / 2.0;
-    const float mid = shift * yres / 2.0;
+    const float mid = yaw * yres / 2.0;
     const float bot = mid - half;
     const float top = mid + half;
     const Projection projection = { bot, top, mid, clamp(yres, bot, top), height };

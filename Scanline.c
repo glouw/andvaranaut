@@ -30,12 +30,12 @@ void xwraster(const Scanline sl, const Ray r, const Torch t)
     }
 }
 
-void xfraster(const Scanline sl, const Ray r, const Torch t, const float height, const Map map)
+void xfraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Calculate the floor casting offset.
-        const float offset = xfcast(r.traceline, x, r.proj.mid) / height;
+        const float offset = xfcast(r.traceline, x, r.proj.mid) / yaw;
         if(offset > 1.0) printf("flor: %f: %d %d %f\n", offset, sl.sdl.yres, sl.sdl.yres / 2, r.proj.mid);
         const Point where = xlerp(r.traceline.trace, offset);
         // Get the hit surface.
@@ -51,12 +51,12 @@ void xfraster(const Scanline sl, const Ray r, const Torch t, const float height,
     }
 }
 
-void xcraster(const Scanline sl, const Ray r, const Torch t, const float height, const Map map)
+void xcraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Calculate the floor casting offset.
-        const float offset = xccast(r.traceline, x, r.proj.mid) / height;
+        const float offset = xccast(r.traceline, x, r.proj.mid) / yaw;
         const Point where = xlerp(r.traceline.trace, offset);
         const int tile = xtile(where, map.ceiling);
         if(offset > 1.0) printf("ceil: %f: %d %d %f\n", offset, sl.sdl.yres, sl.sdl.yres / 2, r.proj.mid);
@@ -73,7 +73,7 @@ void xcraster(const Scanline sl, const Ray r, const Torch t, const float height,
     }
 }
 
-void xsraster(const Scanline sl, const Ray r, const Torch t, const float height, const Clouds clouds)
+void xsraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Clouds clouds)
 {
     // Get the hit surface.
     const SDL_Surface* const surface = sl.sdl.surfaces.surface[1];
@@ -81,7 +81,7 @@ void xsraster(const Scanline sl, const Ray r, const Torch t, const float height,
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Calculate the floor casting offset.
-        const float offset = clouds.height * xccast(r.traceline, x, r.proj.mid) / height;
+        const float offset = clouds.height * xccast(r.traceline, x, r.proj.mid) / yaw;
         const Point where = xlerp(r.traceline.trace, offset);
         const int row = abs(surface->h * xdec(where.y + clouds.where.y));
         const int col = abs(surface->w * xdec(where.x + clouds.where.x));
