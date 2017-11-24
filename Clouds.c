@@ -10,6 +10,7 @@ Clouds xrise()
     c.speed = 0.01;
     c.direction.x = 1.0;
     c.direction.y = 1.0;
+    c.height = 10.0;
     return c;
 }
 

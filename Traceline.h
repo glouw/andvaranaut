@@ -9,3 +9,5 @@ typedef struct
     Line fov;
 }
 Traceline;
+
+float xfcast(const Traceline traceline, const float y, const float yres);

@@ -9,6 +9,7 @@ typedef struct
     Point direction;
     Point velocity;
     Point where;
+    float height;
 }
 Clouds;
 

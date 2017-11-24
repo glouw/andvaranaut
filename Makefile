@@ -24,6 +24,7 @@ SRCS+= Sprites.c
 SRCS+= Surfaces.c
 SRCS+= Textures.c
 SRCS+= Torch.c
+SRCS+= Traceline.c
 SRCS+= Projection.c
 SRCS+= Overview.c
 SRCS+= Found.c

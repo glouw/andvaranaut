@@ -15,7 +15,7 @@ static Hit collision(const Point ray, const Point final, const Point other, char
 {
     const float offset = xdec(ray.x + ray.y);
     const bool inverted = xinverted(xneedle(final, other));
-    const Hit hit = { xtile(final, block), inverted ? 1.0 - offset : offset, final, NULL };
+    const Hit hit = { xtile(final, block), inverted ? 1.0 - offset : offset, ray, NULL };
     return hit;
 }
 
