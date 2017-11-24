@@ -22,5 +22,3 @@ typedef struct
 Hits;
 
 Hits xmarch(const Point where, const Point direction, const Map map);
-
-void xbreak(const Hits hits);
