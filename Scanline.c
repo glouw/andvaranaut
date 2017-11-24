@@ -30,7 +30,7 @@ void xwraster(const Scanline sl, const Ray r, const Torch t)
     }
 }
 
-void xfraster(const Scanline sl, const Ray r, const Torch t, Point* wheres, char** floring, int* moddings)
+void xfraster(const Scanline sl, const Ray r, Point* wheres, const Map map, int* moddings, const Torch t)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
@@ -39,7 +39,7 @@ void xfraster(const Scanline sl, const Ray r, const Torch t, Point* wheres, char
         const float offset = (r.traceline.fov.a.x / r.traceline.corrected.x) / (1.0 - (float) x / (sl.sdl.yres / 2));
         const Point where = wheres[xx] = xlerp(r.traceline.trace, offset);
         // Get the hit surface.
-        const SDL_Surface* const surface = sl.sdl.surfaces.surface[xtile(where, floring)];
+        const SDL_Surface* const surface = sl.sdl.surfaces.surface[xtile(where, map.floring)];
         const int row = surface->h * xdec(where.y);
         const int col = surface->w * xdec(where.x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
@@ -51,12 +51,12 @@ void xfraster(const Scanline sl, const Ray r, const Torch t, Point* wheres, char
     }
 }
 
-void xcraster(const Scanline sl, const Ray r, Point* wheres, char** ceiling, int* moddings)
+void xcraster(const Scanline sl, const Ray r, Point* wheres, const Map map, int* moddings)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Get the hit surface. Do not render if no ceiling.
-        const int tile = xtile(wheres[x], ceiling);
+        const int tile = xtile(wheres[x], map.ceiling);
         if(!tile) continue;
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
         const int row = surface->h * xdec(wheres[x].y);

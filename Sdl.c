@@ -177,8 +177,8 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         const Ray ray = xcalc(hero, hits.walling, sdl.yres);
         xwraster(scanline, ray, hero.torch);
         // The floor and ceiling are renderered here.
-        xfraster(scanline, ray, hero.torch, wheres, map.floring, moddings);
-        xcraster(scanline, ray, wheres, map.ceiling, moddings);
+        xfraster(scanline, ray, wheres, map, moddings, hero.torch);
+        xcraster(scanline, ray, wheres, map, moddings);
         // A z-buffer is populated on the eye level walls and stored later for the sprite renderer.
         zbuff[x] = ray.traceline.corrected;
     }
