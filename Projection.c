@@ -14,23 +14,24 @@ static Clamped clamp(const int yres, const float bot, const float top)
     return clamp;
 }
 
-Projection xproject(const int yres, const float focal, const Point corrected)
+Projection xproject(const int yres, const float focal, const float shift, const Point corrected)
 {
     const float height = focal * yres / corrected.x, half = height / 2.0;
-    const float mid = yres / 2.0;
+    const float mid = shift * yres / 2.0;
     const float bot = mid - half;
     const float top = mid + half;
-    const Projection projection = { bot, top, clamp(yres, bot, top), height };
+    const Projection projection = { bot, top, mid, clamp(yres, bot, top), height };
     return projection;
 }
 
-Projection xraise(const Projection p, const int yres)
+Projection xstack(const Projection p, const int yres)
 {
     const float height = p.height;
     // Must subtract one as top and bot are noninclusive to the raise.
     const float bot = p.top - 1.0;
     const float top = p.top - 1.0 + height;
-    const Projection projection = { bot, top, clamp(yres, bot, top), height };
+    const float mid = bot + height / 2.0;;
+    const Projection projection = { bot, top, mid, clamp(yres, bot, top), height };
     return projection;
 }
 

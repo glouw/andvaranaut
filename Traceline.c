@@ -1,6 +1,11 @@
 #include "Traceline.h"
 
-float xfcast(const Traceline traceline, const float y, const float yres)
+float xccast(const Traceline traceline, const float y, const float mid)
 {
-    return (traceline.fov.a.x / traceline.corrected.x) / (1.0 - y / (yres / 2.0));
+    return (traceline.fov.a.x / traceline.corrected.x) * mid / (y + 1.0 - mid);
+}
+
+float xfcast(const Traceline traceline, const float y, const float mid)
+{
+    return (traceline.fov.a.x / traceline.corrected.x) * mid / (mid - y - 0.0);
 }

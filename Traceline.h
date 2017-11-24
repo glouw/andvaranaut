@@ -10,4 +10,6 @@ typedef struct
 }
 Traceline;
 
-float xfcast(const Traceline traceline, const float y, const float yres);
+float xccast(const Traceline traceline, const float y, const float mid);
+
+float xfcast(const Traceline traceline, const float y, const float mid);

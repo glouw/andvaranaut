@@ -18,7 +18,7 @@ static Point beginning()
 {
     Point where;
     where.x = 1.5;
-    where.y = 1.5;
+    where.y = 3.5;
     return where;
 }
 
@@ -33,7 +33,7 @@ Hero xspawn(const float focal)
     hero.torch = xsnuff();
     hero.arm = 0.75;
     hero.scent = 6;
-    hero.theta = -2.0;
+    hero.height = 1.0;
     return hero;
 }
 
@@ -108,11 +108,11 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-Hero xsustain(Hero hero, const Map map, const Input input)
+static Hero crouch(Hero hero, const Input input)
 {
-    hero = spin(hero, input);
-    hero = move(hero, map.walling, input);
-    hero.torch = xburn(hero.torch);
+    hero.height =
+        input.key[SDL_SCANCODE_Q] ? 1.50 :
+        input.key[SDL_SCANCODE_E] ? 0.50 : 1.0;
     return hero;
 }
 
@@ -121,8 +121,17 @@ Ray xcalc(const Hero hero, const Hit hit, const int yres)
     const Point end = xsub(hit.where, hero.where);
     const Point corrected = xtrn(end, -hero.theta);
     const Line trace = { hero.where, hit.where };
-    const Projection projection = xproject(yres, hero.fov.a.x, corrected);
+    const Projection projection = xproject(yres, hero.fov.a.x, hero.height, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
     const Ray ray = { traceline, projection, hit };
     return ray;
+}
+
+Hero xsustain(Hero hero, const Map map, const Input input)
+{
+    hero = spin(hero, input);
+    hero = move(hero, map.walling, input);
+    hero = crouch(hero, input);
+    hero.torch = xburn(hero.torch);
+    return hero;
 }

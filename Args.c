@@ -19,8 +19,7 @@ Args xparse(const int argc, const char* argv[])
     args.yres =
         argc >= 3 ?
         strtol(argv[2], NULL, 0)
-        // yres must be even.
-        : xbalance(args.xres * 9.0 / 16.0);
+        : args.xres * 9.0 / 16.0;
     // Focal Length for Field of View.
     args.focal =
         argc >= 4 ?
@@ -30,7 +29,7 @@ Args xparse(const int argc, const char* argv[])
     args.vsync =
         argc >= 5 ?
         strtol(argv[4], NULL, 0)
-        : false;
+        : true;
     // Frames per second.
     args.fps =
         argc >= 6 ?

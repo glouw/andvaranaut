@@ -58,10 +58,12 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Move onto the next sprite if this sprite is behind the player.
         if(sprite.where.x < 0) continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
-        const int size = xbalance(hero.fov.a.x * sdl.yres / sprite.where.x);
+        const int size = xbalance(hero.fov.a.x * sdl.yres / sprite.where.x), half = size / 2;
         // Calculate sprite location on screen.
-        const int l = (sdl.xres - size) / 2;
-        const int t = (sdl.yres - size) / 2;
+        const int mx = sdl.xres / 2;
+        const int my = sdl.yres / 2;
+        const int l = -half + mx;
+        const int t = -half + my * (2.0 - hero.height);
         const int slider = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite.where);
         const SDL_Rect target = { l + slider, t, size, size };
         // Move onto the next sprite if this sprite is off screen.
@@ -153,15 +155,15 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
             const Hit* const behind = hit;
             const Hit* const before = hit->next;
             Ray a = xcalc(hero, *behind, sdl.yres);
-            a.proj = xraise(a.proj, sdl.yres);
             // Sky renderer.
-            if(link++ == 0) xsraster(scanline, a, hero.torch, clouds);
+            if(link++ == 0) xsraster(scanline, a, hero.torch, hero.height, clouds);
             // If a ceiling wall is before another ceiling wall,
             // overlay the two to prevent drawing unecessary parts of the behind wall.
+            a.proj = xstack(a.proj, sdl.yres);
             if(before)
             {
                 Ray b = xcalc(hero, *before, sdl.yres);
-                b.proj = xraise(b.proj, sdl.yres);
+                b.proj = xstack(b.proj, sdl.yres);
                 a.proj = xoverlay(a.proj, b.proj);
             }
             xwraster(scanline, a, hero.torch);
@@ -174,9 +176,9 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         // will artifact if they are behind eye levels walls.
         const Ray ray = xcalc(hero, hits.walling, sdl.yres);
         xwraster(scanline, ray, hero.torch);
-        // The floor and ceiling are renderered here.
-        xfraster(scanline, ray, hero.torch, map);
-        xcraster(scanline, ray, hero.torch, map);
+        //// The floor and ceiling are renderered here.
+        xfraster(scanline, ray, hero.torch, hero.height, map);
+        xcraster(scanline, ray, hero.torch, hero.height, map);
         // A z-buffer is populated on the eye level walls and stored later for the sprite renderer.
         zbuff[x] = ray.traceline.corrected;
     }

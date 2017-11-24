@@ -23,6 +23,7 @@ typedef struct
     int floor;
     // Stronger scent will have sprites chase hero from further away
     int scent;
+    float height;
 }
 Hero;
 
