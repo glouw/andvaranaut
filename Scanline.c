@@ -5,6 +5,7 @@
 // Modulous modify a pixel.
 static uint32_t mod(uint32_t pixel, const float m)
 {
+    return pixel;
     const int rm = (m / 0xFF) * ((pixel >> 0x10) & 0xFF);
     const int gm = (m / 0xFF) * ((pixel >> 0x08) & 0xFF);
     const int bm = (m / 0xFF) * ((pixel >> 0x00) & 0xFF);
@@ -30,14 +31,18 @@ void xwraster(const Scanline sl, const Ray r, const Torch t)
     }
 }
 
-void xfraster(const Scanline sl, const Ray r, Point* wheres, const Map map, int* moddings, const Torch t)
+static float fcast(const Traceline traceline, const float y, const float yres)
+{
+    return (traceline.fov.a.x / traceline.corrected.x) / (1.0 - y / (yres / 2.0));
+}
+
+void xfraster(const Scanline sl, const Ray r, const Torch t, const Map map)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Calculate the floor casting offset.
-        const int xx = sl.sdl.yres - 1 - x;
-        const float offset = (r.traceline.fov.a.x / r.traceline.corrected.x) / (1.0 - (float) x / (sl.sdl.yres / 2));
-        const Point where = wheres[xx] = xlerp(r.traceline.trace, offset);
+        const float offset = 1.0 * fcast(r.traceline, x, sl.sdl.yres);
+        const Point where = xlerp(r.traceline.trace, offset);
         // Get the hit surface.
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[xtile(where, map.floring)];
         const int row = surface->h * xdec(where.y);
@@ -45,33 +50,49 @@ void xfraster(const Scanline sl, const Ray r, Point* wheres, const Map map, int*
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const uint32_t pixel = pixels[col + row * surface->w];
         // Calculate surface lighting midding. Moddings are saved for the ceiling rasterer.
-        moddings[xx] = xilluminate(t, xmag(xsub(wheres[xx], r.traceline.trace.a)));
+        const float m = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
         // Transfer surface to display.
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, moddings[xx]);
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, m);
     }
 }
 
-void xcraster(const Scanline sl, const Ray r, Point* wheres, const Map map, int* moddings)
+void xcraster(const Scanline sl, const Ray r, const Torch t, const Map map)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
-        // Get the hit surface. Do not render if no ceiling.
-        const int tile = xtile(wheres[x], map.ceiling);
+        // Calculate the floor casting offset.
+        const float offset = 1.0 * fcast(r.traceline, sl.sdl.yres - 1 - x, sl.sdl.yres);
+        const Point where = xlerp(r.traceline.trace, offset);
+        const int tile = xtile(where, map.ceiling);
         if(!tile) continue;
+        // Get the hit surface.
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
-        const int row = surface->h * xdec(wheres[x].y);
-        const int col = surface->w * xdec(wheres[x].x);
+        const int row = surface->h * xdec(where.y);
+        const int col = surface->w * xdec(where.x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const uint32_t pixel = pixels[col + row * surface->w];
-        // Transfer surface to display. Light modding borrowed from ceiling renderer.
-        // Since light moddings are array accessed, the yres of the display must be even.
-        // This can be cooerced when command line res arguments are parsed.
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, moddings[x]);
+        const int m = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
+        // Transfer surface to display.
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, m);
     }
 }
 
-void xsraster(const Scanline sl, const Ray r)
+void xsraster(const Scanline sl, const Ray r, const Torch t, const Clouds clouds)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
-        sl.display.pixels[x + sl.y * sl.display.width] = 0x0F0F0F;
+    {
+        // Calculate the floor casting offset.
+        const float offset = 9.0 * fcast(r.traceline, sl.sdl.yres - 1 - x, sl.sdl.yres);
+        const Point where = xlerp(r.traceline.trace, offset);
+        // Get the hit surface.
+        const SDL_Surface* const surface = sl.sdl.surfaces.surface[1];
+        const int row = abs(surface->h * xdec(where.y + clouds.where.y));
+        const int col = abs(surface->w * xdec(where.x + clouds.where.x));
+        const uint32_t* const pixels = (uint32_t*) surface->pixels;
+        const uint32_t pixel = pixels[col + row * surface->w];
+        const int m = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
+        // Transfer surface to display.
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, m);
+        // Shift the clouds
+    }
 }

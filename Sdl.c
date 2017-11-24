@@ -129,11 +129,9 @@ void xrelease(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const int ticks)
+void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Clouds clouds, const int ticks)
 {
-    Point* const wheres = xtoss(Point, sdl.yres);
     Point* const zbuff = xtoss(Point, sdl.xres);
-    int* const moddings = xtoss(int, sdl.yres);
     // The map, that is, the walls, ceiling, and floor, are drawn by software;
     // for each column of the screen, a ray is cast, and a line projected
     // to the screen is drawn. The projected line is raised for the upper ceiling walls.
@@ -157,7 +155,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
             Ray a = xcalc(hero, *behind, sdl.yres);
             a.proj = xraise(a.proj, sdl.yres);
             // Sky renderer.
-            if(link++ == 0) xsraster(scanline, a);
+            if(link++ == 0) xsraster(scanline, a, hero.torch, clouds);
             // If a ceiling wall is before another ceiling wall,
             // overlay the two to prevent drawing unecessary parts of the behind wall.
             if(before)
@@ -177,8 +175,8 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         const Ray ray = xcalc(hero, hits.walling, sdl.yres);
         xwraster(scanline, ray, hero.torch);
         // The floor and ceiling are renderered here.
-        xfraster(scanline, ray, wheres, map, moddings, hero.torch);
-        xcraster(scanline, ray, wheres, map, moddings);
+        xfraster(scanline, ray, hero.torch, map);
+        xcraster(scanline, ray, hero.torch, map);
         // A z-buffer is populated on the eye level walls and stored later for the sprite renderer.
         zbuff[x] = ray.traceline.corrected;
     }
@@ -191,9 +189,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     paste(sdl, relatives, zbuff, hero, ticks);
     // Cleanup all local heap allocations.
     xkill(relatives);
-    free(wheres);
     free(zbuff);
-    free(moddings);
 }
 
 static bool clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)

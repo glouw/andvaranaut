@@ -20,7 +20,7 @@ Torch xsnuff()
     Torch torch;
     xzero(torch);
     torch.light = 0.0;
-    torch.brightness = 500.0;
+    torch.brightness = 750.0;
     torch.dlight = torch.brightness / 20.0;
     return torch;
 }

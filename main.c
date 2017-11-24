@@ -13,6 +13,7 @@ int main(const int argc, const char* argv[])
     Sdl sdl = xsetup(args);
     Input input = xready();
     Overview overview = xinit();
+    Clouds clouds = xrise();
     // A level editor ships with the engine. The level editor will swap the player's renderering
     // view with an overhead view of the sprites and the map. The user can lay down floor, wall,
     // and ceiling tiles while moving and adding new sprites.
@@ -41,6 +42,7 @@ int main(const int argc, const char* argv[])
             // The mouse cursor must be removed when playing.
             SDL_SetRelativeMouseMode(SDL_TRUE);
             // Data update.
+            clouds = xblow(clouds);
             if(xteleporting(hero, map, input, ticks))
             {
                 hero = xteleport(hero, map);
@@ -50,7 +52,7 @@ int main(const int argc, const char* argv[])
             hero = xsustain(hero, map, input);
             xcaretake(sprites, hero, input, map);
             // Video output.
-            xrender(sdl, hero, sprites, map, ticks);
+            xrender(sdl, hero, sprites, map, clouds, ticks);
         }
         // Update the screen with the final rendered frame.
         xpresent(sdl);

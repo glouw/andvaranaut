@@ -8,6 +8,7 @@ PROJ = water
 SRCS = main.c
 SRCS+= util.c
 SRCS+= Args.c
+SRCS+= Clouds.c
 SRCS+= Compass.c
 SRCS+= Field.c
 SRCS+= Display.c
