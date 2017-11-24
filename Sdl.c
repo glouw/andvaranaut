@@ -232,11 +232,9 @@ static void gridl(const Sdl sdl, const Overview ov, const Sprites sprites, const
         const int h = sdl.surfaces.surface[index]->h / STATES;
         const SDL_Rect from = { w * (ticks % FRAMES), h * sprite->state, w, h };
         const SDL_Rect to = {
-            // Middle of cursor.
-            (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
             // Right above cursor.
+            (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
             (int) ((ov.h * sprite->where.y - ov.h / 1) + ov.py),
-            // Size.
             ov.w, ov.h,
         };
         if(clipping(sdl, ov, to)) continue;

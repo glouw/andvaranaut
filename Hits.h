@@ -9,17 +9,15 @@ typedef struct hit Hit;
 struct hit
 {
     int surface;
-    int changed;
     float offset;
     Point where;
-    Compass facing;
     Hit* next;
 };
 
 typedef struct
 {
-    Hit walling;
     Hit* ceiling;
+    Hit walling;
 }
 Hits;
 
