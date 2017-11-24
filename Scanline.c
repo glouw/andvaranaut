@@ -2,6 +2,8 @@
 
 #include "util.h"
 
+#include <assert.h>
+
 // Modulous modify a pixel.
 static uint32_t mod(uint32_t pixel, const float m)
 {
@@ -88,6 +90,7 @@ void xsraster(const Scanline sl, const Ray r, const Torch t, const float yaw, co
         const uint32_t pixel = pixels[col + row * surface->w];
         const int m = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
         // Transfer surface to display.
+        // SEGFAULTS are happening here?!
         sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, m);
     }
 }
