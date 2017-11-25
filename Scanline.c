@@ -4,13 +4,13 @@
 
 #include <assert.h>
 
-// Modulous modify a pixel.
+// Modulous modify a pixel. Discards alpha.
 static uint32_t mod(uint32_t pixel, const float m)
 {
-    const int rm = (m / 0xFF) * ((pixel >> 0x10) & 0xFF);
-    const int gm = (m / 0xFF) * ((pixel >> 0x08) & 0xFF);
-    const int bm = (m / 0xFF) * ((pixel >> 0x00) & 0xFF);
-    return rm << 0x10 | gm << 0x08 | bm << 0x00;
+    return
+    (int) (((pixel >> 0x10) /*  */) * m / 0xFF) << 0x10 |
+    (int) (((pixel >> 0x08) & 0xFF) * m / 0xFF) << 0x08 |
+    (int) (((pixel /*   */) & 0xFF) * m / 0xFF);
 }
 
 void xwraster(const Scanline sl, const Ray r, const Torch t)

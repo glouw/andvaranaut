@@ -28,10 +28,11 @@ Projection xstack(const Projection p, const int yres)
 {
     const float height = p.height;
     // Must subtract one as top and bot are noninclusive to the raise.
+    // The middle section is not raised because raised walls will never have a ceiling;
+    // A raised wall will expose the open sky which will terminate on the horizon.
     const float bot = p.top - 1.0;
     const float top = p.top - 1.0 + height;
-    const float mid = bot + height / 2.0;;
-    const Projection projection = { bot, top, mid, clamp(yres, bot, top), height };
+    const Projection projection = { bot, top, p.mid, clamp(yres, bot, top), height };
     return projection;
 }
 

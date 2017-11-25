@@ -146,22 +146,18 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         const Scanline scanline = { sdl, display, x };
         const Point column = xlerp(camera, x / (float) sdl.xres);
         const Hits hits = xmarch(hero.where, column, map);
-        // The ceiing walls are rendered first.
-        // Due to the nature of ceiling walls, the sky will show as gaps are left in the ceiling.
-        // A sky renderer is required above the furthest ceiling wall; this is simply just the
-        // zeroth link the ceiling hits link list.
-        // The link list is cleaned up as it is traversed.
+        // The ceiing walls are rendered first back to front.
         int link = 0;
         for(Hit* hit = hits.ceiling, *next; hit != NULL; next = hit->next, free(hit), hit = next)
         {
             const Hit* const behind = hit;
             const Hit* const before = hit->next;
             Ray a = xcalc(hero, *behind, sdl.yres);
+            a.proj = xstack(a.proj, sdl.yres);
             // Sky renderer.
             if(link++ == 0) xsraster(scanline, a, hero.torch, hero.yaw, clouds);
             // If a ceiling wall is before another ceiling wall,
             // overlay the two to prevent drawing unecessary parts of the behind wall.
-            a.proj = xstack(a.proj, sdl.yres);
             if(before)
             {
                 Ray b = xcalc(hero, *before, sdl.yres);
