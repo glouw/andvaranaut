@@ -24,5 +24,3 @@ Projection;
 Projection xproject(const int yres, const float focal, const float yaw, const Point corrected);
 
 Projection xstack(const Projection p, const int yres);
-
-Projection xoverlay(Projection a, const Projection b);

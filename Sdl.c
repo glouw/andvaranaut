@@ -152,19 +152,21 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         {
             const Hit* const behind = hit;
             const Hit* const before = hit->next;
-            Ray a = xcalc(hero, *behind, sdl.yres);
-            a.proj = xstack(a.proj, sdl.yres);
+            const Ray hind = xcalc(hero, *behind, 1, sdl.yres);
             // Sky renderer.
-            if(link++ == 0) xsraster(scanline, a, hero.torch, hero.yaw, clouds);
             // If a ceiling wall is before another ceiling wall,
             // overlay the two to prevent drawing unecessary parts of the behind wall.
+            if(link++ == 0) xsraster(scanline, hind, hero.torch, hero.yaw, clouds);
             if(before)
             {
-                Ray b = xcalc(hero, *before, sdl.yres);
-                b.proj = xstack(b.proj, sdl.yres);
-                a.proj = xoverlay(a.proj, b.proj);
+                const Ray fore = xcalc(hero, *before, 1, sdl.yres);
+                const Ray flat = xoverlay(hind, fore);
+                xwraster(scanline, flat, hero.torch);
             }
-            xwraster(scanline, a, hero.torch);
+            else
+            {
+                xwraster(scanline, hind, hero.torch);
+            }
         }
         // Eye level walls. No linked list is needed as leading
         // eye level wall will always overlap behind eye level walls.
@@ -172,9 +174,9 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         // to be behind eye level walls. The two must either be flush, or the ceiling
         // level walls in front of the eye level walls. Ceiling level walls
         // will artifact if they are behind eye levels walls.
-        const Ray ray = xcalc(hero, hits.walling, sdl.yres);
+        const Ray ray = xcalc(hero, hits.walling, 0, sdl.yres);
         xwraster(scanline, ray, hero.torch);
-        //// The floor and ceiling are renderered here.
+        // The floor and ceiling are renderered here.
         xfraster(scanline, ray, hero.torch, hero.yaw, map);
         xcraster(scanline, ray, hero.torch, hero.yaw, map);
         // A z-buffer is populated on the eye level walls and stored later for the sprite renderer.

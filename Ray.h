@@ -11,3 +11,5 @@ typedef struct
     Hit hit;
 }
 Ray;
+
+Ray xoverlay(Ray a, const Ray b);

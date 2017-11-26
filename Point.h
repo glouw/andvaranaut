@@ -27,9 +27,6 @@ Point xmul(const Point a, const float n);
 // Returns the magnitude of a point.
 float xmag(const Point a);
 
-// Returns the division of a point by a scalar (a / n).
-Point xdvd(const Point a, const float n);
-
 // Returns the unit vector of a point relative to (0, 0).
 Point xunt(const Point a);
 

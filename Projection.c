@@ -35,9 +35,3 @@ Projection xstack(const Projection p, const int yres)
     const Projection projection = { bot, top, p.mid, clamp(yres, bot, top), height };
     return projection;
 }
-
-Projection xoverlay(Projection a, const Projection b)
-{
-    if(a.clamped.top > b.clamped.bot) a.clamped.top = b.clamped.bot;
-    return a;
-}
