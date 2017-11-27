@@ -7,8 +7,8 @@
 // Modulous modify a pixel. Discards alpha.
 static uint32_t mod(const uint32_t pixel, const int m)
 {
-    const uint32_t r = (((pixel >> 0x10) /****/) * m) >> 0x08; // Shift by 0x08 is same as
-    const uint32_t g = (((pixel >> 0x08) & 0xFF) * m) >> 0x08; // division by 256. Somehow
+    const uint32_t r = (((pixel >> 0x10) /****/) * m) >> 0x08; // Shift right by 0x08 is same as
+    const uint32_t g = (((pixel >> 0x08) & 0xFF) * m) >> 0x08; // dividing by 256. Somehow
     const uint32_t b = (((pixel /*****/) & 0xFF) * m) >> 0x08; // ofast was not catching this.
     return r << 0x10 | g << 0x08 | b;
 }
@@ -34,10 +34,10 @@ void xwraster(const Scanline sl, const Ray r)
 
 void xfraster(const Scanline sl, const Ray r, const float yaw, const Map map)
 {
+    const float mid = yaw * sl.sdl.yres / 2.0;
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Calculate the floor casting offset.
-        const float mid = yaw * sl.sdl.yres / 2.0;
         const float offset = xfcast(r.traceline, x, mid) / yaw;
         const Point where = xlerp(r.traceline.trace, offset);
         const int tile = xtile(where, map.floring);
@@ -56,10 +56,10 @@ void xfraster(const Scanline sl, const Ray r, const float yaw, const Map map)
 
 void xcraster(const Scanline sl, const Ray r, const float yaw, const Map map)
 {
+    const float mid = yaw * sl.sdl.yres / 2.0;
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Calculate the floor casting offset.
-        const float mid = yaw * sl.sdl.yres / 2.0;
         const float offset = xccast(r.traceline, x, mid) / yaw;
         const Point where = xlerp(r.traceline.trace, offset);
         const int tile = xtile(where, map.ceiling);
