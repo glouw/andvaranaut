@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-float xilluminate(const Torch torch, const float distance)
+int xilluminate(const Torch torch, const float distance)
 {
     const int luminance = torch.light / distance;
     return luminance > 0xFF ? 0xFF : luminance;

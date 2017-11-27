@@ -8,7 +8,7 @@ typedef struct
 }
 Torch;
 
-float xilluminate(const Torch torch, const float distance);
+int xilluminate(const Torch torch, const float distance);
 
 Torch xburn(const Torch torch);
 

@@ -20,6 +20,7 @@ Args xparse(const int argc, const char* argv[])
         argc >= 3 ?
         strtol(argv[2], NULL, 0)
         : args.xres * 9.0 / 16.0;
+    printf("%d %d\n", args.xres, args.yres);
     // Focal Length for Field of View.
     args.focal =
         argc >= 4 ?
