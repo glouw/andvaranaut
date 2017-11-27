@@ -12,13 +12,13 @@ typedef struct
 Scanline;
 
 // Wall rasterer for one scanline.
-void xwraster(const Scanline sl, const Ray r, const Torch t);
+void xwraster(const Scanline, const Ray);
 
 // Floor rasterer for one scanline.
-void xfraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map);
+void xfraster(const Scanline, const Ray, const float yaw, const Map);
 
 // Ceiling rasterer for one scanline.
-void xcraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map);
+void xcraster(const Scanline, const Ray, const float yaw, const Map);
 
 // Sky raster for one scanline.
-void xsraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map, const Clouds clouds);
+void xsraster(const Scanline, const Ray);

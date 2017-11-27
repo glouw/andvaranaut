@@ -13,14 +13,14 @@ typedef struct
 }
 Field;
 
-void xdiffuse(const Field field, const Point where);
+void xdiffuse(const Field, const Point where);
 
-Field xprepare(const Map map, const float scent);
+Field xprepare(const Map, const float scent);
 
-Point xforce(const Field field, const Point from, const Point to);
+Point xforce(const Field, const Point from, const Point to);
 
-void xexamine(const Field field);
+void xexamine(const Field);
 
-void xdeposit(const Field field, const Point p, const float val);
+void xdeposit(const Field, const Point p, const float val);
 
-void xruin(const Field field);
+void xruin(const Field);

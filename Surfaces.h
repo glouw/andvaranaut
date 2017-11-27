@@ -11,4 +11,4 @@ Surfaces;
 
 Surfaces xpull();
 
-void xclean(const Surfaces surfaces);
+void xclean(const Surfaces);

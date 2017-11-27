@@ -10,10 +10,10 @@ typedef struct
 Point;
 
 // Returns a point rotated about the origin by t radians.
-Point xtrn(const Point a, const float t);
+Point xtrn(const Point, const float t);
 
 // Returns a point rotated about the origin by right angle degrees.
-Point xrag(const Point a);
+Point xrag(const Point);
 
 // Returns the subtraction of two points (a - b).
 Point xsub(const Point a, const Point b);
@@ -25,13 +25,13 @@ Point xadd(const Point a, const Point b);
 Point xmul(const Point a, const float n);
 
 // Returns the magnitude of a point.
-float xmag(const Point a);
+float xmag(const Point);
 
 // Returns the unit vector of a point relative to (0, 0).
-Point xunt(const Point a);
+Point xunt(const Point);
 
 // Returns the slope of a point relative to (0, 0).
-float xslp(const Point a);
+float xslp(const Point);
 
 // Shifts a point horizontally on a grid along a vector of point b and (0, 0).
 Point xshr(const Point a, const Point b);
@@ -40,10 +40,10 @@ Point xshr(const Point a, const Point b);
 Point xsvr(const Point a, const Point b);
 
 // Returns a point snapped to the middle of a grid.
-Point xmid(const Point a);
+Point xmid(const Point);
 
 // Returns true if a point is infinitly far away from the (0, 0).
-bool xinf(const Point a);
+bool xinf(const Point);
 
 // Returns b if b is closer to a, else c.
 Point xcmp(const Point a, const Point b, const Point c);

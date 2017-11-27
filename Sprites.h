@@ -28,14 +28,14 @@ Sprites;
 
 Sprites xwake(const int level);
 
-void xkill(const Sprites sprites);
+void xkill(const Sprites);
 
-Sprites xrewake(const Sprites sprites, const int level);
+Sprites xrewake(const Sprites, const int level);
 
-Sprites xorient(const Sprites sprites, const Hero hero);
+Sprites xorient(const Sprites, const Hero);
 
 bool xissprite(const int ascii);
 
-Sprites xlay(Sprites sprites, const Map map, const Overview ov, const int ticks);
+Sprites xlay(Sprites, const Map, const Overview, const int ticks);
 
-void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map);
+void xcaretake(Sprites, const Hero, const Input, const Map);

@@ -9,6 +9,6 @@ typedef struct
 }
 Display;
 
-Display xlock(const Sdl sdl);
+Display xlock(const Sdl);
 
-void xunlock(const Sdl sdl);
+void xunlock(const Sdl);

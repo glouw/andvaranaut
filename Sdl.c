@@ -149,20 +149,20 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
             const Hit* const behind = hit;
             const Hit* const before = hit->next;
             const Ray hind = xcalc(hero, *behind, 1, sdl.yres);
-            if(link++ == 0) xsraster(scanline, hind, hero.torch, hero.yaw, map, clouds);
+            if(link++ == 0) xsraster(scanline, hind);
             if(before)
             {
                 const Ray fore = xcalc(hero, *before, 1, sdl.yres);
                 const Ray flat = xoverlay(hind, fore);
-                xwraster(scanline, flat, hero.torch);
+                xwraster(scanline, flat);
             }
             else
-                xwraster(scanline, hind, hero.torch);
+                xwraster(scanline, hind);
         }
         const Ray ray = xcalc(hero, hits.walling, 0, sdl.yres);
-        xwraster(scanline, ray, hero.torch);
-        xfraster(scanline, ray, hero.torch, hero.yaw, map);
-        xcraster(scanline, ray, hero.torch, hero.yaw, map);
+        xwraster(scanline, ray);
+        xfraster(scanline, ray, hero.yaw, map);
+        xcraster(scanline, ray, hero.yaw, map);
         // A z-buffer is populated on the eye level walls and stored later for the sprite renderer.
         zbuff[x] = ray.traceline.corrected;
     }

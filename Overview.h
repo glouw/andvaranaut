@@ -29,4 +29,4 @@ Overview;
 
 Overview xinit();
 
-Overview xupdate(Overview ov, const Input input, const int xres, const int textures);
+Overview xupdate(Overview, const Input, const int xres, const int textures);

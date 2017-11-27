@@ -46,8 +46,8 @@ static Hero spin(Hero hero, const Input input)
 static Hero yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dy * input.sy;
-    if(hero.yaw > 1.9) hero.yaw = 1.9;
-    if(hero.yaw < 0.1) hero.yaw = 0.1;
+    if(hero.yaw > 1.99) hero.yaw = 1.99;
+    if(hero.yaw < 0.01) hero.yaw = 0.01;
     return hero;
 }
 
@@ -123,7 +123,7 @@ Ray xcalc(const Hero hero, const Hit hit, const int level, const int yres)
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, hero.fov.a.x, hero.yaw, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
-    const Ray ray = { traceline, level == 0 ? projection : xstack(projection, yres), hit };
+    const Ray ray = { traceline, level == 0 ? projection : xstack(projection, yres), hit, hero.torch };
     return ray;
 }
 

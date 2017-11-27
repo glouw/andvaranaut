@@ -17,12 +17,12 @@ Map;
 
 Map xopen(const int level);
 
-void xclose(const Map map);
+void xclose(const Map);
 
-Map xreopen(const Map map, const int level);
+Map xreopen(const Map, const int level);
 
-bool xisportal(const Map map, const Point where);
+bool xisportal(const Map, const Point where);
 
-void xedit(const Map map, const Overview ov);
+void xedit(const Map, const Overview);
 
-bool xout(const Map map, const Point where);
+bool xout(const Map, const Point where);

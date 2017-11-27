@@ -23,6 +23,6 @@ typedef struct
 }
 Input;
 
-Input xpump(Input input);
+Input xpump(Input);
 
 Input xready();

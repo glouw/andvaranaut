@@ -9,6 +9,6 @@ typedef struct
 }
 Textures;
 
-Textures xcache(const Surfaces surfaces, SDL_Renderer* const renderer);
+Textures xcache(const Surfaces, SDL_Renderer* const renderer);
 
-void xpurge(const Textures textures);
+void xpurge(const Textures);

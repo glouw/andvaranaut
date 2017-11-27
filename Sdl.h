@@ -21,14 +21,14 @@ typedef struct
 }
 Sdl;
 
-Sdl xsetup(const Args args);
+Sdl xsetup(const Args);
 
-void xrelease(const Sdl sdl);
+void xrelease(const Sdl);
 
-void xpresent(const Sdl sdl);
+void xpresent(const Sdl);
 
 // Renders one one frame with SDL using hero, sprite, and map data. Ticks determine animation.
-void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Clouds clouds, const int ticks);
+void xrender(const Sdl, const Hero, const Sprites, const Map, const Clouds, const int ticks);
 
 // Renders the overview of the map and sprites for editing purposes.
-void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks);
+void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks);

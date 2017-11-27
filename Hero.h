@@ -29,12 +29,12 @@ Hero;
 
 Hero xspawn(const float focal);
 
-Point xtouch(const Hero hero, const float reach);
+Point xtouch(const Hero, const float reach);
 
-bool xteleporting(const Hero hero, const Map map, const Input input, const int ticks);
+bool xteleporting(const Hero, const Map, const Input, const int ticks);
 
-Hero xteleport(Hero hero, const Map map);
+Hero xteleport(Hero, const Map);
 
-Hero xsustain(Hero hero, const Map map, const Input input);
+Hero xsustain(Hero, const Map, const Input);
 
-Ray xcalc(const Hero hero, const Hit hit, const int level, const int yres);
+Ray xcalc(const Hero, const Hit, const int level, const int yres);

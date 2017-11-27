@@ -6,4 +6,4 @@ typedef bool (*const Found)(const Sprite* const);
 
 bool xgrabbed(const Sprite* const sprite);
 
-Sprite* find(const Found found, const Sprites sprites);
+Sprite* find(const Found, const Sprites);

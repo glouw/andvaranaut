@@ -15,4 +15,4 @@ Clouds;
 
 Clouds xrise();
 
-Clouds xblow(Clouds clouds);
+Clouds xblow(Clouds);
