@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-bool xgrabbed(const Sprite* const sprite)
+int xgrabbed(const Sprite* const sprite)
 {
     return sprite->state == GRABBED;
 }

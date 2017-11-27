@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <stdbool.h>
 #include <float.h>
 
 Point xtrn(const Point a, const float t)
@@ -94,7 +93,7 @@ Point xmid(const Point a)
     return out;
 }
 
-bool xinf(const Point a)
+int xinf(const Point a)
 {
     return isinf(a.x) || isinf(a.y);
 }
@@ -104,7 +103,7 @@ Point xcmp(const Point a, const Point b, const Point c)
     return xinf(c) ? b : xinf(b) ? c : xmag(xsub(b, a)) < xmag(xsub(c, a)) ? b : c;
 }
 
-bool xeql(const Point a, const Point b, const float e)
+int xeql(const Point a, const Point b, const float e)
 {
     return a.x < b.x + (e / 2.0)
         && a.x > b.x - (e / 2.0)

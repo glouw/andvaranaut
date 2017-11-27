@@ -3,8 +3,6 @@
 #include "Point.h"
 #include "Overview.h"
 
-#include <stdbool.h>
-
 typedef struct
 {
     char** ceiling;
@@ -21,8 +19,8 @@ void xclose(const Map);
 
 Map xreopen(const Map, const int level);
 
-bool xisportal(const Map, const Point where);
+int xisportal(const Map, const Point where);
 
 void xedit(const Map, const Overview);
 
-bool xout(const Map, const Point where);
+int xout(const Map, const Point where);

@@ -18,7 +18,7 @@ Field xprepare(const Map map, const float scent)
     return field;
 }
 
-static bool on(const Field field, const int y, const int x)
+static int on(const Field field, const int y, const int x)
 {
     return y >= 0 && x >= 0 && y < field.rows && x < field.cols;
 }

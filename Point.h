@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdbool.h>
-
 typedef struct
 {
     float x;
@@ -43,13 +41,13 @@ Point xsvr(const Point a, const Point b);
 Point xmid(const Point);
 
 // Returns true if a point is infinitly far away from the (0, 0).
-bool xinf(const Point);
+int xinf(const Point);
 
 // Returns b if b is closer to a, else c.
 Point xcmp(const Point a, const Point b, const Point c);
 
 // Returns true if a is within b with some epsilon width.
-bool xeql(const Point a, const Point b, const float e);
+int xeql(const Point a, const Point b, const float e);
 
 // Returns the block at point a.
 int xblok(const Point a, char** const blocks);

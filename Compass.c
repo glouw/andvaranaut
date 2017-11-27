@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-bool xinverted(const Compass face)
+int xinverted(const Compass face)
 {
     return face == E || face == S;
 }

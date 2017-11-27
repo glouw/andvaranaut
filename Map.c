@@ -52,12 +52,12 @@ Map xreopen(const Map map, const int level)
     return xopen(level);
 }
 
-bool xisportal(const Map map, const Point where)
+int xisportal(const Map map, const Point where)
 {
     return xblok(where, map.floring) == '~' || xblok(where, map.ceiling) == '~';
 }
 
-bool xout(const Map map, const Point where)
+int xout(const Map map, const Point where)
 {
     return where.x >= map.cols || where.x < 0.0
         || where.y >= map.rows || where.y < 0.0;

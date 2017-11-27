@@ -17,7 +17,7 @@ int main(const int argc, const char* argv[])
     // A level editor ships with the engine. The level editor will swap the player's renderering
     // view with an overhead view of the sprites and the map. The user can lay down floor, wall,
     // and ceiling tiles while moving and adding new sprites.
-    bool editing = false;
+    int editing = false;
     // Game loop.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
     {

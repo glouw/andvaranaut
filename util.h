@@ -27,7 +27,7 @@ char* xreadln(FILE* const file);
 void xbomb(const char* const message, ...);
 
 // Returns true if number is odd.
-bool xodd(const int a);
+int xodd(const int a);
 
 // Makes a number even.
 int xbalance(const int a);

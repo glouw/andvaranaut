@@ -60,7 +60,7 @@ void xbomb(const char* const message, ...)
     exit(1);
 }
 
-bool xodd(const int a)
+int xodd(const int a)
 {
     return a % 2;
 }

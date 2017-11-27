@@ -157,7 +157,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     free(zbuff);
 }
 
-static bool clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
+static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 {
     return (to.x > sdl.xres || to.x < -ov.w)
         && (to.y > sdl.yres || to.y < -ov.h);

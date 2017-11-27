@@ -6,8 +6,6 @@
 #include "Map.h"
 #include "Input.h"
 
-#include <stdbool.h>
-
 typedef struct
 {
     Line fov;
@@ -31,7 +29,7 @@ Hero xspawn(const float focal);
 
 Point xtouch(const Hero, const float reach);
 
-bool xteleporting(const Hero, const Map, const Input, const int ticks);
+int xteleporting(const Hero, const Map, const Input, const int ticks);
 
 Hero xteleport(Hero, const Map);
 

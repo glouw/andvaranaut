@@ -95,7 +95,7 @@ static Hero move(Hero hero, char** const walling, const Input input)
     return hero;
 }
 
-bool xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
+int xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
     // Time delay is arbitrary to feel;
     static int last;

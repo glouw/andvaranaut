@@ -14,7 +14,7 @@ typedef struct
     float speed;
     float acceleration;
     float scent;
-    bool transparent;
+    int transparent;
 }
 Sprite;
 
@@ -34,7 +34,7 @@ Sprites xrewake(const Sprites, const int level);
 
 Sprites xorient(const Sprites, const Hero);
 
-bool xissprite(const int ascii);
+int xissprite(const int ascii);
 
 Sprites xlay(Sprites, const Map, const Overview, const int ticks);
 

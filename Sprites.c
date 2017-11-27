@@ -340,7 +340,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     xdiffuse(field, hero.where);
 }
 
-bool xissprite(const int ascii)
+int xissprite(const int ascii)
 {
     return isalpha(ascii);
 }
