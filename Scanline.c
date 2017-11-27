@@ -13,7 +13,7 @@ static uint32_t mod(const uint32_t pixel, const int m)
     return r << 0x10 | g << 0x08 | b;
 }
 
-void xwraster(const Scanline sl, const Ray r)
+static void wraster(const Scanline sl, const Ray r)
 {
     // Get the hit surface.
     const SDL_Surface* const surface = sl.sdl.surfaces.surface[r.hit.surface];
@@ -32,14 +32,13 @@ void xwraster(const Scanline sl, const Ray r)
     }
 }
 
-void xfraster(const Scanline sl, const Ray r, const float yaw, const Map map)
+static void fraster(const Scanline sl, const Ray r, const float yaw, const Map map)
 {
-    const float mid = yaw * sl.sdl.yres / 2.0;
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Calculate the floor casting offset.
-        const float offset = xfcast(r.traceline, x, mid) / yaw;
-        const Point where = xlerp(r.traceline.trace, offset);
+        const float mid = yaw * (sl.sdl.yres / 2);
+        const Point where = xlerp(r.traceline.trace, 1.0 * xfcast(r.traceline, x, mid) / yaw);
         const int tile = xtile(where, map.floring);
         // Get the hit surface.
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
@@ -54,14 +53,13 @@ void xfraster(const Scanline sl, const Ray r, const float yaw, const Map map)
     }
 }
 
-void xcraster(const Scanline sl, const Ray r, const float yaw, const Map map)
+static void craster(const Scanline sl, const Ray r, const float yaw, const Map map)
 {
-    const float mid = yaw * sl.sdl.yres / 2.0;
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Calculate the floor casting offset.
-        const float offset = xccast(r.traceline, x, mid) / yaw;
-        const Point where = xlerp(r.traceline.trace, offset);
+        const float mid = yaw * (sl.sdl.yres / 2);
+        const Point where = xlerp(r.traceline.trace, 1.0 * xccast(r.traceline, x, mid) / yaw);
         const int tile = xtile(where, map.ceiling);
         if(!tile) continue;
         // Get the hit surface.
@@ -76,9 +74,51 @@ void xcraster(const Scanline sl, const Ray r, const float yaw, const Map map)
     }
 }
 
-void xsraster(const Scanline sl, const Ray r)
+static void sraster(const Scanline sl, const Ray r, const float yaw, const Map map)
 {
-    // Get the hit surface.
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
-        sl.display.pixels[x + sl.y * sl.display.width] = 0x0;
+    {
+        // Calculate the floor casting offset.
+        const float mid = yaw * (sl.sdl.yres / 2);
+        const Point where = xlerp(r.traceline.trace, 3.0 * xccast(r.traceline, x, mid) / yaw);
+        const int tile = xtile(where, map.ceiling);
+        if(tile) continue;
+        // Get the hit surface.
+        const SDL_Surface* const surface = sl.sdl.surfaces.surface['#' - ' '];
+        const int row = surface->h * xdec(where.y);
+        const int col = surface->w * xdec(where.x);
+        const uint32_t* const pixels = (uint32_t*) surface->pixels;
+        const uint32_t pixel = pixels[col + row * surface->w];
+        const int modding = xilluminate(r.torch, xmag(xsub(where, r.traceline.trace.a)));
+        // Transfer surface to display.
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
+    }
+}
+
+Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
+{
+    // Upper walls.
+    int link = 0;
+    for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
+    {
+        const Hit* const behind = hit;
+        const Hit* const before = hit->next;
+        const Ray hind = xcalc(hero, *behind, true, sl.sdl.yres);
+        if(link++ == 0)
+            sraster(sl, hind, hero.yaw, map);
+        if(before)
+        {
+            const Ray fore = xcalc(hero, *before, true, sl.sdl.yres);
+            const Ray flat = xoverlay(hind, fore);
+            wraster(sl, flat);
+        }
+        else
+            wraster(sl, hind);
+    }
+    // Lower walls.
+    const Ray ray = xcalc(hero, hits.walling, false, sl.sdl.yres);
+    wraster(sl, ray);
+    fraster(sl, ray, hero.yaw, map);
+    craster(sl, ray, hero.yaw, map);
+    return ray.traceline.corrected;
 }

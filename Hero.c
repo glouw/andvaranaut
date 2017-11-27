@@ -116,14 +116,14 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-Ray xcalc(const Hero hero, const Hit hit, const int level, const int yres)
+Ray xcalc(const Hero hero, const Hit hit, const int upper, const int yres)
 {
     const Point end = xsub(hit.where, hero.where);
     const Point corrected = xtrn(end, -hero.theta);
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, hero.fov.a.x, hero.yaw, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
-    const Ray ray = { traceline, level == 0 ? projection : xstack(projection, yres), hit, hero.torch };
+    const Ray ray = { traceline, upper ? xstack(projection, yres) : projection, hit, hero.torch };
     return ray;
 }
 

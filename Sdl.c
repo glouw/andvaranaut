@@ -136,35 +136,14 @@ void xrelease(const Sdl sdl)
 void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Clouds clouds, const int ticks)
 {
     Point* const zbuff = xtoss(Point, sdl.xres);
-    const Display display = xlock(sdl);
     const Line camera = xrotate(hero.fov, hero.theta);
+    const Display display = xlock(sdl);
     for(int x = 0; x < sdl.xres; x++)
     {
         const Scanline scanline = { sdl, display, x };
         const Point column = xlerp(camera, x / (float) sdl.xres);
         const Hits hits = xmarch(hero.where, column, map);
-        int link = 0;
-        for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
-        {
-            const Hit* const behind = hit;
-            const Hit* const before = hit->next;
-            const Ray hind = xcalc(hero, *behind, 1, sdl.yres);
-            if(link++ == 0) xsraster(scanline, hind);
-            if(before)
-            {
-                const Ray fore = xcalc(hero, *before, 1, sdl.yres);
-                const Ray flat = xoverlay(hind, fore);
-                xwraster(scanline, flat);
-            }
-            else
-                xwraster(scanline, hind);
-        }
-        const Ray ray = xcalc(hero, hits.walling, 0, sdl.yres);
-        xwraster(scanline, ray);
-        xfraster(scanline, ray, hero.yaw, map);
-        xcraster(scanline, ray, hero.yaw, map);
-        // A z-buffer is populated on the eye level walls and stored later for the sprite renderer.
-        zbuff[x] = ray.traceline.corrected;
+        zbuff[x] = xraster(scanline, hits, hero, map);
     }
     xunlock(sdl);
     // The scene was rendered on its side for fast caching. Rotate the scene.

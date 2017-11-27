@@ -28,7 +28,7 @@ Projection xstack(const Projection p, const int yres)
 {
     // Must subtract one as top and bot are noninclusive to the raise.
     const float bot = p.top - 1.0;
-    const float top = p.top - 1.0 + p.height;
+    const float top = p.top + 1.0 + p.height;
     const Projection projection = { bot, top, clamp(yres, bot, top), p.height };
     return projection;
 }
