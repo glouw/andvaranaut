@@ -144,12 +144,12 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         const Point column = xlerp(camera, x / (float) sdl.xres);
         const Hits hits = xmarch(hero.where, column, map);
         int link = 0;
-        for(Hit* hit = hits.ceiling, *next; hit != NULL; next = hit->next, free(hit), hit = next)
+        for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
         {
             const Hit* const behind = hit;
             const Hit* const before = hit->next;
             const Ray hind = xcalc(hero, *behind, 1, sdl.yres);
-            if(link++ == 0) xsraster(scanline, hind, hero.torch, hero.yaw, clouds);
+            if(link++ == 0) xsraster(scanline, hind, hero.torch, hero.yaw, map, clouds);
             if(before)
             {
                 const Ray fore = xcalc(hero, *before, 1, sdl.yres);

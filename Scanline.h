@@ -21,7 +21,4 @@ void xfraster(const Scanline sl, const Ray r, const Torch t, const float yaw, co
 void xcraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map);
 
 // Sky raster for one scanline.
-void xsraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Clouds clouds);
-
-// Backdrop sky rasterer
-void xbraster(const Scanline sl);
+void xsraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map, const Clouds clouds);

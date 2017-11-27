@@ -37,7 +37,8 @@ void xfraster(const Scanline sl, const Ray r, const Torch t, const float yaw, co
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Calculate the floor casting offset.
-        const Point where = xlerp(r.traceline.trace, xfcast(r.traceline, x, r.proj.mid) / yaw);
+        const float mid = yaw * sl.sdl.yres / 2.0;
+        const Point where = xlerp(r.traceline.trace, xfcast(r.traceline, x, mid) / yaw);
         const int tile = xtile(where, map.floring);
         // Get the hit surface.
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
@@ -57,7 +58,8 @@ void xcraster(const Scanline sl, const Ray r, const Torch t, const float yaw, co
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Calculate the floor casting offset.
-        const Point where = xlerp(r.traceline.trace, xccast(r.traceline, x, r.proj.mid) / yaw);
+        const float mid = yaw * sl.sdl.yres / 2.0;
+        const Point where = xlerp(r.traceline.trace, xccast(r.traceline, x, mid) / yaw);
         const int tile = xtile(where, map.ceiling);
         if(!tile) continue;
         // Get the hit surface.
@@ -72,27 +74,24 @@ void xcraster(const Scanline sl, const Ray r, const Torch t, const float yaw, co
     }
 }
 
-void xsraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Clouds clouds)
+void xsraster(const Scanline sl, const Ray r, const Torch t, const float yaw, const Map map, const Clouds clouds)
 {
     // Get the hit surface.
     const SDL_Surface* const surface = sl.sdl.surfaces.surface[1];
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
-        // Calculate the floor casting offset.
-        const Point where = xlerp(r.traceline.trace, clouds.height * xccast(r.traceline, x, r.proj.mid) / yaw);
-        const int row = abs(surface->h * xdec(where.y + clouds.where.y));
-        const int col = abs(surface->w * xdec(where.x + clouds.where.x));
+        const float mid = yaw * sl.sdl.yres / 2.0;
+        const Point where = xlerp(r.traceline.trace, xccast(r.traceline, x, mid) / yaw);
+        const int tile = xtile(where, map.ceiling);
+        if(tile) continue;
+
+        const Point sky = xlerp(r.traceline.trace, clouds.height * xccast(r.traceline, x, mid) / yaw);
+        const int row = abs(surface->h * xdec(sky.y + clouds.where.y));
+        const int col = abs(surface->w * xdec(sky.x + clouds.where.x));
         const uint32_t pixel = pixels[col + row * surface->w];
-        const int modding = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
-        // Transfer surface to display.
-        // SEGFAULTS are happening here?!
+        const int modding = xilluminate(t, xmag(xsub(sky, r.traceline.trace.a)));
+        // Transfer surface to display. SEGFAULTS are happening here?!
         sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
     }
-}
-
-void xbraster(const Scanline sl)
-{
-    for(int x = sl.sdl.yres / 2; x < sl.sdl.yres; x++)
-        sl.display.pixels[x + sl.y * sl.display.width] = 0x00;
 }

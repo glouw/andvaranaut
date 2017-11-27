@@ -13,7 +13,6 @@ typedef struct
 {
     float bot;
     float top;
-    float mid;
     Clamped clamped;
     float height;
 }
