@@ -83,7 +83,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
         if(seen.w <= 0) continue;
         // Apply lighting to the sprite.
-        const int modding = xilluminate(hero.torch, sprite.where.x);
+        const float modding = xilluminate(hero.torch, sprite.where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Apply transperancy to the sprite, if required.
         if(sprite.transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
