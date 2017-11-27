@@ -37,8 +37,7 @@ static void fraster(const Scanline sl, const Ray r, const float yaw, const Map m
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Calculate the floor casting offset.
-        const float mid = yaw * (sl.sdl.yres / 2);
-        const Point where = xlerp(r.traceline.trace, 1.0 * xfcast(r.traceline, x, mid) / yaw);
+        const Point where = xgfp(r.traceline, x, sl.sdl.yres, yaw, 1.0);
         const int tile = xtile(where, map.floring);
         // Get the hit surface.
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
@@ -58,8 +57,7 @@ static void craster(const Scanline sl, const Ray r, const float yaw, const Map m
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Calculate the floor casting offset.
-        const float mid = yaw * (sl.sdl.yres / 2);
-        const Point where = xlerp(r.traceline.trace, 1.0 * xccast(r.traceline, x, mid) / yaw);
+        const Point where = xgcp(r.traceline, x, sl.sdl.yres, yaw, 1.0);
         const int tile = xtile(where, map.ceiling);
         if(!tile) continue;
         // Get the hit surface.
@@ -79,17 +77,17 @@ static void sraster(const Scanline sl, const Ray r, const float yaw, const Map m
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Calculate the floor casting offset.
-        const float mid = yaw * (sl.sdl.yres / 2);
-        const Point where = xlerp(r.traceline.trace, 3.0 * xccast(r.traceline, x, mid) / yaw);
+        const Point where = xgcp(r.traceline, x, sl.sdl.yres, yaw, 1.0);
         const int tile = xtile(where, map.ceiling);
         if(tile) continue;
         // Get the hit surface.
+        const Point skies = xgcp(r.traceline, x, sl.sdl.yres, yaw, 3.0);
         const SDL_Surface* const surface = sl.sdl.surfaces.surface['#' - ' '];
-        const int row = surface->h * xdec(where.y);
-        const int col = surface->w * xdec(where.x);
+        const int row = abs(surface->h * xdec(skies.y));
+        const int col = abs(surface->w * xdec(skies.x));
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const uint32_t pixel = pixels[col + row * surface->w];
-        const int modding = xilluminate(r.torch, xmag(xsub(where, r.traceline.trace.a)));
+        const int modding = xilluminate(r.torch, xmag(xsub(skies, r.traceline.trace.a)));
         // Transfer surface to display.
         sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
     }
