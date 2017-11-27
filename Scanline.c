@@ -20,7 +20,7 @@ void xwraster(const Scanline sl, const Ray r, const Torch t)
     const int row = surface->h * r.hit.offset;
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     // Calculate surface light modding.
-    const int m = xilluminate(t, r.traceline.corrected.x);
+    const int modding = xilluminate(t, r.traceline.corrected.x);
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
         // Calculate the floor casting offset.
@@ -28,7 +28,7 @@ void xwraster(const Scanline sl, const Ray r, const Torch t)
         const int col = surface->w * offset;
         const uint32_t pixel = pixels[col + row * surface->w];
         // Transfer surface to display.
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, m);
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
     }
 }
 
@@ -46,9 +46,9 @@ void xfraster(const Scanline sl, const Ray r, const Torch t, const float yaw, co
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const uint32_t pixel = pixels[col + row * surface->w];
         // Calculate surface lighting midding. Moddings are saved for the ceiling rasterer.
-        const int m = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
+        const int modding = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
         // Transfer surface to display.
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, m);
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
     }
 }
 
@@ -66,9 +66,9 @@ void xcraster(const Scanline sl, const Ray r, const Torch t, const float yaw, co
         const int col = surface->w * xdec(where.x);
         const uint32_t* const pixels = (uint32_t*) surface->pixels;
         const uint32_t pixel = pixels[col + row * surface->w];
-        const int m = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
+        const int modding = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
         // Transfer surface to display.
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, m);
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
     }
 }
 
@@ -84,10 +84,10 @@ void xsraster(const Scanline sl, const Ray r, const Torch t, const float yaw, co
         const int row = abs(surface->h * xdec(where.y + clouds.where.y));
         const int col = abs(surface->w * xdec(where.x + clouds.where.x));
         const uint32_t pixel = pixels[col + row * surface->w];
-        const int m = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
+        const int modding = xilluminate(t, xmag(xsub(where, r.traceline.trace.a)));
         // Transfer surface to display.
         // SEGFAULTS are happening here?!
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, m);
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
     }
 }
 
