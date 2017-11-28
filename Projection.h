@@ -15,6 +15,7 @@ typedef struct
     float top;
     Clamped clamped;
     float size;
+    float height;
 }
 Projection;
 
@@ -23,3 +24,7 @@ Projection;
 Projection xproject(const int yres, const float focal, const float yaw, const Point corrected);
 
 Projection xstack(const Projection, const int yres);
+
+float xccast(const Projection proj, const int x, const float yaw, const int yres);
+
+float xfcast(const Projection proj, const int x, const float yaw, const int yres);

@@ -20,7 +20,8 @@ Projection xproject(const int yres, const float focal, const float yaw, const Po
     const float mid = yaw * yres / 2.0;
     const float bot = mid - half;
     const float top = mid + half;
-    const Projection projection = { bot, top, clamp(yres, bot, top), size };
+    const float height = 0.5;
+    const Projection projection = { bot, top, clamp(yres, bot, top), size, height };
     return projection;
 }
 
@@ -29,6 +30,17 @@ Projection xstack(const Projection p, const int yres)
     // Must subtract one as top and bot are noninclusive to the raise.
     const float bot = p.top - 1.0;
     const float top = p.top + 1.0 + p.size ;
-    const Projection projection = { bot, top, clamp(yres, bot, top), p.size };
+    const float height = p.height + 1.0;
+    const Projection projection = { bot, top, clamp(yres, bot, top), p.size , height };
     return projection;
+}
+
+float xccast(const Projection proj, const int x, const float yaw, const int yres)
+{
+    return proj.height * proj.size / ((x + 1) - yaw * (yres / 2));
+}
+
+float xfcast(const Projection proj, const int x, const float yaw, const int yres)
+{
+    return proj.height * proj.size / (yaw * (yres / 2) - (x - 1));
 }
