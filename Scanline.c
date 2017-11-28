@@ -18,8 +18,24 @@ static uint32_t pget(const SDL_Surface* const surface, const Point offset, const
 {
     const int row = clamp ? abs(surface->h * xdec(offset.y)) : surface->h * xdec(offset.y);
     const int col = clamp ? abs(surface->w * xdec(offset.x)) : surface->w * xdec(offset.x);
+    // Row check.
+    assert(row < surface->h);
+    assert(row >= 0);
+    // Col check.
+    assert(col < surface->w);
+    assert(col >= 0);
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     return pixels[col + row * surface->w];
+}
+
+// Pixel putter.
+static void pput(const Scanline sl, const int x, const int pixel)
+{
+    // X check
+    if(x < 0) printf("%d\n", x);
+    assert(x < sl.sdl.yres);
+    assert(x >= 0);
+    sl.display.pixels[x + sl.y * sl.display.width] = pixel;
 }
 
 // Wall rasterer.
@@ -32,7 +48,7 @@ static void wraster(const Scanline sl, const Ray r)
         const uint32_t pixel = pget(sl.sdl.surfaces.surface[r.hit.surface], offset, false);
         // Shade and transfer pixel.
         const float distance = r.traceline.corrected.x;
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, xilluminate(r.torch, distance));
+        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
     }
 }
 
@@ -47,7 +63,7 @@ static void fraster(const Scanline sl, const Ray r, const Map map)
         const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset, false);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, xilluminate(r.torch, distance));
+        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
     }
 }
 
@@ -63,7 +79,7 @@ static void craster(const Scanline sl, const Ray r, const Map map)
         const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset, false);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, xilluminate(r.torch, distance));
+        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
     }
 }
 
@@ -84,7 +100,7 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const Clouds 
         const uint32_t pixel = pget(sl.sdl.surfaces.surface[floor == 0 ? '~' - ' ': '#' - ' '], skies, true);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, xilluminate(r.torch, distance));
+        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
     }
 }
 
