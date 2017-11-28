@@ -24,7 +24,7 @@ static void wraster(const Scanline sl, const Ray r)
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
         // Calculate the floor casting offset.
-        const float offset = (x - r.proj.bot) / r.proj.height;
+        const float offset = (x - r.proj.bot) / r.proj.size;
         const int col = surface->w * offset;
         const uint32_t pixel = pixels[col + row * surface->w];
         // Transfer surface to display.
@@ -32,12 +32,22 @@ static void wraster(const Scanline sl, const Ray r)
     }
 }
 
+float ccast(const float height, const float size, const int x, const float yaw, const int yres)
+{
+    return height * size / ((x + 1) - yaw * (yres / 2));
+}
+
+float fcast(const float height, const float size, const int x, const float yaw, const int yres)
+{
+    return height * size / (yaw * (yres / 2) - (x - 1));
+}
+
 static void fraster(const Scanline sl, const Ray r, const float yaw, const Map map)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Calculate the floor casting offset.
-        const Point where = xgfp(r.traceline, x, sl.sdl.yres, yaw, 1.0);
+        const Point where = xlerp(r.traceline.trace, fcast(0.5, r.proj.size, x, yaw, sl.sdl.yres));
         const int tile = xtile(where, map.floring);
         // Get the hit surface.
         const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
@@ -57,7 +67,7 @@ static void craster(const Scanline sl, const Ray r, const float yaw, const Map m
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Calculate the floor casting offset.
-        const Point where = xgcp(r.traceline, x, sl.sdl.yres, yaw, 1.0);
+        const Point where = xlerp(r.traceline.trace, ccast(0.5, r.proj.size, x, yaw, sl.sdl.yres));
         const int tile = xtile(where, map.ceiling);
         if(!tile) continue;
         // Get the hit surface.
@@ -77,11 +87,11 @@ static void sraster(const Scanline sl, const Ray r, const float yaw, const Map m
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Calculate the floor casting offset.
-        const Point where = xgcp(r.traceline, x, sl.sdl.yres, yaw, 1.0);
+        const Point where = xlerp(r.traceline.trace, ccast(0.5, r.proj.size, x, yaw, sl.sdl.yres));
         const int tile = xtile(where, map.ceiling);
         if(tile) continue;
         // Get the hit surface.
-        const Point skies = xgcp(r.traceline, x, sl.sdl.yres, yaw, 3.0);
+        const Point skies = xlerp(r.traceline.trace, ccast(1.5, r.proj.size, x, yaw, sl.sdl.yres));
         const SDL_Surface* const surface = sl.sdl.surfaces.surface['#' - ' '];
         const int row = abs(surface->h * xdec(skies.y));
         const int col = abs(surface->w * xdec(skies.x));

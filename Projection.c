@@ -16,11 +16,11 @@ static Clamped clamp(const int yres, const float bot, const float top)
 
 Projection xproject(const int yres, const float focal, const float yaw, const Point corrected)
 {
-    const float height = focal * yres / corrected.x, half = height / 2.0;
+    const float size = focal * yres / corrected.x, half = size / 2.0;
     const float mid = yaw * yres / 2.0;
     const float bot = mid - half;
     const float top = mid + half;
-    const Projection projection = { bot, top, clamp(yres, bot, top), height };
+    const Projection projection = { bot, top, clamp(yres, bot, top), size };
     return projection;
 }
 
@@ -28,7 +28,7 @@ Projection xstack(const Projection p, const int yres)
 {
     // Must subtract one as top and bot are noninclusive to the raise.
     const float bot = p.top - 1.0;
-    const float top = p.top + 1.0 + p.height;
-    const Projection projection = { bot, top, clamp(yres, bot, top), p.height };
+    const float top = p.top + 1.0 + p.size ;
+    const Projection projection = { bot, top, clamp(yres, bot, top), p.size };
     return projection;
 }

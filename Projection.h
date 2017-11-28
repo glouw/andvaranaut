@@ -14,7 +14,7 @@ typedef struct
     float bot;
     float top;
     Clamped clamped;
-    float height;
+    float size;
 }
 Projection;
 
