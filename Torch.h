@@ -2,9 +2,9 @@
 
 typedef struct
 {
-    float light;
-    float brightness;
-    float dlight;
+    int light;
+    int brightness;
+    int dlight;
 }
 Torch;
 

@@ -5,95 +5,90 @@
 #include <assert.h>
 
 // Modulous modify a pixel. Discards alpha.
-static uint32_t mod(const uint32_t pixel, const int m)
+static uint32_t mod(const uint32_t pixel, const int modding)
 {
-    const uint32_t r = (((pixel >> 0x10) /****/) * m) >> 0x08; // Shift right by 0x08 is same as
-    const uint32_t g = (((pixel >> 0x08) & 0xFF) * m) >> 0x08; // dividing by 256. Somehow
-    const uint32_t b = (((pixel /*****/) & 0xFF) * m) >> 0x08; // ofast was not catching this.
+    const uint32_t r = (((pixel >> 0x10) /****/) * modding) >> 0x08; // Shift right by 0x08 is same as
+    const uint32_t g = (((pixel >> 0x08) & 0xFF) * modding) >> 0x08; // dividing by 256. Somehow
+    const uint32_t b = (((pixel /*****/) & 0xFF) * modding) >> 0x08; // ofast was not catching this.
     return r << 0x10 | g << 0x08 | b;
 }
 
+// Pixel getter.
+static uint32_t pget(const SDL_Surface* const surface, const Point offset, const int clamp)
+{
+    const int row = clamp ? abs(surface->h * xdec(offset.y)) : surface->h * xdec(offset.y);
+    const int col = clamp ? abs(surface->w * xdec(offset.x)) : surface->w * xdec(offset.x);
+    const uint32_t* const pixels = (uint32_t*) surface->pixels;
+    return pixels[col + row * surface->w];
+}
+
+// Wall rasterer.
 static void wraster(const Scanline sl, const Ray r)
 {
-    // Get the hit surface.
-    const SDL_Surface* const surface = sl.sdl.surfaces.surface[r.hit.surface];
-    const int row = surface->h * r.hit.offset;
-    const uint32_t* const pixels = (uint32_t*) surface->pixels;
-    // Calculate surface light modding.
-    const int modding = xilluminate(r.torch, r.traceline.corrected.x);
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
-        // Calculate the floor casting offset.
-        const float offset = (x - r.proj.bot) / r.proj.size;
-        const int col = surface->w * offset;
-        const uint32_t pixel = pixels[col + row * surface->w];
-        // Transfer surface to display.
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
+        // Get pixel.
+        const Point offset = { (x - r.proj.bot) / r.proj.size, r.hit.offset };
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface[r.hit.surface], offset, false);
+        // Shade and transfer pixel.
+        const float distance = r.traceline.corrected.x;
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, xilluminate(r.torch, distance));
     }
 }
 
-static void fraster(const Scanline sl, const Ray r, const float yaw, const Map map)
+// Floor rasterer.
+static void fraster(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
-        // Calculate the floor casting offset.
-        const Point where = xlerp(r.traceline.trace, xfcast(r.proj, x, yaw, sl.sdl.yres));
-        const int tile = xtile(where, map.floring);
-        // Get the hit surface.
-        const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
-        const int row = surface->h * xdec(where.y);
-        const int col = surface->w * xdec(where.x);
-        const uint32_t* const pixels = (uint32_t*) surface->pixels;
-        const uint32_t pixel = pixels[col + row * surface->w];
-        // Calculate surface lighting midding. Moddings are saved for the ceiling rasterer.
-        const int modding = xilluminate(r.torch, xmag(xsub(where, r.traceline.trace.a)));
-        // Transfer surface to display.
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
+        // Get pixel.
+        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
+        const int tile = xtile(offset, map.floring);
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset, false);
+        // Shade and transfer pixel.
+        const float distance = xmag(xsub(offset, r.traceline.trace.a));
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, xilluminate(r.torch, distance));
     }
 }
 
-static void craster(const Scanline sl, const Ray r, const float yaw, const Map map)
+// Ceiling rasterer.
+static void craster(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
-        // Calculate the floor casting offset.
-        const Point where = xlerp(r.traceline.trace, xccast(r.proj, x, yaw, sl.sdl.yres));
-        const int tile = xtile(where, map.ceiling);
+        // Get pixel.
+        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
+        const int tile = xtile(offset, map.ceiling);
         if(!tile) continue;
-        // Get the hit surface.
-        const SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
-        const int row = surface->h * xdec(where.y);
-        const int col = surface->w * xdec(where.x);
-        const uint32_t* const pixels = (uint32_t*) surface->pixels;
-        const uint32_t pixel = pixels[col + row * surface->w];
-        const int modding = xilluminate(r.torch, xmag(xsub(where, r.traceline.trace.a)));
-        // Transfer surface to display.
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset, false);
+        // Shade and transfer pixel.
+        const float distance = xmag(xsub(offset, r.traceline.trace.a));
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, xilluminate(r.torch, distance));
     }
 }
 
-static void sraster(const Scanline sl, const Ray r, const float yaw, const Map map)
+// Sky rasterer.
+static void sraster(const Scanline sl, const Ray r, const Map map, const Clouds clouds, const int floor)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
-        // Calculate the floor casting offset.
-        const Point where = xlerp(r.traceline.trace, xccast(r.proj, x, yaw, sl.sdl.yres));
-        const int tile = xtile(where, map.ceiling);
+        // Get pixel.
+        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
+        const int tile = xtile(offset, map.ceiling);
         if(tile) continue;
-        // Get the hit surface.
-        const Point skies = xlerp(r.traceline.trace, xccast(r.proj, x, yaw, sl.sdl.yres));
-        const SDL_Surface* const surface = sl.sdl.surfaces.surface['#' - ' '];
-        const int row = abs(surface->h * xdec(skies.y));
-        const int col = abs(surface->w * xdec(skies.x));
-        const uint32_t* const pixels = (uint32_t*) surface->pixels;
-        const uint32_t pixel = pixels[col + row * surface->w];
-        const int modding = xilluminate(r.torch, xmag(xsub(skies, r.traceline.trace.a)));
-        // Transfer surface to display.
-        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, modding);
+        const Point skies = floor == 0 ?
+            // See the blowing clouds.
+            xadd(clouds.where, xlerp(r.traceline.trace, xccast(xrocket(r.proj), x))):
+            // Do not see see the blowing clouds - added bonus of 'faux' level. Will always have ceiling tile.
+            xlerp(r.traceline.trace, xccast(r.proj, x));
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface[floor == 0 ? '~' - ' ': '#' - ' '], skies, true);
+        // Shade and transfer pixel.
+        const float distance = xmag(xsub(offset, r.traceline.trace.a));
+        sl.display.pixels[x + sl.y * sl.display.width] = mod(pixel, xilluminate(r.torch, distance));
     }
 }
 
-Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
+Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds clouds, const Map map)
 {
     // Upper walls.
     int link = 0;
@@ -103,7 +98,7 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Map map
         const Hit* const before = hit->next;
         const Ray hind = xcalc(hero, *behind, true, sl.sdl.yres);
         if(link++ == 0)
-            sraster(sl, hind, hero.yaw, map);
+            sraster(sl, hind, map, clouds, hero.floor);
         if(before)
         {
             const Ray fore = xcalc(hero, *before, true, sl.sdl.yres);
@@ -116,7 +111,7 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Map map
     // Lower walls.
     const Ray ray = xcalc(hero, hits.walling, false, sl.sdl.yres);
     wraster(sl, ray);
-    fraster(sl, ray, hero.yaw, map);
-    craster(sl, ray, hero.yaw, map);
+    fraster(sl, ray, map);
+    craster(sl, ray, map);
     return ray.traceline.corrected;
 }

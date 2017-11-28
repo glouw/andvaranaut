@@ -4,8 +4,7 @@
 
 int xilluminate(const Torch torch, const float distance)
 {
-    const int luminance = torch.light / distance;
-    return luminance > 0xFF ? 0xFF : luminance;
+    return torch.light / distance > 0xFF ? 0xFF : torch.light / distance;
 }
 
 Torch xburn(const Torch torch)
@@ -19,8 +18,8 @@ Torch xsnuff()
 {
     Torch torch;
     xzero(torch);
-    torch.light = 0.0;
-    torch.brightness = 750.0;
-    torch.dlight = torch.brightness / 20.0;
+    torch.light = 0;
+    torch.brightness = 750;
+    torch.dlight = torch.brightness / 32;
     return torch;
 }

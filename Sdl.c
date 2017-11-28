@@ -143,7 +143,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         const Scanline scanline = { sdl, display, x };
         const Point column = xlerp(camera, x / (float) sdl.xres);
         const Hits hits = xmarch(hero.where, column, map);
-        zbuff[x] = xraster(scanline, hits, hero, map);
+        zbuff[x] = xraster(scanline, hits, hero, clouds, map);
     }
     xunlock(sdl);
     // The scene was rendered on its side for fast caching. Rotate the scene.

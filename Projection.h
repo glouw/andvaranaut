@@ -16,6 +16,8 @@ typedef struct
     Clamped clamped;
     float size;
     float height;
+    int yres;
+    float yaw;
 }
 Projection;
 
@@ -23,8 +25,10 @@ Projection;
 // and corrected normal distance from the hero to the wall.
 Projection xproject(const int yres, const float focal, const float yaw, const Point corrected);
 
-Projection xstack(const Projection, const int yres);
+Projection xstack(const Projection);
 
-float xccast(const Projection proj, const int x, const float yaw, const int yres);
+Projection xrocket(const Projection);
 
-float xfcast(const Projection proj, const int x, const float yaw, const int yres);
+float xccast(const Projection, const int x);
+
+float xfcast(const Projection, const int x);

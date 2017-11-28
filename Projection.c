@@ -16,31 +16,37 @@ static Clamped clamp(const int yres, const float bot, const float top)
 
 Projection xproject(const int yres, const float focal, const float yaw, const Point corrected)
 {
-    const float size = focal * yres / corrected.x, half = size / 2.0;
+    const float size = focal * yres / corrected.x;
+    const float half = size / 2.0;
     const float mid = yaw * yres / 2.0;
     const float bot = mid - half;
     const float top = mid + half;
     const float height = 0.5;
-    const Projection projection = { bot, top, clamp(yres, bot, top), size, height };
+    const Projection projection = { bot, top, clamp(yres, bot, top), size, height, yres, yaw };
     return projection;
 }
 
-Projection xstack(const Projection p, const int yres)
+Projection xstack(const Projection p)
 {
     // Must subtract one as top and bot are noninclusive to the raise.
     const float bot = p.top - 1.0;
-    const float top = p.top + 1.0 + p.size ;
+    const float top = p.top + 1.0 + p.size;
     const float height = p.height + 1.0;
-    const Projection projection = { bot, top, clamp(yres, bot, top), p.size , height };
+    const Projection projection = { bot, top, clamp(p.yres, bot, top), p.size, height, p.yres, p.yaw };
     return projection;
 }
 
-float xccast(const Projection proj, const int x, const float yaw, const int yres)
+Projection xrocket(const Projection p)
 {
-    return proj.height * proj.size / ((x + 1) - yaw * (yres / 2));
+    return xstack(xstack(xstack(xstack(xstack(p))))); // lol
 }
 
-float xfcast(const Projection proj, const int x, const float yaw, const int yres)
+float xccast(const Projection p, const int x)
 {
-    return proj.height * proj.size / (yaw * (yres / 2) - (x - 1));
+    return p.height * p.size / ((x + 1) - p.yaw * (p.yres / 2));
+}
+
+float xfcast(const Projection p, const int x)
+{
+    return p.height * p.size / (p.yaw * (p.yres / 2) - (x - 1));
 }

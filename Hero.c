@@ -34,6 +34,7 @@ Hero xspawn(const float focal)
     hero.arm = 0.75;
     hero.scent = 6;
     hero.yaw = 1.0;
+    hero.floor = 1;
     return hero;
 }
 
@@ -123,7 +124,7 @@ Ray xcalc(const Hero hero, const Hit hit, const int upper, const int yres)
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, hero.fov.a.x, hero.yaw, corrected);
     const Traceline traceline = { trace, corrected, hero.fov };
-    const Ray ray = { traceline, upper ? xstack(projection, yres) : projection, hit, hero.torch };
+    const Ray ray = { traceline, upper ? xstack(projection) : projection, hit, hero.torch };
     return ray;
 }
 

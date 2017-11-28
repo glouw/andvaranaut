@@ -11,4 +11,4 @@ typedef struct
 }
 Scanline;
 
-Point xraster(const Scanline, const Hits, const Hero, const Map);
+Point xraster(const Scanline, const Hits, const Hero, const Clouds, const Map);
