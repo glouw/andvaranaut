@@ -88,10 +88,24 @@ static Hero move(Hero hero, char** const walling, const Input input)
     // Moves and checks for a collision.
     hero.where = xadd(hero.where, hero.velocity);
     // Reset hero if collision.
-    if(xtile(hero.where, walling))
+    const Point vectors[] = {
+        {  1, -0 }, // E
+        {  1,  1 }, // SE
+        {  0,  1 }, // S
+        { -1,  1 }, // SW
+        { -1,  0 }, // W
+        { -1, -1 }, // NW
+        {  0, -1 }, // N
+        {  1, -1 }, // NE
+    };
+    for(int i = 0; i < xlen(vectors); i++)
     {
-        xzero(hero.velocity);
-        hero.where = last;
+        const Point out = xadd(hero.where, xmul(vectors[i], 0.01));
+        if(xtile(out, walling))
+        {
+            xzero(hero.velocity);
+            hero.where = last;
+        }
     }
     return hero;
 }
