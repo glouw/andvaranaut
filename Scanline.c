@@ -2,8 +2,6 @@
 
 #include "util.h"
 
-#include <assert.h>
-
 // Modulous modify a pixel. Discards alpha.
 static uint32_t mod(const uint32_t pixel, const int modding)
 {
@@ -18,12 +16,6 @@ static uint32_t pget(const SDL_Surface* const surface, const Point offset, const
 {
     const int row = clamp ? abs(surface->h * xdec(offset.y)) : surface->h * xdec(offset.y);
     const int col = clamp ? abs(surface->w * xdec(offset.x)) : surface->w * xdec(offset.x);
-    // Row check.
-    assert(row >= 0);
-    assert(row < surface->h);
-    // Col check.
-    assert(col >= 0);
-    assert(col < surface->w);
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     return pixels[col + row * surface->w];
 }
@@ -31,12 +23,6 @@ static uint32_t pget(const SDL_Surface* const surface, const Point offset, const
 // Pixel putter.
 static void pput(const Scanline sl, const int x, const int pixel)
 {
-    // Y check
-    assert(sl.y >= 0);
-    assert(sl.y < sl.sdl.xres);
-    // X check
-    assert(x >= 0);
-    assert(x < sl.sdl.yres);
     sl.display.pixels[x + sl.y * sl.display.width] = pixel;
 }
 

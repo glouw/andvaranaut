@@ -54,46 +54,44 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
     // Go through all the sprites.
     for(int which = 0; which < sprites.count; which++)
     {
-        const Sprite sprite = sprites.sprite[which];
+        Sprite* const sprite = &sprites.sprite[which];
         // Move onto the next sprite if this sprite is behind the player.
-        if(sprite.where.x < 0) continue;
+        if(sprite->where.x < 0) continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
-        const int size = xbalance(hero.fov.a.x * sdl.yres / sprite.where.x), half = size / 2;
-        // Only shift sprites for the yaw that are grabbed.
-        const float shift = sprite.state == GRABBED ? 1.0 : (2.0 - hero.yaw);
+        const int size = xbalance(hero.fov.a.x * sdl.yres / sprite->where.x);
         // Calculate sprite location on screen.
+        const int my = sdl.yres / 2 * (sprite->state == GRABBED ? 1.0 : (2.0 - hero.yaw));
         const int mx = sdl.xres / 2;
-        const int my = sdl.yres / 2;
-        const int l = -half + mx;
-        const int t = -half + my * shift;
-        const int slider = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite.where);
-        const SDL_Rect target = { l + slider, t, size, size };
+        const int l = mx - size / 2;
+        const int t = my - size / 2;
+        const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
+        const SDL_Rect target = { l + s, t, size, size };
         // Move onto the next sprite if this sprite is off screen.
         if(target.x + target.w < 0 || target.x >= sdl.xres) continue;
         // Get sprite surface and texture.
-        const int selected = sprite.ascii - ' ';
+        const int selected = sprite->ascii - ' ';
         SDL_Surface* const surface = sdl.surfaces.surface[selected];
         SDL_Texture* const texture = sdl.textures.texture[selected];
         const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
         // Determine sprite animation based on ticks.
-        const SDL_Rect image = { w * (ticks % FRAMES), h * sprite.state, w, h };
+        const SDL_Rect image = { w * (ticks % FRAMES), h * sprite->state, w, h };
         // Calculate how much of the sprite is seen.
-        volatile const SDL_Rect seen = clip(sdl, target, sprite.where, zbuff);
+        volatile const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
         if(seen.w <= 0) continue;
         // Apply lighting to the sprite.
-        const int modding = xilluminate(hero.torch, sprite.where.x);
+        const int modding = xilluminate(hero.torch, sprite->where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Apply transperancy to the sprite, if required.
-        if(sprite.transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
+        if(sprite->transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
         // Renders the sprite.
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
         /* Cleanup */
         // Removes transperancy from the sprite.
-        if(sprite.transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+        if(sprite->transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
         // Revert lighting to the sprite.
         SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
     }
