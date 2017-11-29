@@ -22,6 +22,7 @@ typedef struct
     // Stronger scent will have sprites chase hero from further away
     int scent;
     float yaw;
+    float height;
 }
 Hero;
 

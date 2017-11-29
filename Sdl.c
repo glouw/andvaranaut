@@ -149,7 +149,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // Orient sprite location and theta relative to player.
     const Sprites relatives = xorient(sprites, hero);
     // Use the wall zbuffer to render the sprites.
-    paste(sdl, relatives, zbuff, hero, ticks);
+    //paste(sdl, relatives, zbuff, hero, ticks);
     // Cleanup all local heap allocations.
     xkill(relatives);
     free(zbuff);

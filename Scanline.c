@@ -102,7 +102,7 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds 
         const Hit* const before = hit->next;
         const Ray hind = xcalc(hero, *behind, true, sl.sdl.yres);
         if(link++ == 0)
-            sraster(sl, hind, map, clouds, hero.floor);
+          sraster(sl, hind, map, clouds, hero.floor);
         if(before)
         {
             const Ray fore = xcalc(hero, *before, true, sl.sdl.yres);
