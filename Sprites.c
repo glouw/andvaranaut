@@ -26,7 +26,7 @@ static Sprite _a_(const Point where)
     Sprite sprite = born(where);
     sprite.ascii = 'a';
     sprite.scent = 0.0;
-    sprite.width = 0.30;
+    sprite.width = 0.60;
     return sprite;
 }
 
