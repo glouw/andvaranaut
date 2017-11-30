@@ -5,7 +5,7 @@
 static SDL_Surface* load(const char* const path)
 {
     SDL_Surface* const bmp = SDL_LoadBMP(path);
-    if(!bmp) xbomb("Could not open %s\n", path);
+    if(!bmp) xbomb("%s: Could not open %s\n", SDL_GetError(), path);
     // Color keys can not be set in SDL when an alpha channel is present.
     // The image must first be converted to RGB888 as the source may not be a true color BMP.
     // Notice how RGB888 is used for the conversion contrary to the ARGB8888 of the rendering canvas.

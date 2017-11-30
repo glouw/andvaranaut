@@ -33,7 +33,7 @@ SRCS+= Found.c
 CFLAGS = -Wshadow -Wall -Wpedantic -Wextra
 
 # Debugging flags.
-CFLAGS+= -g -DNDEBUG
+CFLAGS+= -g
 
 # Optimization flags.
 CFLAGS+= -Ofast -march=native -flto -fsingle-precision-constant

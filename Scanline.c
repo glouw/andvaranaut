@@ -85,7 +85,7 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const Clouds 
             xadd(clouds.where, xlerp(r.traceline.trace, xccast(xrocket(r.proj), x))):
             // Do not see see the blowing clouds - added bonus of 'faux' level. Will always have ceiling tile.
             xlerp(r.traceline.trace, xccast(r.proj, x));
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface[floor == 0 ? '~' - ' ': '#' - ' '], skies, true);
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface[floor == 0 ? '%' - ' ': '#' - ' '], skies, true);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
         pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
