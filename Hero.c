@@ -22,24 +22,21 @@ static Point beginning()
     return where;
 }
 
-static float speed() { return 0.12; }
-
-static float height() { return 0.5; }
-
 Hero xspawn(const float focal)
 {
     Hero hero;
     xzero(hero);
     hero.fov = lens(focal);
     hero.where = beginning();
-    hero.speed = speed();
+    hero.speed = 0.12;
     hero.acceleration = 0.0150;
     hero.torch = xsnuff();
     hero.arm = 0.75;
     hero.scent = 6;
     hero.yaw = 1.0;
     hero.floor = 1;
-    hero.height = height();
+    hero.tall = 0.5;
+    hero.height = hero.tall;
     return hero;
 }
 
@@ -52,15 +49,27 @@ static Hero spin(Hero hero, const Input input)
 static Hero yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dy * input.sy;
-    if(hero.yaw > 1.99) hero.yaw = 1.99;
-    if(hero.yaw < 0.01) hero.yaw = 0.01;
+    const float max = 1.99;
+    const float min = 0.01;
+    hero.yaw =
+        hero.yaw > max ? max : // Max clamp.
+        hero.yaw < min ? min : // Min clamp.
+        hero.yaw;
     return hero;
 }
 
-static Hero crouch(Hero hero, const Input input)
+static Hero vert(Hero hero, const Input input)
 {
-    hero.height = input.key[SDL_SCANCODE_LCTRL] ? 0.2 : height();
-    hero.speed = hero.height < 0.25 ? 0.03 : speed();
+    // Crouching. Takes precedence over jumping.
+    if(input.key[SDL_SCANCODE_LCTRL]) { hero.height = hero.tall / 1.5; return hero; }
+    // Jump.
+    if(hero.height <= hero.tall && input.key[SDL_SCANCODE_SPACE]) hero.vvel = 0.05;
+    // Apply.
+    hero.height += hero.vvel, hero.vvel -= 0.005;
+    // Clamp.
+    const float maxheight = 0.95;
+    if(hero.height < hero.tall) hero.vvel = 0.0, hero.height = hero.tall; // Max clamp.
+    if(hero.height > maxheight) hero.vvel = 0.0, hero.height = maxheight; // Min clamp.
     return hero;
 }
 
@@ -81,6 +90,7 @@ static Point accelerate(const Hero hero)
 static Hero move(Hero hero, char** const walling, const Input input)
 {
     const Point last = hero.where;
+    const float speed = hero.height < hero.tall ? hero.speed / 2.5 : hero.speed;
     // Acceleration.
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
@@ -94,9 +104,9 @@ static Hero move(Hero hero, char** const walling, const Input input)
         if(input.key[SDL_SCANCODE_A]) hero.velocity = xsub(hero.velocity, xrag(acceleration));
     }
     // Mass spring damping system.
-    else hero.velocity = xmul(hero.velocity, 1.0 - hero.acceleration / hero.speed);
+    else hero.velocity = xmul(hero.velocity, 1.0 - hero.acceleration / speed);
     // Top speed check.
-    if(xmag(hero.velocity) > hero.speed) hero.velocity = xmul(xunt(hero.velocity), hero.speed);
+    if(xmag(hero.velocity) > speed) hero.velocity = xmul(xunt(hero.velocity), speed);
     // Moves and checks for a collision.
     hero.where = xadd(hero.where, hero.velocity);
     // Reset hero if collision.
@@ -112,7 +122,7 @@ static Hero move(Hero hero, char** const walling, const Input input)
     };
     for(int i = 0; i < xlen(vectors); i++)
     {
-        const Point out = xadd(hero.where, xmul(vectors[i], 0.01));
+        const Point out = xadd(hero.where, xmul(vectors[i], 1e-2)); // Small enough for a magic bubble.
         if(xtile(out, walling))
         {
             xzero(hero.velocity);
@@ -156,7 +166,7 @@ Ray xcalc(const Hero hero, const Hit hit, const int upper, const int yres)
 Hero xsustain(Hero hero, const Map map, const Input input)
 {
     hero = spin(hero, input);
-    hero = crouch(hero, input);
+    hero = vert(hero, input);
     hero = move(hero, map.walling, input);
     hero = yaw(hero, input);
     hero.torch = xburn(hero.torch);

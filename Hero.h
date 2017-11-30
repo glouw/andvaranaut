@@ -15,14 +15,13 @@ typedef struct
     float acceleration;
     float theta;
     Torch torch;
-    // The longer the arm, the further the hero can grab and hit things
     float arm;
-    // Dungeon floor hero is currently on
     int floor;
-    // Stronger scent will have sprites chase hero from further away
     int scent;
     float yaw;
     float height;
+    float tall;
+    float vvel;
 }
 Hero;
 
@@ -36,4 +35,4 @@ Hero xteleport(Hero, const Map);
 
 Hero xsustain(Hero, const Map, const Input);
 
-Ray xcalc(const Hero hero, const Hit hit, const int upper, const int yres);
+Ray xcalc(const Hero hero, const Hit, const int upper, const int yres);
