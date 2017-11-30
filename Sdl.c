@@ -63,7 +63,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const int my = sdl.yres / 2 * (sprite->state == GRABBED ? 1.0 : (2.0 - hero.yaw));
         const int mx = sdl.xres / 2;
         const int l = mx - size / 2;
-        const int t = my - size / 2;
+        const int t = my - (1.0 - hero.height) * size;
         const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
         const SDL_Rect target = { l + s, t, size, size };
         // Move onto the next sprite if this sprite is off screen.
@@ -149,7 +149,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // Orient sprite location and theta relative to player.
     const Sprites relatives = xorient(sprites, hero);
     // Use the wall zbuffer to render the sprites.
-    //paste(sdl, relatives, zbuff, hero, ticks);
+    paste(sdl, relatives, zbuff, hero, ticks);
     // Cleanup all local heap allocations.
     xkill(relatives);
     free(zbuff);

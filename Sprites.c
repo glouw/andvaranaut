@@ -21,6 +21,7 @@ static Sprite born(const Point where)
     return sprite;
 }
 
+// Flower.
 static Sprite _a_(const Point where)
 {
     Sprite sprite = born(where);

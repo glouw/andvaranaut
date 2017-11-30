@@ -22,20 +22,24 @@ static Point beginning()
     return where;
 }
 
+static float speed() { return 0.12; }
+
+static float height() { return 0.5; }
+
 Hero xspawn(const float focal)
 {
     Hero hero;
     xzero(hero);
     hero.fov = lens(focal);
     hero.where = beginning();
-    hero.speed = 0.12;
+    hero.speed = speed();
     hero.acceleration = 0.0150;
     hero.torch = xsnuff();
     hero.arm = 0.75;
     hero.scent = 6;
     hero.yaw = 1.0;
     hero.floor = 1;
-    hero.height = 0.5;
+    hero.height = height();
     return hero;
 }
 
@@ -55,9 +59,8 @@ static Hero yaw(Hero hero, const Input input)
 
 static Hero crouch(Hero hero, const Input input)
 {
-    const int lctrl = input.key[SDL_SCANCODE_LCTRL];
-    hero.height = lctrl ? 0.2 : 0.5;
-    hero.speed = lctrl ? 0.03 : 0.12;
+    hero.height = input.key[SDL_SCANCODE_LCTRL] ? 0.2 : height();
+    hero.speed = hero.height < 0.25 ? 0.03 : speed();
     return hero;
 }
 
@@ -121,7 +124,6 @@ static Hero move(Hero hero, char** const walling, const Input input)
 
 int xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
-    // Time delay is arbitrary to feel;
     static int last;
     const int delay = 3;
     if(ticks < last + delay)
