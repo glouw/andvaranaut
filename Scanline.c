@@ -116,7 +116,9 @@ static void yellow(const Scanline sl)
 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds clouds, const Map map)
 {
+    #if 0
     yellow(sl);
+    #endif
     // Upper walls.
     int ulink = 0;
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
