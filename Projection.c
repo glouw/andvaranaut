@@ -46,11 +46,6 @@ Projection xdrop(const Projection p)
     return projection;
 }
 
-Projection xrocket(const Projection p)
-{
-    return xstack(xstack(xstack(xstack(xstack(p)))));
-}
-
 float xccast(const Projection p, const int x)
 {
     return (1.0 - p.height + p.level) * p.size / (x + 1 - p.mid);

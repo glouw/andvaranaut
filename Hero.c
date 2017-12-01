@@ -17,7 +17,7 @@ static Line lens(const float focal)
 static Point beginning()
 {
     Point where;
-    where.x = 27.5;
+    where.x = 1.5;
     where.y = 3.5;
     return where;
 }
