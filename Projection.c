@@ -35,7 +35,7 @@ Projection xstack(const Projection p)
 Projection xdrop(const Projection p)
 {
     const float top = p.bot + 2.0;
-    const float bot = p.bot - 2.0 - p.size / 3.0;
+    const float bot = p.bot - 2.0 - p.size / 3.0; // TODO: WHAT is the relation here?
     const Projection projection = {
         bot, top, clamp(p.yres, bot, top), p.size, p.height, p.yres, p.mid, p.level - (1.0 / 3.0)
     };

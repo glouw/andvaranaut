@@ -143,6 +143,7 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
+// TODO: make level an int.
 Ray xcalc(const Hero hero, const Hit hit, const float level, const int yres)
 {
     const Point end = xsub(hit.where, hero.where);
