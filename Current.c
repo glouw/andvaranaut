@@ -1,20 +1,19 @@
-#include "Clouds.h"
+#include "Current.h"
 
 #include "util.h"
 
-Clouds xrise()
+Current xstart()
 {
-    Clouds c;
+    Current c;
     xzero(c);
     c.acceleration = 0.00001;
     c.speed = 0.01;
     c.direction.x = 1.0;
     c.direction.y = 1.0;
-    c.height = 10.0;
     return c;
 }
 
-Clouds xblow(Clouds c)
+Current xstream(Current c)
 {
     const Point vect = xmul(c.direction, c.acceleration);
     c.velocity = xadd(c.velocity, vect);

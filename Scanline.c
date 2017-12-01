@@ -12,10 +12,10 @@ static uint32_t mod(const uint32_t pixel, const int modding)
 }
 
 // Pixel getter.
-static uint32_t pget(const SDL_Surface* const surface, const Point offset, const int clamp)
+static uint32_t pget(const SDL_Surface* const surface, const Point offset)
 {
-    const int row = clamp ? abs(surface->h * xdec(offset.y)) : surface->h * xdec(offset.y);
-    const int col = clamp ? abs(surface->w * xdec(offset.x)) : surface->w * xdec(offset.x);
+    const int row = surface->h * xdec(offset.y);
+    const int col = surface->w * xdec(offset.x);
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     return pixels[col + row * surface->w];
 }
@@ -33,7 +33,7 @@ static void wraster(const Scanline sl, const Ray r)
     {
         // Get pixel.
         const Point offset = { (x - r.proj.bot) / r.proj.size, r.hit.offset };
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface[r.hit.surface], offset, false);
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface[r.hit.surface], offset);
         // Shade and transfer pixel.
         const float distance = r.traceline.corrected.x;
         pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
@@ -49,7 +49,7 @@ static void fraster(const Scanline sl, const Ray r, const Map map)
         const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
         const int tile = xtile(offset, map.floring);
         if(!tile) continue;
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset, false);
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
         pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
@@ -65,7 +65,7 @@ static void craster(const Scanline sl, const Ray r, const Map map)
         const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
         const int tile = xtile(offset, map.ceiling);
         if(!tile) continue;
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset, false);
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
         pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
@@ -73,29 +73,28 @@ static void craster(const Scanline sl, const Ray r, const Map map)
 }
 
 // Sky rasterer.
-static void sraster(const Scanline sl, const Ray r, const Map map, const Clouds clouds, const int floor)
+static void sraster(const Scanline sl, const Ray r, const Map map, const int floor)
 {
-    for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
-    {
-        // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
-        const int tile = xtile(offset, map.ceiling);
-        if(tile) continue;
-        const Point skies = floor == 0 ?
-            // See the blowing clouds.
-            xadd(clouds.where, xlerp(r.traceline.trace, xccast(xrocket(r.proj), x))):
-            // Do not see see the blowing clouds - added bonus of 'faux' level.
-            // Will always have an appropriate ceiling texture tile.
-            offset;
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface[floor == 0 ? '%' - ' ': '#' - ' '], skies, true);
-        // Shade and transfer pixel.
-        const float distance = xmag(xsub(offset, r.traceline.trace.a));
-        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
-    }
+    // Simple black sky if on zeroth floor.
+    if(floor == 0)
+        for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++) pput(sl, x, 0x000000);
+    // Otherwise faux ceiling.
+    else
+        for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
+        {
+            // Get pixel.
+            const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
+            const int tile = xtile(offset, map.ceiling);
+            if(tile) continue;
+            const uint32_t pixel = pget(sl.sdl.surfaces.surface['#' - ' '], offset);
+            // Shade and transfer pixel.
+            const float distance = xmag(xsub(offset, r.traceline.trace.a));
+            pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
+        }
 }
 
 // Pit rasterer.
-static void praster(const Scanline sl, const Ray r, const Map map)
+static void praster(const Scanline sl, const Ray r, const Map map, const Current current)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
@@ -103,7 +102,8 @@ static void praster(const Scanline sl, const Ray r, const Map map)
         const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
         const int tile = xtile(offset, map.floring);
         if(tile) continue;
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface['%' - ' '], offset, true);
+        const Point water = xadd(current.where, offset);
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface['%' - ' '], water);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
         pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
@@ -111,7 +111,7 @@ static void praster(const Scanline sl, const Ray r, const Map map)
 }
 
 // Upper level rasterer.
-void uraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds clouds, const Map map)
+void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     int link = 0;
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
@@ -120,7 +120,7 @@ void uraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds c
         const Hit* const before = hit->next;
         const Ray hind = xcalc(hero, *behind, 1, sl.sdl.yres);
         if(link++ == 0)
-            sraster(sl, hind, map, clouds, hero.floor);
+            sraster(sl, hind, map, hero.floor);
         if(before)
         {
             const Ray fore = xcalc(hero, *before, 1, sl.sdl.yres);
@@ -133,7 +133,7 @@ void uraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds c
 }
 
 // Low level rasterer.
-static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
+static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
     int link = 0;
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
@@ -142,7 +142,7 @@ static void lraster(const Scanline sl, const Hits hits, const Hero hero, const M
         const Hit* const before = hit->next;
         const Ray hind = xcalc(hero, *behind, -1, sl.sdl.yres);
         if(link++ == 0)
-            praster(sl, hind, map);
+            praster(sl, hind, map, current);
         if(before)
         {
             const Ray fore = xcalc(hero, *before, -1, sl.sdl.yres);
@@ -165,13 +165,13 @@ static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const 
 }
 
 
-Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds clouds, const Map map)
+Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
     // Debugging highlighter for finding uncolored pixels.
     #if 0
     for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFFFF00);
     #endif
-    uraster(sl, hits, hero, clouds, map);
-    lraster(sl, hits, hero, map);
+    uraster(sl, hits, hero, map);
+    lraster(sl, hits, hero, current, map);
     return eraster(sl, hits, hero, map);
 }

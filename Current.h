@@ -9,10 +9,9 @@ typedef struct
     Point direction;
     Point velocity;
     Point where;
-    float height;
 }
-Clouds;
+Current;
 
-Clouds xrise();
+Current xstart();
 
-Clouds xblow(Clouds);
+Current xstream(Current);

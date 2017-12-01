@@ -132,7 +132,7 @@ void xrelease(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Clouds clouds, const int ticks)
+void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Current current, const int ticks)
 {
     Point* const zbuff = xtoss(Point, sdl.xres);
     const Line camera = xrotate(hero.fov, hero.theta);
@@ -142,7 +142,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         const Scanline scanline = { sdl, display, x };
         const Point column = xlerp(camera, x / (float) sdl.xres);
         const Hits hits = xmarch(hero.where, column, map);
-        zbuff[x] = xraster(scanline, hits, hero, clouds, map);
+        zbuff[x] = xraster(scanline, hits, hero, current, map);
     }
     xunlock(sdl);
     // The scene was rendered on its side for fast caching. Rotate the scene.
