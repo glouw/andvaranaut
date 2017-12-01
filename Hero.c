@@ -58,10 +58,12 @@ static Hero yaw(Hero hero, const Input input)
     return hero;
 }
 
-static Hero vert(Hero hero, const Input input)
+static Hero vert(Hero hero, const Map map, const Input input)
 {
+    // Being in water takes precedence over crouching.
+    if(!xtile(hero.where, map.floring)) { hero.height = 0.0; return hero; }
     // Crouching. Takes precedence over jumping.
-    if(input.key[SDL_SCANCODE_LCTRL]) { hero.height = hero.tall / 1.5; return hero; }
+    if(input.key[SDL_SCANCODE_LCTRL]) { hero.height = hero.tall / 1.50; return hero; }
     // Jump.
     if(hero.height <= hero.tall && input.key[SDL_SCANCODE_SPACE]) hero.vvel = 0.05;
     // Apply.
@@ -87,10 +89,13 @@ static Point accelerate(const Hero hero)
     return xmul(direction, hero.acceleration);
 }
 
-static Hero move(Hero hero, char** const walling, const Input input)
+static Hero move(Hero hero, const Map map, const Input input)
 {
     const Point last = hero.where;
-    const float speed = hero.height < hero.tall ? hero.speed / 2.5 : hero.speed;
+    const float speed =
+        hero.height < hero.tall ? hero.speed / 2.5 :
+        !xtile(hero.where, map.floring) ? hero.speed / 2.5 :
+        hero.speed;
     // Acceleration.
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
@@ -110,24 +115,10 @@ static Hero move(Hero hero, char** const walling, const Input input)
     // Moves and checks for a collision.
     hero.where = xadd(hero.where, hero.velocity);
     // Reset hero if collision.
-    const Point vectors[] = {
-        {  1, -0 }, // E
-        {  1,  1 }, // SE
-        {  0,  1 }, // S
-        { -1,  1 }, // SW
-        { -1,  0 }, // W
-        { -1, -1 }, // NW
-        {  0, -1 }, // N
-        {  1, -1 }, // NE
-    };
-    for(int i = 0; i < xlen(vectors); i++)
+    if(xtile(hero.where, map.walling))
     {
-        const Point out = xadd(hero.where, xmul(vectors[i], 1e-2)); // Small enough for a magic bubble.
-        if(xtile(out, walling))
-        {
-            xzero(hero.velocity);
-            hero.where = last;
-        }
+        xzero(hero.velocity);
+        hero.where = last;
     }
     return hero;
 }
@@ -152,22 +143,26 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-Ray xcalc(const Hero hero, const Hit hit, const int upper, const int yres)
+Ray xcalc(const Hero hero, const Hit hit, const float level, const int yres)
 {
     const Point end = xsub(hit.where, hero.where);
     const Point corrected = xtrn(end, -hero.theta);
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, hero.fov.a.x, hero.yaw, corrected, hero.height);
     const Traceline traceline = { trace, corrected, hero.fov };
-    const Ray ray = { traceline, upper ? xstack(projection) : projection, hit, hero.torch };
+    const Ray ray = {
+        traceline,
+        level > 0.0 ? xstack(projection) : level < 0.0 ? xdrop(projection) : projection,
+        hit, hero.torch
+    };
     return ray;
 }
 
 Hero xsustain(Hero hero, const Map map, const Input input)
 {
     hero = spin(hero, input);
-    hero = vert(hero, input);
-    hero = move(hero, map.walling, input);
+    hero = vert(hero, map, input);
+    hero = move(hero, map, input);
     hero = yaw(hero, input);
     hero.torch = xburn(hero.torch);
     return hero;

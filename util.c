@@ -65,11 +65,6 @@ int xodd(const int a)
     return a % 2;
 }
 
-int xbalance(const int a)
-{
-    return xodd(a) ? a + 1 : a;
-}
-
 char* xconcat(const char* const a, const char* const b)
 {
     char* c = xtoss(char, strlen(a) + strlen(b) + 1);

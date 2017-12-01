@@ -18,7 +18,7 @@ typedef struct
     float height;
     int yres;
     float mid;
-    int level;
+    float level;
 }
 Projection;
 
@@ -29,6 +29,8 @@ Projection xproject(const int yres, const float focal, const float yaw, const Po
 Projection xstack(const Projection);
 
 Projection xrocket(const Projection);
+
+Projection xdrop(const Projection);
 
 float xccast(const Projection, const int x);
 

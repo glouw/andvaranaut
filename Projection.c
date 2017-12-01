@@ -4,7 +4,9 @@
 
 static Clamped clamp(const int yres, const float bot, const float top)
 {
-    const Clamped clamp = { (int) bot < 0 ? 0 : xcl(bot), (int) top > yres ? yres : xfl(top) };
+    const Clamped clamp = {
+        (int) bot < 0 ? 0 : xcl(bot), (int) top > yres ? yres : xfl(top)
+    };
     return clamp;
 }
 
@@ -25,7 +27,17 @@ Projection xstack(const Projection p)
     const float bot = p.top - 1.0;
     const float top = p.top + 1.0 + p.size;
     const Projection projection = {
-        bot, top, clamp(p.yres, bot, top), p.size, p.height, p.yres, p.mid, p.level + 1
+        bot, top, clamp(p.yres, bot, top), p.size, p.height, p.yres, p.mid, p.level + 1.0
+    };
+    return projection;
+}
+
+Projection xdrop(const Projection p)
+{
+    const float top = p.bot + 2.0;
+    const float bot = p.bot - 2.0 - p.size / 3.0;
+    const Projection projection = {
+        bot, top, clamp(p.yres, bot, top), p.size, p.height, p.yres, p.mid, p.level - (1.0 / 3.0)
     };
     return projection;
 }

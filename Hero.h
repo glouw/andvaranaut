@@ -35,4 +35,4 @@ Hero xteleport(Hero, const Map);
 
 Hero xsustain(Hero, const Map, const Input);
 
-Ray xcalc(const Hero hero, const Hit, const int upper, const int yres);
+Ray xcalc(const Hero hero, const Hit, const float level, const int yres);

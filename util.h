@@ -29,9 +29,6 @@ void xbomb(const char* const message, ...);
 // Returns true if number is odd.
 int xodd(const int a);
 
-// Makes a number even.
-int xbalance(const int a);
-
 // Takes two strings and returns a concatenated string.
 char* xconcat(const char* const a, const char* const b);
 

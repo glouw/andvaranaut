@@ -31,6 +31,12 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
         const Hit hit = collision(ray, final, other, map.ceiling);
         hits.ceiling = push(hits.ceiling, hit);
     }
+    // Floring hit linked list.
+    if(xtile(final, map.floring) && !xtile(other, map.floring))
+    {
+        const Hit hit = collision(ray, final, other, map.floring);
+        hits.floring = push(hits.floring, hit);
+    }
     // Walling hit.
     if(xtile(final, map.walling))
     {

@@ -48,6 +48,7 @@ static void fraster(const Scanline sl, const Ray r, const Map map)
         // Get pixel.
         const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
         const int tile = xtile(offset, map.floring);
+        if(!tile) continue;
         const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset, false);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
@@ -84,7 +85,7 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const Clouds 
             // See the blowing clouds.
             xadd(clouds.where, xlerp(r.traceline.trace, xccast(xrocket(r.proj), x))):
             // Do not see see the blowing clouds - added bonus of 'faux' level. Will always have ceiling tile.
-            xlerp(r.traceline.trace, xccast(r.proj, x));
+            offset;
         const uint32_t pixel = pget(sl.sdl.surfaces.surface[floor == 0 ? '%' - ' ': '#' - ' '], skies, true);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
@@ -92,20 +93,60 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const Clouds 
     }
 }
 
+// Pit rasterer.
+static void praster(const Scanline sl, const Ray r, const Map map)
+{
+    for(int x = 0; x < r.proj.clamped.bot; x++)
+    {
+        // Get pixel.
+        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
+        const int tile = xtile(offset, map.floring);
+        if(tile) continue;
+        const uint32_t pixel = pget(sl.sdl.surfaces.surface['%' - ' '], offset, true);
+        // Shade and transfer pixel.
+        const float distance = xmag(xsub(offset, r.traceline.trace.a));
+        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
+    }
+}
+
+static void yellow(const Scanline sl)
+{
+    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFFFF00);
+}
+
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds clouds, const Map map)
 {
+    yellow(sl);
     // Upper walls.
-    int link = 0;
+    int ulink = 0;
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const behind = hit;
         const Hit* const before = hit->next;
-        const Ray hind = xcalc(hero, *behind, true, sl.sdl.yres);
-        if(link++ == 0)
-          sraster(sl, hind, map, clouds, hero.floor);
+        const Ray hind = xcalc(hero, *behind, 1.0, sl.sdl.yres);
+        if(ulink++ == 0)
+            sraster(sl, hind, map, clouds, hero.floor);
         if(before)
         {
-            const Ray fore = xcalc(hero, *before, true, sl.sdl.yres);
+            const Ray fore = xcalc(hero, *before, 1.0, sl.sdl.yres);
+            const Ray flat = xoverlay(hind, fore);
+            wraster(sl, flat);
+        }
+        else
+            wraster(sl, hind);
+    }
+    // Pit walls.
+    int plink = 0;
+    for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
+    {
+        const Hit* const behind = hit;
+        const Hit* const before = hit->next;
+        const Ray hind = xcalc(hero, *behind, -1.0, sl.sdl.yres);
+        if(plink++ == 0)
+            praster(sl, hind, map);
+        if(before)
+        {
+            const Ray fore = xcalc(hero, *before, -1.0, sl.sdl.yres);
             const Ray flat = xoverlay(hind, fore);
             wraster(sl, flat);
         }
@@ -113,7 +154,7 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds 
             wraster(sl, hind);
     }
     // Lower walls.
-    const Ray ray = xcalc(hero, hits.walling, false, sl.sdl.yres);
+    const Ray ray = xcalc(hero, hits.walling, 0.0, sl.sdl.yres);
     wraster(sl, ray);
     fraster(sl, ray, map);
     craster(sl, ray, map);

@@ -17,6 +17,7 @@ struct hit
 typedef struct
 {
     Hit* ceiling;
+    Hit* floring;
     Hit walling;
 }
 Hits;

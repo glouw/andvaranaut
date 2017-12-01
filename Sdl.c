@@ -58,14 +58,15 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Move onto the next sprite if this sprite is behind the player.
         if(sprite->where.x < 0) continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
-        const int size = xbalance(hero.fov.a.x * sdl.yres / sprite->where.x);
+        const int size = hero.fov.a.x * sdl.yres / sprite->where.x;
+        const int osize = xodd(size) ? size + 1 : size;
         // Calculate sprite location on screen.
         const int my = sdl.yres / 2 * (sprite->state == GRABBED ? 1.0 : (2.0 - hero.yaw));
         const int mx = sdl.xres / 2;
-        const int l = mx - size / 2;
-        const int t = my - size * (sprite->state == GRABBED ? 0.5 : (1.0 - hero.height));
+        const int l = mx - osize / 2;
+        const int t = my - osize * (sprite->state == GRABBED ? 0.5 : (1.0 - hero.height));
         const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
-        const SDL_Rect target = { l + s, t, size, size };
+        const SDL_Rect target = { l + s, t, osize, osize };
         // Move onto the next sprite if this sprite is off screen.
         if(target.x + target.w < 0 || target.x >= sdl.xres) continue;
         // Get sprite surface and texture.
