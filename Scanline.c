@@ -126,12 +126,12 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds 
     {
         const Hit* const behind = hit;
         const Hit* const before = hit->next;
-        const Ray hind = xcalc(hero, *behind, 1.0, sl.sdl.yres);
+        const Ray hind = xcalc(hero, *behind, 1, sl.sdl.yres);
         if(ulink++ == 0)
             sraster(sl, hind, map, clouds, hero.floor);
         if(before)
         {
-            const Ray fore = xcalc(hero, *before, 1.0, sl.sdl.yres);
+            const Ray fore = xcalc(hero, *before, 1, sl.sdl.yres);
             const Ray flat = xoverlay(hind, fore);
             wraster(sl, flat);
         }
@@ -144,12 +144,12 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds 
     {
         const Hit* const behind = hit;
         const Hit* const before = hit->next;
-        const Ray hind = xcalc(hero, *behind, -1.0, sl.sdl.yres);
+        const Ray hind = xcalc(hero, *behind, -1, sl.sdl.yres);
         if(plink++ == 0)
             praster(sl, hind, map);
         if(before)
         {
-            const Ray fore = xcalc(hero, *before, -1.0, sl.sdl.yres);
+            const Ray fore = xcalc(hero, *before, -1, sl.sdl.yres);
             const Ray flat = xoverlay(hind, fore);
             wraster(sl, flat);
         }
@@ -157,7 +157,7 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds 
             wraster(sl, hind);
     }
     // Lower walls.
-    const Ray ray = xcalc(hero, hits.walling, 0.0, sl.sdl.yres);
+    const Ray ray = xcalc(hero, hits.walling, 0, sl.sdl.yres);
     wraster(sl, ray);
     fraster(sl, ray, map);
     craster(sl, ray, map);

@@ -143,8 +143,7 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-// TODO: make level an int.
-Ray xcalc(const Hero hero, const Hit hit, const float level, const int yres)
+Ray xcalc(const Hero hero, const Hit hit, const int level, const int yres)
 {
     const Point end = xsub(hit.where, hero.where);
     const Point corrected = xtrn(end, -hero.theta);
@@ -153,7 +152,7 @@ Ray xcalc(const Hero hero, const Hit hit, const float level, const int yres)
     const Traceline traceline = { trace, corrected, hero.fov };
     const Ray ray = {
         traceline,
-        level > 0.0 ? xstack(projection) : level < 0.0 ? xdrop(projection) : projection,
+        level == 1 ? xstack(projection) : level == -1 ? xdrop(projection) : projection,
         hit, hero.torch
     };
     return ray;
