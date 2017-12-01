@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-// Modulous modify a pixel. Discards alpha.
+// Modulous modify a pixel. Discards alpha. Great for lighting.
 static uint32_t mod(const uint32_t pixel, const int modding)
 {
     const uint32_t r = (((pixel >> 0x10) /****/) * modding) >> 0x08; // Shift right by 0x08 is same as
@@ -84,7 +84,8 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const Clouds 
         const Point skies = floor == 0 ?
             // See the blowing clouds.
             xadd(clouds.where, xlerp(r.traceline.trace, xccast(xrocket(r.proj), x))):
-            // Do not see see the blowing clouds - added bonus of 'faux' level. Will always have ceiling tile.
+            // Do not see see the blowing clouds - added bonus of 'faux' level.
+            // Will always have an appropriate ceiling texture tile.
             offset;
         const uint32_t pixel = pget(sl.sdl.surfaces.surface[floor == 0 ? '%' - ' ': '#' - ' '], skies, true);
         // Shade and transfer pixel.
@@ -109,25 +110,16 @@ static void praster(const Scanline sl, const Ray r, const Map map)
     }
 }
 
-static void yellow(const Scanline sl)
+// Upper level rasterer.
+void uraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds clouds, const Map map)
 {
-    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFFFF00);
-}
-
-Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds clouds, const Map map)
-{
-    #if 0
-    yellow(sl);
-    #endif
-    // TODO: Function this.
-    // Upper walls.
-    int ulink = 0;
+    int link = 0;
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const behind = hit;
         const Hit* const before = hit->next;
         const Ray hind = xcalc(hero, *behind, 1, sl.sdl.yres);
-        if(ulink++ == 0)
+        if(link++ == 0)
             sraster(sl, hind, map, clouds, hero.floor);
         if(before)
         {
@@ -138,14 +130,18 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds 
         else
             wraster(sl, hind);
     }
-    // Pit walls.
-    int plink = 0;
+}
+
+// Low level rasterer.
+static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
+{
+    int link = 0;
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const behind = hit;
         const Hit* const before = hit->next;
         const Ray hind = xcalc(hero, *behind, -1, sl.sdl.yres);
-        if(plink++ == 0)
+        if(link++ == 0)
             praster(sl, hind, map);
         if(before)
         {
@@ -156,10 +152,26 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds 
         else
             wraster(sl, hind);
     }
-    // Lower walls.
+}
+
+// Eye level rasterer.
+static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
+{
     const Ray ray = xcalc(hero, hits.walling, 0, sl.sdl.yres);
     wraster(sl, ray);
     fraster(sl, ray, map);
     craster(sl, ray, map);
     return ray.traceline.corrected;
+}
+
+
+Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Clouds clouds, const Map map)
+{
+    // Debugging highlighter for finding uncolored pixels.
+    #if 0
+    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFFFF00);
+    #endif
+    uraster(sl, hits, hero, clouds, map);
+    lraster(sl, hits, hero, map);
+    return eraster(sl, hits, hero, map);
 }
