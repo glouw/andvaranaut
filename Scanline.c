@@ -168,7 +168,7 @@ static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
     // Debugging highlighter for finding uncolored pixels.
-    #if 1
+    #if 0
     for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFF0000);
     #endif
     uraster(sl, hits, hero, map);

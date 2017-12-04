@@ -39,7 +39,7 @@ Projection xstack(const Projection p)
 
 Projection xdrop(const Projection p)
 {
-    const float shift = -1.0 / 3.0;
+    const float shift = -1.0 / 6.0;
     const float top = p.bot + 2.0;
     const float bot = p.bot + 2.0 + p.size * shift;
     const Projection projection = {

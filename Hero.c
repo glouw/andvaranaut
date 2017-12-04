@@ -60,18 +60,19 @@ static Hero yaw(Hero hero, const Input input)
 
 static Hero vert(Hero hero, const Map map, const Input input)
 {
-    // Being in water takes precedence over crouching.
-    if(!xtile(hero.where, map.floring)) { hero.height = 0.0; return hero; }
-    // Crouching. Takes precedence over jumping.
-    if(input.key[SDL_SCANCODE_LCTRL]) { hero.height = hero.tall / 1.50; return hero; }
+    const int land = xtile(hero.where, map.floring);
+    const float tall = land ? hero.tall : 0.4 * hero.tall;
     // Jump.
-    if(hero.height <= hero.tall && input.key[SDL_SCANCODE_SPACE]) hero.vvel = 0.05;
+    if(input.key[SDL_SCANCODE_SPACE] && hero.height <= tall) hero.vvel = 0.05;
     // Apply.
-    hero.height += hero.vvel, hero.vvel -= 0.005;
+    hero.height += hero.vvel;
+    // Fall.
+    if(hero.height > tall) hero.vvel -= 0.005; else hero.vvel = 0.0, hero.height = tall;
     // Clamp.
-    const float maxheight = 0.95;
-    if(hero.height < hero.tall) hero.vvel = 0.0, hero.height = hero.tall; // Max clamp.
-    if(hero.height > maxheight) hero.vvel = 0.0, hero.height = maxheight; // Min clamp.
+    const float max = 0.95;
+    if(hero.height > max) hero.height = max;
+    // Crouch - only works on land.
+    if(input.key[SDL_SCANCODE_LCTRL] && land) hero.height = 0.6 * hero.tall;
     return hero;
 }
 
@@ -92,10 +93,7 @@ static Point accelerate(const Hero hero)
 static Hero move(Hero hero, const Map map, const Input input)
 {
     const Point last = hero.where;
-    const float speed =
-        hero.height < hero.tall ? hero.speed / 2.5 :
-        !xtile(hero.where, map.floring) ? hero.speed / 2.5 :
-        hero.speed;
+    const float speed = hero.height < 0.5 * hero.tall ? 0.1 * hero.speed : hero.speed;
     // Acceleration.
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
