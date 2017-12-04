@@ -10,13 +10,13 @@ Current xstart()
     c.speed = 0.01;
     c.direction.x = 1.0;
     c.direction.y = 1.0;
+    c.height = -1.0 / 6.0;
     return c;
 }
 
 Current xstream(Current c)
 {
-    const Point vect = xmul(c.direction, c.acceleration);
-    c.velocity = xadd(c.velocity, vect);
+    c.velocity = xadd(c.velocity, xmul(c.direction, c.acceleration));
     // And then check top speed...
     if(xmag(c.velocity) > c.speed)
         // And cap speed if the top speed is surpassed.

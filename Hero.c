@@ -58,10 +58,10 @@ static Hero yaw(Hero hero, const Input input)
     return hero;
 }
 
-static Hero vert(Hero hero, const Map map, const Input input)
+static Hero vert(Hero hero, const Map map, const Input input, const Current current)
 {
     const int land = xtile(hero.where, map.floring);
-    const float tall = land ? hero.tall : 0.4 * hero.tall;
+    const float tall = land ? hero.tall : (0.5 + current.height) * hero.tall;
     // Jump.
     if(input.key[SDL_SCANCODE_SPACE] && hero.height <= tall) hero.vvel = 0.05;
     // Apply.
@@ -90,10 +90,12 @@ static Point accelerate(const Hero hero)
     return xmul(direction, hero.acceleration);
 }
 
-static Hero move(Hero hero, const Map map, const Input input)
+static Hero move(Hero hero, const Map map, const Input input, const Current current)
 {
     const Point last = hero.where;
-    const float speed = hero.height < 0.5 * hero.tall ? 0.1 * hero.speed : hero.speed;
+    const int swimming = hero.height <= (0.5 + current.height) * hero.tall;
+    const int crouching = hero.height <= 0.6 * hero.tall;
+    const float speed = swimming ? 0.3 * hero.speed : crouching ? 0.5 * hero.speed : hero.speed;
     // Acceleration.
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
@@ -108,6 +110,8 @@ static Hero move(Hero hero, const Map map, const Input input)
     }
     // Mass spring damping system.
     else hero.velocity = xmul(hero.velocity, 1.0 - hero.acceleration / speed);
+    // Current sweep.
+    if(swimming) hero.velocity = xadd(hero.velocity, current.velocity);
     // Top speed check.
     if(xmag(hero.velocity) > speed) hero.velocity = xmul(xunt(hero.velocity), speed);
     // Moves and checks for a collision.
@@ -141,7 +145,7 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-Ray xcalc(const Hero hero, const Hit hit, const int level, const int yres)
+Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres)
 {
     const Point end = xsub(hit.where, hero.where);
     const Point corrected = xtrn(end, -hero.theta);
@@ -150,17 +154,17 @@ Ray xcalc(const Hero hero, const Hit hit, const int level, const int yres)
     const Traceline traceline = { trace, corrected, hero.fov };
     const Ray ray = {
         traceline,
-        level == 1 ? xstack(projection) : level == -1 ? xdrop(projection) : projection,
+        shift > 0.0 ? xstack(projection, shift) : shift < 0.0 ? xdrop(projection, shift) : projection,
         hit, hero.torch
     };
     return ray;
 }
 
-Hero xsustain(Hero hero, const Map map, const Input input)
+Hero xsustain(Hero hero, const Map map, const Input input, const Current current)
 {
     hero = spin(hero, input);
-    hero = vert(hero, map, input);
-    hero = move(hero, map, input);
+    hero = vert(hero, map, input, current);
+    hero = move(hero, map, input, current);
     hero = yaw(hero, input);
     hero.torch = xburn(hero.torch);
     return hero;

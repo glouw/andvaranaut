@@ -50,7 +50,10 @@ Point xcmp(const Point a, const Point b, const Point c);
 int xeql(const Point a, const Point b, const float e);
 
 // Returns the block at point a.
-int xblok(const Point a, char** const blocks);
+int xblok(const Point, char** const blocks);
 
 // Returns the tile number at point a.
-int xtile(const Point a, char** const blocks);
+int xtile(const Point, char** const blocks);
+
+//
+Point xabs(const Point);

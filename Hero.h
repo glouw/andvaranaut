@@ -5,6 +5,7 @@
 #include "Ray.h"
 #include "Map.h"
 #include "Input.h"
+#include "Current.h"
 
 typedef struct
 {
@@ -33,6 +34,6 @@ int xteleporting(const Hero, const Map, const Input, const int ticks);
 
 Hero xteleport(Hero, const Map);
 
-Hero xsustain(Hero, const Map, const Input);
+Hero xsustain(Hero, const Map, const Input, const Current);
 
-Ray xcalc(const Hero hero, const Hit, const int level, const int yres);
+Ray xcalc(const Hero hero, const Hit, const float shift, const int yres);

@@ -26,9 +26,9 @@ Projection;
 // and corrected normal distance from the hero to the wall.
 Projection xproject(const int yres, const float focal, const float yaw, const Point corrected, const float height);
 
-Projection xstack(const Projection);
+Projection xstack(const Projection, const float shift);
 
-Projection xdrop(const Projection);
+Projection xdrop(const Projection, const float shift);
 
 float xccast(const Projection, const int x);
 

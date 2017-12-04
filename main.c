@@ -49,7 +49,7 @@ int main(const int argc, const char* argv[])
                 map = xreopen(map, hero.floor);
                 sprites = xrewake(sprites, hero.floor);
             }
-            hero = xsustain(hero, map, input);
+            hero = xsustain(hero, map, input, current);
             xcaretake(sprites, hero, input, map);
             // Video output.
             xrender(sdl, hero, sprites, map, current, ticks);

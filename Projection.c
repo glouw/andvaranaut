@@ -26,9 +26,8 @@ Projection xproject(const int yres, const float focal, const float yaw, const Po
     return projection;
 }
 
-Projection xstack(const Projection p)
+Projection xstack(const Projection p, const float shift)
 {
-    const float shift = 1.0;
     const float bot = p.top - 1.0;
     const float top = p.top - 1.0 + p.size * shift;
     const Projection projection = {
@@ -37,9 +36,8 @@ Projection xstack(const Projection p)
     return projection;
 }
 
-Projection xdrop(const Projection p)
+Projection xdrop(const Projection p, const float shift)
 {
-    const float shift = -1.0 / 6.0;
     const float top = p.bot + 2.0;
     const float bot = p.bot + 2.0 + p.size * shift;
     const Projection projection = {

@@ -122,3 +122,11 @@ int xtile(const Point a, char** const blocks)
 {
     return xblok(a, blocks) - ' ';
 }
+
+Point xabs(const Point a)
+{
+    Point b;
+    b.x = fabs(a.x);
+    b.y = fabs(a.y);
+    return b;
+}

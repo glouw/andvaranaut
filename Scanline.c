@@ -102,7 +102,7 @@ static void praster(const Scanline sl, const Ray r, const Map map, const Current
         const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x - 2));
         const int tile = xtile(offset, map.floring);
         if(tile) continue;
-        const Point water = xadd(current.where, offset);
+        const Point water = xabs(xsub(offset, xabs(current.where)));
         const uint32_t pixel = pget(sl.sdl.surfaces.surface['%' - ' '], water);
         // Shade and transfer pixel.
         const float distance = xmag(xsub(offset, r.traceline.trace.a));
@@ -118,12 +118,12 @@ void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
     {
         const Hit* const behind = hit;
         const Hit* const before = hit->next;
-        const Ray hind = xcalc(hero, *behind, 1, sl.sdl.yres);
+        const Ray hind = xcalc(hero, *behind, 1.0, sl.sdl.yres);
         if(link++ == 0)
             sraster(sl, hind, map, hero.floor);
         if(before)
         {
-            const Ray fore = xcalc(hero, *before, 1, sl.sdl.yres);
+            const Ray fore = xcalc(hero, *before, 1.0, sl.sdl.yres);
             const Ray flat = xoverlay(hind, fore);
             wraster(sl, flat);
         }
@@ -140,12 +140,12 @@ static void lraster(const Scanline sl, const Hits hits, const Hero hero, const C
     {
         const Hit* const behind = hit;
         const Hit* const before = hit->next;
-        const Ray hind = xcalc(hero, *behind, -1, sl.sdl.yres);
+        const Ray hind = xcalc(hero, *behind, current.height, sl.sdl.yres);
         if(link++ == 0)
             praster(sl, hind, map, current);
         if(before)
         {
-            const Ray fore = xcalc(hero, *before, -1, sl.sdl.yres);
+            const Ray fore = xcalc(hero, *before, current.height, sl.sdl.yres);
             const Ray flat = xoverlay(hind, fore);
             wraster(sl, flat);
         }
@@ -157,7 +157,7 @@ static void lraster(const Scanline sl, const Hits hits, const Hero hero, const C
 // Eye level rasterer.
 static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
-    const Ray ray = xcalc(hero, hits.walling, 0, sl.sdl.yres);
+    const Ray ray = xcalc(hero, hits.walling, 0.0, sl.sdl.yres);
     wraster(sl, ray);
     fraster(sl, ray, map);
     craster(sl, ray, map);
