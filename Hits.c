@@ -15,16 +15,16 @@ static Hit collision(const Point ray, const Point final, const Point other, char
 {
     const float offset = xdec(ray.x + ray.y);
     const int inverted = xinverted(xneedle(final, other));
-    const Hit hit = { xtile(final, block), inverted ? 1.0 - offset : offset, other, NULL };
+    const Hit hit = { xtile(final, block), inverted ? 1.0 - offset : offset, ray, NULL };
     return hit;
 }
 
 static Hits step(Hits hits, const Point where, const Point direction, const Map map)
 {
     const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));
-    const Point delta = xmul(direction, 1e-4);
-    const Point final = xadd(ray, delta);
-    const Point other = xsub(ray, delta);
+    const Point final = xadd(ray, xmul(direction, 1e-4));
+    const Point other = xsub(ray, xmul(direction, 1e-3));
+    if(xout(map, ray)) puts("woops");
     // Ceiling hit linked list.
     if(xtile(final, map.ceiling) && !xtile(other, map.ceiling))
     {

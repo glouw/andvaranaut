@@ -46,7 +46,7 @@ static void fraster(const Scanline sl, const Ray r, const Map map)
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
+        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x - 1));
         const int tile = xtile(offset, map.floring);
         if(!tile) continue;
         const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset);
@@ -62,7 +62,7 @@ static void craster(const Scanline sl, const Ray r, const Map map)
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
+        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x + 1));
         const int tile = xtile(offset, map.ceiling);
         if(!tile) continue;
         const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset);
@@ -83,7 +83,7 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const int flo
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
             // Get pixel.
-            const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
+            const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x + 2));
             const int tile = xtile(offset, map.ceiling);
             if(tile) continue;
             const uint32_t pixel = pget(sl.sdl.surfaces.surface['#' - ' '], offset);
@@ -99,7 +99,7 @@ static void praster(const Scanline sl, const Ray r, const Map map, const Current
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
+        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x - 2));
         const int tile = xtile(offset, map.floring);
         if(tile) continue;
         const Point water = xadd(current.where, offset);
@@ -168,8 +168,8 @@ static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
     // Debugging highlighter for finding uncolored pixels.
-    #if 0
-    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFFFF00);
+    #if 1
+    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFF0000);
     #endif
     uraster(sl, hits, hero, map);
     lraster(sl, hits, hero, current, map);
