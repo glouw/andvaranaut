@@ -24,7 +24,6 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));
     const Point final = xadd(ray, xmul(direction, 1e-4));
     const Point other = xsub(ray, xmul(direction, 1e-3));
-    if(xout(map, ray)) puts("woops");
     // Ceiling hit linked list.
     if(xtile(final, map.ceiling) && !xtile(other, map.ceiling))
     {

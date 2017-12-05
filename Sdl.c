@@ -2,6 +2,7 @@
 
 #include "Frame.h"
 #include "Scanline.h"
+#include "Bundle.h"
 #include "util.h"
 
 static void churn(const Sdl sdl)
@@ -132,17 +133,48 @@ void xrelease(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
+// Group rasterer.
+static int graster(void* const what)
+{
+    Bundle* const t = (Bundle*) what;
+    for(int x = t->a; x < t->b; x++)
+    {
+        const Scanline scanline = { t->g.sdl, t->g.display, x };
+        const Point column = xlerp(t->g.camera, x / (float) t->g.sdl.xres);
+        const Hits hits = xmarch(t->g.hero.where, column, t->g.map);
+        t->g.zbuff[x] = xraster(scanline, hits, t->g.hero, t->g.current, t->g.map);
+    }
+    return 0;
+}
+
 void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Current current, const int ticks)
 {
     Point* const zbuff = xtoss(Point, sdl.xres);
     const Line camera = xrotate(hero.fov, hero.theta);
     const Display display = xlock(sdl);
-    for(int x = 0; x < sdl.xres; x++)
+    // Prepare all renderer thread objects.
+    const int cpus = SDL_GetCPUCount();
+#define max 8
+    const int nthreads = cpus > max ? max : cpus;
+    const Group group = { zbuff, camera, display, sdl, hero, current, map };
+    Bundle bundles[max];
+    for(int i = 0; i < nthreads; i++)
     {
-        const Scanline scanline = { sdl, display, x };
-        const Point column = xlerp(camera, x / (float) sdl.xres);
-        const Hits hits = xmarch(hero.where, column, map);
-        zbuff[x] = xraster(scanline, hits, hero, current, map);
+        bundles[i].a = (i + 0) * sdl.xres / nthreads;
+        bundles[i].b = (i + 1) * sdl.xres / nthreads;
+        bundles[i].g = group;
+    };
+    // Launch all renderer threads.
+    SDL_Thread* threads[max];
+    for(int i = 0; i < nthreads; i++)
+        threads[i] = SDL_CreateThread(graster, "n/a", &bundles[i]);
+#undef max
+    // Wait on renderer threads.
+    for(int i = 0; i < nthreads; i++)
+    {
+        int status;
+        SDL_WaitThread(threads[i], &status);
+        (void) status; /* Ignore */
     }
     xunlock(sdl);
     // The scene was rendered on its side for fast caching. Rotate the scene.

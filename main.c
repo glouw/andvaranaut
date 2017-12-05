@@ -64,6 +64,7 @@ int main(const int argc, const char* argv[])
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
+        printf("%f\n", 1000.0 / (t1 - t0));
     }
     // Cleanup.
     xrelease(sdl);
