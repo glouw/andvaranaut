@@ -5,14 +5,14 @@
 #include <string.h>
 #include <float.h>
 
-Field xprepare(const Map map, const float scent)
+Field xprepare(const Map map, const float aura)
 {
     Field field;
-    field.res = 1;
+    field.res = 2;
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
     field.mesh = xtoss(float*, field.rows);
-    field.aura = field.res * scent;
+    field.aura = field.res * aura;
     for(int j = 0; j < field.rows; j++)
         field.mesh[j] = xwipe(float, field.cols);
     return field;

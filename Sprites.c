@@ -16,6 +16,7 @@ static Sprite born(const Point where)
     Sprite sprite;
     xzero(sprite);
     sprite.where = where;
+    sprite.last = where;
     sprite.state = IDLE;
     sprite.scent = 0.5;
     return sprite;
@@ -268,11 +269,19 @@ static void bound(const Sprites sprites, const Map map)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        // Stuck in a wall.
         if(xtile(sprite->where, map.walling))
         {
             place(sprite, xmid(sprite->last));
             xzero(sprite->velocity);
             // TODO: add a dizzy animation.
+        }
+        // Stuck in water.
+        if(xblok(sprite->where, map.floring) == ' ')
+        {
+            place(sprite, xmid(sprite->last));
+            xzero(sprite->velocity);
+            // TODO: add a scared animation animation.
         }
     }
 }
@@ -304,6 +313,7 @@ static void move(const Sprites sprites, const Field field, const Point to)
                 // And cap speed if the top speed is surpassed.
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
+        if(sprite->stopping) { sprite->stopping = false; xzero(sprite->velocity); }
         // If the sprite is fast enough they will animate chase.
         sprite->state = xmag(sprite->velocity) > 0.005 ? CHASING : IDLE;
         // Place the sprite at their new location...
@@ -322,6 +332,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         const int y = j / field.res;
         const int x = i / field.res;
         if(map.walling[y][x] != ' ') field.mesh[j][i] = -scent;
+        if(map.floring[y][x] == ' ') field.mesh[j][i] = -scent;
     }
     // Sprite scents stack on one another.
     for(int s = 0; s < sprites.count; s++)
@@ -330,13 +341,13 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         const int j = field.res * sprite->where.y;
         const int i = field.res * sprite->where.x;
         // If the tile is already scented then a sprite is already there.
-        if(field.mesh[j][i] < 0.0) xzero(sprite->velocity);
+        if(field.mesh[j][i] < 0.0) sprite->stopping = true;
         field.mesh[j][i] -= sprite->scent;
     }
     // Hero scent attracts.
     const int j = field.res * hero.where.y;
     const int i = field.res * hero.where.x;
-    field.mesh[j][i] = scent;
+    field.mesh[j][i] = 1000.0 * scent;
     // Diffuse the culminated scent across the field.
     xdiffuse(field, hero.where);
 }
@@ -351,7 +362,7 @@ void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map ma
     // Sprites need to be arrange closest to hero first.
     arrange(sprites, hero);
     // Sprite path finding and movement.
-    const Field field = xprepare(map, hero.scent);
+    const Field field = xprepare(map, hero.aura);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where);
     xruin(field);

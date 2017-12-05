@@ -18,7 +18,7 @@ typedef struct
     Torch torch;
     float arm;
     int floor;
-    int scent;
+    int aura;
     float yaw;
     float height;
     float tall;

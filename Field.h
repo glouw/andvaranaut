@@ -15,7 +15,7 @@ Field;
 
 void xdiffuse(const Field, const Point where);
 
-Field xprepare(const Map, const float scent);
+Field xprepare(const Map, const float aura);
 
 Point xforce(const Field, const Point from, const Point to);
 

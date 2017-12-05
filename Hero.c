@@ -32,7 +32,7 @@ Hero xspawn(const float focal)
     hero.acceleration = 0.0150;
     hero.torch = xsnuff();
     hero.arm = 0.75;
-    hero.scent = 6;
+    hero.aura = 12;
     hero.yaw = 1.0;
     hero.floor = 1;
     hero.tall = 0.5;
