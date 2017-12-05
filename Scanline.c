@@ -21,9 +21,14 @@ static uint32_t pget(const SDL_Surface* const surface, const Point offset)
 }
 
 // Pixel putter.
-static void pput(const Scanline sl, const int x, const int pixel)
+static void pput(const Scanline sl, const int x, const uint32_t pixel)
 {
     sl.display.pixels[x + sl.y * sl.display.width] = pixel;
+}
+
+static void xfer(const Scanline sl, const int x, const Point offset, const int tile, const int distance)
+{
+    pput(sl, x, mod(pget(sl.sdl.surfaces.surface[tile], offset), distance));
 }
 
 // Wall rasterer.
@@ -33,10 +38,11 @@ static void wraster(const Scanline sl, const Ray r)
     {
         // Get pixel.
         const Point offset = { (x - r.proj.bot) / r.proj.size, r.hit.offset };
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface[r.hit.surface], offset);
         // Shade and transfer pixel.
-        const float distance = r.traceline.corrected.x;
-        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
+        xfer(sl, x,
+            offset,
+            r.hit.surface,
+            xilluminate(r.torch, r.traceline.corrected.x));
     }
 }
 
@@ -46,13 +52,15 @@ static void fraster(const Scanline sl, const Ray r, const Map map)
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x - 1));
+        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
         const int tile = xtile(offset, map.floring);
+        // Do not render where there will be a pit.
         if(!tile) continue;
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset);
         // Shade and transfer pixel.
-        const float distance = xmag(xsub(offset, r.traceline.trace.a));
-        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
+        xfer(sl, x,
+            offset,
+            tile,
+            xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
     }
 }
 
@@ -62,35 +70,33 @@ static void craster(const Scanline sl, const Ray r, const Map map)
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x + 1));
+        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
         const int tile = xtile(offset, map.ceiling);
+        // Do not render where there will a second ceiling.
         if(!tile) continue;
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface[tile], offset);
         // Shade and transfer pixel.
-        const float distance = xmag(xsub(offset, r.traceline.trace.a));
-        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
+        xfer(sl, x,
+            offset,
+            tile,
+            xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
     }
 }
 
-// Sky rasterer.
-static void sraster(const Scanline sl, const Ray r, const Map map, const int floor)
+// Second ceiling rasterer.
+static void sraster(const Scanline sl, const Ray r, const Map map)
 {
-    // Simple black sky if on zeroth floor.
-    if(floor == 0)
-        for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++) pput(sl, x, 0x000000);
-    // Otherwise faux ceiling.
-    else
-        for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
-        {
-            // Get pixel.
-            const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x + 2));
-            const int tile = xtile(offset, map.ceiling);
-            if(tile) continue;
-            const uint32_t pixel = pget(sl.sdl.surfaces.surface['#' - ' '], offset);
-            // Shade and transfer pixel.
-            const float distance = xmag(xsub(offset, r.traceline.trace.a));
-            pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
-        }
+    for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
+    {
+        // Get pixel.
+        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
+        // Do not render where there was ceiling.
+        if(xtile(offset, map.ceiling)) continue;
+        // Shade and transfer pixel.
+        xfer(sl, x,
+            offset,
+            '#' - ' ',
+            xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
+    }
 }
 
 // Pit rasterer.
@@ -99,31 +105,31 @@ static void praster(const Scanline sl, const Ray r, const Map map, const Current
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x - 2));
-        const int tile = xtile(offset, map.floring);
-        if(tile) continue;
-        const Point water = xabs(xsub(offset, xabs(current.where)));
-        const uint32_t pixel = pget(sl.sdl.surfaces.surface['%' - ' '], water);
+        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
+        // Do not render where there was a floor.
+        if(xtile(offset, map.floring)) continue;
         // Shade and transfer pixel.
-        const float distance = xmag(xsub(offset, r.traceline.trace.a));
-        pput(sl, x, mod(pixel, xilluminate(r.torch, distance)));
+        xfer(sl, x,
+            xabs(xsub(offset, current.where)),
+            '%' - ' ',
+            xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
     }
 }
 
-// Upper level rasterer.
+// Upper level rasterer (second ceiling and upper walls).
 static void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     int link = 0;
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
-        const Ray hind = xcalc(hero, *which, 1.0, sl.sdl.yres);
-        if(link++ == 0) sraster(sl, hind, map, hero.floor);
+        const Ray hind = xcalc(hero, *which, 2.0, sl.sdl.yres);
+        if(link++ == 0) sraster(sl, hind, map);
         wraster(sl, hind);
     }
 }
 
-// Low level rasterer.
+// Lower level rasterer (pit and lower walls).
 static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Current current)
 {
     int link = 0;
@@ -154,6 +160,7 @@ static inline void fill(const Scanline sl, const uint32_t color)
 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
+    fill(sl, 0xFF0000);
     return
     uraster(sl, hits, hero, map),
     lraster(sl, hits, hero, map, current),

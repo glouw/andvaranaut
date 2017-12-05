@@ -18,7 +18,8 @@ typedef struct
     float height;
     int yres;
     float mid;
-    float level;
+    float shift;
+    int level;
 }
 Projection;
 
