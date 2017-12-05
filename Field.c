@@ -8,7 +8,7 @@
 Field xprepare(const Map map, const float aura)
 {
     Field field;
-    field.res = 2;
+    field.res = 4;
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
     field.mesh = xtoss(float*, field.rows);

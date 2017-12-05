@@ -15,7 +15,7 @@ Args xparse(const int argc, const char* argv[])
     args.xres =
         argc >= 2 ?
         strtol(argv[1], NULL, 0)
-        : 800;
+        : 600;
     args.yres =
         argc >= 3 ?
         strtol(argv[2], NULL, 0)

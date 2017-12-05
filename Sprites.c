@@ -313,7 +313,6 @@ static void move(const Sprites sprites, const Field field, const Point to)
                 // And cap speed if the top speed is surpassed.
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
-        if(sprite->stopping) { sprite->stopping = false; xzero(sprite->velocity); }
         // If the sprite is fast enough they will animate chase.
         sprite->state = xmag(sprite->velocity) > 0.005 ? CHASING : IDLE;
         // Place the sprite at their new location...
@@ -325,13 +324,15 @@ static void move(const Sprites sprites, const Field field, const Point to)
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
     const float scent = 1e3;
-    // Wall scents are repel.
+    // Wall and pools repel.
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
     {
         const int y = j / field.res;
         const int x = i / field.res;
+        // Walls.
         if(map.walling[y][x] != ' ') field.mesh[j][i] = -scent;
+        // Pools.
         if(map.floring[y][x] == ' ') field.mesh[j][i] = -scent;
     }
     // Sprite scents stack on one another.
@@ -340,9 +341,9 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         Sprite* const sprite = &sprites.sprite[s];
         const int j = field.res * sprite->where.y;
         const int i = field.res * sprite->where.x;
-        // If the tile is already scented then a sprite is already there.
-        if(field.mesh[j][i] < 0.0) sprite->stopping = true;
-        field.mesh[j][i] -= sprite->scent;
+        for(int a = -field.res / 2; a < field.res / 2 + 1; a++)
+        for(int b = -field.res / 2; b < field.res / 2 + 1; b++)
+            field.mesh[j + a][i + b] -= sprite->scent;
     }
     // Hero scent attracts.
     const int j = field.res * hero.where.y;

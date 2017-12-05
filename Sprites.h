@@ -15,7 +15,6 @@ typedef struct
     float acceleration;
     float scent;
     int transparent;
-    int stopping;
 }
 Sprite;
 
