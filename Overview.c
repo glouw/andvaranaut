@@ -84,8 +84,8 @@ Overview xupdate(Overview ov, const Input input, const int xres, const int textu
     // Top speed check.
     if(xmag(ov.velocity) > ov.speed) ov.velocity = xmul(xunt(ov.velocity), ov.speed);
     // Due to integer rounding, velocities less than one must be ignored.
-    if(abs(ov.velocity.x) < 1) ov.velocity.x = 0;
-    if(abs(ov.velocity.y) < 1) ov.velocity.y = 0;
+    if(fabs(ov.velocity.x) < 1.0) ov.velocity.x = 0.0;
+    if(fabs(ov.velocity.y) < 1.0) ov.velocity.y = 0.0;
     // Add velocity to pan.
     ov.px += ov.velocity.x;
     ov.py += ov.velocity.y;
