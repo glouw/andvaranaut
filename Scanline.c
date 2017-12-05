@@ -111,46 +111,28 @@ static void praster(const Scanline sl, const Ray r, const Map map, const Current
 }
 
 // Upper level rasterer.
-void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
+static void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     int link = 0;
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
-        const Hit* const behind = hit;
-        const Hit* const before = hit->next;
-        const Ray hind = xcalc(hero, *behind, 1.0, sl.sdl.yres);
-        if(link++ == 0)
-            sraster(sl, hind, map, hero.floor);
-        if(before)
-        {
-            const Ray fore = xcalc(hero, *before, 1.0, sl.sdl.yres);
-            const Ray flat = xoverlay(hind, fore);
-            wraster(sl, flat);
-        }
-        else
-            wraster(sl, hind);
+        const Hit* const which = hit;
+        const Ray hind = xcalc(hero, *which, 1.0, sl.sdl.yres);
+        if(link++ == 0) sraster(sl, hind, map, hero.floor);
+        wraster(sl, hind);
     }
 }
 
 // Low level rasterer.
-static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
+static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Current current)
 {
     int link = 0;
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
     {
-        const Hit* const behind = hit;
-        const Hit* const before = hit->next;
-        const Ray hind = xcalc(hero, *behind, current.height, sl.sdl.yres);
-        if(link++ == 0)
-            praster(sl, hind, map, current);
-        if(before)
-        {
-            const Ray fore = xcalc(hero, *before, current.height, sl.sdl.yres);
-            const Ray flat = xoverlay(hind, fore);
-            wraster(sl, flat);
-        }
-        else
-            wraster(sl, hind);
+        const Hit* const which = hit;
+        const Ray hind = xcalc(hero, *which, current.height, sl.sdl.yres);
+        if(link++ == 0) praster(sl, hind, map, current);
+        wraster(sl, hind);
     }
 }
 
@@ -164,14 +146,16 @@ static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const 
     return ray.traceline.corrected;
 }
 
+// Debugging highlighter for finding uncolored pixels.
+static inline void fill(const Scanline sl, const uint32_t color)
+{
+    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, color);
+}
 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
-    // Debugging highlighter for finding uncolored pixels.
-    #if 0
-    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFF0000);
-    #endif
-    uraster(sl, hits, hero, map);
-    lraster(sl, hits, hero, current, map);
-    return eraster(sl, hits, hero, map);
+    return
+    uraster(sl, hits, hero, map),
+    lraster(sl, hits, hero, map, current),
+    eraster(sl, hits, hero, map);
 }

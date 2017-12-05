@@ -13,5 +13,3 @@ typedef struct
     Torch torch;
 }
 Ray;
-
-Ray xoverlay(Ray a, const Ray b);

@@ -18,7 +18,6 @@ SRCS+= Input.c
 SRCS+= Line.c
 SRCS+= Map.c
 SRCS+= Point.c
-SRCS+= Ray.c
 SRCS+= Sdl.c
 SRCS+= Scanline.c
 SRCS+= Sprites.c
