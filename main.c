@@ -28,6 +28,8 @@ int main(const int argc, const char* argv[])
         if(input.key[SDL_SCANCODE_F3]) editing = false;
         if(editing)
         {
+            // Saving map
+            if(input.key[SDL_SCANCODE_F5]) xsave(map, hero.floor, ticks);
             // The mouse cursor must shown when editing.
             SDL_SetRelativeMouseMode(SDL_FALSE);
             overview = xupdate(overview, input, sdl.xres, sdl.textures.count);
@@ -64,7 +66,6 @@ int main(const int argc, const char* argv[])
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
-        printf("%f\n", 1000.0 / (t1 - t0));
     }
     // Cleanup.
     xrelease(sdl);

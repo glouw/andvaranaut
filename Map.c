@@ -14,10 +14,10 @@ static char** get(FILE* const file, const int rows)
     return block;
 }
 
-Map xopen(const int level)
+Map xopen(const int floor)
 {
     char which[MINTS];
-    sprintf(which, "%d", level);
+    sprintf(which, "%d", floor);
     char* const path = xconcat("maps/lvl", which);
     FILE* const file = fopen(path, "r");
     Map map;
@@ -46,10 +46,30 @@ void xclose(const Map map)
     free(map.floring);
 }
 
-Map xreopen(const Map map, const int level)
+Map xreopen(const Map map, const int floor)
 {
     xclose(map);
-    return xopen(level);
+    return xopen(floor);
+}
+
+void xsave(const Map map, const int floor, const int ticks)
+{
+    // Time delay. Whatever feels best.
+    static int last;
+    if(ticks < last + 6)
+        return;
+    last = ticks;
+    // Save.
+    char which[MINTS];
+    sprintf(which, "%d", floor);
+    char* const path = xconcat("maps/lvl", which);
+    FILE* const file = fopen(path, "w");
+    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.ceiling[row]);
+    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.walling[row]);
+    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.floring[row]);
+    printf("%s saved!\n", path);
+    fclose(file);
+    free(path);
 }
 
 int xisportal(const Map map, const Point where)
@@ -65,6 +85,7 @@ int xout(const Map map, const Point where)
 
 void xedit(const Map map, const Overview ov)
 {
+    // Placing - Out of bounds check.
     if(xout(map, ov.where)) return;
     const int ascii = ov.selected + ' ';
     // If the ascii is an alpha character then it is a sprite

@@ -13,14 +13,16 @@ typedef struct
 }
 Map;
 
-Map xopen(const int level);
+Map xopen(const int floor);
 
 void xclose(const Map);
 
-Map xreopen(const Map, const int level);
+Map xreopen(const Map, const int floor);
 
 int xisportal(const Map, const Point where);
 
 void xedit(const Map, const Overview);
 
 int xout(const Map, const Point where);
+
+void xsave(const Map map, const int floor, const int ticks);

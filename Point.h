@@ -55,5 +55,5 @@ int xblok(const Point, char** const blocks);
 // Returns the tile number at point a.
 int xtile(const Point, char** const blocks);
 
-//
+// Returns an absolute value point of a point.
 Point xabs(const Point);
