@@ -18,7 +18,7 @@ Field xprepare(const Map map, const float aura)
     return field;
 }
 
-static int on(const Field field, const int y, const int x)
+int xon(const Field field, const int y, const int x)
 {
     return y >= 0 && x >= 0 && y < field.rows && x < field.cols;
 }
@@ -31,7 +31,7 @@ static float average(const Field field, const int y, const int x)
     for(int i = x - 1; i <= x + 1; i++)
     {
         // Out of bounds check.
-        if(!on(field, j, i))
+        if(!xon(field, j, i))
             continue;
         // Do not sum middle of box.
         if(j == y && i == x)
@@ -70,7 +70,7 @@ static void box(const Field field, const int y, const int x, const int w)
         // If on outside of box...
         if((i == l || j == t || i == r || j == b)
         // And on a walkable part of the field...
-        && on(field, j, i)
+        && xon(field, j, i)
         // And no antiobject is in the way...
         && field.mesh[j][i] == 0.0)
             // Then materialize an atom with the diffusion box average.
@@ -119,7 +119,7 @@ Point xforce(const Field field, const Point from, const Point to)
         const Point dir = xadd(vectors[i], from);
         const int y = field.res * from.y, yy = field.res * dir.y;
         const int x = field.res * from.x, xx = field.res * dir.x;
-        gradients[i] = field.mesh[yy][xx] - field.mesh[y][x];
+        if(xon(field, yy, xx)) gradients[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
     return vectors[largest(gradients, size)];
 }

@@ -336,9 +336,9 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         Sprite* const sprite = &sprites.sprite[s];
         const int j = field.res * sprite->where.y;
         const int i = field.res * sprite->where.x;
-        for(int a = -field.res / 2; a < field.res / 2 + 1; a++)
-        for(int b = -field.res / 2; b < field.res / 2 + 1; b++)
-            field.mesh[j + a][i + b] -= sprite->scent;
+        for(int a = -field.res / 2; a <= field.res / 2; a++)
+        for(int b = -field.res / 2; b <= field.res / 2; b++)
+            if(xon(field, j + a, i + b)) field.mesh[j + a][i + b] -= sprite->scent;
     }
     // Hero scent attracts.
     const int j = field.res * hero.where.y;

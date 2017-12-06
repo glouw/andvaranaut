@@ -160,7 +160,6 @@ static inline void fill(const Scanline sl, const uint32_t color)
 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
-    fill(sl, 0xFF0000);
     return
     uraster(sl, hits, hero, map),
     lraster(sl, hits, hero, map, current),

@@ -24,3 +24,5 @@ void xexamine(const Field);
 void xdeposit(const Field, const Point p, const float val);
 
 void xruin(const Field);
+
+int xon(const Field field, const int y, const int x);
