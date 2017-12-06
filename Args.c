@@ -30,7 +30,7 @@ Args xparse(const int argc, const char* argv[])
     args.vsync =
         argc >= 5 ?
         strtol(argv[4], NULL, 0)
-        : false;
+        : true;
     // Frames per second.
     args.fps =
         argc >= 6 ?

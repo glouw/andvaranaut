@@ -152,6 +152,7 @@ int xteleporting(const Hero hero, const Map map, const Input input, const int ti
 Hero xteleport(Hero hero, const Map map)
 {
     hero.torch = xsnuff();
+    hero.yaw = 1.0;
     if(xblok(hero.where, map.floring) == '~') hero.floor++;
     if(xblok(hero.where, map.ceiling) == '~') hero.floor--;
     return hero;
