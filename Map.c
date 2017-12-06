@@ -52,7 +52,7 @@ Map xreopen(const Map map, const int floor)
     return xopen(floor);
 }
 
-void xsave(const Map map, const int floor, const int ticks)
+void xmsave(const Map map, const int floor, const int ticks)
 {
     // Time delay. Whatever feels best.
     static int last;

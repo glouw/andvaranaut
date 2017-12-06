@@ -84,10 +84,10 @@ static Sprite registrar(const int ascii, const Point where)
     }
 }
 
-Sprites xwake(const int level)
+Sprites xwake(const int floor)
 {
     char which[MINTS];
-    sprintf(which, "%d", level);
+    sprintf(which, "%d", floor);
     char* const path = xconcat("sprites/lvl", which);
     FILE* const file = fopen(path, "r");
     Sprites sprites;
@@ -113,10 +113,32 @@ void xkill(const Sprites sprites)
     free(sprites.sprite);
 }
 
-Sprites xrewake(const Sprites sprites, const int level)
+Sprites xrewake(const Sprites sprites, const int floor)
 {
     xkill(sprites);
-    return xwake(level);
+    return xwake(floor);
+}
+
+void xssave(const Sprites sprites, const int floor, const int ticks)
+{
+    // Time delay. Whatever feels best.
+    static int last;
+    if(ticks < last + 6)
+        return;
+    last = ticks;
+    // Save.
+    char which[MINTS];
+    sprintf(which, "%d", floor);
+    char* const path = xconcat("sprites/lvl", which);
+    FILE* const file = fopen(path, "w");
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        fprintf(file, "%c,%f,%f\n", sprite->ascii, sprite->where.x, sprite->where.y);
+    }
+    printf("%s saved!\n", path);
+    fclose(file);
+    free(path);
 }
 
 Sprites xlay(Sprites sprites, const Map map, const Overview ov)

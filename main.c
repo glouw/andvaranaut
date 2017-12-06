@@ -29,7 +29,11 @@ int main(const int argc, const char* argv[])
         if(editing)
         {
             // Saving map
-            if(input.key[SDL_SCANCODE_F5]) xsave(map, hero.floor, ticks);
+            if(input.key[SDL_SCANCODE_F5])
+            {
+                xmsave(map, hero.floor, ticks);
+                xssave(sprites, hero.floor, ticks);
+            }
             // The mouse cursor must shown when editing.
             SDL_SetRelativeMouseMode(SDL_FALSE);
             overview = xupdate(overview, input, sdl.xres, sdl.textures.count);

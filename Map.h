@@ -25,4 +25,4 @@ void xedit(const Map, const Overview);
 
 int xout(const Map, const Point where);
 
-void xsave(const Map map, const int floor, const int ticks);
+void xmsave(const Map map, const int floor, const int ticks);
