@@ -36,7 +36,7 @@ int main(const int argc, const char* argv[])
             xview(sdl, overview, sprites, map, ticks);
             // Map editing
             xedit(map, overview);
-            sprites = xlay(sprites, map, overview, ticks);
+            sprites = xlay(sprites, map, overview);
         }
         // Play mode.
         else

@@ -119,13 +119,8 @@ Sprites xrewake(const Sprites sprites, const int level)
     return xwake(level);
 }
 
-Sprites xlay(Sprites sprites, const Map map, const Overview ov, const int ticks)
+Sprites xlay(Sprites sprites, const Map map, const Overview ov)
 {
-    // Time delay check. Time dela is arbitrary to feel.
-    static int last;
-    const int delay = 1;
-    if(ticks < last + delay) return sprites;
-    last = ticks;
     // Out of bounds check.
     if(xout(map, ov.where)) return sprites;
     // Ascii sprite check.

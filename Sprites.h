@@ -36,6 +36,6 @@ Sprites xorient(const Sprites, const Hero);
 
 int xissprite(const int ascii);
 
-Sprites xlay(Sprites, const Map, const Overview, const int ticks);
+Sprites xlay(Sprites, const Map, const Overview);
 
 void xcaretake(Sprites, const Hero, const Input, const Map);

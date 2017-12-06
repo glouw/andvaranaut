@@ -42,7 +42,7 @@ Overview xupdate(Overview ov, const Input input, const int xres, const int textu
     const int seen = xres / ov.w;
     if(textures - ov.wheel < seen) ov.wheel = textures - seen;
     // The left mouse button will update the x and y tile position of the overview.
-    if(input.l)
+    if(input.lu)
     {
         // Overview global tiles.
         ov.where.x = (input.x - ov.px) / (float) ov.w;
@@ -63,7 +63,7 @@ Overview xupdate(Overview ov, const Input input, const int xres, const int textu
     // is out of map range or not before continuing. Reset here if left input is not pressed.
     else ov = reset(ov);
     // The right mouse button will pan the overview x and y pixels.
-    if(input.r)
+    if(input.ru)
     {
         ov.px += input.dx;
         ov.py += input.dy;

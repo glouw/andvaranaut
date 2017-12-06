@@ -16,9 +16,13 @@ typedef struct
     int dx;
     int dy;
     // Mouse Left, middle, right button state.
-    int l;
-    int m;
-    int r;
+    int l; // Left.
+    int m; // Middle.
+    int r; // Right.
+    // Mouse button released.
+    int lu; // Left.
+    int mu; // Middle.
+    int ru; // Right.
 }
 Input;
 
