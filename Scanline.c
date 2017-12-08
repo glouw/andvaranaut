@@ -39,10 +39,7 @@ static void wraster(const Scanline sl, const Ray r)
         // Get pixel.
         const Point offset = { (x - r.proj.bot) / r.proj.size, r.hit.offset };
         // Shade and transfer pixel.
-        xfer(sl, x,
-            offset,
-            r.hit.surface,
-            xilluminate(r.torch, r.traceline.corrected.x));
+        xfer(sl, x, offset, r.hit.surface, xilluminate(r.torch, r.traceline.corrected.x));
     }
 }
 
@@ -57,10 +54,7 @@ static void fraster(const Scanline sl, const Ray r, const Map map)
         // Do not render where there will be a pit.
         if(!tile) continue;
         // Shade and transfer pixel.
-        xfer(sl, x,
-            offset,
-            tile,
-            xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
+        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
     }
 }
 
@@ -75,10 +69,7 @@ static void craster(const Scanline sl, const Ray r, const Map map)
         // Do not render where there will a second ceiling.
         if(!tile) continue;
         // Shade and transfer pixel.
-        xfer(sl, x,
-            offset,
-            tile,
-            xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
+        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
     }
 }
 
@@ -142,7 +133,7 @@ static void lraster(const Scanline sl, const Hits hits, const Hero hero, const M
     }
 }
 
-// Eye level rasterer.
+// Eye level rasterer. Returns a z-buffer element for the sprites.
 static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     const Ray ray = xcalc(hero, hits.walling, 0.0, sl.sdl.yres);
@@ -160,8 +151,8 @@ static inline void fill(const Scanline sl, const uint32_t color)
 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
+    uraster(sl, hits, hero, map);
+    lraster(sl, hits, hero, map, current);
     return
-    uraster(sl, hits, hero, map),
-    lraster(sl, hits, hero, map, current),
     eraster(sl, hits, hero, map);
 }

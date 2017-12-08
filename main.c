@@ -14,28 +14,22 @@ int main(const int argc, const char* argv[])
     Input input = xready();
     Overview overview = xinit();
     Current current = xstart();
-    // A level editor ships with the engine. The level editor will swap the player's renderering
-    // view with an overhead view of the sprites and the map. The user can lay down floor, wall,
-    // and ceiling tiles while moving and adding new sprites.
-    int editing = false;
     // Game loop.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);
         // Edit mode.
-        if(input.key[SDL_SCANCODE_F2]) editing = true;
-        if(input.key[SDL_SCANCODE_F3]) editing = false;
-        if(editing)
+        if(input.key[SDL_SCANCODE_LSHIFT])
         {
+            // The mouse cursor must shown when editing.
+            SDL_SetRelativeMouseMode(SDL_FALSE);
             // Saving map
             if(input.key[SDL_SCANCODE_F5])
             {
                 xmsave(map, hero.floor, ticks);
                 xssave(sprites, hero.floor, ticks);
             }
-            // The mouse cursor must shown when editing.
-            SDL_SetRelativeMouseMode(SDL_FALSE);
             overview = xupdate(overview, input, sdl.xres, sdl.textures.count);
             xview(sdl, overview, sprites, map, ticks);
             // Map editing

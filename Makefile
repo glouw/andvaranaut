@@ -2,12 +2,13 @@
 CC = gcc -std=c99
 
 # Project name.
-PROJ = water
+PROJ = andvaranaut
 
 # Source files.
 SRCS = main.c
 SRCS+= util.c
 SRCS+= Args.c
+SRCS+= Bundle.c
 SRCS+= Current.c
 SRCS+= Compass.c
 SRCS+= Field.c

@@ -9,3 +9,6 @@ typedef struct
     Group g;
 }
 Bundle;
+
+// Bundle rasterer. Renders scanlines <a> to <b>.
+int xbraster(void* const bundle);

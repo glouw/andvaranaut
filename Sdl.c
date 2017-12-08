@@ -5,6 +5,7 @@
 #include "Bundle.h"
 #include "util.h"
 
+// Assumes renderer is rotated 90 degrees.
 static void churn(const Sdl sdl)
 {
     const SDL_Rect dst = {
@@ -13,15 +14,16 @@ static void churn(const Sdl sdl)
         sdl.yres,
         sdl.xres
     };
-    // Does a 90 degree flip upon copy.
     SDL_RenderCopyEx(sdl.renderer, sdl.canvas, NULL, &dst, -90, NULL, SDL_FLIP_NONE);
 }
 
+// Presents the entire renderer to the screen.
 void xpresent(const Sdl sdl)
 {
     SDL_RenderPresent(sdl.renderer);
 }
 
+// Clips a sprite, left or right, based on zbuffer.
 static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Point* const zbuff)
 {
     SDL_Rect seen = frame;
@@ -105,15 +107,21 @@ Sdl xsetup(const Args args)
     Sdl sdl;
     xzero(sdl);
     sdl.window = SDL_CreateWindow("water", 0, 0, args.xres, args.yres, SDL_WINDOW_SHOWN);
-    if(!sdl.window) xbomb("error: could not open window\n");
-    sdl.renderer = SDL_CreateRenderer(sdl.window, -1,
-        // Hardware acceleration
+    if(!sdl.window)
+        xbomb("error: could not open window\n");
+    sdl.renderer = SDL_CreateRenderer(
+        sdl.window,
+        -1,
+        // Hardware acceleration. 
         SDL_RENDERER_ACCELERATED |
-        // Screen Vertical Sync
-        (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0));
-    // The canvas texture will be used for per pixel drawings. This will be used to the walls, floors, and ceiling.
+        // Screen Vertical Sync on / off.
+        (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0x0));
+    // The canvas texture will be used for per pixel drawings.
+    // This will be used to the walls, floors, and ceiling.
     // Notice the flip between yres and xres in the following call for the sdl canvas texture.
-    // Notice how ARGB8888 is used for the hardware. This is the fastest option for the GPU.
+    // This was done for fast caching.
+    // Notice how ARGB8888 is used for the hardware.
+    // This is the fastest option for the GPU.
     sdl.canvas = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, args.yres, args.xres);
     sdl.surfaces = xpull();
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
@@ -123,6 +131,7 @@ Sdl xsetup(const Args args)
     return sdl;
 }
 
+// Program exit cleanup.
 void xrelease(const Sdl sdl)
 {
     xclean(sdl.surfaces);
@@ -133,59 +142,49 @@ void xrelease(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-// Group rasterer.
-static int graster(void* const what)
-{
-    Bundle* const t = (Bundle*) what;
-    for(int x = t->a; x < t->b; x++)
-    {
-        const Scanline scanline = { t->g.sdl, t->g.display, x };
-        const Point column = xlerp(t->g.camera, x / (float) t->g.sdl.xres);
-        const Hits hits = xmarch(t->g.hero.where, column, t->g.map);
-        t->g.zbuff[x] = xraster(scanline, hits, t->g.hero, t->g.current, t->g.map);
-    }
-    return 0;
-}
-
 void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Current current, const int ticks)
 {
+    // Z-buffer will be populated once the map renderering is finished.
     Point* const zbuff = xtoss(Point, sdl.xres);
-    const Line camera = xrotate(hero.fov, hero.theta);
+    // The display must be locked for per-pixel writes.
     const Display display = xlock(sdl);
-    // Prepare all renderer thread objects.
-    const int cpus = SDL_GetCPUCount();
-#define max 8
-    const int nthreads = cpus > max ? max : cpus;
+    const Line camera = xrotate(hero.fov, hero.theta);
+    // Rendering bundles are used for rendering a
+    // portion of the map (ceiling, walls, and flooring) to the display.
+    // One thread per CPU is allocated.
+    // Common data for all threads are grouped.
     const Group group = { zbuff, camera, display, sdl, hero, current, map };
-    Bundle bundles[max];
-    for(int i = 0; i < nthreads; i++)
+    const int cpus = SDL_GetCPUCount();
+    Bundle* const bundles = xtoss(Bundle, cpus);
+    for(int i = 0; i < cpus; i++)
     {
-        bundles[i].a = (i + 0) * sdl.xres / nthreads;
-        bundles[i].b = (i + 1) * sdl.xres / nthreads;
+        bundles[i].a = (i + 0) * sdl.xres / cpus;
+        bundles[i].b = (i + 1) * sdl.xres / cpus;
         bundles[i].g = group;
     };
-    // Launch all renderer threads.
-    SDL_Thread* threads[max];
-    for(int i = 0; i < nthreads; i++)
-        threads[i] = SDL_CreateThread(graster, "n/a", &bundles[i]);
-#undef max
-    // Wait on renderer threads.
-    for(int i = 0; i < nthreads; i++)
+    // Launch all threads and wait.
+    SDL_Thread** const threads = xtoss(SDL_Thread*, cpus);
+    for(int i = 0; i < cpus; i++)
+        threads[i] = SDL_CreateThread(xbraster, "n/a", &bundles[i]);
+    for(int i = 0; i < cpus; i++)
     {
-        int status;
+        int status; /* Ignored */
         SDL_WaitThread(threads[i], &status);
-        (void) status; /* Ignore */
     }
+    // Per-pixel writes are done. Unlock the display.
     xunlock(sdl);
-    // The scene was rendered on its side for fast caching. Rotate the scene.
+    // The map was rendered on its side. Rotate the map upwards.
     churn(sdl);
-    // Orient sprite location and theta relative to player.
+    // Sort the sprites furthest to nearest.
     const Sprites relatives = xorient(sprites, hero);
-    // Use the wall zbuffer to render the sprites.
+    // Use the zbuffer to render the sprites.
+    // The closest sprites will overlap the furthest sprites.
     paste(sdl, relatives, zbuff, hero, ticks);
-    // Cleanup all local heap allocations.
+    // Cleanup.
     xkill(relatives);
     free(zbuff);
+    free(bundles);
+    free(threads);
 }
 
 static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
@@ -197,8 +196,7 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 // Copy over all tiles for the grid layout.
 static void gridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {
-    // Clear renderer and copy over block overview tiles.
-    // The block overview tile will snap to the grid.
+    // Clear renderer and copy over block overview tiles. The block overview tile will snap to the grid.
     SDL_RenderClear(sdl.renderer);
     for(int j = 0; j < map.rows; j++)
     for(int i = 0; i < map.cols; i++)

@@ -7,6 +7,8 @@
 #include "Current.h"
 #include "Map.h"
 
+// Common objects used across rendering threads.
+
 typedef struct
 {
     Point* zbuff;
