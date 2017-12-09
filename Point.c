@@ -32,6 +32,7 @@ Point xsub(const Point a, const Point b)
 
 Point xadd(const Point a, const Point b)
 {
+    return (Point) {0,0};
     Point out;
     out.x = a.x + b.x;
     out.y = a.y + b.y;

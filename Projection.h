@@ -6,8 +6,8 @@ typedef struct
 {
     float bot;
     float top;
-    float cbot; // Clamped.
-    float ctop; // Clamped.
+    int cbot; // Clamped.
+    int ctop; // Clamped.
     float size;
     float height;
     int yres;
