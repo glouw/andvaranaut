@@ -61,15 +61,15 @@ static float hduck(const Hero hero)
 }
 
 // Swimming height.
-static float hswim(const Hero hero, const Current current)
+static float hswim(const Hero hero)
 {
-    return (0.5 + current.height) * hero.tall;
+    return 0.1 * hero.tall;
 }
 
-static Hero vert(Hero hero, const Map map, const Input input, const Current current)
+static Hero vert(Hero hero, const Map map, const Input input)
 {
     const int land = xtile(hero.where, map.floring);
-    const float tall = land ? hero.tall : hswim(hero, current);
+    const float tall = land ? hero.tall : hswim(hero);
     // Jump.
     if(input.key[SDL_SCANCODE_SPACE] && hero.height <= tall) hero.vvel = 0.05;
     // Apply.
@@ -104,7 +104,7 @@ static Point accelerate(const Hero hero)
 static Hero move(Hero hero, const Map map, const Input input, const Current current)
 {
     const Point last = hero.where;
-    const int swimming = hero.height <= hswim(hero, current);
+    const int swimming = hero.height <= hswim(hero);
     const int crouching = hero.height <= hduck(hero);
     const float speed = swimming ? 0.3 * hero.speed : crouching ? 0.5 * hero.speed : hero.speed;
     // Acceleration.
@@ -191,7 +191,7 @@ Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres)
 Hero xsustain(Hero hero, const Map map, const Input input, const Current current)
 {
     hero = spin(hero, input);
-    hero = vert(hero, map, input, current);
+    hero = vert(hero, map, input);
     hero = move(hero, map, input, current);
     hero = yaw(hero, input);
     hero.torch = xburn(hero.torch);
