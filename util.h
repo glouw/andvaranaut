@@ -56,6 +56,9 @@ void xlicense();
 // Generic type macro for finding min of two type values.
 #define xmin(a, b) ((a) < (b) ? (a) : (b))
 
+// String matching.
+#define equals(a, b) (strcmp(a, b) == 0)
+
 // Misc constants.
 enum
 {

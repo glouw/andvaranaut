@@ -22,24 +22,25 @@ int main(const int argc, const char* argv[])
         // Edit mode.
         if(input.key[SDL_SCANCODE_LSHIFT])
         {
-            // The mouse cursor must shown when editing.
+            // The mouse cursor is shown when editing.
             SDL_SetRelativeMouseMode(SDL_FALSE);
-            // Saving map
+            // Map and sprite editing.
+            overview = xupdate(overview, input, sdl.xres, sdl.textures.count);
+            xedit(map, overview);
+            sprites = xlay(sprites, map, overview);
+            // Saving map and sprites.
             if(input.key[SDL_SCANCODE_F5])
             {
                 xmsave(map, hero.floor, ticks);
                 xssave(sprites, hero.floor, ticks);
             }
-            overview = xupdate(overview, input, sdl.xres, sdl.textures.count);
+            // Render.
             xview(sdl, overview, sprites, map, ticks);
-            // Map editing
-            xedit(map, overview);
-            sprites = xlay(sprites, map, overview);
         }
         // Play mode.
         else
         {
-            // The mouse cursor must be removed when playing.
+            // The mouse cursor is removed when playing.
             SDL_SetRelativeMouseMode(SDL_TRUE);
             // Data update.
             current = xstream(current);
@@ -51,16 +52,15 @@ int main(const int argc, const char* argv[])
             }
             hero = xsustain(hero, map, input, current);
             xcaretake(sprites, hero, input, map);
-            // Video output.
+            // Render.
             xrender(sdl, hero, sprites, map, current, ticks);
         }
         // Update the screen with the final rendered frame.
         xpresent(sdl);
         // User input.
         input = xpump(input);
-        // FPS lock.
-        // The renderer will most likely be using VSYNC.
-        // If the renderer is not using VSYNC, this software time delay will create a soft VSYNC effect.
+        // FPS lock; normally handled with VSYNC.
+        // This software time delay will create a soft delay en-lieu of VSYNC if VSYNC is not present.
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
