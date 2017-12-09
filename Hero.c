@@ -4,9 +4,11 @@
 
 #include <SDL2/SDL.h>
 
+// A focal value of 1.0 will create a 90 degree field of view.
 static Line lens(const float focal)
 {
     Line fov;
+    xzero(fov);
     fov.a.x = focal;
     fov.a.y = -1.0;
     fov.b.x = focal;
@@ -14,20 +16,13 @@ static Line lens(const float focal)
     return fov;
 }
 
-static Point beginning()
-{
-    Point where;
-    where.x = 1.5;
-    where.y = 3.5;
-    return where;
-}
-
 Hero xspawn(const float focal)
 {
     Hero hero;
     xzero(hero);
     hero.fov = lens(focal);
-    hero.where = beginning();
+    hero.where.x = 1.5;
+    hero.where.y = 1.5;
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
     hero.torch = xsnuff();
@@ -46,23 +41,26 @@ static Hero spin(Hero hero, const Input input)
     return hero;
 }
 
+// Head up and down.
 static Hero yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dy * input.sy;
     const float max = 1.99;
     const float min = 0.01;
     hero.yaw =
-        hero.yaw > max ? max : // Max clamp.
-        hero.yaw < min ? min : // Min clamp.
+        hero.yaw > max ? max : /* Max clamp. */
+        hero.yaw < min ? min : /* Min clamp. */
         hero.yaw;
     return hero;
 }
 
+// Ducking height.
 static float hduck(const Hero hero)
 {
     return 0.7 * hero.tall;
 }
 
+// Swimming height.
 static float hswim(const Hero hero, const Current current)
 {
     return (0.5 + current.height) * hero.tall;
@@ -78,12 +76,12 @@ static Hero vert(Hero hero, const Map map, const Input input, const Current curr
     hero.height += hero.vvel;
     // Fall.
     if(hero.height > tall) hero.vvel -= 0.005; else hero.vvel = 0.0, hero.height = tall;
-    // Clamp.
+    // Clamp jumping and falling.
     const float max = 0.95;
     const float min = 0.05;
     if(hero.height > max) hero.height = max;
     if(hero.height < min) hero.height = min;
-    // Crouch - only works on land.
+    // Crouch overload - only works on land.
     if(input.key[SDL_SCANCODE_LCTRL] && land) hero.height = hduck(hero);
     return hero;
 }
@@ -95,6 +93,7 @@ Point xtouch(const Hero hero, const float reach)
     return xadd(hero.where, direction);
 }
 
+// Returns an acceleration vector based on the hero's position.
 static Point accelerate(const Hero hero)
 {
     const Point reference = { 1.0, 0.0 };
@@ -120,9 +119,9 @@ static Hero move(Hero hero, const Map map, const Input input, const Current curr
         if(input.key[SDL_SCANCODE_D]) hero.velocity = xadd(hero.velocity, xrag(acceleration));
         if(input.key[SDL_SCANCODE_A]) hero.velocity = xsub(hero.velocity, xrag(acceleration));
     }
-    // Mass spring damping system.
+    // Mass spring damper if not accelerating.
     else hero.velocity = xmul(hero.velocity, 1.0 - hero.acceleration / speed);
-    // Current sweep.
+    // Current velocity is added to hero velocity if hero is swimming.
     if(swimming) hero.velocity = xadd(hero.velocity, current.velocity);
     // Top speed check.
     if(xmag(hero.velocity) > speed) hero.velocity = xmul(xunt(hero.velocity), speed);
@@ -140,6 +139,9 @@ static Hero move(Hero hero, const Map map, const Input input, const Current curr
 int xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
     static int last;
+    // A delay is required between teleports else hero will
+    // quickly teleport between adjacent floors with a single key press.
+    // The delay is arbitrary (whatever feels best).
     const int delay = 3;
     if(ticks < last + delay)
         return false;
@@ -151,6 +153,8 @@ int xteleporting(const Hero hero, const Map map, const Input input, const int ti
 
 Hero xteleport(Hero hero, const Map map)
 {
+    // The teleport effect is done by reseting the hero yaw to the horizon.
+    // The torch is also put out.
     hero.torch = xsnuff();
     hero.yaw = 1.0;
     if(xblok(hero.where, map.floring) == '~') hero.floor++;
@@ -161,15 +165,26 @@ Hero xteleport(Hero hero, const Map map)
 Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres)
 {
     const Point end = xsub(hit.where, hero.where);
+    // The corrected point is the normal distance from the hero to where the ray hit.
     const Point corrected = xtrn(end, -hero.theta);
+    // Wall projections are calculated calculated based hero view parameters, and the corrected distance.
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, hero.fov.a.x, hero.yaw, corrected, hero.height);
+    // Tracelines are used for wall lighting.
     const Traceline traceline = { trace, corrected, hero.fov };
+    // The engine supports lower, eye level, and upper walls. A shift value greater than zero will
+    // stack the wall projection above the eye level walls while a shift value less than zero will
+    // drop the wall projection below the eye level walls. The shift value determines the height of
+    // the ceiling or the flooring. If a value of 0.0 is given for the shift, wall stacking, nor
+    // dropping, will occur; the ceiling and flooring will not be shifted either.
     const Ray ray = {
         traceline,
         shift > 0.0 ? xstack(projection, shift) : shift < 0.0 ? xdrop(projection, shift) : projection,
-        hit, hero.torch
+        hit,
+        hero.torch
     };
+    // A ray object will hold enough information to draw a wall
+    // projection on the screen with the right lighting value.
     return ray;
 }
 

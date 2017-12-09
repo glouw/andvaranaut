@@ -15,11 +15,11 @@ int main(const int argc, const char* argv[])
     Overview overview = xinit();
     Current current = xstart();
     // Game loop.
-    for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_F1]; renders++)
+    for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_END]; renders++)
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);
-        // Edit mode.
+        // Edit mode. User holds in the left shift button.
         if(input.key[SDL_SCANCODE_LSHIFT])
         {
             // The mouse cursor is shown when editing.
