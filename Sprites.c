@@ -160,6 +160,7 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov)
     return sprites;
 }
 
+// Subtracts the hero's position from all sprite positions
 static void pull(const Sprites sprites, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -169,6 +170,7 @@ static void pull(const Sprites sprites, const Hero hero)
     }
 }
 
+// Adds the hero's position to all sprite positions.
 static void push(const Sprites sprites, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -178,25 +180,31 @@ static void push(const Sprites sprites, const Hero hero)
     }
 }
 
-static int backwards(const void *a, const void* b)
+// Quick sort comparator for sorting sprites furthest to nearest.
+static int backwards(const void* a, const void* b)
 {
-    const Point pa = *(const Point *) a;
-    const Point pb = *(const Point *) b;
+    const Point pa = *(const Point*) a;
+    const Point pb = *(const Point*) b;
     return xmag(pa) < xmag(pb) ? +1 : xmag(pa) > xmag(pb) ? -1 : 0;
 }
 
-static int forewards(const void *a, const void* b)
+// Quick sort comparator for sorting sprites nearest to furthest.
+static int forewards(const void* a, const void* b)
 {
-    const Point pa = *(const Point *) a;
-    const Point pb = *(const Point *) b;
+    const Point pa = *(const Point*) a;
+    const Point pb = *(const Point*) b;
     return xmag(pa) < xmag(pb) ? -1 : xmag(pa) > xmag(pb) ? +1 : 0;
 }
 
-static void sort(const Sprites sprites, const int foreward)
+// Quick sort.
+typedef int (*const Direction)(const void*, const void*);
+
+static void sort(const Sprites sprites, const Direction direction)
 {
-    qsort(sprites.sprite, sprites.count, sizeof(Sprite), foreward ? forewards : backwards);
+    qsort(sprites.sprite, sprites.count, sizeof(Sprite), direction);
 }
 
+// Produces a new copy of all sprites on the heap. Don't forget to free it.
 static Sprites copy(const Sprites sprites)
 {
     Sprites temps;
@@ -207,6 +215,7 @@ static Sprites copy(const Sprites sprites)
     return temps;
 }
 
+// Rotates all sprites around (0,0) by some theta.
 static void turn(const Sprites sprites, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -221,24 +230,30 @@ Sprites xorient(const Sprites sprites, const Hero hero)
     const Sprites copied = copy(sprites);
     pull(copied, hero);
     turn(copied, hero);
-    sort(copied, false);
+    sort(copied, backwards);
+    // The sprites are not pushed back as the sprite renderer
+    // pretends the hero is always centered at (0,0).
     return copied;
 }
 
+// Sorts sprites closest to furthest. Useful for knowing which
+// sprite is closest (eg, for talking, attacking, grabbing).
 static void arrange(const Sprites sprites, const Hero hero)
 {
     pull(sprites, hero);
-    sort(sprites, true);
+    sort(sprites, forewards);
     push(sprites, hero);
 }
 
+// Moves a single sprite. Updates the sprites last position.
+// Must always be used for moving sprites.
 static void place(Sprite* const sprite, const Point to)
 {
     sprite->last = sprite->where;
     sprite->where = to;
 }
 
-// Grabs the closest sprite when using hands.
+// Grabs the closest sprite when <hands> are equipped.
 static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
     if(!input.l)
@@ -252,6 +267,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
             sprite->state = GRABBED;
             xzero(sprite->velocity);
             place(sprite, hand);
+            // Only one sprite is grabbed at a time.
             return;
         }
     }
@@ -269,7 +285,7 @@ static void shove(const Sprites sprites)
         Sprite* const other = &sprites.sprite[i];
         // Ensure the other sprite is not the sprite in hand.
         if(other == grabbed) continue;
-        // Shove.
+        // Shove using the largest width of either the grabbed sprite or the other sprite.
         const float width = xmax(other->width, grabbed->width);
         if(xeql(other->where, grabbed->where, width))
         {
@@ -280,7 +296,8 @@ static void shove(const Sprites sprites)
 }
 
 // Puts a sprite in the last good spot if the sprite goes into a wall.
-// The sprite is stunned and put into a dizzy state.
+// TODO: The sprite is stunned and put into a dizzy state if the sprite went into a wall.
+// TODO: The sprite is stunned and put into a scared state if the sprite went into the water.
 static void bound(const Sprites sprites, const Map map)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -341,7 +358,7 @@ static void move(const Sprites sprites, const Field field, const Point to)
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
     const float scent = 1e3;
-    // Wall and pools repel.
+    // Walls and pit water repel sprites.
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
     {
@@ -349,7 +366,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         const int x = i / field.res;
         // Walls.
         if(map.walling[y][x] != ' ') field.mesh[j][i] = -scent;
-        // Pools.
+        // Water.
         if(map.floring[y][x] == ' ') field.mesh[j][i] = -scent;
     }
     // Sprite scents stack on one another.
@@ -360,9 +377,11 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         const int i = field.res * sprite->where.x;
         for(int a = -field.res / 2; a <= field.res / 2; a++)
         for(int b = -field.res / 2; b <= field.res / 2; b++)
-            if(xon(field, j + a, i + b)) field.mesh[j + a][i + b] -= sprite->scent;
+            // Out of bounds check.
+            if(xon(field, j + a, i + b))
+                field.mesh[j + a][i + b] -= sprite->scent;
     }
-    // Hero scent attracts.
+    // Hero scent attracts but a much larger magnitude than the walls and water.
     const int j = field.res * hero.where.y;
     const int i = field.res * hero.where.x;
     field.mesh[j][i] = 1000.0 * scent;

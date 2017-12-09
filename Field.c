@@ -100,7 +100,7 @@ Point xforce(const Field field, const Point from, const Point to)
     if(dist < 1.33 || dist > (field.aura / field.res) - 1)
         return dead;
     // Otherwise, calculate the accleration vectors by direction.
-    const Point vectors[] = {
+    const Point v[] = {
         {  1, -0 }, // E
         {  1,  1 }, // SE
         {  0,  1 }, // S
@@ -110,18 +110,17 @@ Point xforce(const Field field, const Point from, const Point to)
         {  0, -1 }, // N
         {  1, -1 }, // NE
     };
-    const int size = xlen(vectors);
     // And calculate the acceleration field gradients.
-    float gradients[size];
-    xzero(gradients);
-    for(int i = 0; i < size; i++)
+    float grads[xlen(v)];
+    xzero(grads);
+    for(int i = 0; i < xlen(v); i++)
     {
-        const Point dir = xadd(vectors[i], from);
+        const Point dir = xadd(v[i], from);
         const int y = field.res * from.y, yy = field.res * dir.y;
         const int x = field.res * from.x, xx = field.res * dir.x;
-        if(xon(field, yy, xx)) gradients[i] = field.mesh[yy][xx] - field.mesh[y][x];
+        if(xon(field, yy, xx)) grads[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
-    return vectors[largest(gradients, size)];
+    return v[largest(grads, xlen(v))];
 }
 
 void xdiffuse(const Field field, const Point where)

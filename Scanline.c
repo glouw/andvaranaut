@@ -143,16 +143,11 @@ static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const 
     return ray.corrected;
 }
 
-// Debugging highlighter for finding uncolored pixels.
-static inline void fill(const Scanline sl, const uint32_t color)
-{
-    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, color);
-}
-
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
     #if 0
-    fill(sl, 0xFF0000);
+    // Debugging highlighter for finding uncolored pixels.
+    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, color);
     #endif
     uraster(sl, hits, hero, map);
     lraster(sl, hits, hero, map, current);
