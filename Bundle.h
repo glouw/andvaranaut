@@ -1,14 +1,25 @@
 #pragma once
 
-#include "Group.h"
+#include "Line.h"
+#include "Display.h"
+#include "Sdl.h"
+#include "Hero.h"
+#include "Current.h"
+#include "Map.h"
 
 typedef struct
 {
     int a;
     int b;
-    Group g;
+    Point* zbuff;
+    Line camera;
+    Display display;
+    Sdl sdl;
+    Hero hero;
+    Current current;
+    Map map;
 }
 Bundle;
 
-// Bundle rasterer. Renders scanlines <a> to <b>.
+// Bundle rasterer. Renders scanlines <a> to <b>. Thread safe.
 int xbraster(void* const bundle);

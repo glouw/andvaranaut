@@ -23,7 +23,7 @@ void xpresent(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
-// Clips a sprite, left or right, based on zbuffer.
+// Clips a sprite, left and right, based on zbuffer.
 static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Point* const zbuff)
 {
     SDL_Rect seen = frame;
@@ -63,7 +63,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
         const int size = hero.fov.a.x * sdl.yres / sprite->where.x;
         const int osize = xodd(size) ? size + 1 : size;
-        // Calculate sprite location on screen.
+        // Calculate sprite location on screen. Account for hero yaw and height.
         const int my = sdl.yres / 2 * (sprite->state == GRABBED ? 1.0 : (2.0 - hero.yaw));
         const int mx = sdl.xres / 2;
         const int l = mx - osize / 2;
@@ -89,12 +89,12 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Apply transperancy to the sprite, if required.
         if(sprite->transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
-        // Renders the sprite.
+        // Render the sprite.
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
         /* Cleanup */
-        // Removes transperancy from the sprite.
+        // Remove transperancy from the sprite.
         if(sprite->transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
         // Revert lighting to the sprite.
         SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
@@ -112,16 +112,14 @@ Sdl xsetup(const Args args)
     sdl.renderer = SDL_CreateRenderer(
         sdl.window,
         -1,
-        // Hardware acceleration. 
+        // Hardware acceleration.
         SDL_RENDERER_ACCELERATED |
         // Screen Vertical Sync on / off.
         (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0x0));
-    // The canvas texture will be used for per pixel drawings.
-    // This will be used to the walls, floors, and ceiling.
+    // The canvas texture will be used for per pixel drawings. This will be used to the walls, floors, and ceiling.
     // Notice the flip between yres and xres in the following call for the sdl canvas texture.
-    // This was done for fast caching.
-    // Notice how ARGB8888 is used for the hardware.
-    // This is the fastest option for the GPU.
+    // This was done for fast caching. Upon presenting the canvas will be rotated upwards by 90 degrees.
+    // Notice how ARGB8888 is used for the hardware. This is the fastest option for the GPU.
     sdl.canvas = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, args.yres, args.xres);
     sdl.surfaces = xpull();
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
@@ -131,7 +129,7 @@ Sdl xsetup(const Args args)
     return sdl;
 }
 
-// Program exit cleanup.
+// Cleanup at program exit.
 void xrelease(const Sdl sdl)
 {
     xclean(sdl.surfaces);
@@ -152,20 +150,24 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // Rendering bundles are used for rendering a
     // portion of the map (ceiling, walls, and flooring) to the display.
     // One thread per CPU is allocated.
-    // Common data for all threads are grouped.
-    const Group group = { zbuff, camera, display, sdl, hero, current, map };
     const int cpus = SDL_GetCPUCount();
-    Bundle* const bundles = xtoss(Bundle, cpus);
+    Bundle* const bdl = xtoss(Bundle, cpus);
     for(int i = 0; i < cpus; i++)
     {
-        bundles[i].a = (i + 0) * sdl.xres / cpus;
-        bundles[i].b = (i + 1) * sdl.xres / cpus;
-        bundles[i].g = group;
+        bdl[i].a = (i + 0) * sdl.xres / cpus;
+        bdl[i].b = (i + 1) * sdl.xres / cpus;
+        bdl[i].zbuff = zbuff;
+        bdl[i].camera = camera;
+        bdl[i].display = display;
+        bdl[i].sdl = sdl;
+        bdl[i].hero = hero;
+        bdl[i].current = current;
+        bdl[i].map = map;
     };
-    // Launch all threads and wait.
+    // Launch all threads and wait for their completion.
     SDL_Thread** const threads = xtoss(SDL_Thread*, cpus);
     for(int i = 0; i < cpus; i++)
-        threads[i] = SDL_CreateThread(xbraster, "n/a", &bundles[i]);
+        threads[i] = SDL_CreateThread(xbraster, "n/a", &bdl[i]);
     for(int i = 0; i < cpus; i++)
     {
         int status; /* Ignored */
@@ -178,15 +180,16 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // Sort the sprites furthest to nearest.
     const Sprites relatives = xorient(sprites, hero);
     // Use the zbuffer to render the sprites.
-    // The closest sprites will overlap the furthest sprites.
+    // The furthest sprites are pasted first such that the closer sprites overlap.
     paste(sdl, relatives, zbuff, hero, ticks);
-    // Cleanup.
+    // Tidy up the heap.
     xkill(relatives);
     free(zbuff);
-    free(bundles);
+    free(bdl);
     free(threads);
 }
 
+// Returns true if a tile is clipped off the screen.
 static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 {
     return (to.x > sdl.xres || to.x < -ov.w)
@@ -232,8 +235,7 @@ static void gridl(const Sdl sdl, const Overview ov, const Sprites sprites, const
     }
 }
 
-// Copy over the selection tiles.
-// This will be done on the top row of the screen.
+// Copy over the selection tiles. This will be done on the top row of the screen.
 static void panel(const Sdl sdl, const Overview ov, const int ticks)
 {
     for(int i = ov.wheel; i < sdl.textures.count; i++)

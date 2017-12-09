@@ -39,7 +39,7 @@ static void wraster(const Scanline sl, const Ray r)
         // Get pixel.
         const Point offset = { (x - r.proj.bot) / r.proj.size, r.hit.offset };
         // Shade and transfer pixel.
-        xfer(sl, x, offset, r.hit.surface, xilluminate(r.torch, r.traceline.corrected.x));
+        xfer(sl, x, offset, r.hit.surface, xilluminate(r.torch, r.corrected.x));
     }
 }
 
@@ -49,12 +49,12 @@ static void fraster(const Scanline sl, const Ray r, const Map map)
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
+        const Point offset = xlerp(r.trace, xfcast(r.proj, x));
         const int tile = xtile(offset, map.floring);
         // Do not render where there will be a pit.
         if(!tile) continue;
         // Shade and transfer pixel.
-        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
+        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 
@@ -64,12 +64,12 @@ static void craster(const Scanline sl, const Ray r, const Map map)
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
+        const Point offset = xlerp(r.trace, xccast(r.proj, x));
         const int tile = xtile(offset, map.ceiling);
         // Do not render where there will a second ceiling.
         if(!tile) continue;
         // Shade and transfer pixel.
-        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
+        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 
@@ -79,14 +79,14 @@ static void sraster(const Scanline sl, const Ray r, const Map map)
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xccast(r.proj, x));
+        const Point offset = xlerp(r.trace, xccast(r.proj, x));
         // Do not render where there was ceiling.
         if(xtile(offset, map.ceiling)) continue;
         // Shade and transfer pixel.
         xfer(sl, x,
             offset,
             '#' - ' ',
-            xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
+            xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 
@@ -96,14 +96,14 @@ static void praster(const Scanline sl, const Ray r, const Map map, const Current
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         // Get pixel.
-        const Point offset = xlerp(r.traceline.trace, xfcast(r.proj, x));
+        const Point offset = xlerp(r.trace, xfcast(r.proj, x));
         // Do not render where there was a floor.
         if(xtile(offset, map.floring)) continue;
         // Shade and transfer pixel.
         xfer(sl, x,
             xabs(xsub(offset, current.where)),
             '%' - ' ',
-            xilluminate(r.torch, xmag(xsub(offset, r.traceline.trace.a))));
+            xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 
@@ -140,7 +140,7 @@ static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const 
     wraster(sl, ray);
     fraster(sl, ray, map);
     craster(sl, ray, map);
-    return ray.traceline.corrected;
+    return ray.corrected;
 }
 
 // Debugging highlighter for finding uncolored pixels.
