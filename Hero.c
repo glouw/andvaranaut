@@ -179,7 +179,8 @@ Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres)
         trace,
         corrected,
         shift > 0.0 ? xstack(projection, shift) : shift < 0.0 ? xdrop(projection, shift) : projection,
-        hit,
+        hit.surface,
+        hit.offset,
         hero.torch
     };
     // A ray object will hold enough information to draw a wall

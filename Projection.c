@@ -2,6 +2,13 @@
 
 #include "util.h"
 
+typedef struct
+{
+    int bot;
+    int top;
+}
+Clamped;
+
 static Clamped clamp(const int yres, const float bot, const float top)
 {
     const Clamped clamp = {
@@ -12,7 +19,7 @@ static Clamped clamp(const int yres, const float bot, const float top)
 
 Projection xproject(const int yres, const float focal, const float yaw, const Point corrected, const float height)
 {
-    // The corrected x distance must be clamped to a value small enough otherwise the size will
+    // The corrected x distance must be clamped to a value small enough otherwise size will
     // exceed the limitations of single precision floating point. The clamp value is arbitrary.
     const float shift = 0.0;
     const float size = focal * yres / (corrected.x < 1e-5 ? 1e-5 : corrected.x);
@@ -20,8 +27,9 @@ Projection xproject(const int yres, const float focal, const float yaw, const Po
     const float bot = mid + (0.0 - height) * size;
     const float top = mid + (1.0 - height) * size;
     const int level = 0;
+    const Clamped c = clamp(yres, bot, top);
     const Projection projection = {
-        bot, top, clamp(yres, bot, top), size, height, yres, mid, shift, level
+        bot, top, c.bot, c.top, size, height, yres, mid, shift, level
     };
     return projection;
 }
@@ -30,8 +38,9 @@ Projection xstack(const Projection p, const float shift)
 {
     const float bot = p.top - 1.0;
     const float top = p.top - 1.0 + p.size * shift;
+    const Clamped c = clamp(p.yres, bot, top);
     const Projection projection = {
-        bot, top, clamp(p.yres, bot, top), p.size, p.height, p.yres, p.mid, p.shift + shift, p.level + 1
+        bot, top, c.bot, c.top, p.size, p.height, p.yres, p.mid, p.shift + shift, p.level + 1
     };
     return projection;
 }
@@ -40,8 +49,9 @@ Projection xdrop(const Projection p, const float shift)
 {
     const float top = p.bot + 2.0;
     const float bot = p.bot + 2.0 + p.size * shift;
+    const Clamped c = clamp(p.yres, bot, top);
     const Projection projection = {
-        bot, top, clamp(p.yres, bot, top), p.size, p.height, p.yres, p.mid, p.shift + shift, p.level - 1
+        bot, top, c.bot, c.top, p.size, p.height, p.yres, p.mid, p.shift + shift, p.level - 1
     };
     return projection;
 }

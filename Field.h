@@ -3,6 +3,8 @@
 #include "Map.h"
 #include "Hero.h"
 
+// Path finding. Uses collabortive diffisuion.
+
 typedef struct
 {
     float** mesh;
@@ -13,6 +15,7 @@ typedef struct
 }
 Field;
 
+// Collaborative Diffusion.
 void xdiffuse(const Field, const Point where);
 
 Field xprepare(const Map, const float aura);

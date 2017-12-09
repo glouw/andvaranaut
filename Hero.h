@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "Input.h"
 #include "Current.h"
+#include "Hits.h"
 
 typedef struct
 {
