@@ -114,7 +114,7 @@ static void uraster(const Scanline sl, const Hits hits, const Hero hero, const M
     {
         const Hit* const which = hit;
         // TODO: Maybe randomize the height? Maybe random per level?
-        const Ray hind = xcalc(hero, *which, 3.0, sl.sdl.yres);
+        const Ray hind = xcalc(hero, *which, 3.0, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0) sraster(sl, hind, map);
         wraster(sl, hind);
     }
@@ -127,7 +127,7 @@ static void lraster(const Scanline sl, const Hits hits, const Hero hero, const M
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
-        const Ray hind = xcalc(hero, *which, current.height, sl.sdl.yres);
+        const Ray hind = xcalc(hero, *which, current.height, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0) praster(sl, hind, map, current);
         wraster(sl, hind);
     }
@@ -136,7 +136,7 @@ static void lraster(const Scanline sl, const Hits hits, const Hero hero, const M
 // Eye level rasterer. Returns a z-buffer element for the sprites.
 static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
-    const Ray ray = xcalc(hero, hits.walling, 0.0, sl.sdl.yres);
+    const Ray ray = xcalc(hero, hits.walling, 0.0, sl.sdl.yres, sl.sdl.xres);
     wraster(sl, ray);
     fraster(sl, ray, map);
     craster(sl, ray, map);

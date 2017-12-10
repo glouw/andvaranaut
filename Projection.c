@@ -17,12 +17,12 @@ static Clamped clamp(const int yres, const float bot, const float top)
     return clamp;
 }
 
-Projection xproject(const int yres, const float focal, const float yaw, const Point corrected, const float height)
+Projection xproject(const int yres, const int xres, const float focal, const float yaw, const Point corrected, const float height)
 {
     // The corrected x distance must be clamped to a value small enough otherwise size will
     // exceed the limitations of single precision floating point. The clamp value is arbitrary.
     const float shift = 0.0;
-    const float size = focal * yres / (corrected.x < 1e-5 ? 1e-5 : corrected.x);
+    const float size = (focal * xres / 2.0) / (corrected.x < 1e-5 ? 1e-5 : corrected.x);
     const float mid = yaw * yres / 2.0;
     const float bot = mid + (0.0 - height) * size;
     const float top = mid + (1.0 - height) * size;

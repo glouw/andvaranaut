@@ -61,7 +61,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Move onto the next sprite if this sprite is behind the player.
         if(sprite->where.x < 0) continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
-        const int size = hero.fov.a.x * sdl.yres / sprite->where.x;
+        const float focal = hero.fov.a.x;
+        const int size = (focal * sdl.xres / 2.0) / sprite->where.x;
         const int osize = xodd(size) ? size + 1 : size;
         // Calculate sprite location on screen. Account for hero yaw and height.
         const int my = sdl.yres / 2 * (sprite->state == GRABBED ? 1.0 : (2.0 - hero.yaw));

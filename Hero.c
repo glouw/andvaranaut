@@ -162,14 +162,14 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres)
+Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres, const int xres)
 {
     const Point end = xsub(hit.where, hero.where);
     // The corrected point is the normal distance from the hero to where the ray hit.
     const Point corrected = xtrn(end, -hero.theta);
     // Wall projections are calculated calculated based hero view parameters, and the corrected distance.
     const Line trace = { hero.where, hit.where };
-    const Projection projection = xproject(yres, hero.fov.a.x, hero.yaw, corrected, hero.height);
+    const Projection projection = xproject(yres, xres, hero.fov.a.x, hero.yaw, corrected, hero.height);
     // The engine supports lower, eye level, and upper walls. A shift value greater than zero will
     // stack the wall projection above the eye level walls while a shift value less than zero will
     // drop the wall projection below the eye level walls. The shift value determines the height of
