@@ -79,8 +79,8 @@ static Args defaults()
     Args args;
     xzero(args);
     args.xres = 800;
-    args.yres = 400;
-    args.focal = 1.19178; /* About 100 degrees. */
+    args.yres = 600;
+    args.focal = 1.0; /* 90 Degrees. */
     args.vsync = true;
     args.fps = 60;
     return args;
