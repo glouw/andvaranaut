@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <SDL2/SDL.h>
 
 void help()
 {
@@ -24,8 +25,10 @@ static void print(const Args args)
     "y-resolution: %d\n"
     "focal length: %f\n"
     "VSync       : %s\n"
-    "FPS         : %d\n",
-    args.xres, args.yres, args.focal, args.vsync ? "t" : "f", args.fps);
+    "FPS         : %d\n"
+    "Using %d thread(s) for the renderer.\n",
+    args.xres, args.yres, args.focal, args.vsync ? "t" : "f", args.fps,
+    SDL_GetCPUCount());
 }
 
 // Parses command line arguments.
@@ -79,7 +82,7 @@ static Args defaults()
     Args args;
     xzero(args);
     args.xres = 800;
-    args.yres = 600;
+    args.yres = 450;
     args.focal = 1.0; /* 90 Degrees. */
     args.vsync = true;
     args.fps = 60;
