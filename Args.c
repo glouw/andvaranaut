@@ -6,10 +6,26 @@
 #include <stdlib.h>
 #include <time.h>
 
+void help()
+{
+    xlicense();
+    xbomb(
+    "-x: x-resolution [800]\n"
+    "-y: y-resolution [400]\n"
+    "-f: focal length [1.0]\n"
+    "-v: VSync        [t,f]\n"
+    "-p: FPS          [60]\n");
+}
+
 static void print(const Args args)
 {
-    printf("%d\n%d\n%f\n%d\n%d\n",
-        args.xres, args.yres, args.focal, args.vsync, args.fps);
+    printf(
+    "x-resolution: %d\n"
+    "y-resolution: %d\n"
+    "focal length: %f\n"
+    "VSync       : %s\n"
+    "FPS         : %d\n",
+    args.xres, args.yres, args.focal, args.vsync ? "t" : "f", args.fps);
 }
 
 // Parses command line arguments.
@@ -18,6 +34,7 @@ static Args parsed(Args args, const int argc, const char* argv[])
     for(int i = 0; i < argc; i++)
         if(argv[i][0] == '-')
         {
+            if(argv[i][1] == 'h') help();
             // Out of bounds check.
             if(i + 1 == argc)
                 break;

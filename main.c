@@ -4,7 +4,6 @@
 int main(const int argc, const char* argv[])
 {
     srand(time(0));
-    xlicense();
     const Args args = xparse(argc, argv);
     // Data init.
     Hero hero = xspawn(args.focal);
