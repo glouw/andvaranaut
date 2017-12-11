@@ -13,6 +13,7 @@ int main(const int argc, const char* argv[])
     Input input = xready();
     Overview overview = xinit();
     Current current = xstart();
+    Gauge gauge = xgnew();
     // Game loop.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_END]; renders++)
     {
@@ -43,6 +44,7 @@ int main(const int argc, const char* argv[])
             SDL_SetRelativeMouseMode(SDL_TRUE);
             // Data update.
             current = xstream(current);
+            gauge = xgwind(gauge, input);
             if(xteleporting(hero, map, input, ticks))
             {
                 hero = xteleport(hero, map);
@@ -53,6 +55,7 @@ int main(const int argc, const char* argv[])
             xcaretake(sprites, hero, input, map);
             // Render.
             xrender(sdl, hero, sprites, map, current, ticks);
+            xdgauge(sdl, gauge);
         }
         // Update the screen with the final rendered frame.
         xpresent(sdl);
@@ -65,6 +68,7 @@ int main(const int argc, const char* argv[])
         SDL_Delay(ms < 0 ? 0 : ms);
     }
     // Cleanup.
+    xgfree(gauge);
     xrelease(sdl);
     xclose(map);
     xkill(sprites);

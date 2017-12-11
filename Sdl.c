@@ -59,7 +59,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
     {
         Sprite* const sprite = &sprites.sprite[which];
         // Move onto the next sprite if this sprite is behind the player.
-        if(sprite->where.x < 0) continue;
+        if(sprite->where.x < 0)
+            continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
         const float focal = hero.fov.a.x;
         const int size = (focal * sdl.xres / 2.0) / sprite->where.x;
@@ -72,7 +73,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
         const SDL_Rect target = { l + s, t, osize, osize };
         // Move onto the next sprite if this sprite is off screen.
-        if(target.x + target.w < 0 || target.x >= sdl.xres) continue;
+        if(target.x + target.w < 0 || target.x >= sdl.xres)
+            continue;
         // Get sprite surface and texture.
         const int selected = sprite->ascii - ' ';
         SDL_Surface* const surface = sdl.surfaces.surface[selected];
@@ -84,7 +86,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Calculate how much of the sprite is seen.
         volatile const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
-        if(seen.w <= 0) continue;
+        if(seen.w <= 0)
+            continue;
         // Apply lighting to the sprite.
         const int modding = xilluminate(hero.torch, sprite->where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
@@ -197,8 +200,31 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
         && (to.y > sdl.yres || to.y < -ov.h);
 }
 
-// Copy over all tiles for the grid layout.
-static void gridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
+// Draws all power gauge squares.
+void xdgauge(const Sdl sdl, const Gauge gauge)
+{
+    SDL_SetRenderDrawBlendMode(sdl.renderer, SDL_BLENDMODE_BLEND);
+    for(int i = 0; i < gauge.top; i++)
+    {
+        const float growth = i / (float) gauge.top;
+        const int width = 0x15 * growth;
+        const int color = 0xFF * growth;
+        const int x = 3.0 * gauge.points[i].x - width / 2;
+        const int y = 3.0 * gauge.points[i].y - width / 2;
+        const SDL_Rect disp = {
+            x + sdl.xres / 2,
+            y + sdl.yres / 2,
+            width,
+            width,
+        };
+        SDL_SetRenderDrawColor(sdl.renderer, 0xFF, color, 0x00, 0xFF);
+        SDL_RenderFillRect(sdl.renderer, &disp);
+    }
+    SDL_SetRenderDrawBlendMode(sdl.renderer, SDL_BLENDMODE_NONE);
+}
+
+// Draw tiles for the grid layout.
+static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {
     // Clear renderer and copy over block overview tiles. The block overview tile will snap to the grid.
     SDL_RenderClear(sdl.renderer);
@@ -211,10 +237,12 @@ static void gridl(const Sdl sdl, const Overview ov, const Sprites sprites, const
             ov.party == CEILING ? map.ceiling[j][i] : map.walling[j][i];
         // If ch is zero, then it is empty space. Skip the render.
         const int ch = ascii - ' ';
-        if(ch == 0) continue;
+        if(ch == 0)
+            continue;
         // Otherwise, render the tile.
         const SDL_Rect to = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
-        if(clipping(sdl, ov, to)) continue;
+        if(clipping(sdl, ov, to))
+            continue;
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &to);
     }
     // Put down sprites. Sprites will not snap to the grid.
@@ -231,13 +259,14 @@ static void gridl(const Sdl sdl, const Overview ov, const Sprites sprites, const
             (int) ((ov.h * sprite->where.y - ov.h / 1) + ov.py),
             ov.w, ov.h,
         };
-        if(clipping(sdl, ov, to)) continue;
+        if(clipping(sdl, ov, to))
+            continue;
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[index], &from, &to);
     }
 }
 
-// Copy over the selection tiles. This will be done on the top row of the screen.
-static void panel(const Sdl sdl, const Overview ov, const int ticks)
+// Draw the selection panel.
+static void dpanel(const Sdl sdl, const Overview ov, const int ticks)
 {
     for(int i = ov.wheel; i < sdl.textures.count; i++)
     {
@@ -249,7 +278,8 @@ static void panel(const Sdl sdl, const Overview ov, const int ticks)
             const int h = sdl.surfaces.surface[i]->h / STATES;
             // Copy over the tile. Make animation idle.
             const SDL_Rect from = { w * (ticks % FRAMES), h * IDLE, w, h };
-            if(clipping(sdl, ov, to)) continue;
+            if(clipping(sdl, ov, to))
+                continue;
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
         }
         // Blocks.
@@ -259,8 +289,6 @@ static void panel(const Sdl sdl, const Overview ov, const int ticks)
 
 void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {
-    // All blocks and sprites.
-    gridl(sdl, ov, sprites, map, ticks);
-    // Block and sprite selection panel.
-    panel(sdl, ov, ticks);
+    dgridl(sdl, ov, sprites, map, ticks);
+    dpanel(sdl, ov, ticks);
 }

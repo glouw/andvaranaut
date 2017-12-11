@@ -59,9 +59,5 @@ void xlicense();
 // String matching.
 #define equals(a, b) (strcmp(a, b) == 0)
 
-// Misc constants.
-enum
-{
-    // Minimum array size needed for an integer to be converted to a string.
-    MINTS = (CHAR_BIT * sizeof(int) - 1) / 3 + 2
-};
+// Minimum array size needed for an integer to be converted to a string.
+#define MINTS ((CHAR_BIT * sizeof(int) - 1) / 3 + 2)
