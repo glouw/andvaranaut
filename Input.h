@@ -28,4 +28,4 @@ Input;
 
 Input xpump(Input);
 
-Input xready();
+Input xready(const float sensitivity);

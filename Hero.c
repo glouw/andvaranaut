@@ -32,6 +32,7 @@ Hero xspawn(const float focal)
     hero.floor = 1;
     hero.tall = 0.5;
     hero.height = hero.tall;
+    hero.weapon = SHORT;
     return hero;
 }
 

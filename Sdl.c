@@ -130,6 +130,7 @@ Sdl xsetup(const Args args)
     sdl.xres = args.xres;
     sdl.yres = args.yres;
     sdl.fps = args.fps;
+    sdl.threads = args.threads;
     return sdl;
 }
 
@@ -154,12 +155,11 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // Rendering bundles are used for rendering a
     // portion of the map (ceiling, walls, and flooring) to the display.
     // One thread per CPU is allocated.
-    const int cpus = SDL_GetCPUCount();
-    Bundle* const bdl = xtoss(Bundle, cpus);
-    for(int i = 0; i < cpus; i++)
+    Bundle* const bdl = xtoss(Bundle, sdl.threads);
+    for(int i = 0; i < sdl.threads; i++)
     {
-        bdl[i].a = (i + 0) * sdl.xres / cpus;
-        bdl[i].b = (i + 1) * sdl.xres / cpus;
+        bdl[i].a = (i + 0) * sdl.xres / sdl.threads;
+        bdl[i].b = (i + 1) * sdl.xres / sdl.threads;
         bdl[i].zbuff = zbuff;
         bdl[i].camera = camera;
         bdl[i].display = display;
@@ -169,10 +169,10 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         bdl[i].map = map;
     };
     // Launch all threads and wait for their completion.
-    SDL_Thread** const threads = xtoss(SDL_Thread*, cpus);
-    for(int i = 0; i < cpus; i++)
+    SDL_Thread** const threads = xtoss(SDL_Thread*, sdl.threads);
+    for(int i = 0; i < sdl.threads; i++)
         threads[i] = SDL_CreateThread(xbraster, "n/a", &bdl[i]);
-    for(int i = 0; i < cpus; i++)
+    for(int i = 0; i < sdl.threads; i++)
     {
         int status; /* Ignored */
         SDL_WaitThread(threads[i], &status);
@@ -207,10 +207,10 @@ void xdgauge(const Sdl sdl, const Gauge g)
     for(int i = 0; i < g.top; i++)
     {
         const float growth = i / (float) g.top;
-        const int width = 0x15 * growth;
-        const int color = 0xFF * growth;
-        const int x = g.sensitivity * g.points[i].x - (width - sdl.xres) / 2;
-        const int y = g.sensitivity * g.points[i].y - (width - sdl.yres) / 2;
+        const int width = growth * xmin(sdl.xres, sdl.yres) / 20.0; /* Arbirary scaling. */
+        const int color = growth * 0xFF;
+        const int x = g.points[i].x * g.sfactor - (width - sdl.xres) / 2;
+        const int y = g.points[i].y * g.sfactor - (width - sdl.yres) / 2;
         const SDL_Rect square = { x, y, width, width };
         SDL_SetRenderDrawColor(sdl.renderer, 0xFF, color, 0x00, 0xFF);
         SDL_RenderFillRect(sdl.renderer, &square);
@@ -220,7 +220,7 @@ void xdgauge(const Sdl sdl, const Gauge g)
 // Draw tiles for the grid layout.
 static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {
-    // Clear renderer and copy over block overview tiles. The block overview tile will snap to the grid.
+    // Clear renderer and draw overview tiles.
     SDL_SetRenderDrawColor(sdl.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(sdl.renderer);
     for(int j = 0; j < map.rows; j++)
@@ -230,11 +230,11 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         const int ascii =
             ov.party == FLORING ? map.floring[j][i] :
             ov.party == CEILING ? map.ceiling[j][i] : map.walling[j][i];
-        // If ch is zero, then it is empty space. Skip the render.
+        // If empty space then skip the tile.
         const int ch = ascii - ' ';
         if(ch == 0)
             continue;
-        // Otherwise, render the tile.
+        // Otherwise render the tile.
         const SDL_Rect to = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
         if(clipping(sdl, ov, to))
             continue;

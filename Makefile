@@ -13,25 +13,26 @@ SRCS+= Current.c
 SRCS+= Compass.c
 SRCS+= Display.c
 SRCS+= Field.c
+SRCS+= Found.c
 SRCS+= Gauge.c
 SRCS+= Hero.c
 SRCS+= Hits.c
 SRCS+= Input.c
 SRCS+= Line.c
 SRCS+= Map.c
+SRCS+= Overview.c
 SRCS+= Point.c
+SRCS+= Projection.c
 SRCS+= Sdl.c
 SRCS+= Scanline.c
 SRCS+= Sprites.c
 SRCS+= Surfaces.c
 SRCS+= Textures.c
 SRCS+= Torch.c
-SRCS+= Projection.c
-SRCS+= Overview.c
-SRCS+= Found.c
+SRCS+= Weapon.c
 
 # Warnings flags.
-CFLAGS = -Wshadow -Wall -Wpedantic -Wextra
+CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wimplicit-fallthrough=5
 
 # Debugging flags.
 CFLAGS+= -g

@@ -10,10 +10,10 @@ int main(const int argc, const char* argv[])
     Map map = xopen(hero.floor);
     Sprites sprites = xwake(hero.floor);
     Sdl sdl = xsetup(args);
-    Input input = xready();
+    Input input = xready(args.msen);
     Overview overview = xinit();
     Current current = xstart();
-    Gauge gauge = xgnew(3.0);
+    Gauge gauge = xgnew(args.gfac);
     // Game loop.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_END]; renders++)
     {
@@ -44,7 +44,7 @@ int main(const int argc, const char* argv[])
             SDL_SetRelativeMouseMode(SDL_TRUE);
             // Data update.
             current = xstream(current);
-            gauge = xgwind(gauge, input);
+            gauge = xgwind(gauge, hero.weapon, input);
             if(xteleporting(hero, map, input, ticks))
             {
                 hero = xteleport(hero, map);

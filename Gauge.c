@@ -2,13 +2,13 @@
 
 #include "util.h"
 
-Gauge xgnew(const float sensitivity)
+Gauge xgnew(const float sfactor)
 {
     Gauge g;
     xzero(g);
     g.max = 60;
     g.points = xtoss(Point, g.max); /* About one second. */
-    g.sensitivity = sensitivity;
+    g.sfactor = sfactor;
     return g;
 }
 
@@ -34,8 +34,10 @@ static Gauge reset(Gauge g)
     return g;
 }
 
-Gauge xgwind(Gauge g, const Input input)
+Gauge xgwind(Gauge g, const Weapon weapon, const Input input)
 {
+    if(weapon == HANDS)
+        return g;
     if(input.l)
     {
         // Fizzle out.

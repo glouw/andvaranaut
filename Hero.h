@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Weapon.h"
 #include "Line.h"
 #include "Torch.h"
 #include "Ray.h"
@@ -32,6 +33,7 @@ typedef struct
     float tall;
     // Vertical velocity.
     float vvel;
+    Weapon weapon;
 }
 Hero;
 

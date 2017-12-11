@@ -29,13 +29,13 @@ Input xpump(Input input)
     return input;
 }
 
-Input xready()
+Input xready(const float sensitivity)
 {
     Input input;
     xzero(input);
     // Mouse.
-    input.sx = 0.01;
-    input.sy = 0.01;
+    input.sx = sensitivity;
+    input.sy = sensitivity;
     // Keyboard.
     input.key = SDL_GetKeyboardState(NULL);
     return xpump(input);

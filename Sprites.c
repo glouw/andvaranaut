@@ -258,6 +258,8 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
     if(!input.l)
         return;
+    if(hero.weapon != HANDS)
+        return;
     const Point hand = xtouch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
     {

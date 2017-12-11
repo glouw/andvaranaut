@@ -2,6 +2,7 @@
 
 #include "Point.h"
 #include "Input.h"
+#include "Weapon.h"
 
 typedef struct
 {
@@ -10,14 +11,14 @@ typedef struct
     Point* points;
     int mx;
     int my;
-    float sensitivity;
+    float sfactor;
 }
 Gauge;
 
-Gauge xgnew(const float sensitivity);
+Gauge xgnew(const float sfactor);
 
 void xgfree(const Gauge);
 
 Point xgadd(const Gauge);
 
-Gauge xgwind(Gauge, const Input input);
+Gauge xgwind(Gauge, const Weapon, const Input);

@@ -1,15 +1,53 @@
-- no skill system
-- inventory items acts like a deck of cards
-- items in hand are more effective than items in inventory
-- items work together
-    - polearm + crescent shield give +2 thrust
-- attack direction determined by player
-    - hold for thrust
-    - direction for slash
-- items in hand can discard items in inventory
-- certain items in inventory cannot be dropped
-- items are used by hand movements
-- loot bags drop from enemies
-- loot bags contain up to 3 new items when opened
-- loot bag rarity go by color
-- certain hand combinations can lift and immobalize all enemies
+I N V E N T O R Y
+    - no skill system
+    - inventory items acts like a deck of cards
+    - items in hand are more effective than items in inventory
+    - items work together
+        - polearm + crescent shield give +2 thrust
+    - attack direction determined by player
+        - hold for thrust
+        - direction for slash
+    - items in hand can discard items in inventory
+    - certain items in inventory cannot be dropped
+    - items are used by hand movements
+    - loot bags drop from enemies
+    - loot bags contain up to 3 new items when opened
+    - loot bag rarity go by color
+    - loot bags are opened by being attacked
+    - certain hand combinations can lift and immobalize all enemies
+    - hunger
+    - over over items for description
+
+G U I
+    - lower left event log explains whats happening in game
+    - "excellent leather armor has been added to you inventory!"
+
+A R E A S
+    - room with dead knights
+    - room with seller
+    - kill seller for special items (seller will put up a fight)
+    - kandom map generation
+    - keys open found rooms (legend of zelda like)
+
+S P R I T E S
+    - grass / flowers / trees flammable
+    - state
+    - sprites runs into wall - goes confused - immobalized
+    - sprite falls into water - goes scared - immobalized
+    - can be grabbed and moved
+    - must be attacked in direction
+        - some sprites armored on head == damage reduction for downard attacks
+
+B O S S E S
+    - other human NPC dungeon adventurers
+    - named human names
+    - attack player on sight
+    - very tough
+    - can die to fire
+
+G A U G E
+    - changes color based on item
+
+P L A Y E R
+    - jumping attacks
+    - going into water with fast streams will make you lose items

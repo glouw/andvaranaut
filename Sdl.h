@@ -24,6 +24,8 @@ typedef struct
     Surfaces surfaces;
     // GPU textures of all the surfaces used predominatly for the sprites.
     Textures textures;
+    // CPU rendering threads.
+    int threads;
 }
 Sdl;
 
