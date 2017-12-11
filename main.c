@@ -13,7 +13,7 @@ int main(const int argc, const char* argv[])
     Input input = xready();
     Overview overview = xinit();
     Current current = xstart();
-    Gauge gauge = xgnew();
+    Gauge gauge = xgnew(3.0);
     // Game loop.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_END]; renders++)
     {

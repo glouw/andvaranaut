@@ -26,7 +26,7 @@ static void print(const Args args)
     "focal length: %f\n"
     "VSync       : %s\n"
     "FPS         : %d\n"
-    "Using %d thread(s) for the renderer.\n",
+    "Using %d CPU thread(s) for the renderer.\n",
     args.xres, args.yres, args.focal, args.vsync ? "t" : "f", args.fps,
     SDL_GetCPUCount());
 }

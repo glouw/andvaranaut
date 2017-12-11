@@ -1,0 +1,15 @@
+- no skill system
+- inventory items acts like a deck of cards
+- items in hand are more effective than items in inventory
+- items work together
+    - polearm + crescent shield give +2 thrust
+- attack direction determined by player
+    - hold for thrust
+    - direction for slash
+- items in hand can discard items in inventory
+- certain items in inventory cannot be dropped
+- items are used by hand movements
+- loot bags drop from enemies
+- loot bags contain up to 3 new items when opened
+- loot bag rarity go by color
+- certain hand combinations can lift and immobalize all enemies

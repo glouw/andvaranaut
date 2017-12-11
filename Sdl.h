@@ -39,4 +39,4 @@ void xrender(const Sdl, const Hero, const Sprites, const Map, const Current, con
 // Renders the overview of the map and sprites for editing purposes.
 void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks);
 
-void xdgauge(const Sdl sdl, const Gauge gauge);
+void xdgauge(const Sdl, const Gauge);

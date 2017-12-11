@@ -2,12 +2,13 @@
 
 #include "util.h"
 
-Gauge xgnew()
+Gauge xgnew(const float sensitivity)
 {
     Gauge g;
     xzero(g);
     g.max = 60;
     g.points = xtoss(Point, g.max); /* About one second. */
+    g.sensitivity = sensitivity;
     return g;
 }
 

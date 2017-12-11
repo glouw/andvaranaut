@@ -201,32 +201,27 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 }
 
 // Draws all power gauge squares.
-void xdgauge(const Sdl sdl, const Gauge gauge)
+// As a trained swordsman your sword will always return to the center of the screen.
+void xdgauge(const Sdl sdl, const Gauge g)
 {
-    SDL_SetRenderDrawBlendMode(sdl.renderer, SDL_BLENDMODE_BLEND);
-    for(int i = 0; i < gauge.top; i++)
+    for(int i = 0; i < g.top; i++)
     {
-        const float growth = i / (float) gauge.top;
+        const float growth = i / (float) g.top;
         const int width = 0x15 * growth;
         const int color = 0xFF * growth;
-        const int x = 3.0 * gauge.points[i].x - width / 2;
-        const int y = 3.0 * gauge.points[i].y - width / 2;
-        const SDL_Rect disp = {
-            x + sdl.xres / 2,
-            y + sdl.yres / 2,
-            width,
-            width,
-        };
+        const int x = g.sensitivity * g.points[i].x - (width - sdl.xres) / 2;
+        const int y = g.sensitivity * g.points[i].y - (width - sdl.yres) / 2;
+        const SDL_Rect square = { x, y, width, width };
         SDL_SetRenderDrawColor(sdl.renderer, 0xFF, color, 0x00, 0xFF);
-        SDL_RenderFillRect(sdl.renderer, &disp);
+        SDL_RenderFillRect(sdl.renderer, &square);
     }
-    SDL_SetRenderDrawBlendMode(sdl.renderer, SDL_BLENDMODE_NONE);
 }
 
 // Draw tiles for the grid layout.
 static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {
     // Clear renderer and copy over block overview tiles. The block overview tile will snap to the grid.
+    SDL_SetRenderDrawColor(sdl.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(sdl.renderer);
     for(int j = 0; j < map.rows; j++)
     for(int i = 0; i < map.cols; i++)

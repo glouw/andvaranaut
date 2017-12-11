@@ -10,13 +10,14 @@ typedef struct
     Point* points;
     int mx;
     int my;
+    float sensitivity;
 }
 Gauge;
 
-Gauge xgnew();
+Gauge xgnew(const float sensitivity);
 
-void xgfree(const Gauge g);
+void xgfree(const Gauge);
 
-Point xgadd(const Gauge g);
+Point xgadd(const Gauge);
 
-Gauge xgwind(Gauge g, const Input input);
+Gauge xgwind(Gauge, const Input input);
