@@ -1,17 +1,22 @@
 # andvaranaut
 
+Andvaranaut aims to be a 2.5D dungeon crawler with procedural dungeon generation.
+Your inventory is like a deck of cards; lootbags dropped by enemies are like booster packs.
+
 ![Screenshot](scrots/2017-10-14-155456_800x450_scrot.png)
 
-make; ./andvaranaut
+    make; ./andvaranaut
 
-move: w,a,s,d
+Controls:
 
-turn: mouse
+    move: w,a,s,d
 
-open: e
+    turn: mouse
 
-grab and attack: left mouse button
+    open: e
 
-exit: END
+    grab and attack: left mouse button
 
-edit: hold in left shift
+    exit: End
+
+    edit: hold in left shift
