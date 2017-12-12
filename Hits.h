@@ -16,8 +16,11 @@ struct hit
 
 typedef struct
 {
+    // Linked lists.
+    // Remember to free these hits as they are used.
     Hit* ceiling;
     Hit* floring;
+    // Not a linked list.
     Hit walling;
 }
 Hits;

@@ -32,9 +32,13 @@ static void print(const Args args)
 static void check(const Args args)
 {
     if(args.threads <= 0)
-        xbomb("error: not a valid CPU thread count (-t)\n");
+        xbomb("error: not a valid CPU thread count (-t).\n");
     if(args.xres % args.threads)
         xbomb("error: x-resolution (-x) not divisible by CPU thread count (-t).\n");
+    if(args.xres == 512)
+        printf(
+        "warning: an X-Resolution of 512 is reserved for performance testing\n"
+        "and will exit after 60 frame renders.\n");
 }
 
 // Parses command line arguments.
