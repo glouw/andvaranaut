@@ -156,23 +156,23 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // Rendering bundles are used for rendering a
     // portion of the map (ceiling, walls, and flooring) to the display.
     // One thread per CPU is allocated.
-    Bundle* const bdl = xtoss(Bundle, sdl.threads);
+    Bundle* const b = xtoss(Bundle, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
     {
-        bdl[i].a = (i + 0) * sdl.xres / sdl.threads;
-        bdl[i].b = (i + 1) * sdl.xres / sdl.threads;
-        bdl[i].zbuff = zbuff;
-        bdl[i].camera = camera;
-        bdl[i].display = display;
-        bdl[i].sdl = sdl;
-        bdl[i].hero = hero;
-        bdl[i].current = current;
-        bdl[i].map = map;
+        b[i].a = (i + 0) * sdl.xres / sdl.threads;
+        b[i].b = (i + 1) * sdl.xres / sdl.threads;
+        b[i].zbuff = zbuff;
+        b[i].camera = camera;
+        b[i].display = display;
+        b[i].sdl = sdl;
+        b[i].hero = hero;
+        b[i].current = current;
+        b[i].map = map;
     };
     // Launch all threads and wait for their completion.
     SDL_Thread** const threads = xtoss(SDL_Thread*, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
-        threads[i] = SDL_CreateThread(xbraster, "n/a", &bdl[i]);
+        threads[i] = SDL_CreateThread(xbraster, "n/a", &b[i]);
     for(int i = 0; i < sdl.threads; i++)
     {
         int status; /* Ignored */
@@ -190,7 +190,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // Tidy up the heap.
     xkill(relatives);
     free(zbuff);
-    free(bdl);
+    free(b);
     free(threads);
 }
 
