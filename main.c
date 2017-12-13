@@ -56,7 +56,7 @@ int main(const int argc, const char* argv[])
             // nender.
             xrender(sdl, hero, sprites, map, current, ticks);
             xdgauge(sdl, gauge);
-            xdbars(sdl, hero, ticks);
+            xdmeters(sdl, hero, ticks);
         }
         // Update the screen with the final rendered frame.
         xpresent(sdl);

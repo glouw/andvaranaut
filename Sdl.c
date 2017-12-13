@@ -3,7 +3,6 @@
 #include "Frame.h"
 #include "Scanline.h"
 #include "Bundle.h"
-#include "Bar.h"
 #include "util.h"
 
 // Assumes renderer is rotated 90 degrees.
@@ -219,63 +218,63 @@ void xdgauge(const Sdl sdl, const Gauge g)
 }
 
 // Animates first the liquid then glass for a bar.
-static void dbar(const Sdl sdl, const int ticks, const float stat, const int max, const Bar bar)
+static void dmeter(const Sdl sdl, const int ticks, const Meter m)
 {
     // Bars start at this column on GUI.bmp.
     const int col = 6;
     // Tile <from> size is 16x16.
     const int fs = 16;
     // Will flicker if less than 25% for a stat.
-    const int frame = stat < max / 4.0 ?  'Y' - ' ' + ticks % FRAMES : 'Y' - ' ';
+    const int frame = m.stat < m.max / 4.0 ?
+        'Y' - ' ' + ticks % FRAMES :
+        'Y' - ' ';
     // Tile <to> size is resolution dependent.
     const int ts = sdl.yres / 24;
     /* Liquid. */
-    for(int i = 0; i < xcl(stat); i++)
+    for(int i = 0; i < xcl(m.stat); i++)
     {
         const SDL_Rect fm = {
             // Column.
-            i == xfl(stat) && (xdec(stat) < 0.25) ? (col + 3) * fs :
-            i == xfl(stat) && (xdec(stat) < 0.50) ? (col + 2) * fs :
-            i == xfl(stat) && (xdec(stat) < 0.75) ? (col + 1) * fs : (col + 0) * fs,
+            i == xfl(m.stat) && (xdec(m.stat) < 0.25) ? (col + 3) * fs :
+            i == xfl(m.stat) && (xdec(m.stat) < 0.50) ? (col + 2) * fs :
+            i == xfl(m.stat) && (xdec(m.stat) < 0.75) ? (col + 1) * fs : (col + 0) * fs,
             // Row.
-            bar * fs,
+            m.bar * fs,
             // Dimension
             fs, fs
         };
-        const SDL_Rect to = {
-            i * ts, sdl.yres - bar * ts, ts, ts
-        };
+        const SDL_Rect to = { i * ts, sdl.yres - m.bar * ts, ts, ts };
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[frame], &fm, &to);
     }
     /* Glass. */
-    for(int i = 0; i < max; i++)
+    for(int i = 0; i < m.max; i++)
     {
-        const int where = xfl(stat);
-        const int final = max - 1;
+        const int where = xfl(m.stat);
+        const int final = m.max - 1;
         const int first = 0;
         const SDL_Rect fm = {
             // Column.
             i == where ? (col + 3) * fs :
-                i == first ? (col + 0) * fs :
-                i == final ? (col + 2) * fs : (col + 1) * fs,
+            i == first ? (col + 0) * fs :
+            i == final ? (col + 2) * fs : (col + 1) * fs,
             // Row.
             0,
             // Dimension.
             fs, fs
         };
-        const SDL_Rect to = {
-            i * ts, sdl.yres - bar * ts, ts, ts
-        };
+        const SDL_Rect to = { i * ts, sdl.yres - m.bar * ts, ts, ts };
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[frame], &fm, &to);
     }
 }
 
-void xdbars(const Sdl sdl, const Hero hero, const int ticks)
+void xdmeters(const Sdl sdl, const Hero hero, const int ticks)
 {
-    // Call order does not matter.
-    dbar(sdl, ticks, hero.h, hero.hmax, HEALTH);
-    dbar(sdl, ticks, hero.m, hero.mmax, MANA);
-    dbar(sdl, ticks, hero.f, hero.fmax, FATIGUE);
+    const Meter meters[] = {
+        { hero.h, hero.hmax, HEALTH  },
+        { hero.m, hero.mmax, MANA    },
+        { hero.f, hero.fmax, FATIGUE },
+    };
+    for(int i = 0; i < xlen(meters); i++) dmeter(sdl, ticks, meters[i]);
 }
 
 // Draw tiles for the grid layout.

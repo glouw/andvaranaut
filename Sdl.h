@@ -5,6 +5,7 @@
 #include "Args.h"
 #include "Overview.h"
 #include "Current.h"
+#include "Meter.h"
 #include "Gauge.h"
 
 #include <SDL2/SDL.h>
@@ -43,4 +44,4 @@ void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks)
 
 void xdgauge(const Sdl, const Gauge);
 
-void xdbars(const Sdl sdl, const Hero, const int hearts);
+void xdmeters(const Sdl sdl, const Hero, const int hearts);
