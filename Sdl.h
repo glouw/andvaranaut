@@ -42,3 +42,5 @@ void xrender(const Sdl, const Hero, const Sprites, const Map, const Current, con
 void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks);
 
 void xdgauge(const Sdl, const Gauge);
+
+void xdbars(const Sdl sdl, const int hearts);

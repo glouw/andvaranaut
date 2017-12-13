@@ -52,3 +52,11 @@ P L A Y E R
     - jumping attacks
     - going into water with fast streams will make you lose items
     - holding more than two swords permantly grows another arm
+
+G A M E
+    - Dive down dungeon, cannot go back up
+    - new sprites and map, randomly generated, when diving down
+    - after dive, get message to customize deck with pool
+    - deck pool (100 something cards? cards go here when picked up in dungeon)
+    - deck (30 something cards - used for the level)
+    - deck hand (5 something cards - used while playing)

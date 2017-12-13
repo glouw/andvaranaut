@@ -53,9 +53,10 @@ int main(const int argc, const char* argv[])
             }
             hero = xsustain(hero, map, input, current);
             xcaretake(sprites, hero, input, map);
-            // Render.
+            // nender.
             xrender(sdl, hero, sprites, map, current, ticks);
             xdgauge(sdl, gauge);
+            xdbars(sdl, ticks);
         }
         // Update the screen with the final rendered frame.
         xpresent(sdl);

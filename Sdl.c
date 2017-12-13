@@ -217,6 +217,66 @@ void xdgauge(const Sdl sdl, const Gauge g)
     }
 }
 
+void xdbars(const Sdl sdl, const int ticks)
+{
+    // TODO: Populate these guys with hero stats.
+    const float stat = 5.2;
+    const int max = 8;
+    // Bars start at this column on GUI.bmp.
+    const int col = 6;
+    // Tile size on GUI.bmp is 16x16.
+    const int fs = 16;
+    // To swap between GUI0.bmp and GUI1.bmp for animation.
+    const int frame = 'Y' - ' ';//+ ticks % FRAMES - ' ';
+    // The size to paste on the screen is resolution dependent.
+    const int ts = sdl.xres / 24;
+    const int bar[] = {
+        (col + 0) * fs, // 1.00
+        (col + 1) * fs, // 0.75
+        (col + 2) * fs, // 0.50
+        (col + 3) * fs, // 0.25
+    };
+    /* Liquid. */
+    for(int i = 0; i < xcl(stat); i++)
+    {
+        const SDL_Rect fm = {
+            // Column.
+            i == xfl(stat) && (xdec(stat) < 0.25) ? bar[3] :
+            i == xfl(stat) && (xdec(stat) < 0.50) ? bar[2] :
+            i == xfl(stat) && (xdec(stat) < 0.75) ? bar[1] : bar[0],
+            // Row.
+            fs,
+            // Dimension
+            fs, fs
+        };
+        const SDL_Rect to = {
+            i * ts, sdl.yres - ts, ts, ts
+        };
+        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[frame], &fm, &to);
+    }
+    /* Glass. */
+    for(int i = 0; i < max; i++)
+    {
+        const int where = xfl(stat);
+        const int final = max - 1;
+        const int first = 0;
+        const SDL_Rect fm = {
+            // Column.
+            i == where ? bar[3] :
+            i == first ? bar[0] :
+            i == final ? bar[2] : bar[1],
+            // Row.
+            0,
+            // Dimension.
+            fs, fs
+        };
+        const SDL_Rect to = {
+            i * ts, sdl.yres - ts, ts, ts
+        };
+        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[frame], &fm, &to);
+    }
+}
+
 // Draw tiles for the grid layout.
 static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {
