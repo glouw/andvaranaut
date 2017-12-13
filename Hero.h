@@ -33,6 +33,16 @@ typedef struct
     float tall;
     // Vertical velocity.
     float vvel;
+    // Health.
+    float h;
+    int hmax;
+    // Mana.
+    float m;
+    int mmax;
+    // Fatigue
+    float f;
+    int fmax;
+    // TBD.
     Weapon weapon;
 }
 Hero;

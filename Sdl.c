@@ -270,12 +270,12 @@ static void dbar(const Sdl sdl, const int ticks, const float stat, const int max
     }
 }
 
-void xdbars(const Sdl sdl, const int ticks)
+void xdbars(const Sdl sdl, const Hero hero, const int ticks)
 {
     // Call order does not matter.
-    dbar(sdl, ticks, 5.2, 8, HEALTH);
-    dbar(sdl, ticks, 2.8, 3, MANA);
-    dbar(sdl, ticks, 1.2, 6, FATIGUE);
+    dbar(sdl, ticks, hero.h, hero.hmax, HEALTH);
+    dbar(sdl, ticks, hero.m, hero.mmax, MANA);
+    dbar(sdl, ticks, hero.f, hero.fmax, FATIGUE);
 }
 
 // Draw tiles for the grid layout.
