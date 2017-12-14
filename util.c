@@ -72,8 +72,3 @@ char* xconcat(const char* const a, const char* const b)
     strcat(c, b);
     return c;
 }
-
-void xlicense()
-{
-    puts("Source (C) Gustav Louw GPL3, artwork (C) Cameron Bauer CC BY-NC-SA 4.0");
-}

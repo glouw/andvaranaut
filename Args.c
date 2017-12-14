@@ -2,14 +2,12 @@
 
 #include "util.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 #include <SDL2/SDL.h>
 
 static void print(const Args args)
 {
-    xlicense();
+    puts("Source (C) Gustav Louw GPL3, artwork (C) Cameron Bauer CC BY-NC-SA 4.0");
     printf(
     /* 0 */ "-x: X-Resolution             : %d\n"
     /* 1 */ "-y: Y-Resolution             : %d\n"
@@ -37,8 +35,8 @@ static void check(const Args args)
         xbomb("error: x-resolution (-x) not divisible by CPU thread count (-t).\n");
     if(args.xres == 512)
         printf(
-        "warning: an X-Resolution of 512 is reserved for performance testing\n"
-        "and will exit after 60 frame renders.\n");
+            "warning: an X-Resolution of 512 is reserved for performance testing\n"
+            "and will exit after 60 frame renders.\n");
 }
 
 // Parses command line arguments.
