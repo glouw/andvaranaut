@@ -21,7 +21,3 @@ Controls:
     exit: End
 
     edit: hold in left shift
-
-Art inspired by Platino's DawnLike.
-
-Color palette designed by DawnBringer.
