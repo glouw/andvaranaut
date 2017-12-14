@@ -7,7 +7,7 @@
 
 static void print(const Args args)
 {
-    puts("Source (C) Gustav Louw GPL3, artwork (C) Cameron Bauer CC BY-NC-SA 4.0");
+    puts("Source copyright (C) Gustav Louw GPL3");
     printf(
     /* 0 */ "-x: X-Resolution             : %d\n"
     /* 1 */ "-y: Y-Resolution             : %d\n"
