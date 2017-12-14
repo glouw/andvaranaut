@@ -75,6 +75,5 @@ char* xconcat(const char* const a, const char* const b)
 
 void xlicense()
 {
-    puts("src (C) Gustav Louw GPL3");
-    puts("art (C) Cameron Bauer CC BY-NC-SA 4.0");
+    puts("Source (C) Gustav Louw GPL3, artwork (C) Cameron Bauer CC BY-NC-SA 4.0");
 }
