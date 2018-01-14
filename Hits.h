@@ -4,15 +4,14 @@
 #include "Compass.h"
 #include "Map.h"
 
-typedef struct hit Hit;
-
-struct hit
+typedef struct hit
 {
     int surface;
     float offset;
     Point where;
-    Hit* next;
-};
+    struct hit* next;
+}
+Hit;
 
 typedef struct
 {

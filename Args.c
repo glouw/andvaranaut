@@ -32,7 +32,9 @@ static void check(const Args args)
     if(args.threads <= 0)
         xbomb("error: not a valid CPU thread count (-t).\n");
     if(args.xres % args.threads)
-        xbomb("error: x-resolution (-x) not divisible by CPU thread count (-t).\n");
+        xbomb(
+            "error: x-resolution (-x) not divisible by CPU thread count (-t).\n"
+            "change either the number of rendering theads or resolution.\n");
     if(args.xres == 512)
         printf(
             "warning: an X-Resolution of 512 is reserved for performance testing\n"
@@ -115,14 +117,14 @@ static Args defaults()
 {
     Args args;
     xzero(args);
-    args.xres = 800;
-    args.yres = 450;
-    args.focal = 1.0; /* 90 Degrees. */
+    args.xres = 640;
+    args.yres = 360;
+    args.focal = 1.0; // About 90 degrees.
     args.vsync = true;
     args.fps = 60;
     args.msen = 0.01;
     args.gfac = 3.00;
-    args.threads = SDL_GetCPUCount();
+    args.threads = 8;
     return args;
 }
 
