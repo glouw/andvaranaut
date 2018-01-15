@@ -47,7 +47,9 @@ Attack xgpower(const Gauge g, const Input input)
 {
     Attack none;
     xzero(none);
-    if(g.count < 2)
+    const int last = g.count - 1;
+    const int tail = 6;
+    if(g.count < tail)
         return none;
     if(input.lu)
     {
@@ -60,8 +62,8 @@ Attack xgpower(const Gauge g, const Input input)
             mag += xmag(diff);
         }
         const Point dir = xsub(
-            g.points[g.count - 1],
-            g.points[g.count - 2]);
+            g.points[last],
+            g.points[last - tail]);
         const Attack attack =  { mag, xunt(dir) };
         return xmag(dir) > 0.0 ? attack : none;
     }

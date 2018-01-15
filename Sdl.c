@@ -225,11 +225,9 @@ static void dmeter(const Sdl sdl, const int ticks, const Meter m)
     // Tile <from> size is 16x16.
     const int fs = 16;
     // Will flicker if less than 25% for a stat.
-    const int frame = m.stat < m.max / 4.0 ?
-        'Y' - ' ' + ticks % FRAMES :
-        'Y' - ' ';
+    const int frame = m.stat < m.max / 4.0 ?  (ticks % FRAMES ? ']' : '[' ) - ' ' : '[' - ' ';
     // Tile <to> size is resolution dependent.
-    const int ts = sdl.yres / 24;
+    const int ts = 16.0 * (sdl.xres / (float) sdl.yres);
     /* Liquid. */
     for(int i = 0; i < xcl(m.stat); i++)
     {
@@ -237,7 +235,8 @@ static void dmeter(const Sdl sdl, const int ticks, const Meter m)
             // Column.
             i == xfl(m.stat) && (xdec(m.stat) < 0.25) ? (col + 3) * fs :
             i == xfl(m.stat) && (xdec(m.stat) < 0.50) ? (col + 2) * fs :
-            i == xfl(m.stat) && (xdec(m.stat) < 0.75) ? (col + 1) * fs : (col + 0) * fs,
+            i == xfl(m.stat) && (xdec(m.stat) < 0.75) ? (col + 1) * fs :
+            (col + 0) * fs,
             // Row.
             m.bar * fs,
             // Dimension
@@ -249,14 +248,13 @@ static void dmeter(const Sdl sdl, const int ticks, const Meter m)
     /* Glass. */
     for(int i = 0; i < m.max; i++)
     {
-        const int where = xfl(m.stat);
         const int final = m.max - 1;
         const int first = 0;
         const SDL_Rect fm = {
             // Column.
-            i == where ? (col + 3) * fs :
-            i == first ? (col + 0) * fs :
-            i == final ? (col + 2) * fs : (col + 1) * fs,
+            i == first ? (col + 0) * fs : // Left end of glass bar.
+            i == final ? (col + 2) * fs : // Right end of glass bar.
+            (col + 1) * fs, // Anywhere in the middle of the glass bar.
             // Row.
             0,
             // Dimension.

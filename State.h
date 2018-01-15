@@ -14,7 +14,9 @@ typedef enum
     // Sprite is hurt!
     HURTN, // North
     HURTE, // East
-    HURTW, // West // Number of states present.
+    HURTS, // South
+    HURTW, // West
+    // Number of states
     STATES
 }
 State;

@@ -392,8 +392,8 @@ static void hurt(const Sprites sprites, const Attack attack, const Hero hero, co
             if(fabs(attack.dir.x) > fabs(attack.dir.y))
                 sprite->state = attack.dir.x > 0.0 ? HURTW : HURTE;
             else
-                if(attack.dir.y > 0.0)
-                    sprite->state = HURTN;
+            if(fabs(attack.dir.y) > fabs(attack.dir.x))
+                sprite->state = attack.dir.y > 0.0 ? HURTN : HURTS;
             sprite->ticks = ticks + 5;
             xzero(sprite->velocity);
         }

@@ -32,9 +32,9 @@ Hero xspawn(const float focal)
     hero.floor = 1;
     hero.tall = 0.5;
     hero.height = hero.tall;
-    hero.hlth = hero.maxhlth = 32;
+    hero.hlth = 0.4, hero.maxhlth = 6;
     hero.mana = hero.maxmana = 6;
-    hero.fatg = hero.maxfatg = 16;
+    hero.fatg = hero.maxfatg = 6;
     hero.wep = SHORT;
     return hero;
 }
