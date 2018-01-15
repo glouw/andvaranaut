@@ -2,6 +2,7 @@
 
 #include "Hero.h"
 #include "State.h"
+#include "Attack.h"
 
 typedef struct
 {
@@ -24,6 +25,8 @@ typedef struct
     float scent;
     // If true, the sprite is rendered see through like a ghost.
     int transparent;
+    //
+    int ticks;
 }
 Sprite;
 
@@ -55,7 +58,7 @@ int xissprite(const int ascii);
 Sprites xlay(Sprites, const Map, const Overview);
 
 // Self sustain for all sprites.
-void xcaretake(Sprites, const Hero, const Input, const Map);
+void xcaretake(Sprites, const Hero, const Input, const Map, const Attack, const int ticks);
 
 // Saves sprites to sprite data file.
 void xssave(const Sprites sprites, const int floor, const int ticks);

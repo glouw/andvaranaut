@@ -32,6 +32,7 @@ static Sprite _a_(const Point where)
     return sprite;
 }
 
+// Outlaw.
 static Sprite _b_(const Point where)
 {
     Sprite sprite = born(where);
@@ -39,16 +40,6 @@ static Sprite _b_(const Point where)
     sprite.speed = 0.033;
     sprite.acceleration = 0.0025;
     sprite.width = 0.66;
-    return sprite;
-}
-
-static Sprite _c_(const Point where)
-{
-    Sprite sprite = born(where);
-    sprite.ascii = 'c';
-    sprite.speed = 0.053;
-    sprite.acceleration = 0.0010;
-    sprite.width = 0.80;
     return sprite;
 }
 
@@ -61,26 +52,14 @@ static Sprite _d_(const Point where)
     return sprite;
 }
 
-static Sprite _e_(const Point where)
-{
-    Sprite sprite = born(where);
-    sprite.ascii = 'e';
-    sprite.speed = 0.02;
-    sprite.acceleration = 0.0005;
-    sprite.width = 0.4;
-    return sprite;
-}
-
 static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
     {
         default:
-        case 'a': return _a_(where); // If the ASCII sprite is not found then default to
-        case 'b': return _b_(where); // clutter sprite, though this should never ever happen.
-        case 'c': return _c_(where);
+        case 'a': return _a_(where);
+        case 'b': return _b_(where);
         case 'd': return _d_(where);
-        case 'e': return _e_(where);
     }
 }
 
@@ -258,7 +237,7 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
 {
     if(!input.l)
         return;
-    if(hero.weapon != HANDS)
+    if(hero.wep != HANDS)
         return;
     const Point hand = xtouch(hero, hero.arm);
     for(int i = 0; i < sprites.count; i++)
@@ -328,6 +307,8 @@ static void move(const Sprites sprites, const Field field, const Point to)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        if(xishurt(sprite->state))
+            continue;
         // Do not move the sprite if the sprite is immovable.
         if(sprite->speed == 0.0)
         {
@@ -396,15 +377,50 @@ int xissprite(const int ascii)
     return isalpha(ascii);
 }
 
-void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map)
+static void hurt(const Sprites sprites, const Attack attack, const Hero hero, const Input input, const int ticks)
+{
+    if(!input.lu)
+        return;
+    if(hero.wep == HANDS)
+        return;
+    const Point hand = xtouch(hero, hero.arm);
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(xeql(hand, sprite->where, 2.0))
+        {
+            if(fabs(attack.dir.x) > fabs(attack.dir.y))
+                sprite->state = attack.dir.x > 0.0 ? HURTW : HURTE;
+            else
+                if(attack.dir.y > 0.0)
+                    sprite->state = HURTN;
+            sprite->ticks = ticks + 5;
+            xzero(sprite->velocity);
+        }
+    }
+}
+
+static void idle(const Sprites sprites, const int ticks)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(ticks > sprite->ticks)
+            sprite->state = IDLE;
+    }
+}
+
+void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map, const Attack attack, const int ticks)
 {
     // Sprites need to be arrange closest to hero first.
     arrange(sprites, hero);
+    idle(sprites, ticks);
     // Sprite path finding and movement.
     const Field field = xprepare(map, hero.aura);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where);
     xruin(field);
+    hurt(sprites, attack, hero, input, ticks);
     // Sprite placement - interactive and out of bounds.
     grab(sprites, hero, input);
     shove(sprites);

@@ -23,6 +23,7 @@ SRCS+= Map.c
 SRCS+= Overview.c
 SRCS+= Point.c
 SRCS+= Projection.c
+SRCS+= State.c
 SRCS+= Sdl.c
 SRCS+= Scanline.c
 SRCS+= Sprites.c

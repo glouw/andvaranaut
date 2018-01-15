@@ -204,9 +204,9 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 // As a trained swordsman your sword will always return to the center of the screen.
 void xdgauge(const Sdl sdl, const Gauge g)
 {
-    for(int i = 0; i < g.top; i++)
+    for(int i = 0; i < g.count; i++)
     {
-        const float growth = i / (float) g.top;
+        const float growth = i / (float) g.count;
         const int width = growth * xmin(sdl.xres, sdl.yres) / 20.0; /* Arbirary scaling. */
         const int color = growth * 0xFF;
         const int x = g.points[i].x * g.sfactor - (width - sdl.xres) / 2;
@@ -270,9 +270,9 @@ static void dmeter(const Sdl sdl, const int ticks, const Meter m)
 void xdmeters(const Sdl sdl, const Hero hero, const int ticks)
 {
     const Meter meters[] = {
-        { hero.h, hero.hmax, HEALTH  },
-        { hero.m, hero.mmax, MANA    },
-        { hero.f, hero.fmax, FATIGUE },
+        { hero.hlth, hero.maxhlth, HEALTH  },
+        { hero.mana, hero.maxmana, MANA    },
+        { hero.fatg, hero.maxfatg, FATIGUE },
     };
     for(int i = 0; i < xlen(meters); i++) dmeter(sdl, ticks, meters[i]);
 }

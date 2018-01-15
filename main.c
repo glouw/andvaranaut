@@ -44,7 +44,10 @@ int main(const int argc, const char* argv[])
             SDL_SetRelativeMouseMode(SDL_TRUE);
             // Data update.
             current = xstream(current);
-            gauge = xgwind(gauge, hero.weapon, input);
+            const Attack attack = xgpower(gauge, input); // return Attack type
+            if(attack.power > 0.0)
+                printf("%f %f %f\n", attack.power, attack.dir.x, attack.dir.y);
+            gauge = xgwind(gauge, hero.wep, input);
             if(xteleporting(hero, map, input, ticks))
             {
                 hero = xteleport(hero, map);
@@ -52,8 +55,8 @@ int main(const int argc, const char* argv[])
                 sprites = xrewake(sprites, hero.floor);
             }
             hero = xsustain(hero, map, input, current);
-            xcaretake(sprites, hero, input, map);
-            // nender.
+            xcaretake(sprites, hero, input, map, attack, ticks);
+            // Render.
             xrender(sdl, hero, sprites, map, current, ticks);
             xdgauge(sdl, gauge);
             xdmeters(sdl, hero, ticks);

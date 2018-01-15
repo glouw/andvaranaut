@@ -119,11 +119,11 @@ static Args defaults()
     xzero(args);
     args.xres = 640;
     args.yres = 360;
-    args.focal = 1.0; // About 90 degrees.
+    args.focal = 0.8;
     args.vsync = true;
     args.fps = 60;
-    args.msen = 0.01;
-    args.gfac = 3.00;
+    args.msen = 0.007;
+    args.gfac = 2.0;
     args.threads = 8;
     return args;
 }

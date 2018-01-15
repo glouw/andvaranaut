@@ -11,7 +11,12 @@ typedef enum
     GRABBED,
     // Sprite is doing nothing.
     IDLE,
-    // Number of states present.
+    // Sprite is hurt!
+    HURTN, // North
+    HURTE, // East
+    HURTW, // West // Number of states present.
     STATES
 }
 State;
+
+int xishurt(const State state);
