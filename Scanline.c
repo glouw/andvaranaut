@@ -5,13 +5,15 @@
 // Enabling this performance flag will remove ceiling and floor rastering.
 // This is good for getting work done on old laptops without suffering
 // from low FPS motion sickness.
-#if 1
+#if 0
+# pragma message "WARNING: Performance flag enabled - ceiling and floors will not be rendered"
 # define PERF
 #endif
 
 // Enabling this flag will paint the screen yellow before any of the rendering is done.
 // This is good for seeing where the software render missed any pixels.
 #if 0
+# pragma message "WARNING: Highlight flag enabled - yellow lines need to be fixed"
 # define HILITE
 #endif
 
@@ -122,7 +124,9 @@ static void praster(const Scanline sl, const Ray r, const Map map, const Current
 // Upper level rasterer (second ceiling and upper walls).
 static void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
+    #ifndef PERF
     int link = 0;
+    #endif
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
@@ -139,7 +143,9 @@ static void uraster(const Scanline sl, const Hits hits, const Hero hero, const M
 // Lower level rasterer (pit and lower walls).
 static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Current current)
 {
+    #ifndef PERF
     int link = 0;
+    #endif
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;

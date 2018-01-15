@@ -19,6 +19,7 @@ static Sprite born(const Point where)
     sprite.last = where;
     sprite.state = IDLE;
     sprite.scent = 0.5;
+    sprite.health = 1000.0;
     return sprite;
 }
 
@@ -243,6 +244,8 @@ static void grab(const Sprites sprites, const Hero hero, const Input input)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        if(xisdead(sprite->state))
+            continue;
         if(xeql(hand, sprite->where, sprite->width))
         {
             sprite->state = GRABBED;
@@ -308,6 +311,8 @@ static void move(const Sprites sprites, const Field field, const Point to)
     {
         Sprite* const sprite = &sprites.sprite[i];
         if(xishurt(sprite->state))
+            continue;
+        if(xisdead(sprite->state))
             continue;
         // Do not move the sprite if the sprite is immovable.
         if(sprite->speed == 0.0)
@@ -384,27 +389,45 @@ static void hurt(const Sprites sprites, const Attack attack, const Hero hero, co
     if(hero.wep == HANDS)
         return;
     const Point hand = xtouch(hero, hero.arm);
+    const int side = fabs(attack.dir.x) > fabs(attack.dir.y);
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        // Cannot hurt dead sprites.
+        if(xisdead(sprite->state))
+            continue;
         if(xeql(hand, sprite->where, 2.0))
         {
-            if(fabs(attack.dir.x) > fabs(attack.dir.y))
-                sprite->state = attack.dir.x > 0.0 ? HURTW : HURTE;
-            else
-            if(fabs(attack.dir.y) > fabs(attack.dir.x))
-                sprite->state = attack.dir.y > 0.0 ? HURTN : HURTS;
+            // Hurt direction.
+            sprite->state =
+                side ?
+                (attack.dir.x > 0.0 ? HURTW : HURTE):
+                (attack.dir.y > 0.0 ? HURTN : HURTS);
+            // Hurt the sprite.
+            sprite->health -= attack.power;
+            // Sprite dead?
+            if(sprite->health < 0.0)
+                // Dead direction.
+                sprite->state =
+                    side ?
+                    (attack.dir.x > 0.0 ? DEADW : DEADE):
+                    (attack.dir.y > 0.0 ? DEADN : DEADS);
+            // Timer for idle reset.
             sprite->ticks = ticks + 5;
-            xzero(sprite->velocity);
+            // 25% chance sprite loses its velocity when hurt.
+            if(rand() % 4 == 0) xzero(sprite->velocity);
         }
     }
 }
 
+// For timer expirey.
 static void idle(const Sprites sprites, const int ticks)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        if(xisdead(sprite->state))
+            continue;
         if(ticks > sprite->ticks)
             sprite->state = IDLE;
     }

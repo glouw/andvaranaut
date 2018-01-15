@@ -27,6 +27,7 @@ typedef struct
     int transparent;
     //
     int ticks;
+    float health;
 }
 Sprite;
 

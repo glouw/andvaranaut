@@ -8,7 +8,6 @@ typedef struct
     int vsync;
     int fps;
     float msen;
-    float gfac;
     int threads;
 }
 Args;

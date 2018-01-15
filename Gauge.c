@@ -2,14 +2,13 @@
 
 #include "util.h"
 
-Gauge xgnew(const float sfactor)
+Gauge xgnew()
 {
     Gauge g;
     xzero(g);
     // Maybe have max change with weapon? Stronger weapons have longer windup.
     g.max = 120; /* About two seconds max. */
     g.points = xtoss(Point, g.max);
-    g.sfactor = sfactor;
     return g;
 }
 

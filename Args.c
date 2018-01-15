@@ -15,16 +15,14 @@ static void print(const Args args)
     /* 3 */ "-v: VSync                    : %s\n"
     /* 4 */ "-p: FPS                      : %d\n"
     /* 5 */ "-m: Mouse Sensitivity        : %f\n"
-    /* 6 */ "-g: Gauge Sensitivity Factor : %f\n"
-    /* 7 */ "-t: CPU Renderer Thread(s)   : %d\n",
+    /* 6 */ "-t: CPU Renderer Thread(s)   : %d\n",
     /* 0 */ args.xres,
     /* 1 */ args.yres,
     /* 2 */ args.focal,
     /* 3 */ args.vsync ? "t" : "f",
     /* 4 */ args.fps,
     /* 5 */ args.msen,
-    /* 6 */ args.gfac,
-    /* 7 */ args.threads);
+    /* 6 */ args.threads);
 }
 
 static void check(const Args args)
@@ -91,11 +89,6 @@ static Args parsed(Args args, const int argc, const char* argv[])
                     args.msen =
                         strtof(next, NULL);
                     break;
-                /* Gauge Sensitivity Factor. */
-                case 'g':
-                    args.gfac =
-                        strtof(next, NULL);
-                    break;
                 /* CPU Threads for the Renderer. */
                 case 't':
                     args.threads =
@@ -117,13 +110,12 @@ static Args defaults()
 {
     Args args;
     xzero(args);
-    args.xres = 640;
-    args.yres = 360;
-    args.focal = 0.8;
-    args.vsync = true;
+    args.xres = 900;
+    args.yres = 600;
+    args.focal = 0.6;
+    args.vsync = false;
     args.fps = 60;
     args.msen = 0.007;
-    args.gfac = 2.0;
     args.threads = 8;
     return args;
 }

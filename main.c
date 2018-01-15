@@ -13,7 +13,7 @@ int main(const int argc, const char* argv[])
     Input input = xready(args.msen);
     Overview overview = xinit();
     Current current = xstart();
-    Gauge gauge = xgnew(args.gfac);
+    Gauge gauge = xgnew();
     // Game loop.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_END]; renders++)
     {
@@ -41,7 +41,7 @@ int main(const int argc, const char* argv[])
         else
         {
             // The mouse cursor is removed when playing.
-            SDL_SetRelativeMouseMode(SDL_TRUE);
+            SDL_SetRelativeMouseMode(SDL_FALSE);
             // Data update.
             current = xstream(current);
             const Attack attack = xgpower(gauge, input); // return Attack type

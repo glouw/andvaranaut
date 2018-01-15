@@ -12,11 +12,10 @@ typedef struct
     Point* points;
     int mx;
     int my;
-    float sfactor;
 }
 Gauge;
 
-Gauge xgnew(const float sfactor);
+Gauge xgnew();
 
 void xgfree(const Gauge);
 

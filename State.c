@@ -7,3 +7,11 @@ int xishurt(const State state)
         || state == HURTS
         || state == HURTW;
 }
+
+int xisdead(const State state)
+{
+    return state == DEADN
+        || state == DEADE
+        || state == DEADS
+        || state == DEADW;
+}

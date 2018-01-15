@@ -209,8 +209,9 @@ void xdgauge(const Sdl sdl, const Gauge g)
         const float growth = i / (float) g.count;
         const int width = growth * xmin(sdl.xres, sdl.yres) / 20.0; /* Arbirary scaling. */
         const int color = growth * 0xFF;
-        const int x = g.points[i].x * g.sfactor - (width - sdl.xres) / 2;
-        const int y = g.points[i].y * g.sfactor - (width - sdl.yres) / 2;
+        const float sens = 2.33;
+        const int x = g.points[i].x * sens - (width - sdl.xres) / 2;
+        const int y = g.points[i].y * sens - (width - sdl.yres) / 2;
         const SDL_Rect square = { x, y, width, width };
         SDL_SetRenderDrawColor(sdl.renderer, 0xFF, color, 0x00, 0xFF);
         SDL_RenderFillRect(sdl.renderer, &square);

@@ -41,6 +41,8 @@ Hero xspawn(const float focal)
 
 static Hero spin(Hero hero, const Input input)
 {
+    if(input.l)
+        return hero;
     hero.theta += input.dx * input.sx;
     return hero;
 }
@@ -48,6 +50,8 @@ static Hero spin(Hero hero, const Input input)
 // Head up and down.
 static Hero yaw(Hero hero, const Input input)
 {
+    if(input.l)
+        return hero;
     hero.yaw += input.dy * input.sy;
     const float max = 1.99;
     const float min = 0.01;
