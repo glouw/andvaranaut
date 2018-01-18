@@ -84,6 +84,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Determine sprite animation based on ticks.
         const SDL_Rect image = { w * (ticks % FRAMES), h * sprite->state, w, h };
         // Calculate how much of the sprite is seen.
+        /* NEEDS to be volatile else it exits without segfault on my Thinkpad t43 with
+         * either x or y 255 overflow. Assuming integrated graphics driver bug. */
         volatile const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
         if(seen.w <= 0)
@@ -207,7 +209,8 @@ void xdgauge(const Sdl sdl, const Gauge g)
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
-        const int width = growth * xmin(sdl.xres, sdl.yres) / 20.0; /* Arbirary scaling. */
+        const float scale = 28.0; // Arbitrary.
+        const int width = growth * xmin(sdl.xres, sdl.yres) / scale;
         const int color = growth * 0xFF;
         const float sens = 2.33;
         const int x = g.points[i].x * sens - (width - sdl.xres) / 2;
@@ -228,8 +231,8 @@ static void dmeter(const Sdl sdl, const int ticks, const Meter m)
     // Will flicker if less than 25% for a stat.
     const int frame = m.stat < m.max / 4.0 ?  (ticks % FRAMES ? ']' : '[' ) - ' ' : '[' - ' ';
     // Tile <to> size is resolution dependent.
-    const int ts = 16.0 * (sdl.xres / (float) sdl.yres);
-    /* Liquid. */
+    const int ts = 14.0 * (sdl.xres / (float) sdl.yres);
+    /* Draw liquid in glass. */
     for(int i = 0; i < xcl(m.stat); i++)
     {
         const SDL_Rect fm = {
@@ -246,7 +249,7 @@ static void dmeter(const Sdl sdl, const int ticks, const Meter m)
         const SDL_Rect to = { i * ts, sdl.yres - m.bar * ts, ts, ts };
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[frame], &fm, &to);
     }
-    /* Glass. */
+    /* Draw glass. */
     for(int i = 0; i < m.max; i++)
     {
         const int final = m.max - 1;
@@ -266,6 +269,7 @@ static void dmeter(const Sdl sdl, const int ticks, const Meter m)
     }
 }
 
+// Draw health, mana, and fatigue meters.
 void xdmeters(const Sdl sdl, const Hero hero, const int ticks)
 {
     const Meter meters[] = {

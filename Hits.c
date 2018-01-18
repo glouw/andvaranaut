@@ -26,39 +26,30 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     const Point final = xadd(ray, xmul(direction, 1e-4));
     const Point other = xsub(ray, xmul(direction, 1e-3));
     /* Flooring wall was hit. Push the flooring hit linked list. */
-    if(xtile(final, map.floring))
+    if(xtile(final, map.floring) && !xtile(other, map.floring))
     {
-        if(!xtile(other, map.floring))
-        {
-            const Hit hit = collision(ray, final, other, map.floring);
-            hits.floring = push(hits.floring, hit);
-        }
+        const Hit hit = collision(ray, final, other, map.floring);
+        hits.floring = push(hits.floring, hit);
     }
     /* Ceiling wall was hit. Push the ceiling hit linked list. */
-    if(xtile(final, map.ceiling))
+    if(xtile(final, map.ceiling) && !xtile(other, map.ceiling))
     {
-        if(!xtile(other, map.ceiling))
-        {
-            const Hit hit = collision(ray, final, other, map.ceiling);
-            hits.ceiling = push(hits.ceiling, hit);
-        }
+        const Hit hit = collision(ray, final, other, map.ceiling);
+        hits.ceiling = push(hits.ceiling, hit);
     }
     /* Eye walling hit.
      * A linked list is not needed: Thanks to eye level projections,
      * only one projection is needed as everything else behind will
      * be overlapped by the first. */
-    if(xtile(final, map.walling))
+    if(xtile(final, map.walling) && !hits.walling.surface)
     {
-        if(!hits.walling.surface)
-        {
-            const Hit hit = collision(ray, final, other, map.walling);
-            hits.walling = hit;
-        }
+        const Hit hit = collision(ray, final, other, map.walling);
+        hits.walling = hit;
     }
-    if(hits.walling.surface)
-        if(xtile(final, map.ceiling)
-        && xtile(final, map.floring))
-            return hits;
+    /* Done when a wall was hit and a ceiling wall exists above the wall and
+     * a floor wall exist below the wall. */
+    if(hits.walling.surface && xtile(final, map.ceiling) && xtile(final, map.floring))
+        return hits;
     return step(hits, ray, direction, map);
 }
 

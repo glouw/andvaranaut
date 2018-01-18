@@ -41,12 +41,13 @@ int main(const int argc, const char* argv[])
         else
         {
             // The mouse cursor is removed when playing.
-            SDL_SetRelativeMouseMode(SDL_FALSE);
+            SDL_SetRelativeMouseMode(SDL_TRUE);
             // Data update.
             current = xstream(current);
-            const Attack attack = xgpower(gauge, input); // return Attack type
-            if(attack.power > 0.0)
-                printf("%f %f %f\n", attack.power, attack.dir.x, attack.dir.y);
+            // Notice that attack is taken before the gauge is winded.
+            // The is done because the gauge may fizzle out this frame, either from
+            // an overwind, or the left mouse button is lifted up.
+            const Attack attack = xgpower(gauge, input, hero.wep);
             gauge = xgwind(gauge, hero.wep, input);
             if(xteleporting(hero, map, input, ticks))
             {
@@ -55,7 +56,7 @@ int main(const int argc, const char* argv[])
                 sprites = xrewake(sprites, hero.floor);
             }
             hero = xsustain(hero, map, input, current);
-            xcaretake(sprites, hero, input, map, attack, ticks);
+            sprites = xcaretake(sprites, hero, input, map, attack, ticks);
             // Render.
             xrender(sdl, hero, sprites, map, current, ticks);
             xdgauge(sdl, gauge);

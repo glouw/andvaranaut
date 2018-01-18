@@ -50,6 +50,7 @@ static Sprite _d_(const Point where)
     Sprite sprite = born(where);
     sprite.ascii = 'd';
     sprite.width = 1.00;
+    sprite.health = 1.0; // Breaks very easy.
     return sprite;
 }
 
@@ -121,6 +122,15 @@ void xssave(const Sprites sprites, const int floor, const int ticks)
     free(path);
 }
 
+// Appends a new sprite to the sprite list. Resizes sprite list of need be.
+static Sprites append(Sprites sprites, const Sprite sprite)
+{
+    if(sprites.count >= sprites.max)
+        xretoss(sprites.sprite, Sprite, sprites.max *= 2);
+    sprites.sprite[sprites.count++] = sprite;
+    return sprites;
+}
+
 Sprites xlay(Sprites sprites, const Map map, const Overview ov)
 {
     // Out of bounds check.
@@ -133,9 +143,7 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov)
         if(sprites.count == 0)
             xretoss(sprites.sprite, Sprite, sprites.max = 1);
         // If the new sprite cannot fit in the sprite list, resize twice as big.
-        if(sprites.count >= sprites.max)
-            xretoss(sprites.sprite, Sprite, sprites.max *= 2);
-        sprites.sprite[sprites.count++] = registrar(ascii, ov.where);
+        sprites = append(sprites, registrar(ascii, ov.where));
     }
     return sprites;
 }
@@ -382,20 +390,36 @@ int xissprite(const int ascii)
     return isalpha(ascii);
 }
 
-static void hurt(const Sprites sprites, const Attack attack, const Hero hero, const Input input, const int ticks)
+static Sprites drop(Sprites sprites, const Attack attack, const Point where)
+{
+    const Point delta = xmul(xrag(attack.dir), 0.5);
+    return append(sprites, registrar('d', xadd(where, delta)));
+}
+
+static int iscosmetic(const Sprite* sprite)
+{
+    return sprite->ascii == 'a';
+}
+
+// Hurts the closest sprite, or sprites, depending on the weapon.
+static Sprites hurt(Sprites sprites, const Attack attack, const Hero hero, const Input input, const int ticks)
 {
     if(!input.lu)
-        return;
+        return sprites;
     if(hero.wep == HANDS)
-        return;
+        return sprites;
     const Point hand = xtouch(hero, hero.arm);
     const int side = fabs(attack.dir.x) > fabs(attack.dir.y);
-    for(int i = 0; i < sprites.count; i++)
+    for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         // Cannot hurt dead sprites.
         if(xisdead(sprite->state))
             continue;
+        // Cannot hurt cosmetic sprites (flowers and such)
+        if(iscosmetic(sprite))
+            continue;
+        // Contact was made.
         if(xeql(hand, sprite->where, 2.0))
         {
             // Hurt direction.
@@ -403,21 +427,33 @@ static void hurt(const Sprites sprites, const Attack attack, const Hero hero, co
                 side ?
                 (attack.dir.x > 0.0 ? HURTW : HURTE):
                 (attack.dir.y > 0.0 ? HURTN : HURTS);
-            // Hurt the sprite.
             sprite->health -= attack.power;
             // Sprite dead?
-            if(sprite->health < 0.0)
+            if(sprite->health <= 0.0)
+            {
                 // Dead direction.
                 sprite->state =
                     side ?
                     (attack.dir.x > 0.0 ? DEADW : DEADE):
                     (attack.dir.y > 0.0 ? DEADN : DEADS);
+                // If a sprite is dead, the hurt counter resets.
+                // That is to say, if a greatsword can hurt 3 enemies at once, and one sprite
+                // dies, three more may be hurt with the same swing.
+                sprites = hurt(sprites, attack, hero, input, ticks);
+                // 10% chance something will drop.
+                // This means that anything can drop a loot bag when it dies, even
+                // a loot bag will have a chance of dropping a loot bag when it "dies".
+                return rand() % 10 == 0 ? drop(sprites, attack, sprite->where) : sprites;
+            }
             // Timer for idle reset.
             sprite->ticks = ticks + 5;
-            // 25% chance sprite loses its velocity when hurt.
-            if(rand() % 4 == 0) xzero(sprite->velocity);
+            // Depending on the held weapon, only a certain number of enemies
+            // can be hurt. For instance, a dagger can at most hurt one enemy.
+            // A greatsword or warhammer can hurt more than one enemy.
+            if(++hurts == 3) return sprites;
         }
     }
+    return sprites;
 }
 
 // For timer expirey.
@@ -433,7 +469,7 @@ static void idle(const Sprites sprites, const int ticks)
     }
 }
 
-void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map, const Attack attack, const int ticks)
+Sprites xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map, const Attack attack, const int ticks)
 {
     // Sprites need to be arrange closest to hero first.
     arrange(sprites, hero);
@@ -443,9 +479,10 @@ void xcaretake(Sprites sprites, const Hero hero, const Input input, const Map ma
     route(sprites, field, map, hero);
     move(sprites, field, hero.where);
     xruin(field);
-    hurt(sprites, attack, hero, input, ticks);
+    sprites = hurt(sprites, attack, hero, input, ticks);
     // Sprite placement - interactive and out of bounds.
     grab(sprites, hero, input);
     shove(sprites);
     bound(sprites, map);
+    return sprites;
 }

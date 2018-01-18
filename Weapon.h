@@ -6,5 +6,6 @@ typedef enum
 {
     HANDS,
     SHORT,
+    LONG,
 }
 Weapon;

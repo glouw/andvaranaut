@@ -8,6 +8,7 @@ PROJ = andvaranaut
 SRCS = main.c
 SRCS+= util.c
 SRCS+= Args.c
+SRCS+= Attack.c
 SRCS+= Bundle.c
 SRCS+= Current.c
 SRCS+= Compass.c

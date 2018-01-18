@@ -25,8 +25,9 @@ static Gauge reset(Gauge g)
 
 Gauge xgwind(Gauge g, const Weapon weapon, const Input input)
 {
-    if(weapon == HANDS)
-        return g;
+    // Cannot wind with hands.
+    if(weapon == HANDS) return g;
+    // Winds with left mouse button down.
     if(input.l)
     {
         // Fizzle out.
@@ -40,31 +41,4 @@ Gauge xgwind(Gauge g, const Weapon weapon, const Input input)
     // Done winding.
     else g = reset(g);
     return g;
-}
-
-Attack xgpower(const Gauge g, const Input input)
-{
-    Attack none;
-    xzero(none);
-    const int last = g.count - 1;
-    const int tail = 6;
-    if(g.count < tail)
-        return none;
-    if(input.lu)
-    {
-        float mag = 0.0;
-        for(int i = 0; i < g.count - 1; i++)
-        {
-            const Point diff = xsub(
-                g.points[i + 1],
-                g.points[i + 0]);
-            mag += xmag(diff);
-        }
-        const Point dir = xsub(
-            g.points[last],
-            g.points[last - tail]);
-        const Attack attack =  { mag, xunt(dir) };
-        return xmag(dir) > 0.0 ? attack : none;
-    }
-    return none;
 }
