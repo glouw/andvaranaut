@@ -21,7 +21,7 @@ Hero xspawn(const float focal)
     Hero hero;
     xzero(hero);
     hero.fov = lens(focal);
-    hero.where.x = 40.0;
+    hero.where.x = 39.5;
     hero.where.y = 3.5;
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
@@ -29,10 +29,10 @@ Hero xspawn(const float focal)
     hero.arm = 0.75;
     hero.aura = 12;
     hero.yaw = 1.0;
-    hero.floor = 1;
     hero.tall = 0.5;
     hero.height = hero.tall;
     hero.hlth = 0.4, hero.maxhlth = 6;
+    hero.theta = 3.14156 / 2;
     hero.mana = hero.maxmana = 6;
     hero.fatg = hero.maxfatg = 6;
     hero.wep = SHORT;
