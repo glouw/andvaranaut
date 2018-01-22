@@ -112,7 +112,7 @@ static Args defaults()
     xzero(args);
     args.xres = 800;
     args.yres = 500;
-    args.focal = 0.6;
+    args.focal = 1.0;
     args.vsync = false;
     args.fps = 60;
     args.msen = 0.007;

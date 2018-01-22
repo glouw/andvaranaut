@@ -5,7 +5,7 @@
 // Enabling this performance flag will remove ceiling and floor rastering.
 // This is good for getting work done on old laptops without suffering
 // from low FPS motion sickness.
-#if 1
+#if 0
 # pragma message "WARNING: Performance flag enabled - ceiling and floors will not be rendered"
 # define PERF
 #endif

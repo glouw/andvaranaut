@@ -21,8 +21,8 @@ Hero xspawn(const float focal)
     Hero hero;
     xzero(hero);
     hero.fov = lens(focal);
-    hero.where.x = 1.5;
-    hero.where.y = 1.5;
+    hero.where.x = 40.0;
+    hero.where.y = 3.5;
     hero.speed = 0.12;
     hero.acceleration = 0.0150;
     hero.torch = xsnuff();
