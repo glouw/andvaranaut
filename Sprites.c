@@ -65,61 +65,18 @@ static Sprite registrar(const int ascii, const Point where)
     }
 }
 
-Sprites xwake(const int floor)
+Sprites xsgen()
 {
-    char which[MINTS];
-    sprintf(which, "%d", floor);
-    char* const path = xconcat("sprites/lvl", which);
-    FILE* const file = fopen(path, "r");
     Sprites sprites;
-    sprites.count = xlns(file);
-    sprites.sprite = xtoss(Sprite, sprites.count);
-    sprites.max = sprites.count;
-    for(int i = 0; i < sprites.count; i++)
-    {
-        char* const line = xreadln(file);
-        char ascii = 0;
-        Point where = { 0.0, 0.0 };
-        sscanf(line, "%c,%f,%f\n", &ascii, &where.x, &where.y);
-        sprites.sprite[i] = registrar(ascii, where);
-        free(line);
-    }
-    fclose(file);
-    free(path);
+    sprites.count = 0;
+    sprites.max = 32;
+    sprites.sprite = xtoss(Sprite, sprites.max);
     return sprites;
 }
 
 void xkill(const Sprites sprites)
 {
     free(sprites.sprite);
-}
-
-Sprites xrewake(const Sprites sprites, const int floor)
-{
-    xkill(sprites);
-    return xwake(floor);
-}
-
-void xssave(const Sprites sprites, const int floor, const int ticks)
-{
-    // Time delay. Whatever feels best.
-    static int last;
-    if(ticks < last + 6)
-        return;
-    last = ticks;
-    // Save.
-    char which[MINTS];
-    sprintf(which, "%d", floor);
-    char* const path = xconcat("sprites/lvl", which);
-    FILE* const file = fopen(path, "w");
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-        fprintf(file, "%c,%f,%f\n", sprite->ascii, sprite->where.x, sprite->where.y);
-    }
-    printf("%s saved!\n", path);
-    fclose(file);
-    free(path);
 }
 
 // Appends a new sprite to the sprite list. Resizes sprite list of need be.

@@ -7,8 +7,8 @@ int main(const int argc, const char* argv[])
     const Args args = xparse(argc, argv);
     // Data init.
     Hero hero = xspawn(args.focal);
-    Map map = xopen(hero.floor);
-    Sprites sprites = xwake(hero.floor);
+    Map map = xmgen(hero.where);
+    Sprites sprites = xsgen(hero.floor);
     Sdl sdl = xsetup(args);
     Input input = xready(args.msen);
     Overview overview = xinit();
@@ -28,12 +28,6 @@ int main(const int argc, const char* argv[])
             overview = xupdate(overview, input, sdl.xres, sdl.textures.count);
             xedit(map, overview);
             sprites = xlay(sprites, map, overview);
-            // Saving map and sprites.
-            if(input.key[SDL_SCANCODE_F5])
-            {
-                xmsave(map, hero.floor, ticks);
-                xssave(sprites, hero.floor, ticks);
-            }
             // Render.
             xview(sdl, overview, sprites, map, ticks);
         }
@@ -51,9 +45,9 @@ int main(const int argc, const char* argv[])
             gauge = xgwind(gauge, hero.wep, input);
             if(xteleporting(hero, map, input, ticks))
             {
-                hero = xteleport(hero, map);
-                map = xreopen(map, hero.floor);
-                sprites = xrewake(sprites, hero.floor);
+                //hero = xteleport(hero, map);
+                //map = xreopen(map, hero.floor);
+                //sprites = xrewake(sprites, hero.floor);
             }
             hero = xsustain(hero, map, input, current);
             sprites = xcaretake(sprites, hero, input, map, attack, ticks);

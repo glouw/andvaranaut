@@ -55,6 +55,3 @@ char* xconcat(const char* const a, const char* const b);
 
 // String matching.
 #define equals(a, b) (strcmp(a, b) == 0)
-
-// Minimum array size needed for an integer to be converted to a string.
-#define MINTS ((CHAR_BIT * sizeof(int) - 1) / 3 + 2)

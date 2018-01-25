@@ -6,31 +6,85 @@
 
 // TODO: Add functionality to expand (retoss) map when editing.
 
-static char** get(FILE* const file, const int rows)
+static char** mreset(char** block, const int rows, const int cols)
 {
-    char** block = xtoss(char*, rows);
     for(int row = 0; row < rows; row++)
-        block[row] = xreadln(file);
+    for(int col = 0; col < cols; col++)
+        block[row][col] = '#';
     return block;
 }
 
-Map xopen(const int floor)
+static char** mnew(const int rows, const int cols)
 {
-    char which[MINTS];
-    sprintf(which, "%d", floor);
-    char* const path = xconcat("maps/lvl", which);
-    FILE* const file = fopen(path, "r");
+    char** block = xtoss(char*, rows);
+    for(int row = 0; row < rows; row++)
+        block[row] = xtoss(char, cols);
+    return mreset(block, rows, cols);
+}
+
+static int scheck(const Map map, const int row, const int col, const int s)
+{
+    for(int j = row; j < row + s; j++)
+    for(int i = col; i < col + s; i++)
+    {
+        // Check if square is out of map bounds.
+        if(i <= 0 || i >= map.cols - 1) return false;
+        if(j <= 0 || j >= map.rows - 1) return false;
+        // Check if another square to left, right, top, or bottom.
+        if(i == col && map.walling[j][i - 1] == ' ') return false; // Left.
+        if(j == row && map.walling[j - 1][i] == ' ') return false; // Top.
+        if(i == col + s - 1 && map.walling[j][i + 1] == ' ') return false; // Right.
+        if(j == row + s - 1 && map.walling[j + 1][i] == ' ') return false; // Bottom.
+        // Otherwise, check if current tile was carved.
+        if(map.walling[j][i] == ' ') return false;
+    }
+    return true;
+}
+
+static void square(const Map map, const int row, const int col, const int s)
+{
+    for(int j = row; j < row + s; j++)
+    for(int i = col; i < col + s; i++)
+    {
+        if(i == col && j == row) continue;
+        if(i == col + s - 1 && j == row + s - 1) continue;
+        if(i == col + s - 1 && j == row) continue;
+        if(i == col && j == row + s - 1) continue;
+        map.walling[j][i] = ' ';
+    }
+}
+
+static void psquare(const Map map, const int y, const int x, const int s)
+{
+    if(scheck(map, y, x, s)) square(map, y, x, s);
+}
+
+static Map carved(const Map map, const Point where)
+{
+    square(map, where.x - 1, where.y - 1, 8);
+    const int tries = 100;
+    for(int i = 0; i < tries; i++)
+    {
+        const int y = rand() % map.rows;
+        const int x = rand() % map.cols;
+        const int s = rand() % 10 + 5;
+        psquare(map, y, x, s);
+    }
+    for(int row = 0; row < map.rows; row++)
+    for(int col = 0; col < map.cols; col++)
+        printf("%c%s", map.walling[row][col], col == map.cols - 1 ? "\n" : "");
+    return map;
+}
+
+Map xmgen(const Point where)
+{
     Map map;
     xzero(map);
-    map.rows = xlns(file) / 3;
-    map.ceiling = get(file, map.rows);
-    map.walling = get(file, map.rows);
-    map.floring = get(file, map.rows);
-    // Assumes all row columns are same size.
-    map.cols = strlen(map.walling[0]);
-    fclose(file);
-    free(path);
-    return map;
+    map.rows = map.cols = 64;
+    map.ceiling = mnew(map.rows, map.cols);
+    map.walling = mnew(map.rows, map.cols);
+    map.floring = mnew(map.rows, map.cols);
+    return carved(map, where);
 }
 
 void xclose(const Map map)
@@ -46,35 +100,10 @@ void xclose(const Map map)
     free(map.floring);
 }
 
-Map xreopen(const Map map, const int floor)
-{
-    xclose(map);
-    return xopen(floor);
-}
-
-void xmsave(const Map map, const int floor, const int ticks)
-{
-    // Time delay. Whatever feels best.
-    static int last;
-    if(ticks < last + 6)
-        return;
-    last = ticks;
-    // Save.
-    char which[MINTS];
-    sprintf(which, "%d", floor);
-    char* const path = xconcat("maps/lvl", which);
-    FILE* const file = fopen(path, "w");
-    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.ceiling[row]);
-    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.walling[row]);
-    for(int row = 0; row < map.rows; row++) fprintf(file, "%s\n", map.floring[row]);
-    printf("%s saved!\n", path);
-    fclose(file);
-    free(path);
-}
-
 int xisportal(const Map map, const Point where)
 {
-    return xblok(where, map.floring) == '~' || xblok(where, map.ceiling) == '~';
+    return xblok(where, map.floring) == '~'
+        || xblok(where, map.ceiling) == '~';
 }
 
 int xout(const Map map, const Point where)

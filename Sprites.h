@@ -40,13 +40,10 @@ typedef struct
 Sprites;
 
 // Loads all the sprites on a floor.
-Sprites xwake(const int floor);
+Sprites xsgen();
 
 // Frees all loaded sprites from memory.
 void xkill(const Sprites);
-
-// Frees then loads a floor's sprites.
-Sprites xrewake(const Sprites, const int floor);
 
 // Arranges sprites furthest to nearest relative to
 // the hero's orientation (angle and position). Useful for the sprite renderer.
@@ -60,6 +57,3 @@ Sprites xlay(Sprites, const Map, const Overview);
 
 // Self sustain for all sprites.
 Sprites xcaretake(Sprites, const Hero, const Input, const Map, const Attack, const int ticks);
-
-// Saves sprites to sprite data file.
-void xssave(const Sprites sprites, const int floor, const int ticks);
