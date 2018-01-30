@@ -1,10 +1,9 @@
-CC = gcc
+CC = g++
 
-# Project name.
 NAME = andvaranaut
 
-# Source files.
-SRCS = main.c
+SRCS =
+SRCS+= main.c
 SRCS+= util.c
 SRCS+= Args.c
 SRCS+= Attack.c

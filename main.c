@@ -8,7 +8,7 @@ int main(const int argc, const char* argv[])
     // Data init.
     Hero hero = xspawn(args.focal);
     Map map = xmgen(hero.where);
-    Sprites sprites = xsgen(hero.floor);
+    Sprites sprites = xsgen();
     Sdl sdl = xsetup(args);
     Input input = xready(args.msen);
     Overview overview = xinit();
