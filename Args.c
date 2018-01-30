@@ -18,10 +18,10 @@ static void print(const Args args)
     /* 6 */ "-t: CPU Renderer Thread(s)   : %d\n",
     /* 0 */ args.xres,
     /* 1 */ args.yres,
-    /* 2 */ args.focal,
+    /* 2 */ (double) args.focal,
     /* 3 */ args.vsync ? "t" : "f",
     /* 4 */ args.fps,
-    /* 5 */ args.msen,
+    /* 5 */ (double) args.msen,
     /* 6 */ args.threads);
 }
 
@@ -112,10 +112,10 @@ static Args defaults()
     xzero(args);
     args.xres = 800;
     args.yres = 500;
-    args.focal = 1.0;
+    args.focal = 1.0f;
     args.vsync = false;
     args.fps = 60;
-    args.msen = 0.007;
+    args.msen = 0.007f;
     args.threads = 8;
     return args;
 }

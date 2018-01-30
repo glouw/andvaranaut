@@ -8,21 +8,21 @@ Overview xinit()
 {
     Overview ov;
     xzero(ov);
-    ov.where.x = -1.0;
-    ov.where.y = -1.0;
+    ov.where.x = -1.0f;
+    ov.where.y = -1.0f;
     ov.w = 32;
     ov.h = 32;
     ov.party = WALLING;
-    ov.acceleration = 3.33;
-    ov.speed = 20.0;
+    ov.acceleration = 3.33f;
+    ov.speed = 20.0f;
     return ov;
 }
 
 // When x and y are both -1 then then the left mouse is not pressed.
 static Overview reset(Overview ov)
 {
-    ov.where.x = -1.0;
-    ov.where.y = -1.0;
+    ov.where.x = -1.0f;
+    ov.where.y = -1.0f;
     return ov;
 }
 
@@ -80,12 +80,12 @@ Overview xupdate(Overview ov, const Input input, const int xres, const int textu
         if(input.key[SDL_SCANCODE_D]) ov.velocity.x -= ov.acceleration;
         if(input.key[SDL_SCANCODE_A]) ov.velocity.x += ov.acceleration;
     }
-    else ov.velocity = xmul(ov.velocity, 1.0 - ov.acceleration / ov.speed);
+    else ov.velocity = xmul(ov.velocity, 1.0f - ov.acceleration / ov.speed);
     // Top speed check.
     if(xmag(ov.velocity) > ov.speed) ov.velocity = xmul(xunt(ov.velocity), ov.speed);
     // Due to integer rounding, velocities less than one must be ignored.
-    if(fabs(ov.velocity.x) < 1.0) ov.velocity.x = 0.0;
-    if(fabs(ov.velocity.y) < 1.0) ov.velocity.y = 0.0;
+    if(fabsf(ov.velocity.x) < 1.0f) ov.velocity.x = 0.0f;
+    if(fabsf(ov.velocity.y) < 1.0f) ov.velocity.y = 0.0f;
     // Add velocity to pan.
     ov.px += ov.velocity.x;
     ov.py += ov.velocity.y;

@@ -14,7 +14,7 @@ Attack xgpower(const Gauge g, const Input input, const Weapon w)
     // On the mouse left up, calculate the magnitude and direction of attack.
     if(input.lu)
     {
-        float mag = 0.0;
+        float mag = 0.0f;
         // Magnitude.
         for(int i = 0; i < g.count - 1; i++)
             mag += xmag(xsub(g.points[i + 1], g.points[i + 0]));
@@ -30,7 +30,7 @@ Attack xgpower(const Gauge g, const Input input, const Weapon w)
             w == SHORT ? 1 : w == LONG ? 3 : 0
         };
         // If direction magitude is zero, the unit vector will be NA, so none must be returned.
-        return xmag(dir) > 0.0 ? attack : none;
+        return xmag(dir) > 0.0f ? attack : none;
     }
     return none;
 }

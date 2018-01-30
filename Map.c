@@ -108,8 +108,8 @@ int xisportal(const Map map, const Point where)
 
 int xout(const Map map, const Point where)
 {
-    return where.x >= map.cols || where.x < 0.0
-        || where.y >= map.rows || where.y < 0.0;
+    return where.x >= map.cols || where.x < 0.0f
+        || where.y >= map.rows || where.y < 0.0f;
 }
 
 void xedit(const Map map, const Overview ov)

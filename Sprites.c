@@ -18,8 +18,8 @@ static Sprite born(const Point where)
     sprite.where = where;
     sprite.last = where;
     sprite.state = IDLE;
-    sprite.scent = 0.5;
-    sprite.health = 1000.0;
+    sprite.scent = 0.5f;
+    sprite.health = 1000.0f;
     return sprite;
 }
 
@@ -28,8 +28,8 @@ static Sprite _a_(const Point where)
 {
     Sprite sprite = born(where);
     sprite.ascii = 'a';
-    sprite.scent = 0.0;
-    sprite.width = 0.60;
+    sprite.scent = 0.0f;
+    sprite.width = 0.60f;
     return sprite;
 }
 
@@ -38,9 +38,9 @@ static Sprite _b_(const Point where)
 {
     Sprite sprite = born(where);
     sprite.ascii = 'b';
-    sprite.speed = 0.033;
-    sprite.acceleration = 0.0025;
-    sprite.width = 0.66;
+    sprite.speed = 0.033f;
+    sprite.acceleration = 0.0025f;
+    sprite.width = 0.66f;
     return sprite;
 }
 
@@ -49,8 +49,8 @@ static Sprite _d_(const Point where)
 {
     Sprite sprite = born(where);
     sprite.ascii = 'd';
-    sprite.width = 1.00;
-    sprite.health = 1.0; // Breaks very easy.
+    sprite.width = 1.00f;
+    sprite.health = 1.0f; // Breaks very easy.
     return sprite;
 }
 
@@ -280,16 +280,16 @@ static void move(const Sprites sprites, const Field field, const Point to)
         if(xisdead(sprite->state))
             continue;
         // Do not move the sprite if the sprite is immovable.
-        if(sprite->speed == 0.0)
+        if(sprite->speed == 0.0f)
         {
             sprite->state = IDLE;
             continue;
         }
         const Point dir = xforce(field, sprite->where, to);
         // No force of direction...
-        if(dir.x == 0.0 && dir.y == 0.0)
+        if(dir.x == 0.0f && dir.y == 0.0f)
             // Then slow down
-            sprite->velocity = xmul(sprite->velocity, 1.0 - sprite->acceleration / sprite->speed);
+            sprite->velocity = xmul(sprite->velocity, 1.0f - sprite->acceleration / sprite->speed);
         // Otherwise speed up.
         else
         {
@@ -301,7 +301,7 @@ static void move(const Sprites sprites, const Field field, const Point to)
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
         // If the sprite is fast enough they will animate chase.
-        sprite->state = xmag(sprite->velocity) > 0.005 ? CHASING : IDLE;
+        sprite->state = xmag(sprite->velocity) > 0.005f ? CHASING : IDLE;
         // Place the sprite at their new location...
         place(sprite, xadd(sprite->where, sprite->velocity));
     }
@@ -310,7 +310,7 @@ static void move(const Sprites sprites, const Field field, const Point to)
 // Collaborative diffusion with various scents.
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
-    const float scent = 1e3;
+    const float scent = 1e3f;
     // Walls and pit water repel sprites.
     for(int j = 0; j < field.rows; j++)
     for(int i = 0; i < field.cols; i++)
@@ -337,7 +337,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     // Hero scent attracts but a much larger magnitude than the walls and water.
     const int j = field.res * hero.where.y;
     const int i = field.res * hero.where.x;
-    field.mesh[j][i] = 1000.0 * scent;
+    field.mesh[j][i] = 1000.0f * scent;
     // Diffuse the culminated scent across the field.
     xdiffuse(field, hero.where);
 }
@@ -349,7 +349,7 @@ int xissprite(const int ascii)
 
 static Sprites drop(Sprites sprites, const Attack attack, const Point where)
 {
-    const Point delta = xmul(xrag(attack.dir), 0.5);
+    const Point delta = xmul(xrag(attack.dir), 0.5f);
     return append(sprites, registrar('d', xadd(where, delta)));
 }
 
@@ -377,22 +377,22 @@ static Sprites hurt(Sprites sprites, const Attack attack, const Hero hero, const
         if(iscosmetic(sprite))
             continue;
         // Contact was made.
-        if(xeql(hand, sprite->where, 2.0))
+        if(xeql(hand, sprite->where, 2.0f))
         {
             // Hurt direction.
             sprite->state =
                 side ?
-                (attack.dir.x > 0.0 ? HURTW : HURTE):
-                (attack.dir.y > 0.0 ? HURTN : HURTS);
+                (attack.dir.x > 0.0f ? HURTW : HURTE):
+                (attack.dir.y > 0.0f ? HURTN : HURTS);
             sprite->health -= attack.power;
             // Sprite dead?
-            if(sprite->health <= 0.0)
+            if(sprite->health <= 0.0f)
             {
                 // Dead direction.
                 sprite->state =
                     side ?
-                    (attack.dir.x > 0.0 ? DEADW : DEADE):
-                    (attack.dir.y > 0.0 ? DEADN : DEADS);
+                    (attack.dir.x > 0.0f ? DEADW : DEADE):
+                    (attack.dir.y > 0.0f ? DEADN : DEADS);
                 // If a sprite is dead, the hurt counter resets.
                 // That is to say, if a greatsword can hurt 3 enemies at once, and one sprite
                 // dies, three more may be hurt with the same swing.

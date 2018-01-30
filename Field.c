@@ -25,7 +25,7 @@ int xon(const Field field, const int y, const int x)
 
 static float average(const Field field, const int y, const int x)
 {
-    float sum = 0.0;
+    float sum = 0.0f;
     int sums = 0;
     for(int j = y - 1; j <= y + 1; j++)
     for(int i = x - 1; i <= x + 1; i++)
@@ -72,7 +72,7 @@ static void box(const Field field, const int y, const int x, const int w)
         // And on a walkable part of the field...
         && xon(field, j, i)
         // And no antiobject is in the way...
-        && field.mesh[j][i] == 0.0)
+        && field.mesh[j][i] == 0.0f)
             // Then materialize an atom with the diffusion box average.
             atoms[count++] = materialize(field, j, i);
     // Transfer diffused atoms in one go.
@@ -95,9 +95,9 @@ Point xforce(const Field field, const Point from, const Point to)
 {
     // Return the zero acceleration vector if the <from> point
     // is close enough to the destination <to> point or if it is far enough away.
-    const Point dead = { 0.0, 0.0 };
+    const Point dead = { 0.0f, 0.0f };
     const float dist = xmag(xsub(from, to));
-    if(dist < 1.33 || dist > (field.aura / field.res) - 1)
+    if(dist < 1.33f || dist > (field.aura / field.res) - 1)
         return dead;
     // Otherwise, calculate the accleration vectors by direction.
     const Point v[] = {
@@ -136,7 +136,7 @@ void xexamine(const Field field)
     for(int j = 0; j < field.rows; j++)
     {
         for(int i = 0; i < field.cols; i++)
-            printf("%13.3f", field.mesh[j][i]);
+            printf("%13.3f", (double) field.mesh[j][i]);
         putchar('\n');
     }
     putchar('\n');

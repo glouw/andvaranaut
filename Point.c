@@ -72,7 +72,7 @@ float xslp(const Point a)
 Point xshr(const Point a, const Point b)
 {
     Point out;
-    out.x = b.x > 0.0 ? xfl(a.x + 1.0) : xcl(a.x - 1.0);
+    out.x = b.x > 0.0f ? xfl(a.x + 1.0f) : xcl(a.x - 1.0f);
     out.y = xslp(b) * (out.x - a.x) + a.y;
     return out;
 }
@@ -80,7 +80,7 @@ Point xshr(const Point a, const Point b)
 Point xsvr(const Point a, const Point b)
 {
     Point out;
-    out.y = b.y > 0.0 ? xfl(a.y + 1.0) : xcl(a.y - 1.0);
+    out.y = b.y > 0.0f ? xfl(a.y + 1.0f) : xcl(a.y - 1.0f);
     out.x = (out.y - a.y) / xslp(b) + a.x;
     return out;
 }
@@ -88,8 +88,8 @@ Point xsvr(const Point a, const Point b)
 Point xmid(const Point a)
 {
     Point out;
-    out.x = xfl(a.x) + 0.5;
-    out.y = xfl(a.y) + 0.5;
+    out.x = xfl(a.x) + 0.5f;
+    out.y = xfl(a.y) + 0.5f;
     return out;
 }
 
@@ -105,10 +105,10 @@ Point xcmp(const Point a, const Point b, const Point c)
 
 int xeql(const Point a, const Point b, const float e)
 {
-    return a.x < b.x + (e / 2.0)
-        && a.x > b.x - (e / 2.0)
-        && a.y < b.y + (e / 2.0)
-        && a.y > b.y - (e / 2.0);
+    return a.x < b.x + (e / 2.0f)
+        && a.x > b.x - (e / 2.0f)
+        && a.y < b.y + (e / 2.0f)
+        && a.y > b.y - (e / 2.0f);
 }
 
 int xblok(const Point a, char** const blocks)

@@ -63,13 +63,13 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
             continue;
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
         const float focal = hero.fov.a.x;
-        const int size = (focal * sdl.xres / 2.0) / sprite->where.x;
+        const int size = (focal * sdl.xres / 2.0f) / sprite->where.x;
         const int osize = xodd(size) ? size + 1 : size;
         // Calculate sprite location on screen. Account for hero yaw and height.
-        const int my = sdl.yres / 2 * (sprite->state == GRABBED ? 1.0 : (2.0 - hero.yaw));
+        const int my = sdl.yres / 2 * (sprite->state == GRABBED ? 1.0f : (2.0f - hero.yaw));
         const int mx = sdl.xres / 2;
         const int l = mx - osize / 2;
-        const int t = my - osize * (sprite->state == GRABBED ? 0.5 : (1.0 - hero.height));
+        const int t = my - osize * (sprite->state == GRABBED ? 0.5f : (1.0f - hero.height));
         const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
         const SDL_Rect target = { l + s, t, osize, osize };
         // Move onto the next sprite if this sprite is off screen.
@@ -229,17 +229,17 @@ static void dmeter(const Sdl sdl, const int ticks, const Meter m)
     // Tile <from> size is 16x16.
     const int fs = 16;
     // Will flicker if less than 25% for a stat.
-    const int frame = m.stat < m.max / 4.0 ?  (ticks % FRAMES ? ']' : '[' ) - ' ' : '[' - ' ';
+    const int frame = m.stat < m.max / 4.0f ?  (ticks % FRAMES ? ']' : '[' ) - ' ' : '[' - ' ';
     // Tile <to> size is resolution dependent.
-    const int ts = 14.0 * (sdl.xres / (float) sdl.yres);
+    const int ts = 14.0f * (sdl.xres / (float) sdl.yres);
     /* Draw liquid in glass. */
     for(int i = 0; i < xcl(m.stat); i++)
     {
         const SDL_Rect fm = {
             // Column.
-            i == xfl(m.stat) && (xdec(m.stat) < 0.25) ? (col + 3) * fs :
-            i == xfl(m.stat) && (xdec(m.stat) < 0.50) ? (col + 2) * fs :
-            i == xfl(m.stat) && (xdec(m.stat) < 0.75) ? (col + 1) * fs :
+            i == xfl(m.stat) && (xdec(m.stat) < 0.25f) ? (col + 3) * fs :
+            i == xfl(m.stat) && (xdec(m.stat) < 0.50f) ? (col + 2) * fs :
+            i == xfl(m.stat) && (xdec(m.stat) < 0.75f) ? (col + 1) * fs :
             (col + 0) * fs,
             // Row.
             m.bar * fs,
