@@ -11,7 +11,10 @@ Input xpump(Input input)
     static int lm; // Middle.
     static int lr; // Right.
     // Keyboard events.
-    SDL_PumpEvents();
+    SDL_Event event;
+    SDL_PollEvent(&event);
+    if(event.type == SDL_QUIT)
+        input.done = true;
     // Relative mouse state and buttons.
     const uint32_t buttons = SDL_GetRelativeMouseState(&input.dx, &input.dy);
     input.l = (buttons >> 0) & 0x1; // Left.

@@ -1,7 +1,7 @@
 #include "Sdl.h"
 #include "util.h"
 
-int main(const int argc, const char* argv[])
+int main(int argc, char* argv[])
 {
     srand(time(0));
     const Args args = xparse(argc, argv);
@@ -15,7 +15,7 @@ int main(const int argc, const char* argv[])
     Current current = xstart();
     Gauge gauge = xgnew();
     // Game loop.
-    for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.key[SDL_SCANCODE_END]; renders++)
+    for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.done; renders++)
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);
@@ -71,4 +71,5 @@ int main(const int argc, const char* argv[])
     xrelease(sdl);
     xclose(map);
     xkill(sprites);
+    return 0;
 }

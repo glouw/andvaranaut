@@ -2,3 +2,5 @@
 *.d
 cachegrind.out*
 andvaranaut
+andvaranaut.exe
+SDL2.dll

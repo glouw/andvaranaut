@@ -23,6 +23,8 @@ typedef struct
     int lu; // Left.
     int mu; // Middle.
     int ru; // Right.
+    // Hit 'x' on window.
+    int done;
 }
 Input;
 

@@ -2,6 +2,7 @@
 
 #include "util.h"
 
+#include <math.h>
 #include <SDL2/SDL.h>
 
 Overview xinit()

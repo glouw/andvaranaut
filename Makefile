@@ -1,4 +1,4 @@
-CC = g++
+CC = gcc
 
 NAME = andvaranaut
 
@@ -45,7 +45,7 @@ endif
 CFLAGS += -std=c99
 CFLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion
 CFLAGS += -g
-CFLAGS += -Ofast -march=pentium4
+CFLAGS += -Ofast -march=native
 CFLAGS += -flto
 
 LDFLAGS =
@@ -66,11 +66,13 @@ endif
 
 # Link.
 $(BIN): $(SRCS:.c=.o)
-	$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
+	@echo linking $(BIN)
+	@$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
 
 # Compile.
 %.o : %.c
-	$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
+	@echo compiling $*.c
+	@$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@$(RM) $*.d
 	@$(MV) $*.td $*.d
 %.d: ;

@@ -112,8 +112,9 @@ Sdl xsetup(const Args args)
     SDL_Init(SDL_INIT_VIDEO);
     Sdl sdl;
     xzero(sdl);
-    sdl.window = SDL_CreateWindow("water", 0, 0, args.xres, args.yres, SDL_WINDOW_SHOWN);
-    if(!sdl.window)
+    sdl.window = SDL_CreateWindow("Andvaranaut",
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, args.xres, args.yres, SDL_WINDOW_SHOWN);
+    if(sdl.window == NULL)
         xbomb("error: could not open window\n");
     sdl.renderer = SDL_CreateRenderer(
         sdl.window,

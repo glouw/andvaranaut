@@ -40,7 +40,7 @@ static void check(const Args args)
 }
 
 // Parses command line arguments.
-static Args parsed(Args args, const int argc, const char* argv[])
+static Args parsed(Args args, int argc, char* argv[])
 {
     for(int i = 1; i < argc; i += 2)
     {
@@ -120,7 +120,7 @@ static Args defaults()
     return args;
 }
 
-Args xparse(const int argc, const char* argv[])
+Args xparse(int argc, char* argv[])
 {
     return parsed(defaults(), argc, argv);
 }

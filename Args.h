@@ -13,4 +13,4 @@ typedef struct
 Args;
 
 // Bundles together all command line parameters.
-Args xparse(const int argc, const char* argv[]);
+Args xparse(int argc, char* argv[]);
