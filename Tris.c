@@ -3,11 +3,7 @@
 #include "Points.h"
 #include "Direction.h"
 #include "Map.h"
-
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
-#include <math.h>
+#include "util.h"
 
 const Point zer = { 0.0f, 0.0f };
 
@@ -36,6 +32,7 @@ static Tris tsadd(Tris tris, const Tri tri, const char* why)
     return tris;
 }
 
+// Verbose equal.
 static int peql(const Point a, const Point b)
 {
     return a.x == b.x && a.y == b.y;
@@ -75,8 +72,7 @@ static Tris ecollect(Tris edges, const Tris in)
 // Returns true if edge ab of two triangles are alligned.
 static int alligned(const Tri a, const Tri b)
 {
-    return (peql(a.a, b.a) && peql(a.b, b.b))
-        || (peql(a.a, b.b) && peql(a.b, b.a));
+    return (peql(a.a, b.a) && peql(a.b, b.b)) || (peql(a.a, b.b) && peql(a.b, b.a));
 }
 
 // Flags alligned edges.
@@ -105,7 +101,7 @@ static Tris ejoin(Tris tris, const Tris edges, const Point p)
         if(peql(edge.c, zer))
         {
             const Tri tri = { edge.a, edge.b, p };
-            tris = tsadd(tris, tri, "ejoin");
+            tris = tsadd(tris, tri, "ejoin tsadd problem");
         }
     }
     return tris;
@@ -128,7 +124,7 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max)
     Tri* dummy = tris.tri;
     // The super triangle will snuggley fit over the screen.
     const Tri super = { { (float) -w, 0.0f }, { 2.0f * w, 0.0f }, { w / 2.0f, 2.0f * h } };
-    tris = tsadd(tris, super, "super");
+    tris = tsadd(tris, super, "delaunay tsadd problem with super");
     for(int j = 0; j < ps.count; j++)
     {
         in.count = out.count = edges.count = 0;
@@ -139,9 +135,9 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max)
             const Tri tri = tris.tri[i];
             // Get triangles where point lies inside their circumcenter...
             if(incircum(tri, p))
-                in = tsadd(in, tri, "in");
+                in = tsadd(in, tri, "delaunay tsadd problem with in");
             // And get triangles where point lies outside of their circumcenter.
-            else out = tsadd(out, tri, "out");
+            else out = tsadd(out, tri, "delaunay tsadd problem with out");
         }
         // Collect all triangle edges where point was inside circumcenter.
         edges = ecollect(edges, in);
@@ -176,10 +172,15 @@ static Points psadd(Points ps, const Point p, const char* why)
     return ps;
 }
 
-static Points prand(const int w, const int h, const int max, const int grid, const int border)
+static Points prand(const int w, const int h, const int max, const int grid, const int border, const Point where, const int scale)
 {
     Points ps = psnew(max);
-    for(int i = 0; i < max; i++)
+    const Point scaled = {
+        floorf(where.x) * scale,
+        floorf(where.y) * scale,
+    };
+    ps = psadd(ps, scaled, "adding hero scaled");
+    for(int i = 0; i < max - 1; i++)
     {
         const Point p = {
             (float) (rand() % (w - border) + border / 2),
@@ -194,22 +195,9 @@ static Points prand(const int w, const int h, const int max, const int grid, con
     return ps;
 }
 
-static Point sub(const Point a, const Point b)
-{
-    Point out;
-    out.x = a.x - b.x;
-    out.y = a.y - b.y;
-    return out;
-}
-
-static float mag(const Point a)
-{
-    return sqrtf(a.x * a.x + a.y * a.y);
-}
-
 static float len(const Tri edge)
 {
-    return mag(sub(edge.b, edge.a));
+    return xmag(xsub(edge.b, edge.a));
 }
 
 static int descending(const void* a, const void* b)
@@ -228,8 +216,8 @@ static int psfind(const Points ps, const Point p)
 {
     for(int i = 0; i < ps.count; i++)
         if(peql(ps.point[i], p))
-            return 1;
-    return 0;
+            return true;
+    return false;
 }
 
 static int connected(const Point a, const Point b, const Tris edges)
@@ -251,7 +239,7 @@ static int connected(const Point a, const Point b, const Tris edges)
             if(peql(edge.c, one))
                 continue;
             if(peql(edge.a, removed))
-                reach = tsadd(reach, edge, "reach");
+                reach = tsadd(reach, edge, "connected tsadd problem with reach");
         }
         // For all reachable edges
         for(int i = 0; i < reach.count; i++)
@@ -264,7 +252,7 @@ static int connected(const Point a, const Point b, const Tris edges)
             }
             // Otherwise add todo list.
             if(!psfind(done, reach.tri[i].b))
-                todo = psadd(todo, reach.tri[i].b, "todo reachable");
+                todo = psadd(todo, reach.tri[i].b, "connected tsadd problem with todo");
         }
     }
     free(todo.point);
@@ -312,42 +300,53 @@ static void mdups(const Tris edges)
 
 static void carve(const Map map, const Tris edges, const int scale)
 {
-    for(int i = 0; i < edges.count; i += 1)
+    for(int i = 0; i < edges.count; i++)
     {
         const Tri e = edges.tri[i];
         if(peql(e.c, one))
             continue;
-        const int x0 = e.a.x / scale;
-        const int y0 = e.a.y / scale;
-        const int x1 = e.b.x / scale;
-        const int y1 = e.b.y / scale;
+        const int x0 = roundf(e.a.x / (float) scale);
+        const int y0 = roundf(e.a.y / (float) scale);
+        const int x1 = roundf(e.b.x / (float) scale);
+        const int y1 = roundf(e.b.y / (float) scale);
         const Point a = { x0, y0 };
         const Point b = { x1, y1 };
         if(xout(map, a))
-            printf("%d %d: %f %f\n", map.rows, map.cols, a.y, a.x);
+            xbomb("map: point a was out of bounds in map carving");
         if(xout(map, b))
-            printf("%d %d: %f %f\n", map.rows, map.cols, a.y, a.x);
+            xbomb("map: point b was out of bounds in map carving");
         // Draw line.
-        map.walling[y0][x0] = ' ';
-        map.walling[y1][x1] = ' ';
+        const int dx = x1 - x0;
+        const int dy = y1 - y0;
+        const int sx = dx > 0 ? 1 : dx < 0 ? -1 : 0;
+        const int sy = dy > 0 ? 1 : dy < 0 ? -1 : 0;
+        int y = y0;
+        int x = x0;
+        // Start point.
+        map.walling[y][x] = ' ';
+        // Line.
+        for(int j = 0; j < abs(dx); j++) map.walling[y][x += sx] = ' ';
+        for(int j = 0; j < abs(dy); j++) map.walling[y += sy][x] = ' ';
+        printf("%d %d %d %d: %f %f %f %f\n", dx, dy, sx, sy, e.a.x, e.a.y, e.b.x, e.b.y);
     }
 }
 
-Map xtgenerate(const Sdl sdl)
+Map xtgenerate(const Sdl sdl, const Point where)
 {
     srand(time(0));
-    // Choose to generate at roughl screen pixel
-    // size so that triangles can be debugged with simple line drawings.
+    // Generates at screen pixel so that triangles can be debugged with
+    // simple line drawings in SDL.
     const int w = (sdl.xres / 2) + rand() % (sdl.xres / 2);
     const int h = (sdl.yres / 2) + rand() % (sdl.yres / 2);
     // Lets rock.
-    // Border and grid can remain constant. No need to randomize.
-    // Will give bigger rooms on map edge if map and width height small.
-    const int border = 50;
-    const int grid = 20;
+    const int scale = 5;
+    const int border = 100;
+    // Snap size is randomized.
+    const int grid = 15 + rand() % 15;
+    // Snap points is randomized.
     const int max = 50 + rand() % 50;
     // Points are randomly placed in an array.
-    const Points ps = prand(w, h, max, grid, border);
+    const Points ps = prand(w, h, max, grid, border, where, scale);
     // Points are placed into a triangle mesh with delaunay triangulation.
     const Tris tris = delaunay(ps, w, h, 9 * max);
     // Edges are colleted.
@@ -355,15 +354,18 @@ Map xtgenerate(const Sdl sdl)
     // The revere-delete algorithm is used to obtain a minimum spanning tree from edges.
     // Kruskal et al. (C) 1956.
     revdel(edges, w, h);
-    // Duplicate edges are removed and a map is carved. Map is scaled to screen.
-    const int scale = 10;
-    const Map map = xmgen(h / scale, w / scale);
-    printf("%d %d %d %d\n", w, h, map.rows, map.cols);
+    // Map is scaled to screen.
+    const int rows = roundf(h / (float) scale);
+    const int cols = roundf(w / (float) scale);
+    // Notice height and width go the other way for map (for rows then cols).
+    const Map map = xmgen(rows, cols);
+    // Duplicate edges are removed.
     mdups(edges);
+    // Mpa is carved from edge points.
     carve(map, edges, scale);
+    xmdump(map);
     free(tris.tri);
     free(ps.point);
     free(edges.tri);
-    xmdump(map);
     return map;
 }

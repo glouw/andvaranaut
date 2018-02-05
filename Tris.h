@@ -11,4 +11,4 @@ typedef struct
 }
 Tris;
 
-Map xtgenerate(const Sdl sdl);
+Map xtgenerate(const Sdl sdl, const Point where);

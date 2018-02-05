@@ -23,8 +23,7 @@ static char** mreset(char** block, const int rows, const int cols)
 {
     for(int row = 0; row < rows; row++)
     for(int col = 0; col < cols; col++)
-        printf("%c%s", block[row][col] = '#', col == cols - 1 ? "\n" : "");
-    putchar('\n');
+        block[row][col] = '#';
     return block;
 }
 
