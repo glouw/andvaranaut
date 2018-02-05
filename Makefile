@@ -29,6 +29,7 @@ SRCS+= Sprites.c
 SRCS+= Surfaces.c
 SRCS+= Textures.c
 SRCS+= Torch.c
+SRCS+= Tris.c
 
 # CompSpec defined in windows environment.
 ifdef ComSpec
@@ -66,12 +67,12 @@ endif
 
 # Link.
 $(BIN): $(SRCS:.c=.o)
-	@echo linking $(BIN)
+	@echo CC *.o -o $(BIN)
 	@$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
 
 # Compile.
 %.o : %.c
-	@echo compiling $*.c
+	@echo CC $*.c
 	@$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@$(RM) $*.d
 	@$(MV) $*.td $*.d

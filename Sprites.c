@@ -2,6 +2,7 @@
 
 #include "Field.h"
 #include "Found.h"
+#include "Direction.h"
 #include "util.h"
 
 #include <SDL2/SDL.h>
@@ -140,9 +141,6 @@ static int forewards(const void* a, const void* b)
     const Point pb = *(const Point*) b;
     return xmag(pa) < xmag(pb) ? -1 : xmag(pa) > xmag(pb) ? +1 : 0;
 }
-
-// Quick sort.
-typedef int (*const Direction)(const void*, const void*);
 
 static void sort(const Sprites sprites, const Direction direction)
 {

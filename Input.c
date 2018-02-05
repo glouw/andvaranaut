@@ -13,7 +13,7 @@ Input xpump(Input input)
     // Keyboard events.
     SDL_Event event;
     SDL_PollEvent(&event);
-    if(event.type == SDL_QUIT)
+    if(event.type == SDL_QUIT || input.key[SDL_SCANCODE_END])
         input.done = true;
     // Relative mouse state and buttons.
     const uint32_t buttons = SDL_GetRelativeMouseState(&input.dx, &input.dy);

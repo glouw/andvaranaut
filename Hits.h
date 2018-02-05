@@ -3,15 +3,7 @@
 #include "Point.h"
 #include "Compass.h"
 #include "Map.h"
-
-typedef struct hit
-{
-    int surface;
-    float offset;
-    Point where;
-    struct hit* next;
-}
-Hit;
+#include "Hit.h"
 
 typedef struct
 {

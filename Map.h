@@ -15,7 +15,7 @@ typedef struct
 }
 Map;
 
-Map xmgen(const Point where);
+Map xmgen(const int rows, const int cols);
 
 void xclose(const Map);
 
@@ -24,3 +24,5 @@ int xisportal(const Map, const Point where);
 void xedit(const Map, const Overview);
 
 int xout(const Map, const Point where);
+
+void xmdump(const Map map);

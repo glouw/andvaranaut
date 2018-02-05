@@ -1,4 +1,5 @@
 #include "Sdl.h"
+#include "Tris.h"
 #include "util.h"
 
 int main(int argc, char* argv[])
@@ -7,9 +8,9 @@ int main(int argc, char* argv[])
     const Args args = xparse(argc, argv);
     // Data init.
     Hero hero = xspawn(args.focal);
-    Map map = xmgen(hero.where);
     Sprites sprites = xsgen();
     Sdl sdl = xsetup(args);
+    Map map = xtgenerate(sdl);
     Input input = xready(args.msen);
     Overview overview = xinit();
     Current current = xstart();
