@@ -123,7 +123,7 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov)
         if(sprites.count == 0)
             xretoss(sprites.sprite, Sprite, sprites.max = 1);
         // If the new sprite cannot fit in the sprite list, resize twice as big.
-        sprites = append(sprites, registrar(ascii, xmid(ov.where)));
+        sprites = append(sprites, registrar(ascii, ov.where));
     }
     return sprites;
 }
