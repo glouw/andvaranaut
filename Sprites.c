@@ -19,7 +19,6 @@ static Sprite born(const Point where)
     sprite.where = where;
     sprite.last = where;
     sprite.state = IDLE;
-    sprite.scent = 0.5f;
     sprite.health = 1000.0f;
     return sprite;
 }
@@ -29,7 +28,6 @@ static Sprite _a_(const Point where)
 {
     Sprite sprite = born(where);
     sprite.ascii = 'a';
-    sprite.scent = 0.0f;
     sprite.width = 0.60f;
     return sprite;
 }
@@ -89,6 +87,8 @@ static Sprites append(Sprites sprites, const Sprite sprite)
     return sprites;
 }
 
+/* TODO: add snap to feature when laying down sprites.
+ * Maybe Shift + Z. */
 Sprites xlay(Sprites sprites, const Map map, const Overview ov)
 {
     // Out of bounds check.
@@ -101,7 +101,7 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov)
         if(sprites.count == 0)
             xretoss(sprites.sprite, Sprite, sprites.max = 1);
         // If the new sprite cannot fit in the sprite list, resize twice as big.
-        sprites = append(sprites, registrar(ascii, ov.where));
+        sprites = append(sprites, registrar(ascii, xmid(ov.where)));
     }
     return sprites;
 }
@@ -268,7 +268,7 @@ static void bound(const Sprites sprites, const Map map)
 }
 
 // Moves sprite along force field towards the hero player scent.
-static void move(const Sprites sprites, const Field field, const Point to)
+static void move(const Sprites sprites, const Field field, const Point to, const Map map)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -283,7 +283,7 @@ static void move(const Sprites sprites, const Field field, const Point to)
             sprite->state = IDLE;
             continue;
         }
-        const Point dir = xforce(field, sprite->where, to);
+        const Point dir = xforce(field, sprite->where, to, map);
         // No force of direction...
         if(dir.x == 0.0f && dir.y == 0.0f)
             // Then slow down
@@ -330,12 +330,12 @@ static void route(const Sprites sprites, const Field field, const Map map, const
         for(int b = -field.res / 2; b <= field.res / 2; b++)
             // Out of bounds check.
             if(xon(field, j + a, i + b))
-                field.mesh[j + a][i + b] -= sprite->scent;
+                field.mesh[j + a][i + b] -= scent;
     }
     // Hero scent attracts but a much larger magnitude than the walls and water.
     const int j = field.res * hero.where.y;
     const int i = field.res * hero.where.x;
-    field.mesh[j][i] = 1000.0f * scent;
+    field.mesh[j][i] = 100.0f * scent;
     // Diffuse the culminated scent across the field.
     xdiffuse(field, hero.where);
 }
@@ -432,7 +432,7 @@ Sprites xcaretake(Sprites sprites, const Hero hero, const Input input, const Map
     // Sprite path finding and movement.
     const Field field = xprepare(map, hero.aura);
     route(sprites, field, map, hero);
-    move(sprites, field, hero.where);
+    move(sprites, field, hero.where, map);
     xruin(field);
     sprites = hurt(sprites, attack, hero, input, ticks);
     // Sprite placement - interactive and out of bounds.

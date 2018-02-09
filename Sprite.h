@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Point.h"
+#include "State.h"
+
 typedef struct
 {
     Point where;
@@ -15,10 +18,6 @@ typedef struct
     Point velocity;
     float speed;
     float acceleration;
-    // Sprites with stronger scents will be avoided better by other 
-    // sprites with smaller scents. Likewise, sprites with smaller
-    // scents will be attracted to by sprites with larger scents.
-    float scent;
     // If true, the sprite is rendered see through like a ghost.
     int transparent;
     //

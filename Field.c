@@ -91,7 +91,7 @@ static int largest(float* gradients, const int size)
     return index;
 }
 
-Point xforce(const Field field, const Point from, const Point to)
+Point xforce(const Field field, const Point from, const Point to, const Map map)
 {
     // Return the zero acceleration vector if the <from> point
     // is close enough to the destination <to> point or if it is far enough away.
@@ -101,14 +101,14 @@ Point xforce(const Field field, const Point from, const Point to)
         return dead;
     // Otherwise, calculate the accleration vectors by direction.
     const Point v[] = {
-        {  1, -0 }, // E
-        {  1,  1 }, // SE
-        {  0,  1 }, // S
-        { -1,  1 }, // SW
-        { -1,  0 }, // W
-        { -1, -1 }, // NW
-        {  0, -1 }, // N
-        {  1, -1 }, // NE
+        { +1.0f, -0.0f }, // E
+        { +1.0f, +1.0f }, // SE
+        { +0.0f, +1.0f }, // S
+        { -1.0f, +1.0f }, // SW
+        { -1.0f, +0.0f }, // W
+        { -1.0f, -1.0f }, // NW
+        { +0.0f, -1.0f }, // N
+        { +1.0f, -1.0f }, // NE
     };
     // And calculate the acceleration field gradients.
     float grads[xlen(v)];
@@ -120,7 +120,14 @@ Point xforce(const Field field, const Point from, const Point to)
         const int x = field.res * from.x, xx = field.res * dir.x;
         if(xon(field, yy, xx)) grads[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
-    return v[largest(grads, xlen(v))];
+    /* TODO:
+     * Check map here before moving.
+     * Return dead if map wall is in the way. */
+    const Point grad = v[largest(grads, xlen(v))];
+    const Point where = xadd(grad, from);
+    const int xx = where.x;
+    const int yy = where.y;
+    return map.walling[yy][xx] != ' ' ? dead : grad;
 }
 
 void xdiffuse(const Field field, const Point where)

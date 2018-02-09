@@ -11,4 +11,5 @@ typedef struct
 }
 Tris;
 
+// Generates a map starting at hero point.
 Map xtgenerate(const Sdl sdl, const Point where);
