@@ -43,7 +43,7 @@ Map xmgen(const int rows, const int cols)
     map.cols = cols;
     map.ceiling = mnew(map.rows, map.cols, '#');
     map.walling = mnew(map.rows, map.cols, '#');
-    map.floring = mnew(map.rows, map.cols, '#');
+    map.floring = mnew(map.rows, map.cols, '"');
     return map;
 }
 
