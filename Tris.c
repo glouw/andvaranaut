@@ -354,6 +354,7 @@ static void carve(const Map map, const Tris edges, const int scale, const Flags 
         const int dy = y1 - y0;
         const int sx = dx > 0 ? 1 : dx < 0 ? -1 : 0;
         const int sy = dy > 0 ? 1 : dy < 0 ? -1 : 0;
+        // First point.
         room(map, WALLING, x0, y0);
         switch(rand() % 4)
         {
@@ -361,7 +362,7 @@ static void carve(const Map map, const Tris edges, const int scale, const Flags 
             case 1: room(map, FLORING, x0, y0); break;
             default: break;
         }
-        corridor(map, x0, y0, dx, dy, sx, sy);
+        // Second point.
         room(map, WALLING, x1, y1);
         switch(rand() % 4)
         {
@@ -369,6 +370,9 @@ static void carve(const Map map, const Tris edges, const int scale, const Flags 
             case 1: room(map, FLORING, x1, y1); break;
             default: break;
         }
+        /* TODO: Try inflating dead end rooms. */
+        // Connecting corridor.
+        corridor(map, x0, y0, dx, dy, sx, sy);
     }
 }
 
@@ -388,11 +392,11 @@ Map xtgenerate(const Sdl sdl, const Point where)
     // The scale will shrink the screen by some factor for map generation.
     const int scale = 5;
     // The border is a pixel width around the screen where points may not be placed.
-    const int border = 100;
+    const int border = 80;
     // Snap size is randomized.
     const int grid = 15 + rand() % 15;
     // Snap points is randomized.
-    const int max = 10 + rand() % 90;
+    const int max = 60;
     // Points are randomly placed in an array.
     const Points ps = prand(w, h, max, grid, border, where, scale);
     // Points are placed into a triangle mesh with delaunay triangulation.
