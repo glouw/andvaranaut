@@ -37,7 +37,7 @@ Hero xspawn(const float focal)
     hero.maxmana = 6;
     hero.fatg = 6.0f;
     hero.maxfatg = 6;
-    hero.wep = SHORT;
+    hero.wep = HANDS;
     return hero;
 }
 

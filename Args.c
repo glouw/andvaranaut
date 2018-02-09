@@ -110,8 +110,8 @@ static Args defaults()
 {
     Args args;
     xzero(args);
-    args.xres = 800;
-    args.yres = 500;
+    args.xres = 1200;
+    args.yres = 800;
     args.focal = 1.0f;
     args.vsync = false;
     args.fps = 60;
