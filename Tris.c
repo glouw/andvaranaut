@@ -366,7 +366,6 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
 
 Map xtgenerate(const Point where)
 {
-    srand(time(0));
     // The triangle type is reused for edges by omitting the third point.
     // The third point is then reused for a flag. For duplication removal our out of bounds checks.
     const Flags flags = {
@@ -376,7 +375,7 @@ Map xtgenerate(const Point where)
     const int w = 100 + rand() % 60;
     const int h =  50 + rand() % 40;
     // Snap size is randomized.
-    const int grid = 5 + rand() % 20;
+    const int grid = 10 + rand() % 15;
     // The border is a pixel width around the screen where points may not be placed.
     const int border = 2 * grid;
     // Snap points is randomized.

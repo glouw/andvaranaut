@@ -53,6 +53,26 @@ static Sprite _d_(const Point where)
     return sprite;
 }
 
+// Tree Trunk.
+static Sprite _e_(const Point where)
+{
+    Sprite sprite = born(where);
+    sprite.ascii = 'e';
+    sprite.width = 1.00f;
+    sprite.health = 1.0f; // Breaks very easy.
+    return sprite;
+}
+
+// Tree Leaves.
+static Sprite _f_(const Point where)
+{
+    Sprite sprite = born(where);
+    sprite.ascii = 'f';
+    sprite.width = 1.00f;
+    sprite.health = 1.0f; // Breaks very easy.
+    return sprite;
+}
+
 static Sprite registrar(const int ascii, const Point where)
 {
     switch(ascii)
@@ -61,6 +81,8 @@ static Sprite registrar(const int ascii, const Point where)
         case 'a': return _a_(where);
         case 'b': return _b_(where);
         case 'd': return _d_(where);
+        case 'e': return _e_(where);
+        case 'f': return _f_(where);
     }
 }
 
