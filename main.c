@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     Hero hero = xspawn(args.focal);
     Sprites sprites = xsgen();
     Sdl sdl = xsetup(args);
-    Map map = xtgenerate(sdl, hero.where);
+    Map map = xtgenerate(hero.where);
     Input input = xready(args.msen);
     Overview overview = xinit();
     Current current = xstart();

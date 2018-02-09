@@ -19,20 +19,20 @@ void xmdump(const Map map)
     mprint(map.floring, map.rows, map.cols);
 }
 
-static char** mreset(char** block, const int rows, const int cols)
+static char** mreset(char** block, const int rows, const int cols, const int blok)
 {
     for(int row = 0; row < rows; row++)
     for(int col = 0; col < cols; col++)
-        block[row][col] = '#';
+        block[row][col] = blok;
     return block;
 }
 
-static char** mnew(const int rows, const int cols)
+static char** mnew(const int rows, const int cols, const int blok)
 {
     char** block = xtoss(char*, rows);
     for(int row = 0; row < rows; row++)
         block[row] = xtoss(char, cols);
-    return mreset(block, rows, cols);
+    return mreset(block, rows, cols, blok);
 }
 
 Map xmgen(const int rows, const int cols)
@@ -41,9 +41,9 @@ Map xmgen(const int rows, const int cols)
     xzero(map);
     map.rows = rows;
     map.cols = cols;
-    map.ceiling = mnew(map.rows, map.cols);
-    map.walling = mnew(map.rows, map.cols);
-    map.floring = mnew(map.rows, map.cols);
+    map.ceiling = mnew(map.rows, map.cols, '#');
+    map.walling = mnew(map.rows, map.cols, '#');
+    map.floring = mnew(map.rows, map.cols, '#');
     return map;
 }
 

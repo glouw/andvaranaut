@@ -170,14 +170,10 @@ static Points psadd(Points ps, const Point p, const char* why)
 }
 
 // Too many arguments.
-static Points prand(const int w, const int h, const int max, const int grid, const int border, const Point where, const int scale)
+static Points prand(const int w, const int h, const int max, const int grid, const int border, const Point where)
 {
     Points ps = psnew(max);
-    const Point scaled = {
-        xfl(where.x) * scale,
-        xfl(where.y) * scale,
-    };
-    ps = psadd(ps, scaled, "adding hero scaled");
+    ps = psadd(ps, where, "adding hero");
     for(int i = 0; i < max - 1; i++)
     {
         const Point p = {
@@ -305,23 +301,25 @@ static int carvable(const Map map, const int x, const int y)
     return true;
 }
 
-static void room(const Map map, const Party party, const int x, const int y)
+static void room(const Map map, const int x, const int y, const int grid)
 {
-    const int w = 1 + rand() % 2;
-    const int h = 1 + rand() % 2;
+    const int size = (grid - 2) / 2;
+    const int w = 1 + rand() % size;
+    const int h = 1 + rand() % size;
+    const int ceiling = (rand() % 2) == 0;
+    const int walling = true;
+    const int floring = (rand() % 4) == 0;
     for(int i = -w; i <= w; i++)
     for(int j = -h; j <= h; j++)
     {
         const int xx = x + i;
         const int yy = y + j;
         if(carvable(map, xx, yy))
-            switch(party)
-            {
-            case CEILING: map.ceiling[yy][xx] = ' '; break;
-            case WALLING: map.walling[yy][xx] = ' '; break;
-            case FLORING: map.floring[yy][xx] = ' '; break;
-            default: break;
-            }
+        {
+            if(ceiling) map.ceiling[yy][xx] = ' ';
+            if(walling) map.walling[yy][xx] = ' ';
+            if(floring) map.floring[yy][xx] = ' ';
+        }
     }
 }
 
@@ -333,17 +331,17 @@ static void corridor(const Map map, const int x0, const int y0, const int dx, co
     for(int j = 0; j < abs(dy); j++) map.walling[y += sy][x] = ' ';
 }
 
-static void carve(const Map map, const Tris edges, const int scale, const Flags flags)
+static void carve(const Map map, const Tris edges, const Flags flags, const int grid)
 {
     for(int i = 0; i < edges.count; i++)
     {
         const Tri e = edges.tri[i];
         if(peql(e.c, flags.one))
             continue;
-        const int x0 = xfl(e.a.x / (float) scale);
-        const int y0 = xfl(e.a.y / (float) scale);
-        const int x1 = xfl(e.b.x / (float) scale);
-        const int y1 = xfl(e.b.y / (float) scale);
+        const int x0 = e.a.x;
+        const int y0 = e.a.y;
+        const int x1 = e.b.x;
+        const int y1 = e.b.y;
         const Point a = { x0, y0 };
         const Point b = { x1, y1 };
         if(xout(map, a))
@@ -355,28 +353,18 @@ static void carve(const Map map, const Tris edges, const int scale, const Flags 
         const int sx = dx > 0 ? 1 : dx < 0 ? -1 : 0;
         const int sy = dy > 0 ? 1 : dy < 0 ? -1 : 0;
         // First point.
-        room(map, WALLING, x0, y0);
-        switch(rand() % 4)
-        {
-            case 0: room(map, CEILING, x0, y0); break;
-            case 1: room(map, FLORING, x0, y0); break;
-            default: break;
-        }
+        /* If DEADEND double grid size */
+        room(map, x0, y0, grid);
         // Second point.
-        room(map, WALLING, x1, y1);
-        switch(rand() % 4)
-        {
-            case 0: room(map, CEILING, x1, y1); break;
-            case 1: room(map, FLORING, x1, y1); break;
-            default: break;
-        }
+        /* If DEADEND double grid size */
+        room(map, x1, y1, grid);
         /* TODO: Try inflating dead end rooms. */
         // Connecting corridor.
         corridor(map, x0, y0, dx, dy, sx, sy);
     }
 }
 
-Map xtgenerate(const Sdl sdl, const Point where)
+Map xtgenerate(const Point where)
 {
     srand(time(0));
     // The triangle type is reused for edges by omitting the third point.
@@ -385,20 +373,16 @@ Map xtgenerate(const Sdl sdl, const Point where)
         { 0.0, 0.0 },
         { 1.0, 1.0 },
     };
-    // Generates at screen size on the pixel elvel so that triangles
-    // can be debugged with line drawings in SDL.
-    const int w = (sdl.xres / 2) + rand() % (sdl.xres / 2);
-    const int h = (sdl.yres / 2) + rand() % (sdl.yres / 2);
-    // The scale will shrink the screen by some factor for map generation.
-    const int scale = 5;
-    // The border is a pixel width around the screen where points may not be placed.
-    const int border = 80;
+    const int w = 100 + rand() % 60;
+    const int h =  50 + rand() % 40;
     // Snap size is randomized.
-    const int grid = 15 + rand() % 15;
+    const int grid = 5 + rand() % 20;
+    // The border is a pixel width around the screen where points may not be placed.
+    const int border = 2 * grid;
     // Snap points is randomized.
     const int max = 60;
     // Points are randomly placed in an array.
-    const Points ps = prand(w, h, max, grid, border, where, scale);
+    const Points ps = prand(w, h, max, grid, border, where);
     // Points are placed into a triangle mesh with delaunay triangulation.
     const Tris tris = delaunay(ps, w, h, 9 * max, flags);
     // Edges are colleted.
@@ -406,15 +390,12 @@ Map xtgenerate(const Sdl sdl, const Point where)
     // The revere-delete algorithm is used to obtain a minimum spanning tree from edges.
     // Kruskal et al. (C) 1956.
     revdel(edges, w, h, flags);
-    // Map is scaled to screen.
-    const int rows = xfl(h / (float) scale);
-    const int cols = xfl(w / (float) scale);
     // Notice height and width go the other way for map (for rows then cols).
-    const Map map = xmgen(rows, cols);
+    const Map map = xmgen(h, w);
     // Duplicate edges are removed.
     mdups(edges, flags);
     // Map is carved from edge points.
-    carve(map, edges, scale, flags);
+    carve(map, edges, flags, grid);
     xmdump(map);
     free(tris.tri);
     free(ps.point);
