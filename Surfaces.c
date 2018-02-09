@@ -29,7 +29,7 @@ Surfaces xpull()
     /* & */ "art/stat/error.bmp",
     /* ' */ "art/stat/board.bmp",
     /* ( */ "art/stat/grass.bmp",
-    /* ) */ "art/stat/error.bmp",
+    /* ) */ "art/stat/dirt.bmp",
     /* * */ "art/stat/error.bmp",
     /* + */ "art/stat/error.bmp",
     /* , */ "art/stat/error.bmp",
