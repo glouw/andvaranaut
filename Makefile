@@ -1,3 +1,16 @@
+# Makefile for use with Windows and Linux.
+#
+# If Windows, install MinGW32 and extract the SDL2 development files
+# to the same directory where this repository resides. Add mingw32/bin
+# to path. Once ready, cd to the andvaranaut repo and run:
+#
+# 		mingw32-make
+#
+# If Linux, use your package manager to get required SDL2 libs. When installed,
+# use the command line to run:
+#
+# 		make
+
 CC = gcc
 
 NAME = andvaranaut
