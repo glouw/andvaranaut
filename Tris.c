@@ -8,7 +8,7 @@
 
 static Tris tsnew(const int max)
 {
-    const Tris ts = { (Tri*) malloc(sizeof(Tri) * max), 0, max };
+    const Tris ts = { xtoss(Tri, max), 0, max };
     return ts;
 }
 

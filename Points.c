@@ -4,7 +4,7 @@
 
 Points xpsnew(const int max)
 {
-    const Points ps = { (Point*) malloc(sizeof(Point) * max), 0, max };
+    const Points ps = { xtoss(Point, max), 0, max };
     return ps;
 }
 
