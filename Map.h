@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Point.h"
+#include "Points.h"
 #include "Overview.h"
-#include "Trapdoor.h"
 
 typedef struct
 {
@@ -13,11 +12,11 @@ typedef struct
     char** floring;
     int rows;
     int cols;
-    Trapdoor trapdoor;
+    Points trapdoors;
 }
 Map;
 
-Map xmgen(const int rows, const int cols, const Trapdoor);
+Map xmgen(const int rows, const int cols, const Points);
 
 void xclose(const Map);
 

@@ -21,6 +21,7 @@ SRCS+= Line.c
 SRCS+= Map.c
 SRCS+= Overview.c
 SRCS+= Point.c
+SRCS+= Points.c
 SRCS+= Projection.c
 SRCS+= State.c
 SRCS+= Sdl.c
@@ -28,7 +29,6 @@ SRCS+= Scanline.c
 SRCS+= Sprites.c
 SRCS+= Surfaces.c
 SRCS+= Textures.c
-SRCS+= Trapdoor.c
 SRCS+= Torch.c
 SRCS+= Tris.c
 

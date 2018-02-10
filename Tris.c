@@ -152,27 +152,10 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
     return tris;
 }
 
-static Points psnew(const int max)
-{
-    const Points ps = { (Point*) malloc(sizeof(Point) * max), 0, max };
-    return ps;
-}
-
-static Points psadd(Points ps, const Point p, const char* why)
-{
-    if(ps.count == ps.max)
-    {
-        fprintf(stderr, "points size limitation reached: %s\n", why);
-        exit(1);
-    }
-    ps.point[ps.count++] = p;
-    return ps;
-}
-
 // Too many arguments.
 static Points prand(const int w, const int h, const int max, const int grid, const int border)
 {
-    Points ps = psnew(max);
+    Points ps = xpsnew(max);
     for(int i = 0; i < max; i++)
     {
         const Point p = {
@@ -180,8 +163,8 @@ static Points prand(const int w, const int h, const int max, const int grid, con
             (float) (rand() % (h - border) + border / 2),
         };
         const Point snapped = {
-            xfl(p.x / grid) * grid,
-            xfl(p.y / grid) * grid,
+            (float) xfl(p.x / grid) * grid,
+            (float) xfl(p.y / grid) * grid,
         };
         ps.point[ps.count++] = snapped;
     }
@@ -215,15 +198,15 @@ static int psfind(const Points ps, const Point p)
 
 static int connected(const Point a, const Point b, const Tris edges, const Flags flags)
 {
-    Points todo = psnew(edges.max);
-    Points done = psnew(edges.max);
+    Points todo = xpsnew(edges.max);
+    Points done = xpsnew(edges.max);
     Tris reach = tsnew(edges.max);
-    todo = psadd(todo, a, "first todo");
+    todo = xpsadd(todo, a, "first todo");
     int connection = false;
     while(todo.count != 0 && connection != true)
     {
         const Point removed = todo.point[--todo.count];
-        done = psadd(done, removed, "done a point");
+        done = xpsadd(done, removed, "done a point");
         // Get reachable edges from current point.
         reach.count = 0;
         for(int i = 0; i < edges.count; i++)
@@ -245,7 +228,7 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
             }
             // Otherwise add todo list.
             if(!psfind(done, reach.tri[i].b))
-                todo = psadd(todo, reach.tri[i].b, "connected tsadd problem with todo");
+                todo = xpsadd(todo, reach.tri[i].b, "connected tsadd problem with todo");
         }
     }
     free(todo.point);
@@ -322,6 +305,17 @@ static void room(const Map map, const int x, const int y, const int grid)
     }
 }
 
+static void trapdoors(const Map map)
+{
+    for(int i = 0; i < map.trapdoors.count; i++)
+    {
+        const Point where = map.trapdoors.point[i];
+        const int x = where.x;
+        const int y = where.y;
+        map.floring[y][x] = '~';
+    }
+}
+
 static void corridor(const Map map, const int x0, const int y0, const int dx, const int dy, const int sx, const int sy)
 {
     int y = y0;
@@ -341,26 +335,19 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
         const int y0 = e.a.y;
         const int x1 = e.b.x;
         const int y1 = e.b.y;
-        const Point a = { x0, y0 };
-        const Point b = { x1, y1 };
-        if(xout(map, a))
+        if(xout(map, e.a))
             xbomb("map: point a was out of bounds in map carving");
-        if(xout(map, b))
+        if(xout(map, e.b))
             xbomb("map: point b was out of bounds in map carving");
         const int dx = x1 - x0;
         const int dy = y1 - y0;
         const int sx = dx > 0 ? 1 : dx < 0 ? -1 : 0;
         const int sy = dy > 0 ? 1 : dy < 0 ? -1 : 0;
-        // First point.
-        /* If DEADEND double grid size */
         room(map, x0, y0, grid);
-        // Second point.
-        /* If DEADEND double grid size */
         room(map, x1, y1, grid);
-        /* TODO: Try inflating dead end rooms. */
-        // Connecting corridor.
         corridor(map, x0, y0, dx, dy, sx, sy);
     }
+    trapdoors(map);
 }
 
 Map xtgenerate()
@@ -387,9 +374,11 @@ Map xtgenerate()
     const Tris edges = ecollect(tsnew(27 * max), tris, flags);
     // The revere-delete algorithm is used to obtain a minimum spanning tree from edges. Kruskal et al. (C) 1956.
     revdel(edges, w, h, flags);
+    /* Map is generated. */
+    // Trapdoors leading to the next level of the dungeon are randomly selected from the list of points.
+    const Points trapdoors = xpspop(ps, 5);
     // Map is generated. Notice height and width go the other way for map (for rows then cols).
-    const Trapdoor td = xtdnew(ps);
-    const Map map = xmgen(h, w, td);
+    const Map map = xmgen(h, w, trapdoors);
     // Duplicate edges from map are removed.
     mdups(edges, flags);
     // Map is carved from edge points.

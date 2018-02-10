@@ -35,7 +35,7 @@ static char** mnew(const int rows, const int cols, const int blok)
     return mreset(block, rows, cols, blok);
 }
 
-Map xmgen(const int rows, const int cols, const Trapdoor td)
+Map xmgen(const int rows, const int cols, const Points trapdoors)
 {
     Map map;
     xzero(map);
@@ -44,7 +44,7 @@ Map xmgen(const int rows, const int cols, const Trapdoor td)
     map.ceiling = mnew(map.rows, map.cols, '#');
     map.walling = mnew(map.rows, map.cols, '#');
     map.floring = mnew(map.rows, map.cols, '"');
-    map.trapdoor = td;
+    map.trapdoors = trapdoors;
     return map;
 }
 

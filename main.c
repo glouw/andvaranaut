@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     // to make the player realize early on that multiple levels exist
     // in the game. This will also deceive the player into diving down
     // too early and getting hurt by the stronger enemies on the next floor.
-    const Point start = xtdrand(map.trapdoor);
+    const Point start = xpsrand(map.trapdoors);
     Hero hero = xspawn(args.focal, start);
     Sprites sprites = xsgen();
     Sdl sdl = xsetup(args);
@@ -52,9 +52,8 @@ int main(int argc, char* argv[])
             gauge = xgwind(gauge, hero.wep, input);
             if(xteleporting(hero, map, input, ticks))
             {
-                //hero = xteleport(hero, map);
-                //map = xreopen(map, hero.floor);
-                //sprites = xrewake(sprites, hero.floor);
+                printf("teleporting\n");
+                // TODO: Teleport!
             }
             hero = xsustain(hero, map, input, current);
             sprites = xcaretake(sprites, hero, input, map, attack, ticks);
