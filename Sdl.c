@@ -232,7 +232,7 @@ static void dmeter(const Sdl sdl, const int ticks, const Meter m)
     // Will flicker if less than 25% for a stat.
     const int frame = m.stat < m.max / 4.0f ?  (ticks % FRAMES ? ']' : '[' ) - ' ' : '[' - ' ';
     // Tile <to> size is resolution dependent.
-    const int ts = 14.0f * (sdl.xres / (float) sdl.yres);
+    const int ts = sdl.xres / 30;
     /* Draw liquid in glass. */
     for(int i = 0; i < xcl(m.stat); i++)
     {

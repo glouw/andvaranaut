@@ -2,6 +2,7 @@
 
 #include "Point.h"
 #include "Overview.h"
+#include "Trapdoor.h"
 
 typedef struct
 {
@@ -12,10 +13,11 @@ typedef struct
     char** floring;
     int rows;
     int cols;
+    Trapdoor trapdoor;
 }
 Map;
 
-Map xmgen(const int rows, const int cols);
+Map xmgen(const int rows, const int cols, const Trapdoor);
 
 void xclose(const Map);
 

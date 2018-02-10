@@ -7,10 +7,16 @@ int main(int argc, char* argv[])
     srand(time(0));
     const Args args = xparse(argc, argv);
     // Data init.
-    Hero hero = xspawn(args.focal);
+    Map map = xtgenerate();
+    // Hero will randomly start on one of the trapdoors
+    // that lead to the next level of the dungeon. This is done
+    // to make the player realize early on that multiple levels exist
+    // in the game. This will also deceive the player into diving down
+    // too early and getting hurt by the stronger enemies on the next floor.
+    const Point start = xtdrand(map.trapdoor);
+    Hero hero = xspawn(args.focal, start);
     Sprites sprites = xsgen();
     Sdl sdl = xsetup(args);
-    Map map = xtgenerate(hero.where);
     Input input = xready(args.msen);
     Overview overview = xinit();
     Current current = xstart();

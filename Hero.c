@@ -16,13 +16,12 @@ static Line lens(const float focal)
     return fov;
 }
 
-Hero xspawn(const float focal)
+Hero xspawn(const float focal, const Point where)
 {
     Hero hero;
     xzero(hero);
     hero.fov = lens(focal);
-    hero.where.x = 2.5f;
-    hero.where.y = 2.5f;
+    hero.where = where;
     hero.speed = 0.12f;
     hero.acceleration = 0.0150f;
     hero.torch = xsnuff();

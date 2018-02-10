@@ -28,6 +28,7 @@ SRCS+= Scanline.c
 SRCS+= Sprites.c
 SRCS+= Surfaces.c
 SRCS+= Textures.c
+SRCS+= Trapdoor.c
 SRCS+= Torch.c
 SRCS+= Tris.c
 

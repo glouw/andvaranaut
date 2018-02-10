@@ -170,11 +170,10 @@ static Points psadd(Points ps, const Point p, const char* why)
 }
 
 // Too many arguments.
-static Points prand(const int w, const int h, const int max, const int grid, const int border, const Point where)
+static Points prand(const int w, const int h, const int max, const int grid, const int border)
 {
     Points ps = psnew(max);
-    ps = psadd(ps, where, "adding hero");
-    for(int i = 0; i < max - 1; i++)
+    for(int i = 0; i < max; i++)
     {
         const Point p = {
             (float) (rand() % (w - border) + border / 2),
@@ -364,7 +363,7 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
     }
 }
 
-Map xtgenerate(const Point where)
+Map xtgenerate()
 {
     // The triangle type is reused for edges by omitting the third point.
     // The third point is then reused for a flag. For duplication removal our out of bounds checks.
@@ -372,29 +371,30 @@ Map xtgenerate(const Point where)
         { 0.0, 0.0 },
         { 1.0, 1.0 },
     };
-    const int w = 100 + rand() % 60;
-    const int h =  50 + rand() % 40;
+    const int w = 160;
+    const int h = 100;
     // Snap size is randomized.
     const int grid = 10 + rand() % 15;
     // The border is a pixel width around the screen where points may not be placed.
     const int border = 2 * grid;
-    // Snap points is randomized.
+    // Max number of points to be placed. Will place on snap grid.
     const int max = 60;
     // Points are randomly placed in an array.
-    const Points ps = prand(w, h, max, grid, border, where);
+    const Points ps = prand(w, h, max, grid, border);
     // Points are placed into a triangle mesh with delaunay triangulation.
     const Tris tris = delaunay(ps, w, h, 9 * max, flags);
     // Edges are colleted.
     const Tris edges = ecollect(tsnew(27 * max), tris, flags);
-    // The revere-delete algorithm is used to obtain a minimum spanning tree from edges.
-    // Kruskal et al. (C) 1956.
+    // The revere-delete algorithm is used to obtain a minimum spanning tree from edges. Kruskal et al. (C) 1956.
     revdel(edges, w, h, flags);
-    // Notice height and width go the other way for map (for rows then cols).
-    const Map map = xmgen(h, w);
-    // Duplicate edges are removed.
+    // Map is generated. Notice height and width go the other way for map (for rows then cols).
+    const Trapdoor td = xtdnew(ps);
+    const Map map = xmgen(h, w, td);
+    // Duplicate edges from map are removed.
     mdups(edges, flags);
     // Map is carved from edge points.
     carve(map, edges, flags, grid);
+    // Tidy up and return.
     xmdump(map);
     free(tris.tri);
     free(ps.point);
