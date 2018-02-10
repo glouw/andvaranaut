@@ -2,21 +2,6 @@
 
 #include "util.h"
 
-// Enabling this performance flag will remove ceiling and floor rastering.
-// This is good for getting work done on old laptops without suffering
-// from low FPS motion sickness.
-#if 0
-# pragma message "WARNING: Performance flag enabled - ceiling and floors will not be rendered"
-# define PERF
-#endif
-
-// Enabling this flag will paint the screen yellow before any of the rendering is done.
-// This is good for seeing where the software render missed any pixels.
-#if 0
-# pragma message "WARNING: Highlight flag enabled - yellow lines need to be fixed"
-# define HILITE
-#endif
-
 // Modulous modify a pixel. Discards alpha. Great for pixel shading
 static uint32_t mod(const uint32_t pixel, const int modding)
 {
@@ -124,18 +109,14 @@ static void praster(const Scanline sl, const Ray r, const Map map, const Current
 // Upper level rasterer (second ceiling and upper walls).
 static void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
-    #ifndef PERF
     int link = 0;
-    #endif
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
         // TODO: Maybe randomize the height? Maybe random per level?
         const Ray hind = xcalc(hero, *which, 2.0, sl.sdl.yres, sl.sdl.xres);
-        #ifndef PERF
         if(link++ == 0)
             sraster(sl, hind, map);
-        #endif
         wraster(sl, hind);
     }
 }
@@ -143,17 +124,13 @@ static void uraster(const Scanline sl, const Hits hits, const Hero hero, const M
 // Lower level rasterer (pit and lower walls).
 static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Current current)
 {
-    #ifndef PERF
     int link = 0;
-    #endif
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
         const Ray hind = xcalc(hero, *which, current.height, sl.sdl.yres, sl.sdl.xres);
-        #ifndef PERF
         if(link++ == 0)
             praster(sl, hind, map, current);
-        #endif
         wraster(sl, hind);
     }
 }
@@ -163,25 +140,21 @@ static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const 
 {
     const Ray ray = xcalc(hero, hits.walling, 0.0, sl.sdl.yres, sl.sdl.xres);
     wraster(sl, ray);
-    #ifndef PERF
     fraster(sl, ray, map);
     craster(sl, ray, map);
-    #endif
     return ray.corrected;
 }
 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
 {
-    #ifdef HILITE
-    // Show me the missing pixels.
+    #if 0
+    #pragma message "WARNING: Highlight flag enabled - yellow lines need to be fixed"
     for(int x = 0; x < sl.sdl.yres; x++)
         pput(sl, x, 0xFFFF00);
     #endif
-    #ifdef PERF
     // Clean slate.
     for(int x = 0; x < sl.sdl.yres; x++)
         pput(sl, x, 0x0);
-    #endif
     // Ceiling and floor can be turned off for debugging.
     uraster(sl, hits, hero, map);
     lraster(sl, hits, hero, map, current);

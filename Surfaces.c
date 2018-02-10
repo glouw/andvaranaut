@@ -19,7 +19,7 @@ static SDL_Surface* load(const char* const path)
 
 Surfaces xpull()
 {
-    static const char* const name[] = {
+    static const char* const names[] = {
     /*   */ "art/stat/delete.bmp",
     /* ! */ "art/stat/error.bmp",
     /* " */ "art/stat/floor.bmp",
@@ -116,10 +116,10 @@ Surfaces xpull()
     /* } */ "art/stat/error.bmp",
     /* ~ */ "art/stat/trap_door.bmp",
     };
-    const int count = xlen(name);
+    const int count = xlen(names);
     SDL_Surface** const surface = xtoss(SDL_Surface*, count);
     for(int i = 0; i < count; i++)
-        surface[i] = load(name[i]);
+        surface[i] = load(names[i]);
     const Surfaces surfaces = { surface, count };
     return surfaces;
 }
