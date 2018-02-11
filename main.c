@@ -7,6 +7,7 @@ int main(int argc, char* argv[])
     srand(time(0));
     const Args args = xparse(argc, argv);
     // Data init.
+    /* TODO: Maps.h. Start stacking map blocks. */
     Map map = xtgenerate();
     // Hero will randomly start on one of the trapdoors
     // that lead to the next level of the dungeon. This is done

@@ -237,6 +237,8 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
     return connection;
 }
 
+/* Map is generated. */
+// Trapdoors leading to the next level of the dungeon are randomly selected from the list of points.
 static void revdel(Tris edges, const int w, const int h, const Flags flags)
 {
     sort(edges, descending);
@@ -312,6 +314,15 @@ static void trapdoors(const Map map)
         const Point where = map.trapdoors.point[i];
         const int x = where.x;
         const int y = where.y;
+        // Platform first.
+        for(int j = -1; j <= 1; j++)
+        for(int k = -1; k <= 1; k++)
+        {
+            const int xx = k + x;
+            const int yy = j + y;
+            map.floring[yy][xx] = '"';
+        }
+        // Then trapdoor.
         map.floring[y][x] = '~';
     }
 }
@@ -354,36 +365,20 @@ Map xtgenerate()
 {
     // The triangle type is reused for edges by omitting the third point.
     // The third point is then reused for a flag. For duplication removal our out of bounds checks.
-    const Flags flags = {
-        { 0.0, 0.0 },
-        { 1.0, 1.0 },
-    };
+    const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
     const int w = 160;
     const int h = 100;
-    // Snap size is randomized.
     const int grid = 10 + rand() % 15;
-    // The border is a pixel width around the screen where points may not be placed.
     const int border = 2 * grid;
-    // Max number of points to be placed. Will place on snap grid.
     const int max = 60;
-    // Points are randomly placed in an array.
     const Points ps = prand(w, h, max, grid, border);
-    // Points are placed into a triangle mesh with delaunay triangulation.
     const Tris tris = delaunay(ps, w, h, 9 * max, flags);
-    // Edges are colleted.
     const Tris edges = ecollect(tsnew(27 * max), tris, flags);
-    // The revere-delete algorithm is used to obtain a minimum spanning tree from edges. Kruskal et al. (C) 1956.
     revdel(edges, w, h, flags);
-    /* Map is generated. */
-    // Trapdoors leading to the next level of the dungeon are randomly selected from the list of points.
     const Points trapdoors = xpspop(ps, 5);
-    // Map is generated. Notice height and width go the other way for map (for rows then cols).
     const Map map = xmgen(h, w, trapdoors);
-    // Duplicate edges from map are removed.
     mdups(edges, flags);
-    // Map is carved from edge points.
     carve(map, edges, flags, grid);
-    // Tidy up and return.
     xmdump(map);
     free(tris.tri);
     free(ps.point);
