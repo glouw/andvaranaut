@@ -1,13 +1,8 @@
 #include "Projection.h"
 
-#include "util.h"
+#include "Clamped.h"
 
-typedef struct
-{
-    int bot;
-    int top;
-}
-Clamped;
+#include "util.h"
 
 static Clamped clamp(const int yres, const float bot, const float top)
 {

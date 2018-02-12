@@ -24,7 +24,7 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     // Advance the ray.
     const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));
     const Point final = xadd(ray, xmul(direction, 1e-3f));
-    const Point other = xsub(ray, xmul(direction, 1e-2f));
+    const Point other = xsub(ray, xmul(direction, 1e-3f));
     /* Flooring wall was hit. Push the flooring hit linked list. */
     if(xtile(final, map.floring) && !xtile(other, map.floring))
     {
