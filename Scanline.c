@@ -36,7 +36,11 @@ static void xfer(const Scanline sl, const int x, const Point offset, const int t
 // Wall rasterer.
 static void wraster(const Scanline sl, const Ray r)
 {
-    for(int x = r.proj.cbot; x < r.proj.ctop; x++)
+    if(r.proj.clamped.bot < 0)
+        xbomb("clamp bot error");
+    if(r.proj.clamped.top >= sl.sdl.xres)
+        xbomb("clamp top error");
+    for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
         const Point offset = { (x - r.proj.bot) / r.proj.size, r.offset };
         // Shade and transfer pixel.
@@ -47,7 +51,7 @@ static void wraster(const Scanline sl, const Ray r)
 // Floor rasterer.
 static void fraster(const Scanline sl, const Ray r, const Map map)
 {
-    for(int x = 0; x < r.proj.cbot; x++)
+    for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         const Point offset = xlerp(r.trace, xfcast(r.proj, x));
         const int tile = xtile(offset, map.floring);
@@ -61,7 +65,7 @@ static void fraster(const Scanline sl, const Ray r, const Map map)
 // Ceiling rasterer.
 static void craster(const Scanline sl, const Ray r, const Map map)
 {
-    for(int x = r.proj.ctop; x < sl.sdl.yres; x++)
+    for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         const Point offset = xlerp(r.trace, xccast(r.proj, x));
         const int tile = xtile(offset, map.ceiling);
@@ -75,7 +79,7 @@ static void craster(const Scanline sl, const Ray r, const Map map)
 // Second ceiling rasterer.
 static void sraster(const Scanline sl, const Ray r, const Map map)
 {
-    for(int x = r.proj.ctop; x < sl.sdl.yres; x++)
+    for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         const Point offset = xlerp(r.trace, xccast(r.proj, x));
         // Do not render where there was ceiling.
@@ -92,7 +96,7 @@ static void sraster(const Scanline sl, const Ray r, const Map map)
 // Pit water rasterer.
 static void praster(const Scanline sl, const Ray r, const Map map, const Current current)
 {
-    for(int x = 0; x < r.proj.cbot; x++)
+    for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         const Point offset = xlerp(r.trace, xfcast(r.proj, x));
         // Do not render where there was a floor.

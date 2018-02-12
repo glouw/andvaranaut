@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Point.h"
+#include "Clamped.h"
 
 typedef struct
 {
     float bot;
     float top;
-    int cbot; // Clamped.
-    int ctop; // Clamped.
+    Clamped clamped;
     float size;
     float height;
     int yres;
