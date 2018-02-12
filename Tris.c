@@ -152,7 +152,7 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
     return tris;
 }
 
-// Too many arguments.
+// Random points.
 static Points prand(const int w, const int h, const int max, const int grid, const int border)
 {
     Points ps = xpsnew(max);
@@ -220,13 +220,13 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
         // For all reachable edges
         for(int i = 0; i < reach.count; i++)
         {
-            // Destination reached.
+            // Was the destination reached?
             if(peql(reach.tri[i].b, b))
             {
                 connection = true;
                 break;
             }
-            // Otherwise add todo list.
+            // Otherwise add point of reachable edge to todo list.
             if(!psfind(done, reach.tri[i].b))
                 todo = xpsadd(todo, reach.tri[i].b, "connected tsadd problem with todo");
         }
@@ -237,8 +237,7 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
     return connection;
 }
 
-/* Map is generated. */
-// Trapdoors leading to the next level of the dungeon are randomly selected from the list of points.
+// Graph Theory Reverse Delete algorithm. Kruskal 1956.
 static void revdel(Tris edges, const int w, const int h, const Flags flags)
 {
     sort(edges, descending);
@@ -292,7 +291,7 @@ static void room(const Map map, const int x, const int y, const int grid)
     const int h = 1 + rand() % size;
     const int ceiling = (rand() % 2) == 0;
     const int walling = true;
-    const int floring = (rand() % 4) == 0;
+    const int floring = (rand() % 8) == 0;
     for(int i = -w; i <= w; i++)
     for(int j = -h; j <= h; j++)
     {
@@ -307,6 +306,22 @@ static void room(const Map map, const int x, const int y, const int grid)
     }
 }
 
+static void platform(const Map map, const int x, const int y)
+{
+    for(int j = -1; j <= 1; j++)
+    for(int k = -1; k <= 1; k++)
+    {
+        const int yy = j + y;
+        const int xx = k + x;
+        map.floring[yy][xx] = '"';
+    }
+}
+
+static void trapdoor(const Map map, const int x, const int y)
+{
+    map.floring[y][x] = '~';
+}
+
 static void trapdoors(const Map map)
 {
     for(int i = 0; i < map.trapdoors.count; i++)
@@ -314,16 +329,8 @@ static void trapdoors(const Map map)
         const Point where = map.trapdoors.point[i];
         const int x = where.x;
         const int y = where.y;
-        // Platform first.
-        for(int j = -1; j <= 1; j++)
-        for(int k = -1; k <= 1; k++)
-        {
-            const int xx = k + x;
-            const int yy = j + y;
-            map.floring[yy][xx] = '"';
-        }
-        // Then trapdoor.
-        map.floring[y][x] = '~';
+        platform(map, x, y);
+        trapdoor(map, x, y);
     }
 }
 
