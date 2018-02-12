@@ -94,14 +94,16 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const int modding = xilluminate(hero.torch, sprite->where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
         // Apply transperancy to the sprite, if required.
-        if(sprite->transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
+        if(sprite->transparent)
+            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
         // Render the sprite.
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
         /* Cleanup */
         // Remove transperancy from the sprite.
-        if(sprite->transparent) SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+        if(sprite->transparent)
+            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
         // Revert lighting to the sprite.
         SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
     }

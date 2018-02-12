@@ -23,7 +23,7 @@ static Tris tsadd(Tris tris, const Tri tri, const char* why)
     if(flag == 0 && tris.count / (float) tris.max > 0.75f)
     {
         fprintf(stderr, "warning: tris size reaching 75%% capacity: %s\n", why);
-        flag = 1;
+        flag = true;
     }
     tris.tri[tris.count++] = tri;
     return tris;
@@ -275,73 +275,6 @@ static void mdups(const Tris edges, const Flags flags)
     }
 }
 
-static int carvable(const Map map, const int x, const int y)
-{
-    if(x <= 1 || x >= map.cols - 1)
-        return false;
-    if(y <= 1 || y >= map.rows - 1)
-        return false;
-    return true;
-}
-
-static void room(const Map map, const int x, const int y, const int grid)
-{
-    const int size = (grid - 2) / 2;
-    const int w = 1 + rand() % size;
-    const int h = 1 + rand() % size;
-    const int ceiling = (rand() % 2) == 0;
-    const int walling = true;
-    const int floring = (rand() % 8) == 0;
-    for(int i = -w; i <= w; i++)
-    for(int j = -h; j <= h; j++)
-    {
-        const int xx = x + i;
-        const int yy = y + j;
-        if(carvable(map, xx, yy))
-        {
-            if(ceiling) map.ceiling[yy][xx] = ' ';
-            if(walling) map.walling[yy][xx] = ' ';
-            if(floring) map.floring[yy][xx] = ' ';
-        }
-    }
-}
-
-static void platform(const Map map, const int x, const int y)
-{
-    for(int j = -1; j <= 1; j++)
-    for(int k = -1; k <= 1; k++)
-    {
-        const int yy = j + y;
-        const int xx = k + x;
-        map.floring[yy][xx] = '"';
-    }
-}
-
-static void trapdoor(const Map map, const int x, const int y)
-{
-    map.floring[y][x] = '~';
-}
-
-static void trapdoors(const Map map)
-{
-    for(int i = 0; i < map.trapdoors.count; i++)
-    {
-        const Point where = map.trapdoors.point[i];
-        const int x = where.x;
-        const int y = where.y;
-        platform(map, x, y);
-        trapdoor(map, x, y);
-    }
-}
-
-static void corridor(const Map map, const int x0, const int y0, const int dx, const int dy, const int sx, const int sy)
-{
-    int y = y0;
-    int x = x0;
-    for(int j = 0; j < abs(dx); j++) map.walling[y][x += sx] = ' ';
-    for(int j = 0; j < abs(dy); j++) map.walling[y += sy][x] = ' ';
-}
-
 static void carve(const Map map, const Tris edges, const Flags flags, const int grid)
 {
     for(int i = 0; i < edges.count; i++)
@@ -349,23 +282,15 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
         const Tri e = edges.tri[i];
         if(peql(e.c, flags.one))
             continue;
-        const int x0 = e.a.x;
-        const int y0 = e.a.y;
-        const int x1 = e.b.x;
-        const int y1 = e.b.y;
         if(xout(map, e.a))
             xbomb("map: point a was out of bounds in map carving");
         if(xout(map, e.b))
             xbomb("map: point b was out of bounds in map carving");
-        const int dx = x1 - x0;
-        const int dy = y1 - y0;
-        const int sx = dx > 0 ? 1 : dx < 0 ? -1 : 0;
-        const int sy = dy > 0 ? 1 : dy < 0 ? -1 : 0;
-        room(map, x0, y0, grid);
-        room(map, x1, y1, grid);
-        corridor(map, x0, y0, dx, dy, sx, sy);
+        xroom(map, e.a, grid);
+        xroom(map, e.b, grid);
+        xcorridor(map, e.a, e.b);
     }
-    trapdoors(map);
+    xtrapdoors(map);
 }
 
 Map xtgenerate()

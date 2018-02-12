@@ -27,3 +27,9 @@ void xedit(const Map, const Overview);
 int xout(const Map, const Point where);
 
 void xmdump(const Map map);
+
+void xroom(const Map map, const Point where, const int grid);
+
+void xtrapdoors(const Map map);
+
+void xcorridor(const Map map, const Point a, const Point b);
