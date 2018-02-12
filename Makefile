@@ -81,12 +81,12 @@ endif
 
 # Link.
 $(BIN): $(SRCS:.c=.o)
-	@echo CC *.o -o $(BIN)
+	@echo $(CC) *.o -o $(BIN)
 	@$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
 
 # Compile.
 %.o : %.c Makefile
-	@echo CC $*.c
+	@echo $(CC) -c $*.c
 	@$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@$(RM) $*.d
 	@$(MV) $*.td $*.d
