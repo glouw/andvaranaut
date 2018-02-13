@@ -11,10 +11,7 @@ Points xpsnew(const int max)
 Points xpsadd(Points ps, const Point p, const char* why)
 {
     if(ps.count == ps.max)
-    {
-        fprintf(stderr, "points size limitation reached: %s\n", why);
-        exit(1);
-    }
+        xbomb("points size limitation reached: %s\n", why);
     ps.point[ps.count++] = p;
     return ps;
 }

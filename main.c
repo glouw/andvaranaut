@@ -1,18 +1,27 @@
 #include "Tris.h"
+#include "Maps.h"
 #include "util.h"
 
 int main(int argc, char* argv[])
 {
+    const int s0 = SDL_GetTicks();
+    const int floor = 1;
+    const int floors = 32;
     srand(time(0));
     const Args args = xparse(argc, argv);
-    Map map = xtgenerate();
-    Hero hero = xspawn(args.focal, xpsrand(map.trapdoors));
+    Maps maps = xmsinit(floors);
+    Map map = maps.map[floor];
+    const Point start = xpsrand(maps.map[floor].trapdoors);
+    Hero hero = xspawn(args.focal, start, floor);
     Sprites sprites = xsgen();
     Sdl sdl = xsetup(args);
     Input input = xready(args.msen);
     Overview overview = xinit();
     Current current = xstart();
     Gauge gauge = xgnew();
+    const int s1 = SDL_GetTicks();
+    printf("setup time: %d milliseconds\n", s1 - s0);
+    // X-Resolution 512 reserved for performance testing.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.done; renders++)
     {
         const int t0 = SDL_GetTicks();
@@ -33,15 +42,19 @@ int main(int argc, char* argv[])
             current = xstream(current);
             const Attack attack = xgpower(gauge, input, hero.wep);
             gauge = xgwind(gauge, hero.wep, input);
-            if(xteleporting(hero, map, input, ticks))
-            {
-                printf("teleporting\n");
-            }
             hero = xsustain(hero, map, input, current);
             sprites = xcaretake(sprites, hero, input, map, attack, ticks);
             xrender(sdl, hero, sprites, map, current, ticks);
             xdgauge(sdl, gauge);
             xdmeters(sdl, hero, ticks);
+            if(xteleporting(hero, map, input, ticks))
+            {
+                // TODO: Maps must be renamed to Zone.
+                // Maps will include sprites.
+                hero = xteleport(hero, map);
+                map = maps.map[hero.floor];
+                xmprint(map.walling, map.rows, map.cols);
+            }
         }
         xpresent(sdl);
         input = xpump(input);
@@ -49,9 +62,9 @@ int main(int argc, char* argv[])
         const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
+    xmsclose(maps);
     xgfree(gauge);
     xrelease(sdl);
-    xclose(map);
     xkill(sprites);
     return 0;
 }

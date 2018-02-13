@@ -4,7 +4,7 @@
 
 #include "util.h"
 
-static void mprint(char** block, const int rows, const int cols)
+void xmprint(char** block, const int rows, const int cols)
 {
     for(int row = 0; row < rows; row++)
     for(int col = 0; col < cols; col++)
@@ -14,9 +14,9 @@ static void mprint(char** block, const int rows, const int cols)
 
 void xmdump(const Map map)
 {
-    mprint(map.ceiling, map.rows, map.cols);
-    mprint(map.walling, map.rows, map.cols);
-    mprint(map.floring, map.rows, map.cols);
+    xmprint(map.ceiling, map.rows, map.cols);
+    xmprint(map.walling, map.rows, map.cols);
+    xmprint(map.floring, map.rows, map.cols);
 }
 
 static char** mreset(char** block, const int rows, const int cols, const int blok)
@@ -76,10 +76,12 @@ int xout(const Map map, const Point where)
 void xedit(const Map map, const Overview ov)
 {
     // Placing - Out of bounds check.
-    if(xout(map, ov.where)) return;
+    if(xout(map, ov.where))
+        return;
     const int ascii = ov.selected + ' ';
     // If the ascii is an alpha character then it is a sprite
-    if(xissprite(ascii)) return;
+    if(xissprite(ascii))
+        return;
     // Otherwise place the ascii character.
     const int x = ov.where.x;
     const int y = ov.where.y;
@@ -97,9 +99,8 @@ static int carvable(const Map map, const int x, const int y)
     return true;
 }
 
-void xroom(const Map map, const Point where, const int grid)
+void xroom(const Map map, const Point where, const int size)
 {
-    const int size = (grid - 2) / 2;
     const int w = 1 + rand() % size;
     const int h = 1 + rand() % size;
     const int ceiling = (rand() % 2) == 0;
@@ -119,31 +120,45 @@ void xroom(const Map map, const Point where, const int grid)
     }
 }
 
-static void platform(const Map map, const int x, const int y)
+static void platform(const Map map, const int x, const int y, const Party party)
 {
     for(int j = -1; j <= 1; j++)
     for(int k = -1; k <= 1; k++)
     {
         const int yy = j + y;
         const int xx = k + x;
-        map.floring[yy][xx] = '"';
+        switch(party)
+        {
+        case FLORING: map.floring[yy][xx] = '"'; break;
+        case CEILING: map.ceiling[yy][xx] = '#'; break;
+        default:
+            xbomb("platform: party not supported\n");
+            break;
+        }
     }
 }
 
-static void trapdoor(const Map map, const int x, const int y)
+static void trapdoor(const Map map, const int x, const int y, const Party party)
 {
-    map.floring[y][x] = '~';
+    switch(party)
+    {
+    case FLORING: map.floring[y][x] = '~'; break;
+    case CEILING: map.ceiling[y][x] = '~'; break;
+    default:
+        xbomb("trapdoor: party not supported\n");
+        break;
+    }
 }
 
-void xtrapdoors(const Map map)
+void xtrapdoors(const Map map, const Points trapdoors, const Party party)
 {
-    for(int i = 0; i < map.trapdoors.count; i++)
+    for(int i = 0; i < trapdoors.count; i++)
     {
-        const Point where = map.trapdoors.point[i];
+        const Point where = trapdoors.point[i];
         const int x = where.x;
         const int y = where.y;
-        platform(map, x, y);
-        trapdoor(map, x, y);
+        platform(map, x, y, party);
+        trapdoor(map, x, y, party);
     }
 }
 

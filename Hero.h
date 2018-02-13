@@ -48,7 +48,7 @@ typedef struct
 Hero;
 
 // Spawns the hero with default settings. Hero will always spawn at the top left of the map (1.5, 1.5).
-Hero xspawn(const float focal, const Point where);
+Hero xspawn(const float focal, const Point where, const int floor);
 
 // Returns a point within arm's length in front of the hero.
 Point xtouch(const Hero, const float reach);

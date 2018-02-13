@@ -32,6 +32,7 @@ SRCS+= Hits.c
 SRCS+= Input.c
 SRCS+= Line.c
 SRCS+= Map.c
+SRCS+= Maps.c
 SRCS+= Overview.c
 SRCS+= Point.c
 SRCS+= Points.c

@@ -26,10 +26,12 @@ void xedit(const Map, const Overview);
 
 int xout(const Map, const Point where);
 
-void xmdump(const Map map);
+void xmprint(char** block, const int rows, const int cols);
 
-void xroom(const Map map, const Point where, const int grid);
+void xmdump(const Map);
 
-void xtrapdoors(const Map map);
+void xroom(const Map, const Point where, const int size);
 
-void xcorridor(const Map map, const Point a, const Point b);
+void xtrapdoors(const Map, const Points trapdoors, const Party);
+
+void xcorridor(const Map, const Point a, const Point b);

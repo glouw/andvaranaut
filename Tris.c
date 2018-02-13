@@ -15,16 +15,7 @@ static Tris tsnew(const int max)
 static Tris tsadd(Tris tris, const Tri tri, const char* why)
 {
     if(tris.count == tris.max)
-    {
-        fprintf(stderr, "tris size limitation reached: %s\n", why);
-        exit(1);
-    }
-    static int flag;
-    if(flag == 0 && tris.count / (float) tris.max > 0.75f)
-    {
-        fprintf(stderr, "warning: tris size reaching 75%% capacity: %s\n", why);
-        flag = true;
-    }
+        xbomb("tris size limitation reached: %s\n", why);
     tris.tri[tris.count++] = tri;
     return tris;
 }
@@ -153,10 +144,15 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
 }
 
 // Random points.
-static Points prand(const int w, const int h, const int max, const int grid, const int border)
+static Points prand(const int w, const int h, const int max, const int grid, const int border, const Points misc)
 {
+    const int a = 0;
+    const int b = misc.count;
     Points ps = xpsnew(max);
-    for(int i = 0; i < max; i++)
+    // Copy over misc points first.
+    for(int i = a; i < b; i++)
+        ps = xpsadd(ps, misc.point[i], "");
+    for(int i = b; i < max; i++)
     {
         const Point p = {
             (float) (rand() % (w - border) + border / 2),
@@ -275,7 +271,7 @@ static void mdups(const Tris edges, const Flags flags)
     }
 }
 
-static void carve(const Map map, const Tris edges, const Flags flags, const int grid)
+static void carve(const Map map, const Tris edges, const Flags flags, const int size)
 {
     for(int i = 0; i < edges.count; i++)
     {
@@ -286,32 +282,32 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
             xbomb("map: point a was out of bounds in map carving");
         if(xout(map, e.b))
             xbomb("map: point b was out of bounds in map carving");
-        xroom(map, e.a, grid);
-        xroom(map, e.b, grid);
+        xroom(map, e.a, size);
+        xroom(map, e.b, size);
         xcorridor(map, e.a, e.b);
     }
-    xtrapdoors(map);
 }
 
-Map xtgenerate()
+Map xtgenerate(const Points misc)
 {
+    /* Discover optimial relation between w, h, grid, border, size, and max. */
+    const int w = 180;
+    const int h = 105;
     // The triangle type is reused for edges by omitting the third point.
     // The third point is then reused for a flag. For duplication removal our out of bounds checks.
     const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
-    const int w = 160;
-    const int h = 100;
-    const int grid = 10 + rand() % 15;
+    const int grid = 10 * (1 + rand() % 2);
     const int border = 2 * grid;
-    const int max = 60;
-    const Points ps = prand(w, h, max, grid, border);
+    const int size = grid / 4;
+    const int max = 50;
+    const Points ps = prand(w, h, max, grid, border, misc);
     const Tris tris = delaunay(ps, w, h, 9 * max, flags);
     const Tris edges = ecollect(tsnew(27 * max), tris, flags);
     revdel(edges, w, h, flags);
     const Points trapdoors = xpspop(ps, 5);
     const Map map = xmgen(h, w, trapdoors);
     mdups(edges, flags);
-    carve(map, edges, flags, grid);
-    xmdump(map);
+    carve(map, edges, flags, size);
     free(tris.tri);
     free(ps.point);
     free(edges.tri);

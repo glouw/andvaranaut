@@ -16,10 +16,11 @@ static Line lens(const float focal)
     return fov;
 }
 
-Hero xspawn(const float focal, const Point where)
+Hero xspawn(const float focal, const Point where, const int floor)
 {
     Hero hero;
     xzero(hero);
+    hero.floor = floor;
     hero.fov = lens(focal);
     hero.where = where;
     hero.speed = 0.12f;
@@ -145,6 +146,12 @@ static Hero move(Hero hero, const Map map, const Input input, const Current curr
     return hero;
 }
 
+// Neck is craned up or down, not eye level.
+static int iscraned(const float yaw)
+{
+    return yaw > 1.0f || yaw < 1.0f;
+}
+
 int xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
 {
     static int last;
@@ -157,17 +164,18 @@ int xteleporting(const Hero hero, const Map map, const Input input, const int ti
     if(!input.key[SDL_SCANCODE_E])
         return false;
     last = ticks;
-    return xisportal(map, hero.where);
+    return iscraned(hero.yaw) && xisportal(map, hero.where);
 }
 
 Hero xteleport(Hero hero, const Map map)
 {
+    // Look up to teleport a floor up. Look down to teleport a floor down.
+    if(xblok(hero.where, map.floring) == '~' && hero.yaw > 1.0f) hero.floor++;
+    if(xblok(hero.where, map.ceiling) == '~' && hero.yaw < 1.0f) hero.floor--;
     // The teleport effect is done by reseting the hero yaw to the horizon.
     // The torch is also put out.
-    hero.torch = xsnuff();
     hero.yaw = 1.0f;
-    if(xblok(hero.where, map.floring) == '~') hero.floor++;
-    if(xblok(hero.where, map.ceiling) == '~') hero.floor--;
+    hero.torch = xsnuff();
     return hero;
 }
 
