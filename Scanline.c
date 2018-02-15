@@ -77,19 +77,32 @@ static void craster(const Scanline sl, const Ray r, const Map map)
 }
 
 // Second ceiling rasterer.
-static void sraster(const Scanline sl, const Ray r, const Map map)
+static void sraster(const Scanline sl, const Ray r, const Map map, const int floor)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
-        const Point offset = xlerp(r.trace, xccast(r.proj, x));
-        // Do not render where there was ceiling.
-        if(xtile(offset, map.ceiling)) continue;
-        // Shade and transfer pixel.
-        xfer(sl, x,
-            offset,
-            // Second ceiling always uses the same texture.
-            '#' - ' ',
-            xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+        // Zeroth floor renders sky.
+        if(floor == 0)
+        {
+            const Projection sky = xstack(r.proj, 9.0f);
+            const Point offset = xlerp(r.trace, xccast(sky, x));
+            // Shade and transfer pixel.
+            xfer(sl, x, xpabs(offset),
+                // Sky always uses same texture.
+                '&' - ' ',
+                xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+        }
+        else
+        {
+            const Point offset = xlerp(r.trace, xccast(r.proj, x));
+            // Do not render where there was ceiling.
+            if(xtile(offset, map.ceiling)) continue;
+            // Shade and transfer pixel.
+            xfer(sl, x, offset,
+                // Second ceiling always uses the same texture.
+                '#' - ' ',
+                xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+        }
     }
 }
 
@@ -118,9 +131,9 @@ static void uraster(const Scanline sl, const Hits hits, const Hero hero, const M
     {
         const Hit* const which = hit;
         // TODO: Maybe randomize the height? Maybe random per level?
-        const Ray hind = xcalc(hero, *which, 3.0f, sl.sdl.yres, sl.sdl.xres);
+        const Ray hind = xcalc(hero, *which, 1.0f, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
-            sraster(sl, hind, map);
+            sraster(sl, hind, map, hero.floor);
         wraster(sl, hind);
     }
 }

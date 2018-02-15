@@ -308,7 +308,7 @@ Map xtgenerate(const Points misc)
     const int w = 160;
     const int h = 105;
     const int grid = 20;
-    const int max = 20 * (1 + (xd2() == 0));
+    const int max = 20 * (1 + xd4());
     // The triangle type is reused for edges by omitting the third point.
     // The third point is then reused for a flag. For duplication removal our out of bounds checks.
     const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };

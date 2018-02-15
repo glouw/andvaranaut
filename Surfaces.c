@@ -26,7 +26,7 @@ Surfaces xpull()
         /* # */ "art/stat/wall.bmp",
         /* $ */ "art/stat/ceiling.bmp",
         /* % */ "art/stat/water.bmp",
-        /* & */ "art/stat/error.bmp",
+        /* & */ "art/stat/cloud.bmp",
         /* ' */ "art/stat/board.bmp",
         /* ( */ "art/stat/grass.bmp",
         /* ) */ "art/stat/dirt.bmp",
