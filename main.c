@@ -5,7 +5,7 @@
 int main(int argc, char* argv[])
 {
     const int s0 = SDL_GetTicks();
-    const int floor = 1;
+    const int floor = 0;
     const int floors = 32;
     srand(time(0));
     const Args args = xparse(argc, argv);
@@ -21,6 +21,7 @@ int main(int argc, char* argv[])
     Gauge gauge = xgnew();
     const int s1 = SDL_GetTicks();
     printf("setup time: %d milliseconds\n", s1 - s0);
+    xmprint(map.walling, map.rows, map.cols);
     // X-Resolution 512 reserved for performance testing.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.done; renders++)
     {

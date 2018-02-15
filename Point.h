@@ -57,3 +57,5 @@ int xtile(const Point, char** const blocks);
 
 // Returns an absolute value point of a point.
 Point xabs(const Point);
+
+Point xsnap(const Point, const int grid);

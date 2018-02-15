@@ -26,10 +26,7 @@ Maps xmsinit(const int floors)
     maps = xmsadd(maps, xtgenerate(none));
     // Generate remaining floors.
     for(int i = 1; i < floors; i++)
-    {
-        const Points trapdoors = maps.map[i - 1].trapdoors;
-        maps = xmsadd(maps, xtgenerate(trapdoors));
-    }
+        maps = xmsadd(maps, xtgenerate(maps.map[i - 1].trapdoors));
     // Place floor trapdoors.
     for(int i = 0; i < floors; i++)
         xtrapdoors(maps.map[i - 0], maps.map[i - 0].trapdoors, FLORING);

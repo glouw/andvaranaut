@@ -55,3 +55,6 @@ char* xconcat(const char* const a, const char* const b);
 
 // String matching.
 #define equals(a, b) (strcmp(a, b) == 0)
+
+// Dice rolls.
+int xd2(), xd4(), xd8();

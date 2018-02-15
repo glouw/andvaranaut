@@ -30,7 +30,9 @@ void xmprint(char** block, const int rows, const int cols);
 
 void xmdump(const Map);
 
-void xroom(const Map, const Point where, const int size);
+int xcarvable(const Map map, const int x, const int y);
+
+void xroom(const Map map, const Point where, const int w, const int h, const Party);
 
 void xtrapdoors(const Map, const Points trapdoors, const Party);
 

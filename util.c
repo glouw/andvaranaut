@@ -72,3 +72,9 @@ char* xconcat(const char* const a, const char* const b)
     strcat(c, b);
     return c;
 }
+
+int xd2() { return rand() % 2; }
+
+int xd4() { return rand() % 4; }
+
+int xd8() { return rand() % 8; }

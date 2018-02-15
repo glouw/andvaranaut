@@ -118,7 +118,7 @@ static void uraster(const Scanline sl, const Hits hits, const Hero hero, const M
     {
         const Hit* const which = hit;
         // TODO: Maybe randomize the height? Maybe random per level?
-        const Ray hind = xcalc(hero, *which, 2.0, sl.sdl.yres, sl.sdl.xres);
+        const Ray hind = xcalc(hero, *which, 3.0f, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
             sraster(sl, hind, map);
         wraster(sl, hind);

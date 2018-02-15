@@ -90,32 +90,20 @@ void xedit(const Map map, const Overview ov)
     if(ov.party == CEILING) map.ceiling[y][x] = ascii;
 }
 
-static int carvable(const Map map, const int x, const int y)
+void xroom(const Map map, const Point where, const int w, const int h, const Party p)
 {
-    if(x <= 1 || x >= map.cols - 1)
-        return false;
-    if(y <= 1 || y >= map.rows - 1)
-        return false;
-    return true;
-}
-
-void xroom(const Map map, const Point where, const int size)
-{
-    const int w = 1 + rand() % size;
-    const int h = 1 + rand() % size;
-    const int ceiling = (rand() % 2) == 0;
-    const int walling = true;
-    const int floring = (rand() % 8) == 0;
     for(int i = -w; i <= w; i++)
     for(int j = -h; j <= h; j++)
     {
         const int xx = where.x + i;
         const int yy = where.y + j;
-        if(carvable(map, xx, yy))
+        switch(p)
         {
-            if(ceiling) map.ceiling[yy][xx] = ' ';
-            if(walling) map.walling[yy][xx] = ' ';
-            if(floring) map.floring[yy][xx] = ' ';
+        case WALLING: map.walling[yy][xx] = ' '; break;
+        case CEILING: map.ceiling[yy][xx] = ' '; break;
+        case FLORING: map.floring[yy][xx] = ' '; break;
+        default:
+            break;
         }
     }
 }

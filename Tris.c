@@ -158,11 +158,7 @@ static Points prand(const int w, const int h, const int max, const int grid, con
             (float) (rand() % (w - border) + border / 2),
             (float) (rand() % (h - border) + border / 2),
         };
-        const Point snapped = {
-            (float) xfl(p.x / grid) * grid,
-            (float) xfl(p.y / grid) * grid,
-        };
-        ps.point[ps.count++] = snapped;
+        ps.point[ps.count++] = xsnap(p, grid);
     }
     return ps;
 }
@@ -271,35 +267,52 @@ static void mdups(const Tris edges, const Flags flags)
     }
 }
 
-static void carve(const Map map, const Tris edges, const Flags flags, const int size)
+// ####################################### This is what a bone looks like
+// #  r   ################################ when generated from an edge.
+// #  o   #####################          # This here is for wallings, but
+// #  o      c o r r i d o r    r o o m  # apply a chance percentage to the
+// #  m   #####################          # ceiling and floorings to have the same
+// #      ################################ thing happen.
+// #######################################
+static void bone(const Map map, const Tri e, const int w, const int h)
+{
+    xroom(map, e.a, w, h, WALLING);
+    xroom(map, e.b, w, h, WALLING);
+    if(xd2() == 0) xroom(map, e.a, w, h, CEILING);
+    if(xd2() == 0) xroom(map, e.b, w, h, CEILING);
+    if(xd8() == 0) xroom(map, e.a, w / 2, h / 2, FLORING);
+    if(xd8() == 0) xroom(map, e.b, w / 2, h / 2, FLORING);
+    xcorridor(map, e.a, e.b);
+}
+
+// Carve all bones from solid map.
+static void carve(const Map map, const Tris edges, const Flags flags, const int grid)
 {
     for(int i = 0; i < edges.count; i++)
     {
         const Tri e = edges.tri[i];
         if(peql(e.c, flags.one))
             continue;
-        if(xout(map, e.a))
-            xbomb("map: point a was out of bounds in map carving");
-        if(xout(map, e.b))
-            xbomb("map: point b was out of bounds in map carving");
-        xroom(map, e.a, size);
-        xroom(map, e.b, size);
-        xcorridor(map, e.a, e.b);
+        if(xout(map, e.a)) xbomb("map: point a was out of bounds in map carving");
+        if(xout(map, e.b)) xbomb("map: point b was out of bounds in map carving");
+        const int min = 2;
+        const int size = grid / 2 - min;
+        const int w = min + rand() % size;
+        const int h = min + rand() % size;
+        bone(map, e, w, h);
     }
 }
 
 Map xtgenerate(const Points misc)
 {
-    /* Discover optimial relation between w, h, grid, border, size, and max. */
-    const int w = 180;
+    const int w = 160;
     const int h = 105;
+    const int grid = 20;
+    const int max = 20 * (1 + (xd2() == 0));
     // The triangle type is reused for edges by omitting the third point.
     // The third point is then reused for a flag. For duplication removal our out of bounds checks.
     const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
-    const int grid = 10 * (1 + rand() % 2);
     const int border = 2 * grid;
-    const int size = grid / 4;
-    const int max = 50;
     const Points ps = prand(w, h, max, grid, border, misc);
     const Tris tris = delaunay(ps, w, h, 9 * max, flags);
     const Tris edges = ecollect(tsnew(27 * max), tris, flags);
@@ -307,7 +320,7 @@ Map xtgenerate(const Points misc)
     const Points trapdoors = xpspop(ps, 5);
     const Map map = xmgen(h, w, trapdoors);
     mdups(edges, flags);
-    carve(map, edges, flags, size);
+    carve(map, edges, flags, grid);
     free(tris.tri);
     free(ps.point);
     free(edges.tri);

@@ -130,3 +130,12 @@ Point xabs(const Point a)
     b.y = fabs(a.y);
     return b;
 }
+
+Point xsnap(const Point a, const int grid)
+{
+    const Point out = {
+        (float) xfl(a.x / grid) * grid,
+        (float) xfl(a.y / grid) * grid,
+    };
+    return out;
+}
