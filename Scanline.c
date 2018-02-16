@@ -77,7 +77,7 @@ static void craster(const Scanline sl, const Ray r, const Map map)
 }
 
 // Second ceiling rasterer.
-static void sraster(const Scanline sl, const Ray r, const Map map, const int floor)
+static void sraster(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
@@ -87,7 +87,8 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const int flo
             const Projection sky = xstack(r.proj, 9.0f);
             const Point offset = xlerp(r.trace, xccast(sky, x));
             // Shade and transfer pixel.
-            xfer(sl, x, xpabs(offset),
+            xfer(sl, x,
+                xabs(xsub(offset, clouds.where)),
                 // Sky always uses same texture.
                 '&' - ' ',
                 xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
@@ -98,7 +99,8 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const int flo
             // Do not render where there was ceiling.
             if(xtile(offset, map.ceiling)) continue;
             // Shade and transfer pixel.
-            xfer(sl, x, offset,
+            xfer(sl, x,
+                offset,
                 // Second ceiling always uses the same texture.
                 '#' - ' ',
                 xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
@@ -107,7 +109,7 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const int flo
 }
 
 // Pit water rasterer.
-static void praster(const Scanline sl, const Ray r, const Map map, const Current current)
+static void praster(const Scanline sl, const Ray r, const Map map, const Flow current)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
@@ -124,22 +126,22 @@ static void praster(const Scanline sl, const Ray r, const Map map, const Current
 }
 
 // Upper level rasterer (second ceiling and upper walls).
-static void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
+static void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow clouds)
 {
     int link = 0;
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
         // TODO: Maybe randomize the height? Maybe random per level?
-        const Ray hind = xcalc(hero, *which, 1.0f, sl.sdl.yres, sl.sdl.xres);
+        const Ray hind = xcalc(hero, *which, 3.0f, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
-            sraster(sl, hind, map, hero.floor);
+            sraster(sl, hind, map, hero.floor, clouds);
         wraster(sl, hind);
     }
 }
 
 // Lower level rasterer (pit and lower walls).
-static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Current current)
+static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow current)
 {
     int link = 0;
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
@@ -155,14 +157,14 @@ static void lraster(const Scanline sl, const Hits hits, const Hero hero, const M
 // Eye level rasterer. Returns a z-buffer element for the sprites.
 static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
-    const Ray ray = xcalc(hero, hits.walling, 0.0, sl.sdl.yres, sl.sdl.xres);
+    const Ray ray = xcalc(hero, hits.walling, 0.0f, sl.sdl.yres, sl.sdl.xres);
     wraster(sl, ray);
     fraster(sl, ray, map);
     craster(sl, ray, map);
     return ray.corrected;
 }
 
-Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current current, const Map map)
+Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
     #if 0
     #pragma message "WARNING: Highlight flag enabled - yellow lines need to be fixed"
@@ -173,7 +175,7 @@ Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Current
     for(int x = 0; x < sl.sdl.yres; x++)
         pput(sl, x, 0x0);
     // Ceiling and floor can be turned off for debugging.
-    uraster(sl, hits, hero, map);
+    uraster(sl, hits, hero, map, clouds);
     lraster(sl, hits, hero, map, current);
     return eraster(sl, hits, hero, map);
 }

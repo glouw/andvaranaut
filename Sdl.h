@@ -4,7 +4,7 @@
 #include "Sprites.h"
 #include "Args.h"
 #include "Overview.h"
-#include "Current.h"
+#include "Flow.h"
 #include "Meter.h"
 #include "Gauge.h"
 
@@ -37,7 +37,7 @@ void xrelease(const Sdl);
 void xpresent(const Sdl);
 
 // Renders one frame with SDL using hero, sprite, and map data. Ticks determine sprite animation.
-void xrender(const Sdl, const Hero, const Sprites, const Map, const Current, const int ticks);
+void xrender(const Sdl, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const int ticks);
 
 // Renders the overview of the map and sprites for editing purposes.
 void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks);

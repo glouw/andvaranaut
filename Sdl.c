@@ -150,7 +150,7 @@ void xrelease(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Current current, const int ticks)
+void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const int ticks)
 {
     // Z-buffer will be populated once the map renderering is finished.
     Point* const zbuff = xtoss(Point, sdl.xres);
@@ -171,6 +171,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         b[i].sdl = sdl;
         b[i].hero = hero;
         b[i].current = current;
+        b[i].clouds = clouds;
         b[i].map = map;
     };
     // Launch all threads and wait for their completion.

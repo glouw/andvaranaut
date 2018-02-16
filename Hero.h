@@ -6,7 +6,7 @@
 #include "Ray.h"
 #include "Map.h"
 #include "Input.h"
-#include "Current.h"
+#include "Flow.h"
 #include "Hits.h"
 
 typedef struct
@@ -60,7 +60,7 @@ int xteleporting(const Hero, const Map, const Input, const int ticks);
 Hero xteleport(Hero, const Map);
 
 // Hero self sustanance. Does not include sprite to hero interactions.
-Hero xsustain(Hero, const Map, const Input, const Current);
+Hero xsustain(Hero, const Map, const Input, const Flow);
 
 // Calculates a projection ray based on a wall hit.
 // Shift determines the ceiling height if positive or the water height if negative.

@@ -12,10 +12,10 @@ static Tris tsnew(const int max)
     return ts;
 }
 
-static Tris tsadd(Tris tris, const Tri tri, const char* why)
+static Tris tsadd(Tris tris, const Tri tri)
 {
     if(tris.count == tris.max)
-        xbomb("tris size limitation reached: %s\n", why);
+        xbomb("tris size limitation reached\n");
     tris.tri[tris.count++] = tri;
     return tris;
 }
@@ -50,9 +50,9 @@ static Tris ecollect(Tris edges, const Tris in, const Flags flags)
         const Tri ab = { tri.a, tri.b, flags.zer };
         const Tri bc = { tri.b, tri.c, flags.zer };
         const Tri ca = { tri.c, tri.a, flags.zer };
-        edges = tsadd(edges, ab, "ab");
-        edges = tsadd(edges, bc, "bc");
-        edges = tsadd(edges, ca, "ca");
+        edges = tsadd(edges, ab);
+        edges = tsadd(edges, bc);
+        edges = tsadd(edges, ca);
     }
     return edges;
 }
@@ -89,7 +89,7 @@ static Tris ejoin(Tris tris, const Tris edges, const Point p, const Flags flags)
         if(peql(edge.c, flags.zer))
         {
             const Tri tri = { edge.a, edge.b, p };
-            tris = tsadd(tris, tri, "ejoin tsadd problem");
+            tris = tsadd(tris, tri);
         }
     }
     return tris;
@@ -112,7 +112,7 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
     Tri* dummy = tris.tri;
     // The super triangle will snuggley fit over the screen.
     const Tri super = { { (float) -w, 0.0f }, { 2.0f * w, 0.0f }, { w / 2.0f, 2.0f * h } };
-    tris = tsadd(tris, super, "delaunay tsadd problem with super");
+    tris = tsadd(tris, super);
     for(int j = 0; j < ps.count; j++)
     {
         in.count = out.count = edges.count = 0;
@@ -123,9 +123,9 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
             const Tri tri = tris.tri[i];
             // Get triangles where point lies inside their circumcenter...
             if(incircum(tri, p))
-                in = tsadd(in, tri, "delaunay tsadd problem with in");
+                in = tsadd(in, tri);
             // And get triangles where point lies outside of their circumcenter.
-            else out = tsadd(out, tri, "delaunay tsadd problem with out");
+            else out = tsadd(out, tri);
         }
         // Collect all triangle edges where point was inside circumcenter.
         edges = ecollect(edges, in, flags);
@@ -151,7 +151,7 @@ static Points prand(const int w, const int h, const int max, const int grid, con
     Points ps = xpsnew(max);
     // Copy over misc points first.
     for(int i = a; i < b; i++)
-        ps = xpsadd(ps, misc.point[i], "");
+        ps = xpsadd(ps, misc.point[i]);
     for(int i = b; i < max; i++)
     {
         const Point p = {
@@ -193,12 +193,12 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
     Points todo = xpsnew(edges.max);
     Points done = xpsnew(edges.max);
     Tris reach = tsnew(edges.max);
-    todo = xpsadd(todo, a, "first todo");
+    todo = xpsadd(todo, a);
     int connection = false;
     while(todo.count != 0 && connection != true)
     {
         const Point removed = todo.point[--todo.count];
-        done = xpsadd(done, removed, "done a point");
+        done = xpsadd(done, removed);
         // Get reachable edges from current point.
         reach.count = 0;
         for(int i = 0; i < edges.count; i++)
@@ -207,7 +207,7 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
             if(peql(edge.c, flags.one))
                 continue;
             if(peql(edge.a, removed))
-                reach = tsadd(reach, edge, "connected tsadd problem with reach");
+                reach = tsadd(reach, edge);
         }
         // For all reachable edges
         for(int i = 0; i < reach.count; i++)
@@ -220,7 +220,7 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
             }
             // Otherwise add point of reachable edge to todo list.
             if(!psfind(done, reach.tri[i].b))
-                todo = xpsadd(todo, reach.tri[i].b, "connected tsadd problem with todo");
+                todo = xpsadd(todo, reach.tri[i].b);
         }
     }
     free(todo.point);
@@ -267,13 +267,13 @@ static void mdups(const Tris edges, const Flags flags)
     }
 }
 
-// ####################################### This is what a bone looks like
-// #  r   ################################ when generated from an edge.
-// #  o   #####################          # This here is for wallings, but
-// #  o      c o r r i d o r    r o o m  # apply a chance percentage to the
-// #  m   #####################          # ceiling and floorings to have the same
-// #      ################################ thing happen.
-// #######################################
+// ############################################# This is what a bone looks like
+// #            ################################ when generated from an edge.
+// #            #####################          # This here is for wallings, but
+// #  r o o m      c o r r i d o r    r o o m  # apply a chance percentage to the
+// #            #####################          # ceiling and floorings to have the same
+// #            ################################ thing happen.
+// #############################################
 static void bone(const Map map, const Tri e, const int w, const int h)
 {
     xroom(map, e.a, w, h, WALLING);
@@ -293,8 +293,6 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
         const Tri e = edges.tri[i];
         if(peql(e.c, flags.one))
             continue;
-        if(xout(map, e.a)) xbomb("map: point a was out of bounds in map carving");
-        if(xout(map, e.b)) xbomb("map: point b was out of bounds in map carving");
         const int min = 2;
         const int size = grid / 2 - min;
         const int w = min + rand() % size;
@@ -303,7 +301,7 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
     }
 }
 
-Map xtgenerate(const Points misc)
+Map xtgen(const Points misc)
 {
     const int w = 160;
     const int h = 105;

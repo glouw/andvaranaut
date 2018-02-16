@@ -11,8 +11,8 @@ typedef struct
     Point where;
     float height;
 }
-Current;
+Flow;
 
-Current xstart();
+Flow xstart();
 
-Current xstream(Current);
+Flow xstream(Flow);

@@ -12,4 +12,4 @@ typedef struct
 Scanline;
 
 // Renders the map to the display from the position of the hero. Animates water current.
-Point xraster(const Scanline, const Hits, const Hero, const Current, const Map);
+Point xraster(const Scanline, const Hits, const Hero, const Flow current, const Flow clouds, const Map);

@@ -4,7 +4,7 @@
 #include "Display.h"
 #include "Sdl.h"
 #include "Hero.h"
-#include "Current.h"
+#include "Flow.h"
 #include "Map.h"
 
 typedef struct
@@ -16,7 +16,8 @@ typedef struct
     Display display;
     Sdl sdl;
     Hero hero;
-    Current current;
+    Flow current;
+    Flow clouds;
     Map map;
 }
 Bundle;

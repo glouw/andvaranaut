@@ -8,10 +8,10 @@ Points xpsnew(const int max)
     return ps;
 }
 
-Points xpsadd(Points ps, const Point p, const char* why)
+Points xpsadd(Points ps, const Point p)
 {
     if(ps.count == ps.max)
-        xbomb("points size limitation reached: %s\n", why);
+        xbomb("points size limitation reached\n");
     ps.point[ps.count++] = p;
     return ps;
 }
@@ -23,7 +23,7 @@ Points xpspop(const Points ps, const int max)
     {
         const Point point = ps.point[rand() % ps.count];
         const Point mid = xmid(point);
-        out = xpsadd(out, mid, "adding mid in xpspop");
+        out = xpsadd(out, mid);
     }
     return out;
 }

@@ -12,7 +12,7 @@ Points;
 
 Points xpsnew(const int max);
 
-Points xpsadd(Points, const Point, const char* why);
+Points xpsadd(Points, const Point);
 
 Points xpspop(const Points, const int max);
 

@@ -59,5 +59,3 @@ int xtile(const Point, char** const blocks);
 Point xabs(const Point);
 
 Point xsnap(const Point, const int grid);
-
-Point xpabs(const Point a);

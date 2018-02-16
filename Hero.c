@@ -111,7 +111,7 @@ static Point accelerate(const Hero hero)
     return xmul(direction, hero.acceleration);
 }
 
-static Hero move(Hero hero, const Map map, const Input input, const Current current)
+static Hero move(Hero hero, const Map map, const Input input, const Flow current)
 {
     const Point last = hero.where;
     const int swimming = hero.height <= hswim(hero);
@@ -158,7 +158,7 @@ int xteleporting(const Hero hero, const Map map, const Input input, const int ti
     // A delay is required between teleports else hero will
     // quickly teleport between adjacent floors with a single key press.
     // The delay is arbitrary (whatever feels best).
-    const int delay = 3;
+    const int delay = 2;
     if(ticks < last + delay)
         return false;
     if(!input.key[SDL_SCANCODE_E])
@@ -205,7 +205,7 @@ Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres, con
     return ray;
 }
 
-Hero xsustain(Hero hero, const Map map, const Input input, const Current current)
+Hero xsustain(Hero hero, const Map map, const Input input, const Flow current)
 {
     hero = spin(hero, input);
     hero = vert(hero, map, input);

@@ -139,9 +139,3 @@ Point xsnap(const Point a, const int grid)
     };
     return out;
 }
-
-Point xpabs(const Point a)
-{
-    const Point out = { fabs(a.x), fabs(a.y) };
-    return out;
-}
