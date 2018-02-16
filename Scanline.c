@@ -3,11 +3,11 @@
 #include "util.h"
 
 // Modulous modify a pixel. Discards alpha. Great for pixel shading
-static uint32_t mod(const uint32_t pixel, const int modding)
+static uint32_t shade(const uint32_t pixel, const int shading)
 {
-    const uint32_t r = (((pixel >> 0x10) /****/) * modding) >> 0x08; // Shift right by 0x08 is same as
-    const uint32_t g = (((pixel >> 0x08) & 0xFF) * modding) >> 0x08; // dividing by 256. Somehow
-    const uint32_t b = (((pixel /*****/) & 0xFF) * modding) >> 0x08; // ofast was not catching this.
+    const uint32_t r = (((pixel >> 0x10) /****/) * shading) >> 0x08; // Shift right by 0x08 is same as
+    const uint32_t g = (((pixel >> 0x08) & 0xFF) * shading) >> 0x08; // dividing by 256. Somehow
+    const uint32_t b = (((pixel /*****/) & 0xFF) * shading) >> 0x08; // ofast was not catching this.
     return r << 0x10 | g << 0x08 | b;
 }
 
@@ -28,9 +28,11 @@ static void pput(const Scanline sl, const int x, const uint32_t pixel)
 
 static void xfer(const Scanline sl, const int x, const Point offset, const int tile, const int distance)
 {
-    pput(sl, x,
-        // Looks up pixel on texture and shades by distance.
-        mod(pget(sl.sdl.surfaces.surface[tile], offset), distance));
+    const uint32_t color = pget(sl.sdl.surfaces.surface[tile], offset);
+    // Do not transfer if color matches color key.
+    if(color == sl.sdl.key)
+        return;
+    pput(sl, x, shade(color, distance));
 }
 
 // Wall rasterer.
@@ -84,21 +86,19 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const int flo
         // Zeroth floor renders sky.
         if(floor == 0)
         {
-            const Projection sky = xstack(r.proj, 9.0f);
-            const Point offset = xlerp(r.trace, xccast(sky, x));
-            // Shade and transfer pixel.
-            xfer(sl, x,
-                xabs(xsub(offset, clouds.where)),
-                // Sky always uses same texture.
-                '&' - ' ',
-                xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+            // There are two sky layers: The forground layer, and the behind layer.
+            // The foreground layer is closer, the behind layer is further.
+            const Point hind = xlerp(r.trace, xccast(xstack(r.proj, clouds.height / 1.0f), x));
+            const Point fore = xlerp(r.trace, xccast(xstack(r.proj, clouds.height / 2.0f), x));
+            // The behind layer is slower. Division of flow position by some scalar is a good enough approximation.
+            xfer(sl, x, xabs(xsub(hind, xdiv(clouds.where, 3.0f))), '&' - ' ', xilluminate(r.torch, xmag(xsub(hind, r.trace.a))));
+            xfer(sl, x, xabs(xsub(fore, xdiv(clouds.where, 1.0f))), '*' - ' ', xilluminate(r.torch, xmag(xsub(fore, r.trace.a))));
         }
         else
         {
+            // Remaining floors render a second ceiling.
             const Point offset = xlerp(r.trace, xccast(r.proj, x));
-            // Do not render where there was ceiling.
             if(xtile(offset, map.ceiling)) continue;
-            // Shade and transfer pixel.
             xfer(sl, x,
                 offset,
                 // Second ceiling always uses the same texture.

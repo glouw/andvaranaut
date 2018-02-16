@@ -25,3 +25,5 @@ typedef struct
     float health;
 }
 Sprite;
+
+int xsissprite(const int ascii);

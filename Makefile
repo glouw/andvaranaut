@@ -39,6 +39,7 @@ SRCS+= Projection.c
 SRCS+= State.c
 SRCS+= Sdl.c
 SRCS+= Scanline.c
+SRCS+= Sprite.c
 SRCS+= Sprites.c
 SRCS+= Surfaces.c
 SRCS+= Textures.c

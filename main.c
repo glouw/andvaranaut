@@ -4,19 +4,19 @@
 
 int main(int argc, char* argv[])
 {
+    const int floor = 0;
     const int s0 = SDL_GetTicks();
     srand(time(0));
     const Args args = xparse(argc, argv);
-    const int top = 0;
     World world = xwinit(32);
-    Map map = world.map[top];
-    Hero hero = xspawn(args.focal, xpsrand(map.trapdoors), top);
+    Map map = world.map[floor];
+    Hero hero = xspawn(args.focal, xpsrand(map.trapdoors), floor);
     Sprites sprites = xsgen();
     Sdl sdl = xsetup(args);
     Input input = xready(args.msen);
     Overview overview = xinit();
-    Flow current = xstart();
-    Flow clouds = xstart();
+    Flow current = xstart(-1.0f / 6.0f);
+    Flow clouds = xstart(5.0f);
     Gauge gauge = xgnew();
     const int s1 = SDL_GetTicks();
     printf("setup time: %d milliseconds\n", s1 - s0);
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
             // Edit mode.
             SDL_SetRelativeMouseMode(SDL_FALSE);
             overview = xupdate(overview, input, sdl.xres, sdl.textures.count);
-            xedit(map, overview);
+            xmedit(map, overview);
             sprites = xlay(sprites, map, overview);
             xview(sdl, overview, sprites, map, ticks);
         }

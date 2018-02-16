@@ -130,12 +130,13 @@ Sdl xsetup(const Args args)
     // This was done for fast caching. Upon presenting the canvas will be rotated upwards by 90 degrees.
     // Notice how ARGB8888 is used for the hardware. This is the fastest option for the GPU.
     sdl.canvas = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, args.yres, args.xres);
-    sdl.surfaces = xpull();
-    sdl.textures = xcache(sdl.surfaces, sdl.renderer);
+    sdl.key = 0x00FFFF;
     sdl.xres = args.xres;
     sdl.yres = args.yres;
     sdl.fps = args.fps;
     sdl.threads = args.threads;
+    sdl.surfaces = xpull(sdl.key);
+    sdl.textures = xcache(sdl.surfaces, sdl.renderer);
     return sdl;
 }
 
@@ -334,7 +335,7 @@ static void dpanel(const Sdl sdl, const Overview ov, const int ticks)
     {
         const SDL_Rect to = { ov.w * (i - ov.wheel), 0, ov.w, ov.h };
         // Sprites.
-        if(xissprite(i + ' '))
+        if(xsissprite(i + ' '))
         {
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
             const int h = sdl.surfaces.surface[i]->h / STATES;

@@ -27,6 +27,8 @@ typedef struct
     Textures textures;
     // CPU rendering threads.
     int threads;
+    // Color key specifies which colors to omit when rendering sprites or surfaces.
+    uint32_t key;
 }
 Sdl;
 

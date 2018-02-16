@@ -25,6 +25,9 @@ Point xmul(const Point a, const float n);
 // Returns the magnitude of a point.
 float xmag(const Point);
 
+// Returns division by scalar.
+Point xdiv(const Point a, const float n);
+
 // Returns the unit vector of a point relative to (0, 0).
 Point xunt(const Point);
 
@@ -59,3 +62,6 @@ int xtile(const Point, char** const blocks);
 Point xabs(const Point);
 
 Point xsnap(const Point, const int grid);
+
+// Verbose pixel equality without epsilon.
+int xpsame(const Point a, const Point b);

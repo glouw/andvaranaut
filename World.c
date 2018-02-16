@@ -1,7 +1,6 @@
 #include "World.h"
 
 #include "Tris.h"
-
 #include "util.h"
 
 World xwadd(World w, const Map map)
@@ -29,15 +28,15 @@ World xwinit(const int max)
         w = xwadd(w, xtgen(w.map[i - 1].trapdoors));
     // Place floor trapdoors.
     for(int i = 0; i < max; i++)
-        xtrapdoors(w.map[i - 0], w.map[i - 0].trapdoors, FLORING);
+        xmtrapdoors(w.map[i - 0], w.map[i - 0].trapdoors, FLORING);
     // Place ceiling trapdoors.
     for(int i = 1; i < max; i++)
-        xtrapdoors(w.map[i - 0], w.map[i - 1].trapdoors, CEILING);
+        xmtrapdoors(w.map[i - 0], w.map[i - 1].trapdoors, CEILING);
     return w;
 }
 
 void xwclose(const World w)
 {
     for(int i = 0; i < w.count; i++)
-        xclose(w.map[i]);
+        xmclose(w.map[i]);
 }

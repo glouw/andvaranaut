@@ -2,15 +2,15 @@
 
 #include "util.h"
 
-Flow xstart()
+Flow xstart(const float height)
 {
     Flow f;
     xzero(f);
-    f.acceleration = 0.00001;
-    f.speed = 0.01;
-    f.direction.x = 1.0;
-    f.direction.y = 1.0;
-    f.height = -1.0 / 6.0;
+    f.acceleration = 0.00001f;
+    f.speed = 0.01f;
+    f.direction.x = 1.0f;
+    f.direction.y = 1.0f;
+    f.height = height;
     return f;
 }
 

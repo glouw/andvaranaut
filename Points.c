@@ -21,7 +21,8 @@ Points xpspop(const Points ps, const int max)
     Points out = xpsnew(max);
     for(int i = 0; i < max; i++)
     {
-        const Point point = ps.point[rand() % ps.count];
+        const int index = rand() % ps.count;
+        const Point point = ps.point[index];
         const Point mid = xmid(point);
         out = xpsadd(out, mid);
     }
@@ -30,5 +31,21 @@ Points xpspop(const Points ps, const int max)
 
 Point xpsrand(const Points ps)
 {
-    return ps.point[rand() % ps.count];
+    const int index = rand() % ps.count;
+    return ps.point[index];
+}
+
+Points pscat(Points ps, const Points other)
+{
+    for(int i = 0; i < other.count; i++)
+        ps = xpsadd(ps, other.point[i]);
+    return ps;
+}
+
+int xpsfind(const Points ps, const Point p)
+{
+    for(int i = 0; i < ps.count; i++)
+        if(xpsame(ps.point[i], p))
+            return true;
+    return false;
 }

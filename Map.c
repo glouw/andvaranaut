@@ -19,7 +19,7 @@ void xmdump(const Map map)
     xmprint(map.floring, map.rows, map.cols);
 }
 
-static char** mreset(char** block, const int rows, const int cols, const int blok)
+static char** reset(char** block, const int rows, const int cols, const int blok)
 {
     for(int row = 0; row < rows; row++)
     for(int col = 0; col < cols; col++)
@@ -27,12 +27,12 @@ static char** mreset(char** block, const int rows, const int cols, const int blo
     return block;
 }
 
-static char** mnew(const int rows, const int cols, const int blok)
+static char** new(const int rows, const int cols, const int blok)
 {
     char** block = xtoss(char*, rows);
     for(int row = 0; row < rows; row++)
         block[row] = xtoss(char, cols);
-    return mreset(block, rows, cols, blok);
+    return reset(block, rows, cols, blok);
 }
 
 Map xmgen(const int rows, const int cols, const Points trapdoors)
@@ -41,14 +41,14 @@ Map xmgen(const int rows, const int cols, const Points trapdoors)
     xzero(map);
     map.rows = rows;
     map.cols = cols;
-    map.ceiling = mnew(map.rows, map.cols, '#');
-    map.walling = mnew(map.rows, map.cols, '#');
-    map.floring = mnew(map.rows, map.cols, '"');
+    map.ceiling = new(map.rows, map.cols, '#');
+    map.walling = new(map.rows, map.cols, '#');
+    map.floring = new(map.rows, map.cols, '"');
     map.trapdoors = trapdoors;
     return map;
 }
 
-void xclose(const Map map)
+void xmclose(const Map map)
 {
     for(int row = 0; row < map.rows; row++)
     {
@@ -61,26 +61,26 @@ void xclose(const Map map)
     free(map.floring);
 }
 
-int xisportal(const Map map, const Point where)
+int xmisportal(const Map map, const Point where)
 {
     return xblok(where, map.floring) == '~'
         || xblok(where, map.ceiling) == '~';
 }
 
-int xout(const Map map, const Point where)
+int xmout(const Map map, const Point where)
 {
     return (int) where.x >= map.cols || (int) where.x < 0
         || (int) where.y >= map.rows || (int) where.y < 0;
 }
 
-void xedit(const Map map, const Overview ov)
+void xmedit(const Map map, const Overview ov)
 {
     // Placing - Out of bounds check.
-    if(xout(map, ov.where))
+    if(xmout(map, ov.where))
         return;
     const int ascii = ov.selected + ' ';
     // If the ascii is an alpha character then it is a sprite
-    if(xissprite(ascii))
+    if(xsissprite(ascii))
         return;
     // Otherwise place the ascii character.
     const int x = ov.where.x;
@@ -90,7 +90,7 @@ void xedit(const Map map, const Overview ov)
     if(ov.party == CEILING) map.ceiling[y][x] = ascii;
 }
 
-void xroom(const Map map, const Point where, const int w, const int h, const Party p)
+void xmroom(const Map map, const Point where, const int w, const int h, const Party p)
 {
     for(int i = -w; i <= w; i++)
     for(int j = -h; j <= h; j++)
@@ -138,7 +138,7 @@ static void trapdoor(const Map map, const int x, const int y, const Party p)
     }
 }
 
-void xtrapdoors(const Map map, const Points trapdoors, const Party p)
+void xmtrapdoors(const Map map, const Points trapdoors, const Party p)
 {
     for(int i = 0; i < trapdoors.count; i++)
     {
@@ -150,7 +150,7 @@ void xtrapdoors(const Map map, const Points trapdoors, const Party p)
     }
 }
 
-void xcorridor(const Map map, const Point a, const Point b)
+void xmcorridor(const Map map, const Point a, const Point b)
 {
     const Point step = xsub(b, a);
     const Point delta = {

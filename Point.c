@@ -139,3 +139,8 @@ Point xsnap(const Point a, const int grid)
     };
     return out;
 }
+
+int xpsame(const Point a, const Point b)
+{
+    return a.x == b.x && a.y == b.y;
+}

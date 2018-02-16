@@ -114,10 +114,10 @@ static Sprites append(Sprites sprites, const Sprite sprite)
 Sprites xlay(Sprites sprites, const Map map, const Overview ov)
 {
     // Out of bounds check.
-    if(xout(map, ov.where)) return sprites;
+    if(xmout(map, ov.where)) return sprites;
     // Ascii sprite check.
     const int ascii = ov.selected + ' ';
-    if(xissprite(ascii))
+    if(xsissprite(ascii))
     {
         // If the sprite list is empty, resize to one big.
         if(sprites.count == 0)
@@ -360,11 +360,6 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     field.mesh[j][i] = 100.0f * scent;
     // Diffuse the culminated scent across the field.
     xdiffuse(field, hero.where);
-}
-
-int xissprite(const int ascii)
-{
-    return isalpha(ascii);
 }
 
 static Sprites drop(Sprites sprites, const Attack attack, const Point where)

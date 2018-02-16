@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-static SDL_Surface* load(const char* const path)
+static SDL_Surface* load(const char* const path, const uint32_t key)
 {
     SDL_Surface* const bmp = SDL_LoadBMP(path);
     if(bmp == NULL)
@@ -13,11 +13,14 @@ static SDL_Surface* load(const char* const path)
     SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);
     SDL_FreeFormat(allocation);
     SDL_FreeSurface(bmp);
-    SDL_SetColorKey(converted, SDL_TRUE, SDL_MapRGB(converted->format, 0x00, 0xFF, 0xFF));
+    const uint32_t r = 0xFF & (key >> 0x10);
+    const uint32_t g = 0xFF & (key >> 0x08);
+    const uint32_t b = 0xFF & (key >> 0x00);
+    SDL_SetColorKey(converted, SDL_TRUE, SDL_MapRGB(converted->format, r, g, b));
     return converted;
 }
 
-Surfaces xpull()
+Surfaces xpull(const uint32_t key)
 {
     static const char* const names[] = {
         /*   */ "art/static/delete.bmp",
@@ -30,7 +33,7 @@ Surfaces xpull()
         /* ' */ "art/static/board.bmp",
         /* ( */ "art/static/grass.bmp",
         /* ) */ "art/static/dirt.bmp",
-        /* * */ "art/static/error.bmp",
+        /* * */ "art/static/cloud2.bmp",
         /* + */ "art/static/error.bmp",
         /* , */ "art/static/error.bmp",
         /* - */ "art/static/error.bmp",
@@ -119,7 +122,7 @@ Surfaces xpull()
     const int count = xlen(names);
     SDL_Surface** const surface = xtoss(SDL_Surface*, count);
     for(int i = 0; i < count; i++)
-        surface[i] = load(names[i]);
+        surface[i] = load(names[i], key);
     const Surfaces surfaces = { surface, count };
     return surfaces;
 }

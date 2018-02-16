@@ -23,9 +23,6 @@ void xkill(const Sprites);
 // the hero's orientation (angle and position). Useful for the sprite renderer.
 Sprites xorient(const Sprites, const Hero);
 
-// Returns true is the ascii value in question is a sprite.
-int xissprite(const int ascii);
-
 // Edits in new sprites with the sprite editor.
 Sprites xlay(Sprites, const Map, const Overview);
 

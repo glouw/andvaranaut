@@ -164,7 +164,7 @@ int xteleporting(const Hero hero, const Map map, const Input input, const int ti
     if(!input.key[SDL_SCANCODE_E])
         return false;
     last = ticks;
-    return iscraned(hero.yaw) && xisportal(map, hero.where);
+    return iscraned(hero.yaw) && xmisportal(map, hero.where);
 }
 
 Hero xteleport(Hero hero, const Map map)
