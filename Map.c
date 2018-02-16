@@ -108,14 +108,14 @@ void xroom(const Map map, const Point where, const int w, const int h, const Par
     }
 }
 
-static void platform(const Map map, const int x, const int y, const Party party)
+static void platform(const Map map, const int x, const int y, const Party p)
 {
     for(int j = -1; j <= 1; j++)
     for(int k = -1; k <= 1; k++)
     {
         const int yy = j + y;
         const int xx = k + x;
-        switch(party)
+        switch(p)
         {
         case FLORING: map.floring[yy][xx] = '"'; break;
         case CEILING: map.ceiling[yy][xx] = '#'; break;
@@ -126,9 +126,9 @@ static void platform(const Map map, const int x, const int y, const Party party)
     }
 }
 
-static void trapdoor(const Map map, const int x, const int y, const Party party)
+static void trapdoor(const Map map, const int x, const int y, const Party p)
 {
-    switch(party)
+    switch(p)
     {
     case FLORING: map.floring[y][x] = '~'; break;
     case CEILING: map.ceiling[y][x] = '~'; break;
@@ -138,15 +138,15 @@ static void trapdoor(const Map map, const int x, const int y, const Party party)
     }
 }
 
-void xtrapdoors(const Map map, const Points trapdoors, const Party party)
+void xtrapdoors(const Map map, const Points trapdoors, const Party p)
 {
     for(int i = 0; i < trapdoors.count; i++)
     {
         const Point where = trapdoors.point[i];
         const int x = where.x;
         const int y = where.y;
-        platform(map, x, y, party);
-        trapdoor(map, x, y, party);
+        platform(map, x, y, p);
+        trapdoor(map, x, y, p);
     }
 }
 

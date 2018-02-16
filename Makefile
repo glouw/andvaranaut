@@ -22,7 +22,6 @@ SRCS+= Args.c
 SRCS+= Attack.c
 SRCS+= Bundle.c
 SRCS+= Flow.c
-SRCS+= Floors.c
 SRCS+= Compass.c
 SRCS+= Display.c
 SRCS+= Field.c
@@ -45,6 +44,7 @@ SRCS+= Surfaces.c
 SRCS+= Textures.c
 SRCS+= Torch.c
 SRCS+= Tris.c
+SRCS+= World.c
 
 # CompSpec defined in windows environment.
 ifdef ComSpec

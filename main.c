@@ -1,5 +1,5 @@
 #include "Tris.h"
-#include "Floors.h"
+#include "World.h"
 #include "util.h"
 
 int main(int argc, char* argv[])
@@ -8,8 +8,8 @@ int main(int argc, char* argv[])
     srand(time(0));
     const Args args = xparse(argc, argv);
     const int top = 0;
-    Floors floors = xfsinit(32);
-    Map map = floors.map[top];
+    World world = xwinit(32);
+    Map map = world.map[top];
     Hero hero = xspawn(args.focal, xpsrand(map.trapdoors), top);
     Sprites sprites = xsgen();
     Sdl sdl = xsetup(args);
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
                 // TODO: Maps must be renamed to Zone.
                 // Maps will include sprites.
                 hero = xteleport(hero, map);
-                map = floors.map[hero.floor];
+                map = world.map[hero.floor];
                 xmprint(map.walling, map.rows, map.cols);
             }
         }
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
         const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
-    xfsclose(floors);
+    xwclose(world);
     xgfree(gauge);
     xrelease(sdl);
     xkill(sprites);
