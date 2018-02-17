@@ -35,7 +35,7 @@ Point xpsrand(const Points ps)
     return ps.point[index];
 }
 
-Points pscat(Points ps, const Points other)
+Points xpscat(Points ps, const Points other)
 {
     for(int i = 0; i < other.count; i++)
         ps = xpsadd(ps, other.point[i]);

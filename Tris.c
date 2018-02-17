@@ -152,7 +152,7 @@ static Points prand(const int w, const int h, const int max, const int grid, con
 {
     Points ps = xpsnew(max);
     // Copy over extra points.
-    ps = pscat(ps, extra);
+    ps = xpscat(ps, extra);
     // Randomize remaining points.
     for(int i = ps.count; i < ps.max; i++)
     {
