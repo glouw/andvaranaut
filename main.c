@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
     Input input = xready(args.msen);
     Overview overview = xinit();
     Flow current = xstart(-1.0f / 6.0f);
-    Flow clouds = xstart(4.0f);
+    Flow clouds = xstart(10.0f);
     Gauge gauge = xgnew();
     const int s1 = SDL_GetTicks();
     printf("setup time: %d milliseconds\n", s1 - s0);
