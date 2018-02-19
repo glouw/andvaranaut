@@ -31,20 +31,19 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.yaw = 1.0;
     hero.tall = 0.5f;
     hero.height = hero.tall;
-    hero.hlth = 0.4f;
-    hero.maxhlth = 6;
-    hero.mana = 0.6f;
-    hero.maxmana = 6;
-    hero.fatg = 0.6f;
-    hero.maxfatg = 6;
+    hero.hp = 10.0f;
+    hero.hpmax = 10.0f;
+    hero.mana = 4.0f;
+    hero.manamax = 4.0f;
+    hero.ftg = 6.0f;
+    hero.ftgmax = 6.0f;
     hero.wep = SHORT;
     return hero;
 }
 
+// Head left and right.
 static Hero spin(Hero hero, const Input input)
 {
-    if(input.l && hero.wep != HANDS)
-        return hero;
     hero.theta += input.dx * input.sx;
     return hero;
 }
@@ -52,8 +51,6 @@ static Hero spin(Hero hero, const Input input)
 // Head up and down.
 static Hero yaw(Hero hero, const Input input)
 {
-    if(input.l && hero.wep != HANDS)
-        return hero;
     hero.yaw += input.dy * input.sy;
     const float max = 1.99f;
     const float min = 0.01f;
@@ -62,6 +59,13 @@ static Hero yaw(Hero hero, const Input input)
         hero.yaw < min ? min : /* Min clamp. */
         hero.yaw;
     return hero;
+}
+
+static Hero crane(const Hero hero, const Input input)
+{
+    if(input.l && hero.wep != HANDS)
+        return hero;
+    return yaw(spin(hero, input), input);
 }
 
 // Ducking height.
@@ -207,10 +211,9 @@ Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres, con
 
 Hero xsustain(Hero hero, const Map map, const Input input, const Flow current)
 {
-    hero = spin(hero, input);
+    hero = crane(hero, input);
     hero = vert(hero, map, input);
     hero = move(hero, map, input, current);
-    hero = yaw(hero, input);
     hero.torch = xburn(hero.torch);
     return hero;
 }

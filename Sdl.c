@@ -226,65 +226,6 @@ void xdgauge(const Sdl sdl, const Gauge g)
     }
 }
 
-// Animates first the liquid then glass for a bar.
-static void dmeter(const Sdl sdl, const int ticks, const Meter m)
-{
-    // Bars start at this column on GUI.bmp.
-    const int col = 6;
-    // Tile <from> size is 16x16.
-    const int fs = 16;
-    // Will flicker if less than 25% for a stat.
-    const int frame = m.stat < m.max / 4.0f ?  (ticks % FRAMES ? ']' : '[' ) - ' ' : '[' - ' ';
-    // Tile <to> size is resolution dependent.
-    const int ts = sdl.xres / 30;
-    /* Draw liquid in glass. */
-    for(int i = 0; i < xcl(m.stat); i++)
-    {
-        const SDL_Rect fm = {
-            // Column.
-            i == xfl(m.stat) && (xdec(m.stat) < 0.25f) ? (col + 3) * fs :
-            i == xfl(m.stat) && (xdec(m.stat) < 0.50f) ? (col + 2) * fs :
-            i == xfl(m.stat) && (xdec(m.stat) < 0.75f) ? (col + 1) * fs :
-            (col + 0) * fs,
-            // Row.
-            m.bar * fs,
-            // Dimension
-            fs, fs
-        };
-        const SDL_Rect to = { i * ts, sdl.yres - m.bar * ts, ts, ts };
-        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[frame], &fm, &to);
-    }
-    /* Draw glass. */
-    for(int i = 0; i < m.max; i++)
-    {
-        const int final = m.max - 1;
-        const int first = 0;
-        const SDL_Rect fm = {
-            // Column.
-            i == first ? (col + 0) * fs : // Left end of glass bar.
-            i == final ? (col + 2) * fs : // Right end of glass bar.
-            (col + 1) * fs, // Anywhere in the middle of the glass bar.
-            // Row.
-            0,
-            // Dimension.
-            fs, fs
-        };
-        const SDL_Rect to = { i * ts, sdl.yres - m.bar * ts, ts, ts };
-        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[frame], &fm, &to);
-    }
-}
-
-// Draw health, mana, and fatigue meters.
-void xdmeters(const Sdl sdl, const Hero hero, const int ticks)
-{
-    const Meter meters[] = {
-        { hero.hlth, hero.maxhlth, HEALTH  },
-        { hero.mana, hero.maxmana, MANA    },
-        { hero.fatg, hero.maxfatg, FATIGUE },
-    };
-    for(int i = 0; i < xlen(meters); i++) dmeter(sdl, ticks, meters[i]);
-}
-
 // Draw tiles for the grid layout.
 static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {

@@ -5,7 +5,6 @@
 #include "Args.h"
 #include "Overview.h"
 #include "Flow.h"
-#include "Meter.h"
 #include "Gauge.h"
 
 #include <SDL2/SDL.h>
@@ -45,5 +44,3 @@ void xrender(const Sdl, const Hero, const Sprites, const Map, const Flow current
 void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks);
 
 void xdgauge(const Sdl, const Gauge);
-
-void xdmeters(const Sdl sdl, const Hero, const int hearts);

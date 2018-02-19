@@ -42,7 +42,6 @@ int main(int argc, char* argv[])
             world.sprites[hero.floor] = xcaretake(world.sprites[hero.floor], hero, input, world.map[hero.floor], attack, ticks);
             xrender(sdl, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, ticks);
             xdgauge(sdl, gauge);
-            xdmeters(sdl, hero, ticks);
             if(xteleporting(hero, world.map[hero.floor], input, ticks))
                 hero = xteleport(hero, world.map[hero.floor]);
         }
