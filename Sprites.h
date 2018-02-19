@@ -14,7 +14,7 @@ typedef struct
 Sprites;
 
 // Loads all the sprites on a floor.
-Sprites xsgen();
+Sprites xsnew(const int max);
 
 // Frees all loaded sprites from memory.
 void xkill(const Sprites);

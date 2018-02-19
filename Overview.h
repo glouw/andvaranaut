@@ -30,3 +30,5 @@ Overview;
 Overview xinit();
 
 Overview xupdate(Overview, const Input, const int xres, const int textures);
+
+Overview xbackpan(Overview ov, const Point where, const int xres, const int yres);

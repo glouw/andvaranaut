@@ -27,6 +27,13 @@ static Overview reset(Overview ov)
     return ov;
 }
 
+Overview xbackpan(Overview ov, const Point where, const int xres, const int yres)
+{
+    ov.px = -ov.w * where.x + xres / 2;
+    ov.py = -ov.h * where.y + yres / 2;
+    return ov;
+}
+
 Overview xupdate(Overview ov, const Input input, const int xres, const int textures)
 {
     // Selecting either 1, 2, or 3 will change the overview party to either
@@ -64,7 +71,7 @@ Overview xupdate(Overview ov, const Input input, const int xres, const int textu
     // is out of map range or not before continuing. Reset here if left input is not pressed.
     else ov = reset(ov);
     // The right mouse button will pan the overview x and y pixels.
-    if(input.ru)
+    if(input.r)
     {
         ov.px += input.dx;
         ov.py += input.dy;

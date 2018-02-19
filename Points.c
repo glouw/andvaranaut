@@ -29,12 +29,6 @@ Points xpspop(const Points ps, const int max)
     return out;
 }
 
-Point xpsrand(const Points ps)
-{
-    const int index = rand() % ps.count;
-    return ps.point[index];
-}
-
 Points xpscat(Points ps, const Points other)
 {
     for(int i = 0; i < other.count; i++)

@@ -60,7 +60,7 @@ ifdef ComSpec
 	CFLAGS += -I ../SDL2-2.0.7/i686-w64-mingw32/include/SDL2
 endif
 CFLAGS += -std=c99
-CFLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion
+CFLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
 CFLAGS += -g
 CFLAGS += -Ofast -march=native
 CFLAGS += -flto

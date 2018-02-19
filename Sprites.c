@@ -86,12 +86,9 @@ static Sprite registrar(const int ascii, const Point where)
     }
 }
 
-Sprites xsgen()
+Sprites xsnew(const int max)
 {
-    Sprites sprites;
-    sprites.count = 0;
-    sprites.max = 32;
-    sprites.sprite = xtoss(Sprite, sprites.max);
+    const Sprites sprites = { xtoss(Sprite, max), 0, max };
     return sprites;
 }
 
@@ -103,8 +100,13 @@ void xkill(const Sprites sprites)
 // Appends a new sprite to the sprite list. Resizes sprite list of need be.
 static Sprites append(Sprites sprites, const Sprite sprite)
 {
+    // If the sprite list is empty, resize to one big.
+    if(sprites.max == 0)
+        xretoss(sprites.sprite, Sprite, sprites.max = 1);
+    // Grow sprites if need be.
     if(sprites.count >= sprites.max)
         xretoss(sprites.sprite, Sprite, sprites.max *= 2);
+    // Append.
     sprites.sprite[sprites.count++] = sprite;
     return sprites;
 }
@@ -118,13 +120,7 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov)
     // Ascii sprite check.
     const int ascii = ov.selected + ' ';
     if(xsissprite(ascii))
-    {
-        // If the sprite list is empty, resize to one big.
-        if(sprites.count == 0)
-            xretoss(sprites.sprite, Sprite, sprites.max = 1);
-        // If the new sprite cannot fit in the sprite list, resize twice as big.
         sprites = append(sprites, registrar(ascii, ov.where));
-    }
     return sprites;
 }
 
