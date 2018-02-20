@@ -85,21 +85,21 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const int flo
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
-        // Zeroth floor renders sky.
-        if(floor == 0)
-        {
-            // There are two sky layers: The forground layer, and the behind layer.
-            // The foreground layer is closer, the behind layer is further.
-            const Point hind = xlerp(r.trace, xccast(xstack(r.proj, clouds.height / 1.0f), x));
-            const Point fore = xlerp(r.trace, xccast(xstack(r.proj, clouds.height / 2.0f), x));
-            // Clouds are too smale. Scale multiply will enlargen clouds.
-            const float scale = 6.0f;
-            // The behind layer is slower. Division of flow position by some scalar is a good enough approximation.
-            xfer(sl, x, xdiv(xabs(xsub(hind, xdiv(clouds.where, 3.0f))), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(hind, r.trace.a))));
-            xfer(sl, x, xdiv(xabs(xsub(fore, xdiv(clouds.where, 1.0f))), scale), '*' - ' ', xilluminate(r.torch, xmag(xsub(fore, r.trace.a))));
-        }
-        else
-        {
+        //// Zeroth floor renders sky.
+        //if(floor == 0)
+        //{
+        //    // There are two sky layers: The forground layer, and the behind layer.
+        //    // The foreground layer is closer, the behind layer is further.
+        //    const Point hind = xlerp(r.trace, xccast(xstack(r.proj, clouds.height / 1.0f), x));
+        //    const Point fore = xlerp(r.trace, xccast(xstack(r.proj, clouds.height / 2.0f), x));
+        //    // Clouds are too smale. Scale multiply will enlargen clouds.
+        //    const float scale = 6.0f;
+        //    // The behind layer is slower. Division of flow position by some scalar is a good enough approximation.
+        //    xfer(sl, x, xdiv(xabs(xsub(hind, xdiv(clouds.where, 3.0f))), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(hind, r.trace.a))));
+        //    xfer(sl, x, xdiv(xabs(xsub(fore, xdiv(clouds.where, 1.0f))), scale), '*' - ' ', xilluminate(r.torch, xmag(xsub(fore, r.trace.a))));
+        //}
+        //else
+        //{
             // Remaining floors render a second ceiling.
             const Point offset = xlerp(r.trace, xccast(r.proj, x));
             if(xtile(offset, map.ceiling))
@@ -109,7 +109,7 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const int flo
                 // Second ceiling always uses the same texture.
                 '#' - ' ',
                 xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
-        }
+        //}
     }
 }
 
@@ -139,11 +139,10 @@ static void uraster(const Scanline sl, const Hits hits, const Hero hero, const M
     {
         const Hit* const which = hit;
         // TODO: Maybe randomize the height? Maybe random per level?
-        const float height = 3.0f;
-        const Ray hind = xcalc(hero, *which, height, sl.sdl.yres, sl.sdl.xres);
+        const Ray ray = xcalc(hero, *which, 2.0f, 3.0f, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
-            sraster(sl, hind, map, hero.floor, clouds);
-        wraster(sl, hind);
+            sraster(sl, ray, map, hero.floor, clouds);
+        wraster(sl, ray);
     }
 }
 
@@ -154,17 +153,17 @@ static void lraster(const Scanline sl, const Hits hits, const Hero hero, const M
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
-        const Ray hind = xcalc(hero, *which, current.height, sl.sdl.yres, sl.sdl.xres);
+        const Ray ray = xcalc(hero, *which, current.height, -1.0f, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
-            praster(sl, hind, map, current);
-        wraster(sl, hind);
+            praster(sl, ray, map, current);
+        wraster(sl, ray);
     }
 }
 
 // Eye level rasterer. Returns a z-buffer element for the sprites.
 static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
-    const Ray ray = xcalc(hero, hits.walling, 0.0f, sl.sdl.yres, sl.sdl.xres);
+    const Ray ray = xcalc(hero, hits.walling, 0.0f, 1.0f, sl.sdl.yres, sl.sdl.xres);
     wraster(sl, ray);
     fraster(sl, ray, map);
     craster(sl, ray, map);
@@ -173,6 +172,8 @@ static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const 
 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
+    // Highlighter.
+    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFF0000);
     uraster(sl, hits, hero, map, clouds);
     lraster(sl, hits, hero, map, current);
     return eraster(sl, hits, hero, map);

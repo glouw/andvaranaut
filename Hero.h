@@ -64,4 +64,4 @@ Hero xsustain(Hero, const Map, const Input, const Flow);
 
 // Calculates a projection ray based on a wall hit.
 // Shift determines the ceiling height if positive or the water height if negative.
-Ray xcalc(const Hero hero, const Hit, const float shift, const int yres, const int xres);
+Ray xcalc(const Hero hero, const Hit, const float a, const float b, const int yres, const int xres);

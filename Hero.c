@@ -183,7 +183,7 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres, const int xres)
+Ray xcalc(const Hero hero, const Hit hit, const float a, const float b, const int yres, const int xres)
 {
     const Point end = xsub(hit.where, hero.where);
     // The corrected point is the normal distance from the hero to where the ray hit.
@@ -199,7 +199,7 @@ Ray xcalc(const Hero hero, const Hit hit, const float shift, const int yres, con
     const Ray ray = {
         trace,
         corrected,
-        shift > 0.0f ? xstack(projection, shift) : shift < 0.0f ? xdrop(projection, shift) : projection,
+        xsheer(projection, a, b),
         hit.surface,
         hit.offset,
         hero.torch
