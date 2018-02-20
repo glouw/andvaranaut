@@ -4,7 +4,8 @@
 
 int main(int argc, char* argv[])
 {
-    const int floor = 0, floors = 32;
+    const int floor = 0;
+    const int floors = 32;
     srand(time(0));
     const Args args = xparse(argc, argv);
     World world = xwinit(floors);
@@ -15,6 +16,7 @@ int main(int argc, char* argv[])
     Flow current = xstart(-1.0f / 6.0f);
     Flow clouds = xstart(10.0f);
     Gauge gauge = xgnew();
+    Field field = xprepare(world.map[hero.floor], hero.aura);
     // X-Resolution 512 reserved for performance testing.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !input.done; renders++)
     {
@@ -39,11 +41,15 @@ int main(int argc, char* argv[])
             const Attack attack = xgpower(gauge, input, hero.wep);
             gauge = xgwind(gauge, hero.wep, input);
             hero = xsustain(hero, world.map[hero.floor], input, current);
-            world.sprites[hero.floor] = xcaretake(world.sprites[hero.floor], hero, input, world.map[hero.floor], attack, ticks);
+            world.sprites[hero.floor] = xcaretake(world.sprites[hero.floor], hero, input, world.map[hero.floor], attack, field, ticks);
             xrender(sdl, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, ticks);
             xdgauge(sdl, gauge);
             if(xteleporting(hero, world.map[hero.floor], input, ticks))
+            {
                 hero = xteleport(hero, world.map[hero.floor]);
+                xruin(field);
+                field = xprepare(world.map[hero.floor], hero.aura);
+            }
         }
         xpresent(sdl);
         input = xpump(input);
@@ -54,5 +60,6 @@ int main(int argc, char* argv[])
     xwclose(world);
     xgfree(gauge);
     xrelease(sdl);
+    xruin(field);
     return 0;
 }

@@ -27,7 +27,7 @@ Field xprepare(const Map, const float aura);
 
 Point xforce(const Field, const Point from, const Point to, const Map map);
 
-void xexamine(const Field);
+void xexamine(const Field, const int less);
 
 void xdeposit(const Field, const Point p, const float val);
 

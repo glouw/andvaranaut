@@ -4,6 +4,7 @@
 #include "State.h"
 #include "Attack.h"
 #include "Sprite.h"
+#include "Field.h"
 
 typedef struct
 {
@@ -27,4 +28,4 @@ Sprites xorient(const Sprites, const Hero);
 Sprites xlay(Sprites, const Map, const Overview);
 
 // Self sustain for all sprites.
-Sprites xcaretake(Sprites, const Hero, const Input, const Map, const Attack, const int ticks);
+Sprites xcaretake(Sprites, const Hero, const Input, const Map, const Attack, const Field, const int ticks);

@@ -331,21 +331,32 @@ static void move(const Sprites sprites, const Field field, const Point to, const
     }
 }
 
-// Collaborative diffusion with various scents.
-static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
+static void scentwall(const Field field, const Point where, const Map map, const float scent)
 {
-    const float scent = 1e3f;
-    // Walls and pit water repel sprites.
-    for(int j = 0; j < field.rows; j++)
-    for(int i = 0; i < field.cols; i++)
+    // Only need to scent within within aura or double aura.
+    const int t = field.res * where.y - field.aura; // Top.
+    const int b = field.res * where.y + field.aura; // Bottom.
+    const int l = field.res * where.x - field.aura; // Left.
+    const int r = field.res * where.x + field.aura; // Right.
+    for(int j = t; j <= b; j++)
+    for(int i = l; i <= r; i++)
     {
-        const int y = j / field.res;
         const int x = i / field.res;
-        // Walls.
-        if(map.walling[y][x] != ' ') field.mesh[j][i] = -scent;
-        // Water.
-        if(map.floring[y][x] == ' ') field.mesh[j][i] = -scent;
+        const int y = j / field.res;
+        // And on a walkable part of the field...
+        if(xon(field, j, i))
+        {
+            // Walls.
+            field.mesh[j][i] = map.walling[y][x] == ' ' ? 0.0f : -scent;
+            // Water.
+            if(map.floring[y][x] == ' ')
+                field.mesh[j][i] = -scent;
+        }
     }
+}
+
+static void scentsprite(const Field field, const Sprites sprites, const float scent)
+{
     // Sprite scents stack on one another.
     for(int s = 0; s < sprites.count; s++)
     {
@@ -358,11 +369,23 @@ static void route(const Sprites sprites, const Field field, const Map map, const
             if(xon(field, j + a, i + b))
                 field.mesh[j + a][i + b] -= scent;
     }
+}
+
+static void scenthero(const Field field, const Point where, const float scent)
+{
     // Hero scent attracts but a much larger magnitude than the walls and water.
-    const int j = field.res * hero.where.y;
-    const int i = field.res * hero.where.x;
+    const int j = field.res * where.y;
+    const int i = field.res * where.x;
     field.mesh[j][i] = 100.0f * scent;
-    // Diffuse the culminated scent across the field.
+}
+
+// Collaborative diffusion with various scents.
+static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
+{
+    const float scent = 1000.0f;
+    scentwall(field, hero.where, map, scent);
+    scentsprite(field, sprites, scent);
+    scenthero(field, hero.where, scent);;
     xdiffuse(field, hero.where);
 }
 
@@ -445,16 +468,14 @@ static void idle(const Sprites sprites, const int ticks)
     }
 }
 
-Sprites xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map, const Attack attack, const int ticks)
+Sprites xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map, const Attack attack, const Field field, const int ticks)
 {
     // Sprites need to be arrange closest to hero first.
     arrange(sprites, hero);
     idle(sprites, ticks);
     // Sprite path finding and movement.
-    const Field field = xprepare(map, hero.aura);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
-    xruin(field);
     sprites = hurt(sprites, attack, hero, input, ticks);
     // Sprite placement - interactive and out of bounds.
     grab(sprites, hero, input);

@@ -14,7 +14,7 @@ Field xprepare(const Map map, const float aura)
     field.mesh = xtoss(float*, field.rows);
     field.aura = field.res * aura;
     for(int j = 0; j < field.rows; j++)
-        field.mesh[j] = xwipe(float, field.cols);
+        field.mesh[j] = xtoss(float, field.cols);
     return field;
 }
 
@@ -120,9 +120,6 @@ Point xforce(const Field field, const Point from, const Point to, const Map map)
         const int x = field.res * from.x, xx = field.res * dir.x;
         if(xon(field, yy, xx)) grads[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
-    /* TODO:
-     * Check map here before moving.
-     * Return dead if map wall is in the way. */
     const Point grad = v[largest(grads, xlen(v))];
     const Point where = xadd(grad, from);
     const int xx = where.x;
@@ -138,12 +135,18 @@ void xdiffuse(const Field field, const Point where)
         box(field, y, x, w);
 }
 
-void xexamine(const Field field)
+void xexamine(const Field field, const int less)
 {
+    if(less)
+    {
+        static int count;
+        if(count++ % 20 != 0)
+            return;
+    }
     for(int j = 0; j < field.rows; j++)
     {
         for(int i = 0; i < field.cols; i++)
-            printf("%13.3f", (double) field.mesh[j][i]);
+            printf("%d ", field.mesh[j][i] > 0.0f);
         putchar('\n');
     }
     putchar('\n');
