@@ -297,10 +297,11 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
 
 Map xtgen(const Points extra)
 {
-    const int w = 165;
-    const int h = 105;
+    const int w = 200;
+    const int h = 200;
     const int grid = 20;
     const int max = 20 * (1 + xd4());
+    const int maxtps = 3;
     // The triangle type is reused for edges by omitting the third point.
     // The third point is then reused for a flag. For duplication removal our out of bounds checks.
     const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
@@ -309,7 +310,7 @@ Map xtgen(const Points extra)
     const Tris tris = delaunay(ps, w, h, 9 * max, flags);
     const Tris edges = ecollect(tsnew(27 * max), tris, flags);
     revdel(edges, w, h, flags);
-    const Points trapdoors = xpspop(ps, 5);
+    const Points trapdoors = xpspop(ps, maxtps);
     const Map map = xmgen(h, w, trapdoors);
     mdups(edges, flags);
     carve(map, edges, flags, grid);
