@@ -73,16 +73,6 @@ static Sprite _f_(const Point where)
     return sprite;
 }
 
-// Giant.
-static Sprite _g_(const Point where)
-{
-    Sprite sprite = born(where);
-    sprite.ascii = 'g';
-    sprite.width = 1.00f;
-    sprite.health = 1.0f; // Breaks very easy.
-    return sprite;
-}
-
 static Sprite _unknown_(const Point where, const int ascii)
 {
     Sprite sprite = born(where);
@@ -99,7 +89,6 @@ static Sprite registrar(const int ascii, const Point where)
         case 'd': return _d_(where);
         case 'e': return _e_(where);
         case 'f': return _f_(where);
-        case 'g': return _g_(where);
         default:
             return _unknown_(where, ascii);
     }

@@ -94,7 +94,7 @@ Surfaces xpull(const uint32_t key)
         /* d */ "art/lootbag.bmp",
         /* e */ "art/tree.bmp",
         /* f */ "art/treeleaves.bmp",
-        /* g */ "art/giant.bmp",
+        /* g */ "art/missing.bmp",
         /* h */ "art/missing.bmp",
         /* i */ "art/missing.bmp",
         /* j */ "art/missing.bmp",
