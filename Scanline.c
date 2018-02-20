@@ -85,31 +85,31 @@ static void sraster(const Scanline sl, const Ray r, const Map map, const int flo
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
-        //// Zeroth floor renders sky.
-        //if(floor == 0)
-        //{
-        //    // There are two sky layers: The forground layer, and the behind layer.
-        //    // The foreground layer is closer, the behind layer is further.
-        //    const Point hind = xlerp(r.trace, xccast(xstack(r.proj, clouds.height / 1.0f), x));
-        //    const Point fore = xlerp(r.trace, xccast(xstack(r.proj, clouds.height / 2.0f), x));
-        //    // Clouds are too smale. Scale multiply will enlargen clouds.
-        //    const float scale = 6.0f;
-        //    // The behind layer is slower. Division of flow position by some scalar is a good enough approximation.
-        //    xfer(sl, x, xdiv(xabs(xsub(hind, xdiv(clouds.where, 3.0f))), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(hind, r.trace.a))));
-        //    xfer(sl, x, xdiv(xabs(xsub(fore, xdiv(clouds.where, 1.0f))), scale), '*' - ' ', xilluminate(r.torch, xmag(xsub(fore, r.trace.a))));
-        //}
-        //else
-        //{
-            // Remaining floors render a second ceiling.
-            const Point offset = xlerp(r.trace, xccast(r.proj, x));
-            if(xtile(offset, map.ceiling))
-                continue;
-            xfer(sl, x,
-                offset,
-                // Second ceiling always uses the same texture.
-                '#' - ' ',
-                xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
-        //}
+        // Zeroth floor renders sky.
+        if(floor == 0)
+        {
+            // There are two sky layers: The forground layer, and the behind layer.
+            // The foreground layer is closer, the behind layer is further.
+            const Point hind = xlerp(r.trace, xccast(xsheer(r.proj, 0.0f, clouds.height / 1.0f), x));
+            const Point fore = xlerp(r.trace, xccast(xsheer(r.proj, 0.0f, clouds.height / 1.5f), x));
+            // Clouds are too smale. Scale multiply will enlargen clouds.
+            const float scale = 6.0f;
+            // The behind layer is slower. Division of flow position by some scalar is a good enough approximation.
+            xfer(sl, x, xdiv(xabs(xsub(hind, xdiv(clouds.where, 3.0f))), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(hind, r.trace.a))));
+            xfer(sl, x, xdiv(xabs(xsub(fore, xdiv(clouds.where, 1.0f))), scale), '*' - ' ', xilluminate(r.torch, xmag(xsub(fore, r.trace.a))));
+        }
+        else
+        {
+          // Remaining floors render a second ceiling.
+          const Point offset = xlerp(r.trace, xccast(r.proj, x));
+          if(xtile(offset, map.ceiling))
+              continue;
+          xfer(sl, x,
+              offset,
+              // Second ceiling always uses the same texture.
+              '#' - ' ',
+              xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+        }
     }
 }
 
