@@ -5,7 +5,6 @@
 #include "Direction.h"
 #include "util.h"
 
-#include <SDL2/SDL.h>
 #include <ctype.h>
 #include <math.h>
 

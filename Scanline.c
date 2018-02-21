@@ -167,7 +167,7 @@ static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
     // Highlighter for finding missing pixels.
-    if(false)
+    if(true)
         for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFF0000);
     rupper(sl, hits, hero, map, clouds);
     rlower(sl, hits, hero, map, current);
