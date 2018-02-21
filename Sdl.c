@@ -156,7 +156,11 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // Z-buffer will be populated once the map renderering is finished.
     Point* const zbuff = xtoss(Point, sdl.xres);
     // The display must be locked for per-pixel writes.
-    const Display display = xlock(sdl);
+    void* screen;
+    int pitch;
+    SDL_LockTexture(sdl.canvas, NULL, &screen, &pitch);
+    const int width = pitch / sizeof(uint32_t);
+    uint32_t* pixels = (uint32_t*) screen;
     const Line camera = xrotate(hero.fov, hero.theta);
     // Rendering bundles are used for rendering a
     // portion of the map (ceiling, walls, and flooring) to the display.
@@ -168,7 +172,8 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         b[i].b = (i + 1) * sdl.xres / sdl.threads;
         b[i].zbuff = zbuff;
         b[i].camera = camera;
-        b[i].display = display;
+        b[i].pixels = pixels;
+        b[i].width = width;
         b[i].sdl = sdl;
         b[i].hero = hero;
         b[i].current = current;
@@ -185,7 +190,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         SDL_WaitThread(threads[i], &status);
     }
     // Per-pixel writes are done. Unlock the display.
-    xunlock(sdl);
+    SDL_UnlockTexture(sdl.canvas);
     // The map was rendered on its side. Rotate the map upwards.
     churn(sdl);
     // Sort the sprites furthest to nearest.
@@ -300,17 +305,27 @@ void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map ma
 void xdmap(const Sdl sdl, const Map map, const Point where)
 {
     SDL_Texture* const texture = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
+    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
+    // Lock.
     void* screen;
     int pitch;
     SDL_LockTexture(texture, NULL, &screen, &pitch);
     const int width = pitch / sizeof(uint32_t);
     uint32_t* pixels = (uint32_t*) screen;
+    // Draw empty rooms.
     for(int y = 0; y < map.rows; y++)
     for(int x = 0; x < map.cols; x++)
         if(map.walling[y][x] == ' ')
             pixels[x + y * width] = 0xFFFFFFFF;
-        else
-            pixels[x + y * width] = 0xFF000000;
+    // Draw hero dot.
+    for(int y = -1; y <= 1; y++)
+    for(int x = -1; x <= 1; x++)
+    {
+        const int xx = x + where.x;
+        const int yy = y + where.y;
+        pixels[xx + yy * width] = 0xFFFF0000;
+    }
+    // Unlock and send.
     SDL_UnlockTexture(texture);
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };
     SDL_RenderCopy(sdl.renderer, texture, NULL, &dst);

@@ -23,7 +23,7 @@ static uint32_t pget(const SDL_Surface* const surface, const Point offset)
 // Pixel putter.
 static void pput(const Scanline sl, const int x, const uint32_t pixel)
 {
-    sl.display.pixels[x + sl.y * sl.display.width] = pixel;
+    sl.pixels[x + sl.y * sl.width] = pixel;
 }
 
 static void xfer(const Scanline sl, const int x, const Point offset, const int tile, const int distance)

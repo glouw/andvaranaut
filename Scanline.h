@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Display.h"
+#include "Sdl.h"
 
 typedef struct
 {
     Sdl sdl;
-    Display display;
+    uint32_t* pixels;
+    int width;
     // Scanlines are rotated 90 degrees. An x argument would be passed here.
     int y;
 }

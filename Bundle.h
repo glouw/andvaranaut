@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Line.h"
-#include "Display.h"
 #include "Sdl.h"
 #include "Hero.h"
 #include "Flow.h"
@@ -13,7 +12,8 @@ typedef struct
     int b;
     Point* zbuff;
     Line camera;
-    Display display;
+    uint32_t* pixels;
+    int width;
     Sdl sdl;
     Hero hero;
     Flow current;

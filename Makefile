@@ -23,7 +23,6 @@ SRCS+= Attack.c
 SRCS+= Bundle.c
 SRCS+= Flow.c
 SRCS+= Compass.c
-SRCS+= Display.c
 SRCS+= Field.c
 SRCS+= Found.c
 SRCS+= Gauge.c
