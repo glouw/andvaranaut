@@ -296,3 +296,23 @@ void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map ma
     dgridl(sdl, ov, sprites, map, ticks);
     dpanel(sdl, ov, ticks);
 }
+
+void xdmap(const Sdl sdl, const Map map, const Point where)
+{
+    SDL_Texture* const texture = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
+    void* screen;
+    int pitch;
+    SDL_LockTexture(texture, NULL, &screen, &pitch);
+    const int width = pitch / sizeof(uint32_t);
+    uint32_t* pixels = (uint32_t*) screen;
+    for(int y = 0; y < map.rows; y++)
+    for(int x = 0; x < map.cols; x++)
+        if(map.walling[y][x] == ' ')
+            pixels[x + y * width] = 0xFFFFFFFF;
+        else
+            pixels[x + y * width] = 0xFF000000;
+    SDL_UnlockTexture(texture);
+    const SDL_Rect dst = { 0, 0, map.cols, map.rows };
+    SDL_RenderCopy(sdl.renderer, texture, NULL, &dst);
+    SDL_DestroyTexture(texture);
+}

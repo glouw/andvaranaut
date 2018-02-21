@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
             world.sprites[hero.floor] = xcaretake(world.sprites[hero.floor], hero, input, world.map[hero.floor], attack, field, ticks);
             xrender(sdl, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, ticks);
             xdgauge(sdl, gauge);
+            xdmap(sdl, world.map[hero.floor], hero.where);
             if(xteleporting(hero, world.map[hero.floor], input, ticks))
             {
                 hero = xteleport(hero, world.map[hero.floor]);
@@ -54,6 +55,7 @@ int main(int argc, char* argv[])
         xpresent(sdl);
         input = xpump(input);
         const int t1 = SDL_GetTicks();
+        printf("%f\n", 1000.0 / (t1 - t0));
         const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }

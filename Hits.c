@@ -1,6 +1,7 @@
 #include "Hits.h"
 
 #include "Compass.h"
+#include "Line.h"
 #include "util.h"
 
 static Hit* push(Hit* ceiling, const Hit hit)
@@ -11,44 +12,39 @@ static Hit* push(Hit* ceiling, const Hit hit)
     return temp;
 }
 
-static Hit collision(const Point ray, const Point final, const Point other, char** const block)
+static Hit collision(const Point ray, const Line test, char** const block)
 {
     const float offset = xdec(ray.x + ray.y);
-    const int inverted = xinverted(xneedle(final, other));
-    const Hit hit = { xtile(final, block), inverted ? 1.0f - offset : offset, ray, NULL };
+    const int inverted = xinverted(xneedle(test.a, test.b));
+    const Hit hit = { xtile(test.a, block), inverted ? 1.0f - offset : offset, ray, NULL };
     return hit;
 }
 
 static Hits step(Hits hits, const Point where, const Point direction, const Map map)
 {
-    // Advance the ray.
     const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));
-    const Point final = xadd(ray, xmul(direction, 1e-3f));
-    const Point other = xsub(ray, xmul(direction, 1e-3f));
+    const Point delta = xmul(direction, 0.01f);
+    const Point dx = { delta.x, 0.0f };
+    const Point dy = { 0.0f, delta.y };
+    const Line test = {
+        xadd(ray, xdec(ray.x) == 0.0f ? dx : xdec(ray.y) == 0.0f ? dy : delta),
+        xsub(ray, xdec(ray.x) == 0.0f ? dx : xdec(ray.y) == 0.0f ? dy : delta),
+    };
     /* Flooring wall was hit. Push the flooring hit linked list. */
-    if(xtile(final, map.floring) && !xtile(other, map.floring))
-    {
-        const Hit hit = collision(ray, final, other, map.floring);
-        hits.floring = push(hits.floring, hit);
-    }
+    if(xtile(test.a, map.floring) && !xtile(test.b, map.floring))
+        hits.floring = push(hits.floring, collision(ray, test, map.floring));
     /* Ceiling wall was hit. Push the ceiling hit linked list. */
-    if(xtile(final, map.ceiling) && !xtile(other, map.ceiling))
-    {
-        const Hit hit = collision(ray, final, other, map.ceiling);
-        hits.ceiling = push(hits.ceiling, hit);
-    }
+    if(xtile(test.a, map.ceiling) && !xtile(test.b, map.ceiling))
+        hits.ceiling = push(hits.ceiling, collision(ray, test, map.ceiling));
     /* Eye walling hit.
      * A linked list is not needed: Thanks to eye level projections,
-     * only one projection is needed as everything else behind will
-     * be overlapped by the first. */
-    if(xtile(final, map.walling) && !hits.walling.surface)
-    {
-        const Hit hit = collision(ray, final, other, map.walling);
-        hits.walling = hit;
-    }
+     * only one projection is needed as every projection behind will
+     * be overlapped by the first projection. */
+    if(xtile(test.a, map.walling) && !hits.walling.surface)
+        hits.walling = collision(ray, test, map.walling);
     /* Done when a wall was hit and a ceiling wall exists above the wall and
      * a floor wall exist below the wall. */
-    if(hits.walling.surface && xtile(final, map.ceiling) && xtile(final, map.floring))
+    if(hits.walling.surface && xtile(test.a, map.ceiling) && xtile(test.a, map.floring))
         return hits;
     return step(hits, ray, direction, map);
 }

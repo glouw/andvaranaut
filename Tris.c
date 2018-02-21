@@ -297,10 +297,10 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
 
 Map xtgen(const Points extra)
 {
-    const int w = 800;
-    const int h = 800;
+    const int w = 200;
+    const int h = 200;
     const int grid = 20;
-    const int max = 20 * (1 + xd4());
+    const int max = 30 * (1 + xd4());
     const int maxtps = 3;
     // The triangle type is reused for edges by omitting the third point.
     // The third point is then reused for a flag. For duplication removal our out of bounds checks.

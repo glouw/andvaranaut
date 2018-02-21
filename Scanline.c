@@ -29,110 +29,104 @@ static void pput(const Scanline sl, const int x, const uint32_t pixel)
 static void xfer(const Scanline sl, const int x, const Point offset, const int tile, const int distance)
 {
     const uint32_t color = pget(sl.sdl.surfaces.surface[tile], offset);
-    // Do not transfer if color matches color key.
     if(color == sl.sdl.key)
         return;
     pput(sl, x, shade(color, distance));
 }
 
 // Wall rasterer.
-static void wraster(const Scanline sl, const Ray r)
+static void rwall(const Scanline sl, const Ray r)
 {
-    if(r.proj.clamped.bot < 0)
-        xbomb("clamp bot error");
-    if(r.proj.clamped.top >= sl.sdl.xres)
-        xbomb("clamp top error");
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
         const Point offset = { (x - r.proj.bot) / r.proj.size, r.offset };
-        // Shade and transfer pixel.
-        xfer(sl, x, offset, r.surface, xilluminate(r.torch, r.corrected.x));
+        xfer(sl, x,
+            offset,
+            r.surface,
+            xilluminate(r.torch, r.corrected.x));
     }
 }
 
 // Floor rasterer.
-static void fraster(const Scanline sl, const Ray r, const Map map)
+static void rflor(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         const Point offset = xlerp(r.trace, xfcast(r.proj, x));
         const int tile = xtile(offset, map.floring);
-        // Do not render where there will be a pit.
         if(!tile)
             continue;
-        // Shade and transfer pixel.
-        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+        xfer(sl, x,
+            offset,
+            tile,
+            xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 
 // Ceiling rasterer.
-static void craster(const Scanline sl, const Ray r, const Map map)
+static void rceil(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         const Point offset = xlerp(r.trace, xccast(r.proj, x));
         const int tile = xtile(offset, map.ceiling);
-        // Do not render where there will a second ceiling.
         if(!tile)
             continue;
-        // Shade and transfer pixel.
-        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+        xfer(sl, x,
+            offset,
+            tile,
+            xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 
-// Second ceiling rasterer.
-static void sraster(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
+// Sky rasterer.
+static void rsky(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         // Zeroth floor renders sky.
+        // There are two sky layers: The forground layer, and the behind layer.
+        // The foreground layer is closer, the behind layer is further.
         if(floor == 0)
         {
-            // There are two sky layers: The forground layer, and the behind layer.
-            // The foreground layer is closer, the behind layer is further.
-            const Point hind = xlerp(r.trace, xccast(xsheer(r.proj, 0.0f, clouds.height / 1.0f), x));
-            const Point fore = xlerp(r.trace, xccast(xsheer(r.proj, 0.0f, clouds.height / 1.5f), x));
-            // Clouds are too smale. Scale multiply will enlargen clouds.
+            const Point a = xlerp(r.trace, xccast(xsheer(r.proj, 0.0f, clouds.height / 1.0f), x));
+            const Point b = xlerp(r.trace, xccast(xsheer(r.proj, 0.0f, clouds.height / 1.5f), x));
+            // Scale multiply enlargen clouds.
             const float scale = 6.0f;
-            // The behind layer is slower. Division of flow position by some scalar is a good enough approximation.
-            xfer(sl, x, xdiv(xabs(xsub(hind, xdiv(clouds.where, 3.0f))), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(hind, r.trace.a))));
-            xfer(sl, x, xdiv(xabs(xsub(fore, xdiv(clouds.where, 1.0f))), scale), '*' - ' ', xilluminate(r.torch, xmag(xsub(fore, r.trace.a))));
+            xfer(sl, x, xdiv(xabs(xsub(a, clouds.where)), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(a, r.trace.a))));
+            xfer(sl, x, xdiv(xabs(xsub(b, clouds.where)), scale), '*' - ' ', xilluminate(r.torch, xmag(xsub(b, r.trace.a))));
         }
+        // Remaining floors render a second ceiling instead.
         else
         {
-          // Remaining floors render a second ceiling.
-          const Point offset = xlerp(r.trace, xccast(r.proj, x));
-          if(xtile(offset, map.ceiling))
-              continue;
-          xfer(sl, x,
-              offset,
-              // Second ceiling always uses the same texture.
-              '#' - ' ',
-              xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+            const Point offset = xlerp(r.trace, xccast(r.proj, x));
+            if(xtile(offset, map.ceiling))
+                continue;
+            xfer(sl, x,
+                offset,
+                '#' - ' ',
+                xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
         }
     }
 }
 
 // Pit water rasterer.
-static void praster(const Scanline sl, const Ray r, const Map map, const Flow current)
+static void rpit(const Scanline sl, const Ray r, const Map map, const Flow current)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         const Point offset = xlerp(r.trace, xfcast(r.proj, x));
-        // Do not render where there was a floor.
         if(xtile(offset, map.floring))
             continue;
-        // Shade and transfer pixel.
         xfer(sl, x,
             xabs(xsub(offset, current.where)),
-            // Pit water always uses the same texture.
             '%' - ' ',
             xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 
 // Upper level rasterer (second ceiling and upper walls).
-static void uraster(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow clouds)
+static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow clouds)
 {
     int link = 0;
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
@@ -141,13 +135,13 @@ static void uraster(const Scanline sl, const Hits hits, const Hero hero, const M
         // TODO: Maybe randomize the height? Maybe random per level?
         const Ray ray = xcalc(hero, *which, 2.0f, 3.0f, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
-            sraster(sl, ray, map, hero.floor, clouds);
-        wraster(sl, ray);
+            rsky(sl, ray, map, hero.floor, clouds);
+        rwall(sl, ray);
     }
 }
 
 // Lower level rasterer (pit and lower walls).
-static void lraster(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow current)
+static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow current)
 {
     int link = 0;
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
@@ -155,26 +149,27 @@ static void lraster(const Scanline sl, const Hits hits, const Hero hero, const M
         const Hit* const which = hit;
         const Ray ray = xcalc(hero, *which, current.height, -1.0f, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
-            praster(sl, ray, map, current);
-        wraster(sl, ray);
+            rpit(sl, ray, map, current);
+        rwall(sl, ray);
     }
 }
 
-// Eye level rasterer. Returns a z-buffer element for the sprites.
-static Point eraster(const Scanline sl, const Hits hits, const Hero hero, const Map map)
+// Middle level rasterer. Returns a z-buffer element for the sprites.
+static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     const Ray ray = xcalc(hero, hits.walling, 0.0f, 1.0f, sl.sdl.yres, sl.sdl.xres);
-    wraster(sl, ray);
-    fraster(sl, ray, map);
-    craster(sl, ray, map);
+    rwall(sl, ray);
+    rflor(sl, ray, map);
+    rceil(sl, ray, map);
     return ray.corrected;
 }
 
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
-    // Highlighter.
-    for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFF0000);
-    uraster(sl, hits, hero, map, clouds);
-    lraster(sl, hits, hero, map, current);
-    return eraster(sl, hits, hero, map);
+    // Highlighter for finding missing pixels.
+    if(false)
+        for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFF0000);
+    rupper(sl, hits, hero, map, clouds);
+    rlower(sl, hits, hero, map, current);
+    return rmiddle(sl, hits, hero, map);
 }
