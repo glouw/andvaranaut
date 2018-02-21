@@ -297,8 +297,8 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
 
 Map xtgen(const Points extra)
 {
-    const int w = 200;
-    const int h = 200;
+    const int w = 100;
+    const int h = 300;
     const int grid = 20;
     const int max = 30 * (1 + xd4());
     const int maxtps = 3;

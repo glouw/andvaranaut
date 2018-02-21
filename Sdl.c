@@ -305,18 +305,29 @@ void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map ma
 void xdmap(const Sdl sdl, const Map map, const Point where)
 {
     SDL_Texture* const texture = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
-    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
+    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
     // Lock.
     void* screen;
     int pitch;
     SDL_LockTexture(texture, NULL, &screen, &pitch);
     const int width = pitch / sizeof(uint32_t);
     uint32_t* pixels = (uint32_t*) screen;
+    const uint32_t wht = 255 << 24 | 223 << 16 | 239 << 8 | 215;
+    const uint32_t blk = 255 << 24 |   0 << 16 |   0 << 8 |   0;
+    const uint32_t red = 255 << 24 | 211 << 16 |  69 << 8 |  73;
     // Draw empty rooms.
-    for(int y = 0; y < map.rows; y++)
-    for(int x = 0; x < map.cols; x++)
+    for(int y = 1; y < map.rows - 1; y++)
+    for(int x = 1; x < map.cols - 1; x++)
+    {
+        // Outlines
+        if(map.walling[y][x] != ' ' && map.walling[y][x + 1] == ' ') pixels[x + y * width] = blk;
+        if(map.walling[y][x] != ' ' && map.walling[y][x - 1] == ' ') pixels[x + y * width] = blk;
+        if(map.walling[y][x] != ' ' && map.walling[y + 1][x] == ' ') pixels[x + y * width] = blk;
+        if(map.walling[y][x] != ' ' && map.walling[y - 1][x] == ' ') pixels[x + y * width] = blk;
+        // Inside.
         if(map.walling[y][x] == ' ')
-            pixels[x + y * width] = 0xFFFFFFFF;
+            pixels[x + y * width] = wht;
+    }
     // Draw hero dot.
     const int size = 2;
     for(int y = -size; y <= size; y++)
@@ -324,7 +335,13 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
     {
         const int xx = x + where.x;
         const int yy = y + where.y;
-        pixels[xx + yy * width] = 0xFFFF0000;
+        // Inside.
+        pixels[xx + yy * width] = red;
+        // Outside
+        if(x == -size) pixels[xx + yy * width] = blk;
+        if(x == +size) pixels[xx + yy * width] = blk;
+        if(y == -size) pixels[xx + yy * width] = blk;
+        if(y == +size) pixels[xx + yy * width] = blk;
     }
     // Unlock and send.
     SDL_UnlockTexture(texture);

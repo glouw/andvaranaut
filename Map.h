@@ -2,6 +2,7 @@
 
 #include "Points.h"
 #include "Overview.h"
+#include "Sheer.h"
 
 typedef struct
 {
@@ -13,6 +14,8 @@ typedef struct
     int rows;
     int cols;
     Points trapdoors;
+    Sheer middle;
+    Sheer upper;
 }
 Map;
 

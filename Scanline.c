@@ -133,7 +133,7 @@ static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Ma
     {
         const Hit* const which = hit;
         // TODO: Maybe randomize the height? Maybe random per level?
-        const Ray ray = xcalc(hero, *which, 2.0f, 3.0f, sl.sdl.yres, sl.sdl.xres);
+        const Ray ray = xcalc(hero, *which, map.upper.a, map.upper.b, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
             rsky(sl, ray, map, hero.floor, clouds);
         rwall(sl, ray);
@@ -157,7 +157,7 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
 // Middle level rasterer. Returns a z-buffer element for the sprites.
 static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
-    const Ray ray = xcalc(hero, hits.walling, 0.0f, 1.0f, sl.sdl.yres, sl.sdl.xres);
+    const Ray ray = xcalc(hero, hits.walling, map.middle.a, map.middle.b, sl.sdl.yres, sl.sdl.xres);
     rwall(sl, ray);
     rflor(sl, ray, map);
     rceil(sl, ray, map);

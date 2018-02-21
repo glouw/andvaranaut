@@ -14,18 +14,8 @@ static Clamped clamp(const int yres, const float bot, const float top)
 
 Projection xproject(const int yres, const int xres, const float focal, const float yaw, const Point corrected, const float height)
 {
-    const float a = 0.0f; // Base (size unit. 1.0 == one block high)
-    const float b = 0.0f; // Head (size unit. 1.0 == one block high)
-    /* For instance:
-     * One block high:
-     *  a == 0.0
-     *  b == 1.0
-     * Two blocks high:
-     *  a == 0.0
-     *  b == 2.0
-     * One block high, floating one block high:
-     *  a == 1.0
-     *  b == 2.0 */
+    const float a = 0.0f; // Base
+    const float b = 0.0f; // Head
     // The corrected x distance must be clamped to a value small enough otherwise size will
     // exceed the limitations of single precision floating point. The clamp value is arbitrary.
     const float size = (focal * xres / 2.0f) / (corrected.x < 1e-5f ? 1e-5f : corrected.x);
@@ -40,8 +30,8 @@ Projection xproject(const int yres, const int xres, const float focal, const flo
 
 Projection xsheer(const Projection p, const float a, const float b)
 {
-    const float bot = p.bot + p.size * a - (b > a ? 1.0f : 0.0f); // Pretty ridiculous imo, but there is no other way
-    const float top = p.top + p.size * b + (b > a ? 0.0f : 2.0f); // to fix the missing pixels between stacks.
+    const float bot = p.bot + p.size * a - (b >= a ? 1.0f : 0.0f); // Pretty ridiculous imo, but there is no other way
+    const float top = p.top + p.size * b + (b >= a ? 0.0f : 2.0f); // to fix the missing pixels between stacks.
     const Projection projection = {
         bot, top, clamp(p.yres, bot, top), p.size, p.height, p.yres, p.mid, fabsf(a), fabsf(b)
     };

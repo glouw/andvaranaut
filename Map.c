@@ -27,7 +27,7 @@ static char** reset(char** block, const int rows, const int cols, const int blok
     return block;
 }
 
-static char** new(const int rows, const int cols, const int blok)
+static char** mnew(const int rows, const int cols, const int blok)
 {
     char** block = xtoss(char*, rows);
     for(int row = 0; row < rows; row++)
@@ -37,14 +37,24 @@ static char** new(const int rows, const int cols, const int blok)
 
 Map xmgen(const int rows, const int cols, const Points trapdoors)
 {
+    const Sheer mid = {
+        0.0f,
+        (float) (rand() % 2)
+    };
+    const Sheer upp = {
+        mid.b + 1.0f,
+        upp.a + (rand() % 2)
+    };
     Map map;
     xzero(map);
     map.rows = rows;
     map.cols = cols;
-    map.ceiling = new(map.rows, map.cols, '#');
-    map.walling = new(map.rows, map.cols, '#');
-    map.floring = new(map.rows, map.cols, '"');
+    map.ceiling = mnew(map.rows, map.cols, '#');
+    map.walling = mnew(map.rows, map.cols, '#');
+    map.floring = mnew(map.rows, map.cols, '"');
     map.trapdoors = trapdoors;
+    map.upper = upp;
+    map.middle = mid;
     return map;
 }
 
