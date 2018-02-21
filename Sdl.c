@@ -318,8 +318,9 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
         if(map.walling[y][x] == ' ')
             pixels[x + y * width] = 0xFFFFFFFF;
     // Draw hero dot.
-    for(int y = -1; y <= 1; y++)
-    for(int x = -1; x <= 1; x++)
+    const int size = 2;
+    for(int y = -size; y <= size; y++)
+    for(int x = -size; x <= size; x++)
     {
         const int xx = x + where.x;
         const int yy = y + where.y;
