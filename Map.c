@@ -118,6 +118,14 @@ void xmroom(const Map map, const Point where, const int w, const int h, const Pa
     }
 }
 
+static void supports(const Map map, const int x, const int y)
+{
+    map.walling[y + 1][x + 1] = map.floring[y + 1][x + 1] =
+    map.walling[y + 1][x - 1] = map.floring[y + 1][x - 1] =
+    map.walling[y - 1][x - 1] = map.floring[y - 1][x - 1] =
+    map.walling[y - 1][x + 1] = map.floring[y - 1][x + 1] = '#';
+}
+
 static void platform(const Map map, const int x, const int y, const Party p)
 {
     for(int j = -1; j <= 1; j++)
@@ -156,6 +164,7 @@ void xmtrapdoors(const Map map, const Points trapdoors, const Party p)
         const int x = where.x;
         const int y = where.y;
         platform(map, x, y, p);
+        supports(map, x, y);
         trapdoor(map, x, y, p);
     }
 }

@@ -11,7 +11,7 @@
 #
 # 		make
 
-CC = g++
+CC = gcc
 
 NAME = andvaranaut
 
