@@ -65,14 +65,6 @@ int xodd(const int a)
     return a % 2;
 }
 
-char* xconcat(const char* const a, const char* const b)
-{
-    char* c = xtoss(char, strlen(a) + strlen(b) + 1);
-    strcpy(c, a);
-    strcat(c, b);
-    return c;
-}
-
 int xd2() { return rand() % 2; }
 
 int xd4() { return rand() % 4; }

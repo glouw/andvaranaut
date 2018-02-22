@@ -19,12 +19,12 @@ SRCS =
 SRCS+= main.c
 SRCS+= util.c
 SRCS+= Args.c
+SRCS+= Atom.c
 SRCS+= Attack.c
 SRCS+= Bundle.c
 SRCS+= Flow.c
 SRCS+= Compass.c
 SRCS+= Field.c
-SRCS+= Found.c
 SRCS+= Gauge.c
 SRCS+= Hero.c
 SRCS+= Hits.c
@@ -61,7 +61,7 @@ endif
 CFLAGS += -std=c99
 CFLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
 CFLAGS += -g
-CFLAGS += -Ofast -march=native
+CFLAGS += -Ofast -march=native -pipe
 CFLAGS += -flto
 
 LDFLAGS =

@@ -17,44 +17,28 @@ int xcl(const float x);
 // Fast math decimal.
 float xdec(const float x);
 
-// Returns the number of lines in a file.
 int xlns(FILE* const file);
 
-// Returns a line from a file - forwards file pointer.
 char* xreadln(FILE* const file);
 
-// Prints an error message and exits.
 void xbomb(const char* const message, ...);
 
-// Returns true if number is odd.
 int xodd(const int a);
 
-// Takes two strings and returns a concatenated string.
-char* xconcat(const char* const a, const char* const b);
-
-// Get the lenght of an array.
 #define xlen(a) ((int) (sizeof(a) / sizeof(*a)))
 
-// Type safe ease of use calloc.
 #define xwipe(t, n) ((t*) calloc((n), sizeof(t)))
 
-// Type safe ease of use malloc.
 #define xtoss(t, n) ((t*) malloc((n) * sizeof(t)))
 
-// Type safe ease of use realloc.
 #define xretoss(ptr, t, n) (ptr = (t*) realloc((ptr), (n) * sizeof(t)))
 
-// Ease of use memset for zeroing out an array.
 #define xzero(a) (memset(&(a), 0, sizeof(a)))
 
-// Generic type macro for finding max of two type values.
 #define xmax(a, b) ((a) > (b) ? (a) : (b))
 
-// Generic type macro for finding min of two type values.
 #define xmin(a, b) ((a) < (b) ? (a) : (b))
 
-// String matching.
-#define equals(a, b) (strcmp(a, b) == 0)
+#define xequals(a, b) (strcmp(a, b) == 0)
 
-// Dice rolls.
 int xd2(), xd4(), xd8();

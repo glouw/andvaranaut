@@ -6,6 +6,7 @@ Gauge xgnew()
 {
     Gauge g;
     xzero(g);
+    // TODO:
     // Maybe have max change with weapon? Stronger weapons have longer windup.
     g.max = 120; /* About two seconds max. */
     g.points = xtoss(Point, g.max);
@@ -25,9 +26,6 @@ static Gauge reset(Gauge g)
 
 Gauge xgwind(Gauge g, const Weapon weapon, const Input input)
 {
-    // Cannot wind with hands.
-    if(weapon == HANDS) return g;
-    // Winds with left mouse button down.
     if(input.l)
     {
         // Fizzle out.

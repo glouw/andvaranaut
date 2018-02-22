@@ -89,8 +89,11 @@ static void rsky(const Scanline sl, const Ray r, const Map map, const int floor,
         // The foreground layer is closer, the behind layer is further.
         if(floor == 0)
         {
-            const Point a = xlerp(r.trace, xccast(xsheer(r.proj, 0.0f, clouds.height / 1.0f), x));
-            const Point b = xlerp(r.trace, xccast(xsheer(r.proj, 0.0f, clouds.height / 1.5f), x));
+            // Note that the ray is highjacked and resheered here to save some cycles from recalling another xcalc().
+            const Sheer sa = { 0.0f, clouds.height / 1.0f };
+            const Sheer sb = { 0.0f, clouds.height / 1.5f };
+            const Point a = xlerp(r.trace, xccast(xsheer(r.proj, sa), x));
+            const Point b = xlerp(r.trace, xccast(xsheer(r.proj, sb), x));
             // Scale multiply enlargen clouds.
             const float scale = 6.0f;
             xfer(sl, x, xdiv(xabs(xsub(a, clouds.where)), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(a, r.trace.a))));
@@ -125,7 +128,7 @@ static void rpit(const Scanline sl, const Ray r, const Map map, const Flow curre
     }
 }
 
-// Upper level rasterer (second ceiling and upper walls).
+// Upper level rasterer (second ceiling or sky and upper walls).
 static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow clouds)
 {
     int link = 0;
@@ -133,7 +136,7 @@ static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Ma
     {
         const Hit* const which = hit;
         // TODO: Maybe randomize the height? Maybe random per level?
-        const Ray ray = xcalc(hero, *which, map.upper.a, map.upper.b, sl.sdl.yres, sl.sdl.xres);
+        const Ray ray = xcalc(hero, *which, map.upper, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
             rsky(sl, ray, map, hero.floor, clouds);
         rwall(sl, ray);
@@ -147,7 +150,8 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
-        const Ray ray = xcalc(hero, *which, current.height, -1.0f, sl.sdl.yres, sl.sdl.xres);
+        const Sheer sheer = { current.height, -1.0f };
+        const Ray ray = xcalc(hero, *which, sheer, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
             rpit(sl, ray, map, current);
         rwall(sl, ray);
@@ -157,18 +161,24 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
 // Middle level rasterer. Returns a z-buffer element for the sprites.
 static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
-    const Ray ray = xcalc(hero, hits.walling, map.middle.a, map.middle.b, sl.sdl.yres, sl.sdl.xres);
+    const Ray ray = xcalc(hero, hits.walling, map.middle, sl.sdl.yres, sl.sdl.xres);
     rwall(sl, ray);
     rflor(sl, ray, map);
     rceil(sl, ray, map);
     return ray.corrected;
 }
 
+// Highlighter for finding missing pixels.
+static void highlited(const Scanline sl)
+{
+    for(int x = 0; x < sl.sdl.yres; x++)
+        pput(sl, x, 0xFF0000);
+}
+
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
-    // Highlighter for finding missing pixels.
     if(false)
-        for(int x = 0; x < sl.sdl.yres; x++) pput(sl, x, 0xFF0000);
+        highlited(sl);
     rupper(sl, hits, hero, map, clouds);
     rlower(sl, hits, hero, map, current);
     return rmiddle(sl, hits, hero, map);

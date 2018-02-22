@@ -37,18 +37,16 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.manamax = 4.0f;
     hero.ftg = 6.0f;
     hero.ftgmax = 6.0f;
-    hero.wep = HANDS;
+    hero.wep = LONG;
     return hero;
 }
 
-// Head left and right.
 static Hero spin(Hero hero, const Input input)
 {
     hero.theta += input.dx * input.sx;
     return hero;
 }
 
-// Head up and down.
 static Hero yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dy * input.sy;
@@ -61,9 +59,11 @@ static Hero yaw(Hero hero, const Input input)
     return hero;
 }
 
-static Hero crane(const Hero hero, const Input input)
+static Hero look(const Hero hero, const Input input)
 {
-    if(input.l && hero.wep != HANDS)
+    if(input.l)
+        return hero;
+    if(hero.inventory)
         return hero;
     return yaw(spin(hero, input), input);
 }
@@ -95,7 +95,7 @@ static Hero vert(Hero hero, const Map map, const Input input)
     const float min = 0.05f;
     if(hero.height > max) hero.height = max;
     if(hero.height < min) hero.height = min;
-    // Crouch overload - only works on land.
+    // Crouch override - only works on land.
     if(input.key[SDL_SCANCODE_LCTRL] && land) hero.height = hduck(hero);
     return hero;
 }
@@ -107,7 +107,6 @@ Point xtouch(const Hero hero, const float reach)
     return xadd(hero.where, direction);
 }
 
-// Returns an acceleration vector based on the hero's position.
 static Point accelerate(const Hero hero)
 {
     const Point reference = { 1.0f, 0.0f };
@@ -150,10 +149,16 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     return hero;
 }
 
-// Neck is craned up or down, not eye level.
-static int iscraned(const float yaw)
+// Teleport up.
+static int tup(const Hero hero, const Map map)
 {
-    return yaw > 1.0f || yaw < 1.0f;
+    return hero.yaw < 1.0f && xmisportal(map.ceiling, hero.where);
+}
+
+// Teleport down.
+static int tdn(const Hero hero, const Map map)
+{
+    return hero.yaw > 1.0f && xmisportal(map.floring, hero.where);
 }
 
 int xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
@@ -161,21 +166,22 @@ int xteleporting(const Hero hero, const Map map, const Input input, const int ti
     static int last;
     // A delay is required between teleports else hero will
     // quickly teleport between adjacent floors with a single key press.
-    // The delay is arbitrary (whatever feels best).
+    // The delay is arbitrary.
     const int delay = 2;
     if(ticks < last + delay)
         return false;
     if(!input.key[SDL_SCANCODE_E])
         return false;
     last = ticks;
-    return iscraned(hero.yaw) && xmisportal(map, hero.where);
+    return tup(hero, map)
+        || tdn(hero, map);
 }
 
 Hero xteleport(Hero hero, const Map map)
 {
     // Look up to teleport a floor up. Look down to teleport a floor down.
-    if(xblok(hero.where, map.floring) == '~' && hero.yaw > 1.0f) hero.floor++;
-    if(xblok(hero.where, map.ceiling) == '~' && hero.yaw < 1.0f) hero.floor--;
+    if(tup(hero, map)) hero.floor--;
+    if(tdn(hero, map)) hero.floor++;
     // The teleport effect is done by reseting the hero yaw to the horizon.
     // The torch is also put out.
     hero.yaw = 1.0f;
@@ -183,7 +189,7 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-Ray xcalc(const Hero hero, const Hit hit, const float a, const float b, const int yres, const int xres)
+Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, const int xres)
 {
     const Point end = xsub(hit.where, hero.where);
     // The corrected point is the normal distance from the hero to where the ray hit.
@@ -191,15 +197,11 @@ Ray xcalc(const Hero hero, const Hit hit, const float a, const float b, const in
     // Wall projections are calculated calculated based hero view parameters, and the corrected distance.
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, xres, hero.fov.a.x, hero.yaw, corrected, hero.height);
-    // The engine supports lower, eye level, and upper walls. A shift value greater than zero will
-    // stack the wall projection above the eye level walls while a shift value less than zero will
-    // drop the wall projection below the eye level walls. The shift value determines the height of
-    // the ceiling or the flooring. If a value of 0.0 is given for the shift, wall stacking, nor
-    // dropping, will occur; the ceiling and flooring will not be shifted either.
+    // The engine supports lower, eye level, and upper walls.
     const Ray ray = {
         trace,
         corrected,
-        xsheer(projection, a, b),
+        xsheer(projection, sheer),
         hit.surface,
         hit.offset,
         hero.torch
@@ -211,7 +213,7 @@ Ray xcalc(const Hero hero, const Hit hit, const float a, const float b, const in
 
 Hero xsustain(Hero hero, const Map map, const Input input, const Flow current)
 {
-    hero = crane(hero, input);
+    hero = look(hero, input);
     hero = vert(hero, map, input);
     hero = move(hero, map, input, current);
     hero.torch = xburn(hero.torch);

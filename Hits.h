@@ -7,11 +7,10 @@
 
 typedef struct
 {
-    // Linked lists.
-    // Remember to free these hits as they are used.
+    // Linked lists. Remember, programmer, to free these hits as they are used.
     Hit* ceiling;
     Hit* floring;
-    // Not a linked list.
+    // No linked list needed for the renderer.
     Hit walling;
 }
 Hits;

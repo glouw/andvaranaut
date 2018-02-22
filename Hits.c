@@ -30,22 +30,23 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
         xadd(ray, xdec(ray.x) == 0.0f ? dx : xdec(ray.y) == 0.0f ? dy : delta),
         xsub(ray, xdec(ray.x) == 0.0f ? dx : xdec(ray.y) == 0.0f ? dy : delta),
     };
-    /* Flooring wall was hit. Push the flooring hit linked list. */
+    // Flooring wall was hit. Push the flooring hit linked list.
     if(xtile(test.a, map.floring) && !xtile(test.b, map.floring))
         hits.floring = push(hits.floring, collision(ray, test, map.floring));
-    /* Ceiling wall was hit. Push the ceiling hit linked list. */
+    // Ceiling wall was hit. Push the ceiling hit linked list.
     if(xtile(test.a, map.ceiling) && !xtile(test.b, map.ceiling))
         hits.ceiling = push(hits.ceiling, collision(ray, test, map.ceiling));
-    /* Eye walling hit.
-     * A linked list is not needed: Thanks to eye level projections,
-     * only one projection is needed as every projection behind will
-     * be overlapped by the first projection. */
+    // Eye walling hit.
+    // A linked list is not needed: Thanks to eye level projections,
+    // only one projection is needed as every projection behind will
+    // be overlapped by the first projection.
     if(xtile(test.a, map.walling) && !hits.walling.surface)
         hits.walling = collision(ray, test, map.walling);
-    /* Done when a wall was hit and a ceiling wall exists above the wall and
-     * a floor wall exist below the wall. */
+    // Done when a wall was hit and a ceiling wall exists above the wall and
+    // a floor wall exist below the wall.
     if(hits.walling.surface && xtile(test.a, map.ceiling) && xtile(test.a, map.floring))
         return hits;
+    // Otherwise, keep on stepping.
     return step(hits, ray, direction, map);
 }
 

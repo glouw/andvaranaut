@@ -12,5 +12,4 @@ typedef struct
 }
 Args;
 
-// Bundles together all command line parameters.
 Args xparse(int argc, char* argv[]);

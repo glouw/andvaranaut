@@ -4,8 +4,8 @@
 
 typedef enum
 {
-    HANDS,
     SHORT,
     LONG,
+    RANGED,
 }
 Weapon;

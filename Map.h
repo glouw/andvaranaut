@@ -6,8 +6,6 @@
 
 typedef struct
 {
-    // The ASCII value of either the ceiling, walling, or flooring
-    // will determine which surface to lookup for the renderer.
     char** ceiling;
     char** walling;
     char** floring;
@@ -23,7 +21,7 @@ Map xmgen(const int rows, const int cols, const Points);
 
 void xmclose(const Map);
 
-int xmisportal(const Map, const Point where);
+int xmisportal(char** block, const Point where);
 
 void xmedit(const Map, const Overview);
 

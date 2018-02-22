@@ -95,7 +95,8 @@ Point xmid(const Point a)
 
 int xinf(const Point a)
 {
-    return isinf(a.x) || isinf(a.y);
+    return isinf((long double) a.x)
+        || isinf((long double) a.y);
 }
 
 Point xcmp(const Point a, const Point b, const Point c)
@@ -126,8 +127,8 @@ int xtile(const Point a, char** const blocks)
 Point xabs(const Point a)
 {
     Point b;
-    b.x = fabs(a.x);
-    b.y = fabs(a.y);
+    b.x = fabsf(a.x);
+    b.y = fabsf(a.y);
     return b;
 }
 

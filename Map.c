@@ -1,8 +1,9 @@
 #include "Map.h"
 
 #include "Sprites.h"
-
 #include "util.h"
+
+#include <math.h>
 
 void xmprint(char** block, const int rows, const int cols)
 {
@@ -37,13 +38,13 @@ static char** mnew(const int rows, const int cols, const int blok)
 
 Map xmgen(const int rows, const int cols, const Points trapdoors)
 {
-    const Sheer mid = {
+    const Sheer md = {
         0.0f,
-        (float) (rand() % 2)
+        md.a + (float) (rand() % 2)
     };
-    const Sheer upp = {
-        mid.b + 1.0f,
-        upp.a + (rand() % 2)
+    const Sheer up = {
+        md.b + 1.0f,
+        up.a + (float) (rand() % 2)
     };
     Map map;
     xzero(map);
@@ -53,8 +54,8 @@ Map xmgen(const int rows, const int cols, const Points trapdoors)
     map.walling = mnew(map.rows, map.cols, '#');
     map.floring = mnew(map.rows, map.cols, '"');
     map.trapdoors = trapdoors;
-    map.upper = upp;
-    map.middle = mid;
+    map.upper = up;
+    map.middle = md;
     return map;
 }
 
@@ -71,10 +72,9 @@ void xmclose(const Map map)
     free(map.floring);
 }
 
-int xmisportal(const Map map, const Point where)
+int xmisportal(char** block, const Point where)
 {
-    return xblok(where, map.floring) == '~'
-        || xblok(where, map.ceiling) == '~';
+    return xblok(where, block) == '~';
 }
 
 int xmout(const Map map, const Point where)
@@ -113,6 +113,7 @@ void xmroom(const Map map, const Point where, const int w, const int h, const Pa
         case CEILING: map.ceiling[yy][xx] = ' '; break;
         case FLORING: map.floring[yy][xx] = ' '; break;
         default:
+            xbomb("room: party not supported\n");
             break;
         }
     }
@@ -176,8 +177,8 @@ void xmcorridor(const Map map, const Point a, const Point b)
         step.x > 0.0f ? 1.0f : step.x < 0.0f ? -1.0f : 0.0f,
         step.y > 0.0f ? 1.0f : step.y < 0.0f ? -1.0f : 0.0f,
     };
-    const int sx = abs(step.x);
-    const int sy = abs(step.y);
+    const int sx = fabsf(step.x);
+    const int sy = fabsf(step.y);
     const int dx = delta.x;
     const int dy = delta.y;
     int x = a.x;

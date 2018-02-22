@@ -1,5 +1,6 @@
 #include "Field.h"
 
+#include "Atom.h"
 #include "util.h"
 
 #include <string.h>
@@ -23,39 +24,6 @@ int xon(const Field field, const int y, const int x)
     return y >= 0 && x >= 0 && y < field.rows && x < field.cols;
 }
 
-static float average(const Field field, const int y, const int x)
-{
-    float sum = 0.0f;
-    int sums = 0;
-    for(int j = y - 1; j <= y + 1; j++)
-    for(int i = x - 1; i <= x + 1; i++)
-    {
-        // Out of bounds check.
-        if(!xon(field, j, i))
-            continue;
-        // Do not sum middle of box.
-        if(j == y && i == x)
-            continue;
-        sum += field.mesh[j][i];
-        sums++;
-    }
-    return sum / sums;
-}
-
-typedef struct
-{
-    int y; // Notice y and x are in reverse
-    int x; // here, contrary to the Point type.
-    float val;
-}
-Atom;
-
-static Atom materialize(const Field field, const int y, const int x)
-{
-    const Atom atom = { y, x, average(field, y, x) };
-    return atom;
-}
-
 static void box(const Field field, const int y, const int x, const int w)
 {
     Atom* const atoms = xtoss(Atom, 8 * w);
@@ -64,18 +32,12 @@ static void box(const Field field, const int y, const int x, const int w)
     const int b = y + w; // Bottom.
     const int l = x - w; // Left.
     const int r = x + w; // Right.
-    // Calculate diffusable atoms.
     for(int j = t; j <= b; j++)
     for(int i = l; i <= r; i++)
-        // If on outside of box...
         if((i == l || j == t || i == r || j == b)
-        // And on a walkable part of the field...
         && xon(field, j, i)
-        // And no antiobject is in the way...
         && field.mesh[j][i] == 0.0f)
-            // Then materialize an atom with the diffusion box average.
-            atoms[count++] = materialize(field, j, i);
-    // Transfer diffused atoms in one go.
+            atoms[count++] = xmaterialize(field, j, i);
     for(int a = 0; a < count; a++)
         field.mesh[atoms[a].y][atoms[a].x] = atoms[a].val;
     free(atoms);
@@ -93,13 +55,10 @@ static int largest(float* gradients, const int size)
 
 Point xforce(const Field field, const Point from, const Point to, const Map map)
 {
-    // Return the zero acceleration vector if the <from> point
-    // is close enough to the destination <to> point or if it is far enough away.
     const Point dead = { 0.0f, 0.0f };
     const float dist = xmag(xsub(from, to));
     if(dist < 1.33f || dist > (field.aura / field.res) - 1)
         return dead;
-    // Otherwise, calculate the accleration vectors by direction.
     const Point v[] = {
         { +1.0f, -0.0f }, // E
         { +1.0f, +1.0f }, // SE
@@ -110,7 +69,6 @@ Point xforce(const Field field, const Point from, const Point to, const Map map)
         { +0.0f, -1.0f }, // N
         { +1.0f, -1.0f }, // NE
     };
-    // And calculate the acceleration field gradients.
     float grads[xlen(v)];
     xzero(grads);
     for(int i = 0; i < xlen(v); i++)
@@ -135,14 +93,8 @@ void xdiffuse(const Field field, const Point where)
         box(field, y, x, w);
 }
 
-void xexamine(const Field field, const int less)
+void xexamine(const Field field)
 {
-    if(less)
-    {
-        static int count;
-        if(count++ % 20 != 0)
-            return;
-    }
     for(int j = 0; j < field.rows; j++)
     {
         for(int i = 0; i < field.cols; i++)

@@ -7,8 +7,8 @@
 
 static void print(const Args args)
 {
-    puts("Source copyright (C) Gustav Louw GPL3");
     printf(
+            "Source copyright (C) Gustav Louw GPL3\n"
     /* 0 */ "-x: X-Resolution             : %d\n"
     /* 1 */ "-y: Y-Resolution             : %d\n"
     /* 2 */ "-f: Focal Length             : %f\n"
@@ -39,7 +39,6 @@ static void check(const Args args)
             "and will exit after 60 frame renders.\n");
 }
 
-// Parses command line arguments.
 static Args parsed(Args args, int argc, char* argv[])
 {
     for(int i = 1; i < argc; i += 2)
@@ -47,10 +46,8 @@ static Args parsed(Args args, int argc, char* argv[])
         if(argv[i][0] == '-')
         {
             if(argv[i][1] == 'h') print(args), xbomb("");
-            // Out of bounds check.
             if(i + 1 == argc)
                 break;
-            // Parse argument list.
             const char* const next = argv[i + 1];
             const char option = argv[i][1];
             switch(option)
@@ -68,15 +65,13 @@ static Args parsed(Args args, int argc, char* argv[])
                 /* Focal Length. */
                 case 'f':
                     args.focal =
-                        strtof(next, NULL); /* Notice the float. */
+                        strtof(next, NULL);
                     break;
                 /* VSync. */
                 case 'v':
                     args.vsync =
-                        // True and false handling via strings.
-                        equals(next, "true")  ? 1 : equals(next, "t") ? 1 :
-                        equals(next, "false") ? 0 : equals(next, "f") ? 0 :
-                        // True and false handling via integers.
+                        xequals(next, "true")  ? 1 : xequals(next, "t") ? 1 :
+                        xequals(next, "false") ? 0 : xequals(next, "f") ? 0 :
                         strtod(next, NULL) != 0;
                     break;
                 /* Frames per Second. */
@@ -113,7 +108,7 @@ static Args defaults()
     args.xres = 1000;
     args.yres = 600;
     args.focal = 1.0f;
-    args.vsync = false;
+    args.vsync = true;
     args.fps = 60;
     args.msen = 0.007f;
     args.threads = 8;
