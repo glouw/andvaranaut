@@ -7,16 +7,16 @@ typedef enum
 {
     // In hot pursuit of the player.
     CHASING,
-    // Grabbed by the player.
-    GRABBED,
+    // Sprite is lifted into the air
+    LIFTED,
     // Sprite is doing nothing.
     IDLE,
-    // Sprite is hurt!
+    // Sprite is hurt with direction.
     HURTN, // North.
     HURTE, // East.
     HURTS, // South.
     HURTW, // West.
-    // RIP in peace.
+    // Sprite is dead with direction.
     DEADN, // North.
     DEADE, // East.
     DEADS, // South.

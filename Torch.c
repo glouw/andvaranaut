@@ -20,6 +20,6 @@ Torch xsnuff()
     xzero(torch);
     torch.light = 0;
     torch.brightness = 750;
-    torch.dlight = torch.brightness / 32; /* Arbitrary. */
+    torch.dlight = torch.brightness / 32; // Arbitrary divisor.
     return torch;
 }

@@ -34,19 +34,25 @@ int main(int argc, char* argv[])
         // Play mode.
         else
         {
+            if(xteleporting(h, w.map[h.floor], in, ticks))
+            {
+                h = xteleport(h, w.map[h.floor]);
+                xruin(f);
+                f = xprepare(w.map[h.floor], h.aura);
+            }
             ov = xbackpan(ov, h.where, s.xres, s.yres);
             current = xstream(current);
             clouds = xstream(clouds);
             xrender(s, h, w.sprites[h.floor], w.map[h.floor], current, clouds, ticks);
-            // Inventory management.
-            if(in.key[SDL_SCANCODE_LSHIFT])
+            h = xinventory(h, in);
+            if(h.inventory)
             {
-                h.inventory = true;
                 SDL_SetRelativeMouseMode(SDL_FALSE);
+                // TODO: Manage inventory here.
+                // TODO: Draw inventory here.
             }
             else
             {
-                h.inventory = false;
                 SDL_SetRelativeMouseMode(SDL_TRUE);
                 const Attack attack = xgpower(g, in, h.wep);
                 g = xgwind(g, h.wep, in);
@@ -55,12 +61,6 @@ int main(int argc, char* argv[])
                 w.sprites[h.floor] = xcaretake(w.sprites[h.floor], h, in, w.map[h.floor], attack, f, ticks);
             }
             xdmap(s, w.map[h.floor], h.where);
-            if(xteleporting(h, w.map[h.floor], in, ticks))
-            {
-                h = xteleport(h, w.map[h.floor]);
-                xruin(f);
-                f = xprepare(w.map[h.floor], h.aura);
-            }
         }
         xpresent(s);
         in = xpump(in);

@@ -18,4 +18,4 @@ Points xpspop(const Points, const int max);
 
 Points xpscat(Points, const Points other);
 
-int xpsfind(const Points ps, const Point p);
+int xpsfind(const Points, const Point p);

@@ -22,16 +22,15 @@ static World xwnew(const int max)
 World xwinit(const int max)
 {
     World w = xwnew(max);
-    // The zeroth floor does not take any extra trapdoor arguments
-    // because there are no trapdoors in the sky.
+    // The zeroth floor does not take any extra trapdoor arguments because there are no trapdoors in the sky.
     for(int i = 0; i < max; i++)
         w = xwadd(w,
             xtgen(i == 0 ? xpsnew(0) : w.map[i - 1].trapdoors),
             xsnew(32));
-    // Ceiling trapdoor connection starts from floor 1 because floor 0 has a sky and
-    // skies do not have trapdoors.
+    // Ceiling trapdoor connection starts from floor 1 because floor 0 has a sky and skies do not have trapdoors.
     for(int i = 0; i < max; i++) xmtrapdoors(w.map[i], w.map[i - 0].trapdoors, FLORING);
     for(int i = 1; i < max; i++) xmtrapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
+    // Am I being too cheeky?
     return w;
 }
 

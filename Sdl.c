@@ -66,10 +66,10 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const int size = (focal * sdl.xres / 2.0f) / sprite->where.x;
         const int osize = xodd(size) ? size + 1 : size;
         // Calculate sprite location on screen. Account for hero yaw and height.
-        const int my = sdl.yres / 2 * (sprite->state == GRABBED ? 1.0f : (2.0f - hero.yaw));
+        const int my = sdl.yres / 2 * (sprite->state == LIFTED ? 1.0f : (2.0f - hero.yaw));
         const int mx = sdl.xres / 2;
         const int l = mx - osize / 2;
-        const int t = my - osize * (sprite->state == GRABBED ? 0.5f : (1.0f - hero.height));
+        const int t = my - osize * (sprite->state == LIFTED ? 0.5f : (1.0f - hero.height));
         const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
         const SDL_Rect target = { l + s, t, osize, osize };
         // Move onto the next sprite if this sprite is off screen.
@@ -84,8 +84,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Determine sprite animation based on ticks.
         const SDL_Rect image = { w * (ticks % FRAMES), h * sprite->state, w, h };
         // Calculate how much of the sprite is seen.
-        /* NEEDS to be volatile else it exits without segfault on my Thinkpad t43 with
-         * either x or y 255 overflow. Assuming integrated graphics driver bug. */
+        // NEEDS to be volatile else it exits without segfault on my Thinkpad t43 with
+        // either x or y 255 overflow. Assuming integrated graphics driver bug.
         volatile const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
         if(seen.w <= 0)
@@ -100,7 +100,6 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
-        /* Cleanup */
         // Remove transperancy from the sprite.
         if(sprite->transparent)
             SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
@@ -304,6 +303,7 @@ void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map ma
 
 void xdmap(const Sdl sdl, const Map map, const Point where)
 {
+    // This map texture is not apart of the Sdl struct since it must be refreshed each frame via creation and destruction.
     SDL_Texture* const texture = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
     // Lock.
@@ -312,9 +312,9 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
     SDL_LockTexture(texture, NULL, &screen, &pitch);
     const int width = pitch / sizeof(uint32_t);
     uint32_t* pixels = (uint32_t*) screen;
-    const uint32_t wht = 255 << 24 | 223 << 16 | 239 << 8 | 215;
-    const uint32_t blk = 255 << 24 |   0 << 16 |   0 << 8 |   0;
-    const uint32_t red = 255 << 24 | 211 << 16 |  69 << 8 |  73;
+    const uint32_t wht = 255 << 24 | 223 << 16 | 239 << 8 | 215; // TODO: Convert to hex.
+    const uint32_t blk = 255 << 24 |   0 << 16 |   0 << 8 |   0; // TODO: Convert to hex.
+    const uint32_t red = 255 << 24 | 211 << 16 |  69 << 8 |  73; // TODO: Convert to hex.
     // Draw empty rooms.
     for(int y = 1; y < map.rows - 1; y++)
     for(int x = 1; x < map.cols - 1; x++)

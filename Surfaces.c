@@ -7,7 +7,6 @@ static SDL_Surface* load(const char* const path, const uint32_t key)
     SDL_Surface* const bmp = SDL_LoadBMP(path);
     if(bmp == NULL)
         xbomb("%s\n", SDL_GetError());
-    // Notice how RGB888 is used here contrary to the ARGB8888 of the rendering canvas.
     // Color keys can not be set in SDL when an alpha channel is present.
     SDL_PixelFormat* const allocation = SDL_AllocFormat(SDL_PIXELFORMAT_RGB888);
     SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);

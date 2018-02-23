@@ -12,7 +12,7 @@
 typedef struct
 {
     SDL_Window* window;
-    // Final renderered frame including walls, ceiling, floors, sprites,
+    // Final renderered frame including walls, ceiling, floors, sprites, sprites
     // and any gui related elements if playing, or the editing screen when editing the map.
     SDL_Renderer* renderer;
     // For per-pixel access when drawing walls, ceiling, and floors.
@@ -20,9 +20,9 @@ typedef struct
     int xres;
     int yres;
     int fps;
-    // All sprite and block surfaces in bitmap format.
+    // All sprite and block surfaces in bitmap format stored in RAM with applied color key.
     Surfaces surfaces;
-    // GPU textures of all the surfaces used predominatly for the sprites.
+    // All sprite and block surfaces converted from RAM memory in GPU memory with applied color key.
     Textures textures;
     // CPU rendering threads.
     int threads;

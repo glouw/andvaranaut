@@ -17,8 +17,7 @@ typedef struct
 }
 Projection;
 
-// Creates a line projection suited for the display based on the focal distance
-// and corrected normal distance from the hero to the wall.
+// Creates a line projection suited for the display based on the focal distance and corrected normal distance from the hero to the wall.
 Projection xproject(const int yres, const int xres, const float focal, const float yaw, const Point corrected, const float height);
 
 Projection xsheer(const Projection, const Sheer);

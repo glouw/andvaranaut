@@ -3,9 +3,10 @@
 #include "Projection.h"
 #include "Torch.h"
 
-// Rays go from the position of the player to the hit surface of a wall.
-// Included is the surface and surface offset, the corrected (normal)
-// distance, and the torch of the hero for the pixel shading of the wall.
+// Rays go from the position of the player to the hit position of a wall.
+// Included is the surface and surface offset of the hit position, the corrected (normal)
+// distance from the hit to the player, and the torch of the hero for the later scanline
+// calculations of wall pixel shading.
 
 typedef struct
 {

@@ -63,8 +63,6 @@ static Hero look(const Hero hero, const Input input)
 {
     if(input.l)
         return hero;
-    if(hero.inventory)
-        return hero;
     return yaw(spin(hero, input), input);
 }
 
@@ -182,8 +180,7 @@ Hero xteleport(Hero hero, const Map map)
     // Look up to teleport a floor up. Look down to teleport a floor down.
     if(tup(hero, map)) hero.floor--;
     if(tdn(hero, map)) hero.floor++;
-    // The teleport effect is done by reseting the hero yaw to the horizon.
-    // The torch is also put out.
+    // The teleport effect is done by reseting the hero yaw to the horizon. The torch is also put out.
     hero.yaw = 1.0f;
     hero.torch = xsnuff();
     return hero;
@@ -198,17 +195,15 @@ Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, con
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, xres, hero.fov.a.x, hero.yaw, corrected, hero.height);
     // The engine supports lower, eye level, and upper walls.
-    const Ray ray = {
-        trace,
-        corrected,
-        xsheer(projection, sheer),
-        hit.surface,
-        hit.offset,
-        hero.torch
-    };
-    // A ray object will hold enough information to draw a wall
-    // projection on the screen with the right lighting value.
+    const Ray ray = { trace, corrected, xsheer(projection, sheer), hit.surface, hit.offset, hero.torch };
+    // A ray object will hold enough information to draw a wall projection on the screen with the right lighting value.
     return ray;
+}
+
+Hero xinventory(Hero hero, const Input in)
+{
+    hero.inventory = in.key[SDL_SCANCODE_LSHIFT];
+    return hero;
 }
 
 Hero xsustain(Hero hero, const Map map, const Input input, const Flow current)

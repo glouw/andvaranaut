@@ -141,15 +141,10 @@ static void move(const Sprites sprites, const Field field, const Point to, const
             continue;
         if(xisdead(sprite->state))
             continue;
-        if(sprite->speed == 0.0f)
-        {
-            sprite->state = IDLE;
-            continue;
-        }
         const Point dir = xforce(field, sprite->where, to, map);
         // No force of direction...
         if(dir.x == 0.0f && dir.y == 0.0f)
-            // Then slow down
+            // Then slow down.
             sprite->velocity = xmul(sprite->velocity, 1.0f - sprite->acceleration / sprite->speed);
         // Otherwise speed up.
         else

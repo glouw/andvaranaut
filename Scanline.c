@@ -2,7 +2,6 @@
 
 #include "util.h"
 
-// Modulous modify a pixel. Discards alpha. Great for pixel shading
 static uint32_t shade(const uint32_t pixel, const int shading)
 {
     const uint32_t r = (((pixel >> 0x10) /****/) * shading) >> 0x08; // Shift right by 0x08 is same as
@@ -11,7 +10,6 @@ static uint32_t shade(const uint32_t pixel, const int shading)
     return r << 0x10 | g << 0x08 | b;
 }
 
-// Pixel getter.
 static uint32_t pget(const SDL_Surface* const surface, const Point offset)
 {
     const int row = surface->h * xdec(offset.y);
@@ -20,7 +18,6 @@ static uint32_t pget(const SDL_Surface* const surface, const Point offset)
     return pixels[col + row * surface->w];
 }
 
-// Pixel putter.
 static void pput(const Scanline sl, const int x, const uint32_t pixel)
 {
     sl.pixels[x + sl.y * sl.width] = pixel;
@@ -34,7 +31,6 @@ static void xfer(const Scanline sl, const int x, const Point offset, const int t
     pput(sl, x, shade(color, distance));
 }
 
-// Wall rasterer.
 static void rwall(const Scanline sl, const Ray r)
 {
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
@@ -47,7 +43,6 @@ static void rwall(const Scanline sl, const Ray r)
     }
 }
 
-// Floor rasterer.
 static void rflor(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
@@ -63,7 +58,6 @@ static void rflor(const Scanline sl, const Ray r, const Map map)
     }
 }
 
-// Ceiling rasterer.
 static void rceil(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
@@ -79,7 +73,6 @@ static void rceil(const Scanline sl, const Ray r, const Map map)
     }
 }
 
-// Sky rasterer.
 static void rsky(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
@@ -113,7 +106,6 @@ static void rsky(const Scanline sl, const Ray r, const Map map, const int floor,
     }
 }
 
-// Pit water rasterer.
 static void rpit(const Scanline sl, const Ray r, const Map map, const Flow current)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
@@ -128,7 +120,6 @@ static void rpit(const Scanline sl, const Ray r, const Map map, const Flow curre
     }
 }
 
-// Upper level rasterer (second ceiling or sky and upper walls).
 static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow clouds)
 {
     int link = 0;
@@ -143,7 +134,6 @@ static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Ma
     }
 }
 
-// Lower level rasterer (pit and lower walls).
 static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow current)
 {
     int link = 0;
@@ -158,7 +148,6 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
     }
 }
 
-// Middle level rasterer. Returns a z-buffer element for the sprites.
 static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     const Ray ray = xcalc(hero, hits.walling, map.middle, sl.sdl.yres, sl.sdl.xres);
@@ -168,7 +157,6 @@ static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const 
     return ray.corrected;
 }
 
-// Highlighter for finding missing pixels.
 static void highlited(const Scanline sl)
 {
     for(int x = 0; x < sl.sdl.yres; x++)

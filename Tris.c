@@ -144,7 +144,7 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
     return tris;
 }
 
-// Random points.
+// Generates random points. Snaps to grid. Does not exceed outer border defined within w and h.
 // Some extra points can be added to the points list. For example: trapdoors from the previous floor.
 static Points prand(const int w, const int h, const int max, const int grid, const int border, const Points extra)
 {

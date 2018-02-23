@@ -14,5 +14,4 @@ Surfaces;
 // Color key specifies which color to omit when rendering surface.
 Surfaces xpull(const uint32_t key);
 
-// Cleans up all surfaces in RAM.
 void xclean(const Surfaces);

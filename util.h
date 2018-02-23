@@ -41,4 +41,5 @@ int xodd(const int a);
 
 #define xequals(a, b) (strcmp(a, b) == 0)
 
+// D&D dice.
 int xd2(), xd4(), xd8();

@@ -112,6 +112,11 @@ int xeql(const Point a, const Point b, const float e)
         && a.y > b.y - (e / 2.0f);
 }
 
+int xpsame(const Point a, const Point b)
+{
+    return a.x == b.x && a.y == b.y;
+}
+
 int xblok(const Point a, char** const blocks)
 {
     const int y = a.y;
@@ -139,9 +144,4 @@ Point xsnap(const Point a, const int grid)
         (float) xfl(a.y / grid) * grid,
     };
     return out;
-}
-
-int xpsame(const Point a, const Point b)
-{
-    return a.x == b.x && a.y == b.y;
 }
