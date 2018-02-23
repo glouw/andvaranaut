@@ -1,6 +1,6 @@
 [x] Remove grabbing.
 [ ] Get one .bmp of all inventory tiles.
 [/] Remove Flag.h. Have xpzer, xpone in Points.h. Find xzero for Points and replace with xpzer.
-[ ] Remove all comments (need to be rewritten at some point).
+[x] Remove all comments (need to be rewritten at some point).
 [ ] Start adding x__ namespace for public functions and constants.
 [x] Move Sprite functions to Sprite.c. Keep as pointer access.
