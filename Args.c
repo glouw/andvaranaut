@@ -2,9 +2,6 @@
 
 #include "util.h"
 
-#include <time.h>
-#include <SDL2/SDL.h>
-
 static void print(const Args args)
 {
     printf(
