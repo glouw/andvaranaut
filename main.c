@@ -5,7 +5,7 @@
 int main(int argc, char* argv[])
 {
     const int floor = 0;
-    srand(time(0));
+    //srand(time(0));
     const Args args = xparse(argc, argv);
     Sdl s = xsetup(args);
     World w = xwinit(32);
