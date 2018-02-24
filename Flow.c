@@ -10,6 +10,7 @@ Flow xstart(const float height)
     f.speed = 0.01f;
     f.direction.x = 1.0f;
     f.direction.y = 1.0f;
+    f.velocity = xmul(f.direction, f.speed);
     f.height = height;
     return f;
 }
