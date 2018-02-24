@@ -1,6 +1,6 @@
 Andvaranaut aims to be a retro dungeon crawler with procedural dungeon generation.
 
-The game and graphics engine written was written from the gound up.
+The game and graphics engine was written from the gound up.
 
 Game mechanics are now being implemented.
 
