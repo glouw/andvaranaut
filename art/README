@@ -1,0 +1,9 @@
+The artwork in these files is best edited with grafx2.
+
+The dawn.pal configuration file will load the appropriate color palette.
+
+This artwork in the items folder is from the DawnLike 16x16 tileset by Platino.
+
+W A R N I N G
+    The color palettes in the items folder have been zapped to save image space
+    and thus not compatible with dawn.pal when using grafx2.
