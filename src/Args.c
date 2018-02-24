@@ -5,7 +5,6 @@
 static void print(const Args args)
 {
     printf(
-            "Source copyright (C) Gustav Louw GPL3\n"
     /* 0 */ "-x: X-Resolution             : %d\n"
     /* 1 */ "-y: Y-Resolution             : %d\n"
     /* 2 */ "-f: Focal Length             : %f\n"

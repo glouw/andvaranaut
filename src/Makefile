@@ -13,7 +13,7 @@
 
 CC = gcc
 
-NAME = andvaranaut
+NAME = ../andvaranaut
 
 SRCS =
 SRCS+= main.c
