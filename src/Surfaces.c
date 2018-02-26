@@ -22,6 +22,9 @@ static SDL_Surface* load(const char* const path, const uint32_t key)
 Surfaces xpull(const uint32_t key)
 {
     static const char* const names[] = {
+        // ASCII representable indices are used for sprites and tiles.
+        // Alpha ASCII is for sprites.
+        // Non-Alpha ASCII is for tiles.
         /*   */ "art/tiles/delete.bmp",
         /* ! */ "art/tiles/error.bmp",
         /* " */ "art/tiles/floor.bmp",
@@ -117,9 +120,34 @@ Surfaces xpull(const uint32_t key)
         /* | */ "art/tiles/error.bmp",
         /* } */ "art/tiles/error.bmp",
         /* ~ */ "art/tiles/trap_door.bmp",
-        /*
-         * Extra surfaces without representable ascii characters
-         * -- Used for the GUI and what not. */
+
+        // Extra surfaces without representable ASCII characters
+        // Eg. Items and GUI.
+
+        /* ~ +  1 */ "art/items/ammo.bmp",
+        /* ~ +  2 */ "art/items/amulet.bmp",
+        /* ~ +  3 */ "art/items/armor.bmp",
+        /* ~ +  4 */ "art/items/book.bmp",
+        /* ~ +  5 */ "art/items/boot.bmp",
+        /* ~ +  6 */ "art/items/chest.bmp",
+        /* ~ +  7 */ "art/items/flesh.bmp",
+        /* ~ +  8 */ "art/items/food.bmp",
+        /* ~ +  9 */ "art/items/glove.bmp",
+        /* ~ + 10 */ "art/items/hat.bmp",
+        /* ~ + 11 */ "art/items/key.bmp",
+        /* ~ + 12 */ "art/items/light.bmp",
+        /* ~ + 13 */ "art/items/longwep.bmp",
+        /* ~ + 14 */ "art/items/medwep.bmp",
+        /* ~ + 15 */ "art/items/money.bmp",
+        /* ~ + 16 */ "art/items/music.bmp",
+        /* ~ + 17 */ "art/items/potion.bmp",
+        /* ~ + 18 */ "art/items/ring.bmp",
+        /* ~ + 19 */ "art/items/rock.bmp",
+        /* ~ + 20 */ "art/items/scroll.bmp",
+        /* ~ + 21 */ "art/items/shield.bmp",
+        /* ~ + 22 */ "art/items/shortwep.bmp",
+        /* ~ + 23 */ "art/items/tool.bmp",
+        /* ~ + 24 */ "art/items/wand.bmp",
     };
     const int count = xlen(names);
     SDL_Surface** const surface = xtoss(SDL_Surface*, count);
