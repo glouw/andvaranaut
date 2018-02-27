@@ -2,6 +2,7 @@
 
 #include "Field.h"
 #include "Direction.h"
+#include "Inventory.h"
 #include "util.h"
 
 #include <ctype.h>
@@ -144,8 +145,13 @@ static void move(const Sprites sprites, const Field field, const Point to, const
         const Point dir = xforce(field, sprite->where, to, map);
         // No force of direction...
         if(dir.x == 0.0f && dir.y == 0.0f)
+        {
+            // Some sprites do not move.
+            if(sprite->speed == 0.0f)
+                continue;
             // Then slow down.
             sprite->velocity = xmul(sprite->velocity, 1.0f - sprite->acceleration / sprite->speed);
+        }
         // Otherwise speed up.
         else
         {
@@ -221,7 +227,7 @@ static Sprites drop(Sprites sprites, const Attack attack, const Point where)
 }
 
 // Hurts the closest sprite, or sprites, depending on the weapon.;
-static Sprites hurt(Sprites sprites, const Attack attack, const Hero hero, const Input input, const int ticks)
+static Sprites hurt(Sprites sprites, const Attack attack, const Hero hero, const Input input, const Inventory inv, const Surfaces surfaces, const int ticks)
 {
     if(!input.lu)
         return sprites;
@@ -252,8 +258,14 @@ static Sprites hurt(Sprites sprites, const Attack attack, const Hero hero, const
                     side ?
                     (attack.dir.x > 0.0f ? DEADW : DEADE):
                     (attack.dir.y > 0.0f ? DEADN : DEADS);
+                // Broke a lootbag?
+                if(sprite->ascii == 'd')
+                {
+                    puts("?");
+                    xitsadd(inv.backpack, xitrand(surfaces));
+                }
                 // If a sprite is dead, the hurt counter resets, so this function is called again.
-                sprites = hurt(sprites, attack, hero, input, ticks);
+                sprites = hurt(sprites, attack, hero, input, inv, surfaces, ticks);
                 // 10% chance a sprite will drop a loot bag.
                 return rand() % 10 == 0 ? drop(sprites, attack, sprite->where) : sprites;
             }
@@ -278,13 +290,13 @@ static void idle(const Sprites sprites, const int ticks)
     }
 }
 
-Sprites xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map, const Attack attack, const Field field, const int ticks)
+Sprites xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map, const Attack attack, const Field field, const Inventory inv, const Surfaces surfaces, const int ticks)
 {
     arrange(sprites, hero);
     idle(sprites, ticks);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
-    sprites = hurt(sprites, attack, hero, input, ticks);
+    sprites = hurt(sprites, attack, hero, input, inv, surfaces, ticks);
     bound(sprites, map);
     return sprites;
 }

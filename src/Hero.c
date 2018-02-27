@@ -200,12 +200,6 @@ Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, con
     return ray;
 }
 
-Hero xinventory(Hero hero, const Input in)
-{
-    hero.inventory = in.key[SDL_SCANCODE_LSHIFT];
-    return hero;
-}
-
 Hero xsustain(Hero hero, const Map map, const Input input, const Flow current)
 {
     hero = look(hero, input);

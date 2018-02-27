@@ -5,10 +5,10 @@
 typedef struct
 {
     Classification classification;
-    int indices;
+    int index;
 }
 Item;
 
-void xiprint(const Surfaces);
+void xitprint(const Surfaces);
 
-Item xirand(const Surfaces);
+Item xitrand(const Surfaces);

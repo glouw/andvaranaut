@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Items.h"
+#include "Input.h"
 
 typedef struct
 {
@@ -8,3 +9,7 @@ typedef struct
     Items backpack;
 }
 Inventory;
+
+Inventory xinvnew();
+
+int xinvuse(const Input);

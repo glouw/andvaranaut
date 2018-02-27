@@ -1,6 +1,6 @@
 #include "Tris.h"
 #include "World.h"
-#include "Item.h"
+#include "Inventory.h"
 #include "util.h"
 
 int main(int argc, char* argv[])
@@ -11,8 +11,7 @@ int main(int argc, char* argv[])
     #endif
     const int floor = 0;
     const Args args = xparse(argc, argv);
-    Sdl s = xsetup(args);
-    xiprint(s.surfaces);
+    Sdl sdl = xsetup(args);
     World w = xwinit(32);
     const Point start = w.map[floor].trapdoors.point[0];
     Hero h = xspawn(args.focal, start, floor);
@@ -22,6 +21,7 @@ int main(int argc, char* argv[])
     Flow clouds = xstart(10.0f);
     Gauge g = xgnew();
     Field f = xprepare(w.map[h.floor], h.aura);
+    Inventory inv = xinvnew();
     // X-Resolution 512 reserved for performance testing.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
     {
@@ -32,10 +32,10 @@ int main(int argc, char* argv[])
         if(in.key[SDL_SCANCODE_TAB])
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
-            ov = xupdate(ov, in, s.xres, s.textures.count);
+            ov = xupdate(ov, in, sdl.xres, sdl.textures.count);
             xmedit(w.map[h.floor], ov);
             w.sprites[h.floor] = xlay(w.sprites[h.floor], w.map[h.floor], ov);
-            xview(s, ov, w.sprites[h.floor], w.map[h.floor], ticks);
+            xview(sdl, ov, w.sprites[h.floor], w.map[h.floor], ticks);
         }
         // Play mode.
         else
@@ -46,12 +46,11 @@ int main(int argc, char* argv[])
                 xruin(f);
                 f = xprepare(w.map[h.floor], h.aura);
             }
-            ov = xbackpan(ov, h.where, s.xres, s.yres);
+            ov = xbackpan(ov, h.where, sdl.xres, sdl.yres);
             current = xstream(current);
             clouds = xstream(clouds);
-            xrender(s, h, w.sprites[h.floor], w.map[h.floor], current, clouds, ticks);
-            h = xinventory(h, in);
-            if(h.inventory)
+            xrender(sdl, h, w.sprites[h.floor], w.map[h.floor], current, clouds, ticks);
+            if(xinvuse(in))
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
                 // TODO: Manage inventory here.
@@ -63,12 +62,12 @@ int main(int argc, char* argv[])
                 const Attack attack = xgpower(g, in, h.wep);
                 g = xgwind(g, h.wep, in);
                 h = xsustain(h, w.map[h.floor], in, current);
-                xdgauge(s, g);
-                w.sprites[h.floor] = xcaretake(w.sprites[h.floor], h, in, w.map[h.floor], attack, f, ticks);
+                xdgauge(sdl, g);
+                w.sprites[h.floor] = xcaretake(w.sprites[h.floor], h, in, w.map[h.floor], attack, f, inv, sdl.surfaces, ticks);
             }
-            xdmap(s, w.map[h.floor], h.where);
+            xdmap(sdl, w.map[h.floor], h.where);
         }
-        xpresent(s);
+        xpresent(sdl);
         in = xpump(in);
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0 / args.fps - (t1 - t0);
@@ -76,7 +75,7 @@ int main(int argc, char* argv[])
     }
     xwclose(w);
     xgfree(g);
-    xrelease(s);
+    xrelease(sdl);
     xruin(f);
     return 0;
 }

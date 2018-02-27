@@ -28,6 +28,7 @@ typedef enum
     SHORTWEP,
     TOOL,
     WAND,
+    NONE,
     CLASSIFICATIONS,
 }
 Classification;
