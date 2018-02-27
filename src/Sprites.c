@@ -260,14 +260,11 @@ static Sprites hurt(Sprites sprites, const Attack attack, const Hero hero, const
                     (attack.dir.y > 0.0f ? DEADN : DEADS);
                 // Broke a lootbag?
                 if(sprite->ascii == 'd')
-                {
-                    puts("?");
                     xitsadd(inv.backpack, xitrand(surfaces));
-                }
                 // If a sprite is dead, the hurt counter resets, so this function is called again.
                 sprites = hurt(sprites, attack, hero, input, inv, surfaces, ticks);
                 // 10% chance a sprite will drop a loot bag.
-                return rand() % 10 == 0 ? drop(sprites, attack, sprite->where) : sprites;
+                return xd10() == 0 ? drop(sprites, attack, sprite->where) : sprites;
             }
             // Timer for idle reset.
             sprite->ticks = ticks + 5;

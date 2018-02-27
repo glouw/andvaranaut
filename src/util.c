@@ -65,8 +65,22 @@ int xodd(const int a)
     return a % 2;
 }
 
-int xd2() { return rand() % 2; }
+int xd2()
+{
+    return rand() % 2;
+}
 
-int xd4() { return rand() % 4; }
+int xd4()
+{
+    return rand() % 4;
+}
 
-int xd8() { return rand() % 8; }
+int xd8()
+{
+    return rand() % 8;
+}
+
+int xd10()
+{
+    return rand() % 10;
+}
