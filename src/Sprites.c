@@ -199,6 +199,7 @@ static void scentsprite(const Field field, const Sprites sprites, const float sc
         for(int a = -field.res / 2; a <= field.res / 2; a++)
         for(int b = -field.res / 2; b <= field.res / 2; b++)
             if(xon(field, j + a, i + b))
+                // Sprite scents stack.
                 field.mesh[j + a][i + b] -= scent;
     }
 }
@@ -207,7 +208,7 @@ static void scenthero(const Field field, const Point where, const float scent)
 {
     const int j = field.res * where.y;
     const int i = field.res * where.x;
-    field.mesh[j][i] = 100.0f * scent;
+    field.mesh[j][i] = scent;
 }
 
 // Collaborative diffusion with various object scents.
@@ -216,7 +217,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     const float scent = 1000.0f;
     scentwall(field, hero.where, map, scent);
     scentsprite(field, sprites, scent);
-    scenthero(field, hero.where, scent);;
+    scenthero(field, hero.where, 100.0f * scent); // Why this much more scent?
     xdiffuse(field, hero.where);
 }
 
@@ -226,10 +227,10 @@ static Sprites drop(Sprites sprites, const Attack attack, const Point where)
     return append(sprites, xsregistrar('d', xadd(where, delta)));
 }
 
-// Hurts the closest sprite, or sprites, depending on the weapon.;
-static Sprites hurt(Sprites sprites, const Attack attack, const Hero hero, const Input input, const Inventory inv, const Surfaces surfaces, const int ticks)
+// Hurts the closest sprite.
+Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, const Surfaces ss, const int ticks)
 {
-    if(!input.lu)
+    if(!in.lu)
         return sprites;
     const Point hand = xtouch(hero, hero.arm);
     const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
@@ -260,10 +261,11 @@ static Sprites hurt(Sprites sprites, const Attack attack, const Hero hero, const
                     (attack.dir.y > 0.0f ? DEADN : DEADS);
                 // Broke a lootbag?
                 if(sprite->ascii == 'd')
-                    xitsadd(inv.backpack, xitrand(surfaces));
+                    if(!xitsadd(inv.backpack, xitrand(ss)))
+                        printf("Backpack full\n");
                 // If a sprite is dead, the hurt counter resets, so this function is called again.
-                sprites = hurt(sprites, attack, hero, input, inv, surfaces, ticks);
-                // 10% chance a sprite will drop a loot bag.
+                sprites = xhurt(sprites, attack, hero, in, inv, ss, ticks);
+                // Chance sprite will drop loot bag.
                 return xd10() == 0 ? drop(sprites, attack, sprite->where) : sprites;
             }
             // Timer for idle reset.
@@ -287,13 +289,11 @@ static void idle(const Sprites sprites, const int ticks)
     }
 }
 
-Sprites xcaretake(Sprites sprites, const Hero hero, const Input input, const Map map, const Attack attack, const Field field, const Inventory inv, const Surfaces surfaces, const int ticks)
+void xcaretake(Sprites sprites, const Hero hero, const Map map, const Field field, const int ticks)
 {
     arrange(sprites, hero);
     idle(sprites, ticks);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
-    sprites = hurt(sprites, attack, hero, input, inv, surfaces, ticks);
     bound(sprites, map);
-    return sprites;
 }

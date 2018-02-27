@@ -18,3 +18,9 @@ Item xitrand(const Surfaces ss)
     const Item item = { cls, index };
     return item;
 }
+
+Item xitnone()
+{
+    Item it = { NONE, 0 };
+    return it;
+}

@@ -63,7 +63,8 @@ int main(int argc, char* argv[])
                 g = xgwind(g, h.wep, in);
                 h = xsustain(h, w.map[h.floor], in, current);
                 xdgauge(sdl, g);
-                w.sprites[h.floor] = xcaretake(w.sprites[h.floor], h, in, w.map[h.floor], attack, f, inv, sdl.surfaces, ticks);
+                xcaretake(w.sprites[h.floor], h, w.map[h.floor], f, ticks);
+                w.sprites[h.floor] = xhurt(w.sprites[h.floor], attack, h, in, inv, sdl.surfaces, ticks);
             }
             xdmap(sdl, w.map[h.floor], h.where);
         }

@@ -12,3 +12,5 @@ Item;
 void xitprint(const Surfaces);
 
 Item xitrand(const Surfaces);
+
+Item xitnone();

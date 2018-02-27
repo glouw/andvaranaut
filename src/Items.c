@@ -6,10 +6,7 @@ Items xitsnew(const int max)
 {
     const Items its = { xtoss(Item, max), max };
     for(int i = 0; i < max; i++)
-    {
-        its.item[i].classification = NONE;
-        its.item[i].index = 0;
-    }
+        its.item[i] = xitnone();
     return its;
 }
 
