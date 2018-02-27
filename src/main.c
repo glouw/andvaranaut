@@ -5,6 +5,7 @@
 int main(int argc, char* argv[])
 {
     #if 0
+    // This is the only srand in the game. Turn it off to keep map generation the same.
     srand(time(0));
     #endif
     const int floor = 0;
@@ -25,6 +26,7 @@ int main(int argc, char* argv[])
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);
         // Edit mode.
+        // Maybe remove one day? Not really needed with random map generation.
         if(in.key[SDL_SCANCODE_TAB])
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
