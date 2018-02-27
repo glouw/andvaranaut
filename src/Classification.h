@@ -26,6 +26,8 @@ typedef enum
     SHORTWEP,
     TOOL,
     WAND,
-    TYPES,
+    CLASSIFICATIONS,
 }
-Type;
+Classification;
+
+int xcavail(const Classification);

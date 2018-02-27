@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Type.h"
+#include "Classification.h"
 
 typedef struct
 {
-    Type type;
+    Classification classification;
     int which;
 }
 Item;
