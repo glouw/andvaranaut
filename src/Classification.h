@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Surfaces.h"
+
 typedef enum
 {
     AMMO,
@@ -30,4 +32,4 @@ typedef enum
 }
 Classification;
 
-int xcavail(const Classification);
+int xcindices(const Classification, const Surfaces);

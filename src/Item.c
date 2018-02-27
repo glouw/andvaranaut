@@ -2,10 +2,16 @@
 
 #include <stdlib.h>
 
-Item irand()
+void xiprint(const Surfaces ss)
 {
-    const Classification c = rand() % CLASSIFICATIONS;
-    const int which = rand() % xcavail(c);
-    const Item item = { c, which };
+    for(Classification cls = 0; cls < CLASSIFICATIONS; cls++)
+        printf("%d\n", xcindices(cls, ss));
+}
+
+Item xirand(const Surfaces ss)
+{
+    const Classification cls = rand() % CLASSIFICATIONS;
+    const int indices = rand() % xcindices(cls, ss);
+    const Item item = { cls, indices };
     return item;
 }

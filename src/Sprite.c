@@ -3,86 +3,51 @@
 #include <ctype.h>
 #include "util.h"
 
-static Sprite born(const Point where)
+static Sprite born(const int ascii, const Point where)
 {
-    Sprite sprite;
-    xzero(sprite);
-    sprite.where = where;
-    sprite.last = where;
-    sprite.state = IDLE;
-    sprite.health = 1000.0f;
-    return sprite;
-}
-
-// Flower.
-static Sprite _a_(const Point where)
-{
-    Sprite sprite = born(where);
-    sprite.ascii = 'a';
-    sprite.width = 0.60f;
-    return sprite;
-}
-
-// Outlaw.
-static Sprite _b_(const Point where)
-{
-    Sprite sprite = born(where);
-    sprite.ascii = 'b';
-    sprite.speed = 0.033f;
-    sprite.acceleration = 0.0025f;
-    sprite.width = 0.66f;
-    return sprite;
-}
-
-// Loot bag.
-static Sprite _d_(const Point where)
-{
-    Sprite sprite = born(where);
-    sprite.ascii = 'd';
-    sprite.width = 1.00f;
-    sprite.health = 1.0f;
-    return sprite;
-}
-
-// Tree Trunk.
-static Sprite _e_(const Point where)
-{
-    Sprite sprite = born(where);
-    sprite.ascii = 'e';
-    sprite.width = 1.00f;
-    sprite.health = 1.0f;
-    return sprite;
-}
-
-// Tree Leaves.
-static Sprite _f_(const Point where)
-{
-    Sprite sprite = born(where);
-    sprite.ascii = 'f';
-    sprite.width = 1.00f;
-    sprite.health = 1.0f;
-    return sprite;
-}
-
-static Sprite _unknown_(const Point where, const int ascii)
-{
-    Sprite sprite = born(where);
-    sprite.ascii = ascii;
-    return sprite;
+    Sprite s;
+    xzero(s);
+    s.ascii = ascii;
+    s.where = where;
+    s.last = where;
+    s.state = IDLE;
+    s.health = 1000.0f;
+    return s;
 }
 
 Sprite xsregistrar(const int ascii, const Point where)
 {
-    switch(ascii)
+    Sprite s = born(ascii, where);
+    switch(s.ascii)
     {
-    case 'a': return _a_(where);
-    case 'b': return _b_(where);
-    case 'd': return _d_(where);
-    case 'e': return _e_(where);
-    case 'f': return _f_(where);
-    default:
-        return _unknown_(where, ascii);
+    // Flower.
+    case 'a':
+        s.width = 0.60f;
+        break;
+    // Outlaw.
+    case 'b':
+        s.speed = 0.033f;
+        s.acceleration = 0.0025f;
+        s.width = 0.66f;
+        break;
+    // Loot bag.
+    case 'd':
+        s.width = 1.00f;
+        s.health = 1.0f;
+        break;
+    // Tree trunk.
+    case 'e':
+        s.width = 1.00f;
+        s.health = 1.0f;
+        break;
+    // Tree leaves.
+    case 'f':
+        s.ascii = 'f';
+        s.width = 1.00f;
+        s.health = 1.0f;
+        break;
     }
+    return s;
 }
 
 int xsissprite(const int ascii)

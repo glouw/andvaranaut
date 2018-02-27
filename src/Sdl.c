@@ -304,7 +304,8 @@ void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map ma
 void xdmap(const Sdl sdl, const Map map, const Point where)
 {
     // This map texture is not apart of the Sdl struct since it must be refreshed each frame via creation and destruction.
-    SDL_Texture* const texture = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
+    SDL_Texture* const texture = SDL_CreateTexture(
+        sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
     // Lock.
     void* screen;
@@ -312,9 +313,9 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
     SDL_LockTexture(texture, NULL, &screen, &pitch);
     const int width = pitch / sizeof(uint32_t);
     uint32_t* pixels = (uint32_t*) screen;
-    const uint32_t wht = 255 << 24 | 223 << 16 | 239 << 8 | 215; // TODO: Convert to hex.
-    const uint32_t blk = 255 << 24 |   0 << 16 |   0 << 8 |   0; // TODO: Convert to hex.
-    const uint32_t red = 255 << 24 | 211 << 16 |  69 << 8 |  73; // TODO: Convert to hex.
+    const uint32_t wht = 0XFFDFEFD7;
+    const uint32_t blk = 0XFF000000;
+    const uint32_t red = 0XFFD34549;
     // Draw empty rooms.
     for(int y = 1; y < map.rows - 1; y++)
     for(int x = 1; x < map.cols - 1; x++)

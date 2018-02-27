@@ -1,5 +1,6 @@
 #include "Tris.h"
 #include "World.h"
+#include "Item.h"
 #include "util.h"
 
 int main(int argc, char* argv[])
@@ -11,6 +12,7 @@ int main(int argc, char* argv[])
     const int floor = 0;
     const Args args = xparse(argc, argv);
     Sdl s = xsetup(args);
+    xiprint(s.surfaces);
     World w = xwinit(32);
     const Point start = w.map[floor].trapdoors.point[0];
     Hero h = xspawn(args.focal, start, floor);

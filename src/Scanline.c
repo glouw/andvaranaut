@@ -126,7 +126,6 @@ static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Ma
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
-        // TODO: Maybe randomize the height? Maybe random per level?
         const Ray ray = xcalc(hero, *which, map.upper, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
             rsky(sl, ray, map, hero.floor, clouds);
