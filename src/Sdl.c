@@ -295,6 +295,25 @@ static void dpanel(const Sdl sdl, const Overview ov, const int ticks)
     }
 }
 
+// Draws the inventory.
+void xdinv(const Sdl sdl, const Inventory inv)
+{
+    for(int i = 0; i < inv.items.max; i++)
+    {
+        const Item item = inv.items.item[i];
+        if(item.classification == NONE)
+            continue;
+        const int index = xcindex(item.classification);
+        SDL_Texture* const texture = sdl.textures.texture[index];
+        SDL_Surface* const surface = sdl.surfaces.surface[index];
+        const int w = surface->w;
+        const int ww = 32;
+        const int xx = sdl.xres - ww;
+        const SDL_Rect from = { 0, w * item.index, w, w }, to = { xx, ww * i, ww, ww };
+        SDL_RenderCopy(sdl.renderer, texture, &from, &to);
+    }
+}
+
 void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
 {
     dgridl(sdl, ov, sprites, map, ticks);

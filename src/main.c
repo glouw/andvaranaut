@@ -51,6 +51,7 @@ int main(int argc, char* argv[])
             current = xstream(current);
             clouds = xstream(clouds);
             xrender(sdl, h, w.sprites[h.floor], w.map[h.floor], current, clouds, ticks);
+            xdinv(sdl, inv);
             if(xinvuse(in))
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);

@@ -46,3 +46,5 @@ void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks)
 void xdgauge(const Sdl, const Gauge);
 
 void xdmap(const Sdl, const Map, const Point);
+
+void xdinv(const Sdl, const Inventory);

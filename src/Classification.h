@@ -33,4 +33,6 @@ typedef enum
 }
 Classification;
 
+int xcindex(const Classification);
+
 int xcindices(const Classification, const Surfaces);

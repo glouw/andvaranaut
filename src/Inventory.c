@@ -3,8 +3,7 @@
 Inventory xinvnew()
 {
     const Inventory inv = {
-        xitsnew(10), // Equipped.
-        xitsnew(30), // Backpack.
+        xitsnew(20)
     };
     return inv;
 }

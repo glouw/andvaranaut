@@ -5,8 +5,7 @@
 
 typedef struct
 {
-    Items equipped;
-    Items backpack;
+    Items items;
 }
 Inventory;
 

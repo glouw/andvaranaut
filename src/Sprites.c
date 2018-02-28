@@ -261,7 +261,7 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
                     (attack.dir.y > 0.0f ? DEADN : DEADS);
                 // Broke a lootbag?
                 if(sprite->ascii == 'd')
-                    if(!xitsadd(inv.backpack, xitrand(ss)))
+                    if(!xitsadd(inv.items, xitrand(ss)))
                         printf("Backpack full\n");
                 // If a sprite is dead, the hurt counter resets, so this function is called again.
                 sprites = xhurt(sprites, attack, hero, in, inv, ss, ticks);
