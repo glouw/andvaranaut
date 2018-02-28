@@ -120,10 +120,7 @@ Surfaces xpull(const uint32_t key)
         /* | */ "art/tiles/error.bmp",
         /* } */ "art/tiles/error.bmp",
         /* ~ */ "art/tiles/trap_door.bmp",
-
-        // Extra surfaces without representable ASCII characters
-        // Eg. Items and GUI.
-
+        // Items.
         /* ~ +  1 */ "art/items/ammo.bmp",
         /* ~ +  2 */ "art/items/amulet.bmp",
         /* ~ +  3 */ "art/items/armor.bmp",
@@ -148,6 +145,8 @@ Surfaces xpull(const uint32_t key)
         /* ~ + 22 */ "art/items/shortwep.bmp",
         /* ~ + 23 */ "art/items/tool.bmp",
         /* ~ + 24 */ "art/items/wand.bmp",
+        // GUI.
+        /* ~ + 25 */ "art/gui/gui.bmp",
     };
     const int count = xlen(names);
     SDL_Surface** const surface = xtoss(SDL_Surface*, count);

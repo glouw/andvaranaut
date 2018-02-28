@@ -5,9 +5,10 @@
 
 int main(int argc, char* argv[])
 {
-    #if 0
-    // This is the only srand in the game. Turn it off to keep map generation the same.
+    #if 1
     srand(time(0));
+    #else
+    srand(1);
     #endif
     const int floor = 0;
     const Args args = xparse(argc, argv);
