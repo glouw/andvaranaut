@@ -52,6 +52,8 @@ int main(int argc, char* argv[])
             clouds = xstream(clouds);
             xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, ticks);
             xdinv(sdl, inv);
+            xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, ticks);
+            inv = xinvselect(inv, in);
             if(xinvuse(in))
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
@@ -65,7 +67,6 @@ int main(int argc, char* argv[])
                 gg = xgwind(gg, me.wep, in);
                 me = xsustain(me, wd.map[me.floor], in, current);
                 xdgauge(sdl, gg);
-                xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, ticks);
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], attack, me, in, inv, sdl.surfaces, ticks);
             }
             xdmap(sdl, wd.map[me.floor], me.where);

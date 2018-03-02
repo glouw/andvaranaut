@@ -305,15 +305,25 @@ void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map ma
 static void dinvbp(const Sdl sdl, const Inventory inv)
 {
     const int gui = '~' - ' ' + 25;
+    const Point white = { 0.0, 512.0 };
+    const Point green = { 0.0, 544.0 };
     for(int i = 0; i < inv.items.max; i++)
     {
         SDL_Texture* const texture = sdl.textures.texture[gui];
-        const int x = 0;
-        const int y = 128;
-        const int w = 16;
+        SDL_Surface* const surface = sdl.surfaces.surface[gui];
+        const int w = surface->w;
         const int ww = 32;
         const int xx = sdl.xres - ww;
-        const SDL_Rect from = { x, y, w, w }, to = { xx, ww * i, ww, ww };
+        const SDL_Rect from = {
+            (int) (i == inv.selected ? green.x : white.x),
+            (int) (i == inv.selected ? green.y : white.y),
+            w, w
+        };
+        const SDL_Rect to = {
+            xx,
+            ww * i,
+            ww, ww
+        };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }
