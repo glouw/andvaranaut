@@ -5,23 +5,23 @@
 
 int main(int argc, char* argv[])
 {
-    #if 1
+    #if 0
     srand(time(0));
     #else
-    srand(1);
+    srand(0);
     #endif
     const int floor = 0;
     const Args args = xparse(argc, argv);
     Sdl sdl = xsetup(args);
-    World w = xwinit(32);
-    const Point start = w.map[floor].trapdoors.point[0];
-    Hero h = xspawn(args.focal, start, floor);
+    World wd = xwinit(32);
+    const Point start = wd.map[floor].trapdoors.point[0];
+    Hero me = xspawn(args.focal, start, floor);
     Input in = xready(args.msen);
     Overview ov = xinit();
     Flow current = xstart(-1.0f / 6.0f);
     Flow clouds = xstart(10.0f);
-    Gauge g = xgnew();
-    Field f = xprepare(w.map[h.floor], h.aura);
+    Gauge gg = xgnew();
+    Field fd = xprepare(wd.map[me.floor], me.aura);
     Inventory inv = xinvnew();
     // X-Resolution 512 reserved for performance testing.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
@@ -34,23 +34,23 @@ int main(int argc, char* argv[])
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
             ov = xupdate(ov, in, sdl.xres, sdl.textures.count);
-            xmedit(w.map[h.floor], ov);
-            w.sprites[h.floor] = xlay(w.sprites[h.floor], w.map[h.floor], ov);
-            xview(sdl, ov, w.sprites[h.floor], w.map[h.floor], ticks);
+            xmedit(wd.map[me.floor], ov);
+            wd.sprites[me.floor] = xlay(wd.sprites[me.floor], wd.map[me.floor], ov);
+            xview(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], ticks);
         }
         // Play mode.
         else
         {
-            if(xteleporting(h, w.map[h.floor], in, ticks))
+            if(xteleporting(me, wd.map[me.floor], in, ticks))
             {
-                h = xteleport(h, w.map[h.floor]);
-                xruin(f);
-                f = xprepare(w.map[h.floor], h.aura);
+                me = xteleport(me, wd.map[me.floor]);
+                xruin(fd);
+                fd = xprepare(wd.map[me.floor], me.aura);
             }
-            ov = xbackpan(ov, h.where, sdl.xres, sdl.yres);
+            ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
             current = xstream(current);
             clouds = xstream(clouds);
-            xrender(sdl, h, w.sprites[h.floor], w.map[h.floor], current, clouds, ticks);
+            xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, ticks);
             xdinv(sdl, inv);
             if(xinvuse(in))
             {
@@ -61,14 +61,14 @@ int main(int argc, char* argv[])
             else
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
-                const Attack attack = xgpower(g, in, h.wep);
-                g = xgwind(g, h.wep, in);
-                h = xsustain(h, w.map[h.floor], in, current);
-                xdgauge(sdl, g);
-                xcaretake(w.sprites[h.floor], h, w.map[h.floor], f, ticks);
-                w.sprites[h.floor] = xhurt(w.sprites[h.floor], attack, h, in, inv, sdl.surfaces, ticks);
+                const Attack attack = xgpower(gg, in, me.wep);
+                gg = xgwind(gg, me.wep, in);
+                me = xsustain(me, wd.map[me.floor], in, current);
+                xdgauge(sdl, gg);
+                xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, ticks);
+                wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], attack, me, in, inv, sdl.surfaces, ticks);
             }
-            xdmap(sdl, w.map[h.floor], h.where);
+            xdmap(sdl, wd.map[me.floor], me.where);
         }
         xpresent(sdl);
         in = xpump(in);
@@ -76,9 +76,9 @@ int main(int argc, char* argv[])
         const int ms = 1000.0 / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
-    xwclose(w);
-    xgfree(g);
+    xwclose(wd);
+    xgfree(gg);
     xrelease(sdl);
-    xruin(f);
+    xruin(fd);
     return 0;
 }

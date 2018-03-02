@@ -295,8 +295,31 @@ static void dpanel(const Sdl sdl, const Overview ov, const int ticks)
     }
 }
 
-// Draws the inventory.
-void xdinv(const Sdl sdl, const Inventory inv)
+void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
+{
+    dgridl(sdl, ov, sprites, map, ticks);
+    dpanel(sdl, ov, ticks);
+}
+
+// Draws the inventory backpanel.
+static void dinvbp(const Sdl sdl, const Inventory inv)
+{
+    const int gui = '~' - ' ' + 25;
+    for(int i = 0; i < inv.items.max; i++)
+    {
+        SDL_Texture* const texture = sdl.textures.texture[gui];
+        const int x = 0;
+        const int y = 128;
+        const int w = 16;
+        const int ww = 32;
+        const int xx = sdl.xres - ww;
+        const SDL_Rect from = { x, y, w, w }, to = { xx, ww * i, ww, ww };
+        SDL_RenderCopy(sdl.renderer, texture, &from, &to);
+    }
+}
+
+// Draws the inventory items.
+static void dinvits(const Sdl sdl, const Inventory inv)
 {
     for(int i = 0; i < inv.items.max; i++)
     {
@@ -314,10 +337,10 @@ void xdinv(const Sdl sdl, const Inventory inv)
     }
 }
 
-void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
+void xdinv(const Sdl sdl, const Inventory inv)
 {
-    dgridl(sdl, ov, sprites, map, ticks);
-    dpanel(sdl, ov, ticks);
+    dinvbp(sdl, inv);
+    dinvits(sdl, inv);
 }
 
 void xdmap(const Sdl sdl, const Map map, const Point where)
