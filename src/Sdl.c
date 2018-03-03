@@ -371,11 +371,7 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
             (int) (i == inv.selected ? red.y : wht.y),
             w, w
         };
-        const SDL_Rect to = {
-            xx,
-            ww * i,
-            ww, ww
-        };
+        const SDL_Rect to = { xx, ww * i, ww, ww };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }
@@ -405,6 +401,35 @@ void xdinv(const Sdl sdl, const Inventory inv)
     dinvits(sdl, inv);
 }
 
+static void drooms(uint32_t* pixels, const int width, const Map map, const uint32_t in, const uint32_t out)
+{
+    for(int y = 1; y < map.rows - 1; y++)
+    for(int x = 1; x < map.cols - 1; x++)
+    {
+        if(map.walling[y][x] != ' ' && map.walling[y][x + 1] == ' ') pixels[x + y * width] = out;
+        if(map.walling[y][x] != ' ' && map.walling[y][x - 1] == ' ') pixels[x + y * width] = out;
+        if(map.walling[y][x] != ' ' && map.walling[y + 1][x] == ' ') pixels[x + y * width] = out;
+        if(map.walling[y][x] != ' ' && map.walling[y - 1][x] == ' ') pixels[x + y * width] = out;
+        if(map.walling[y][x] == ' ')
+            pixels[x + y * width] = in;
+    }
+}
+
+static void ddot(uint32_t* pixels, const int width, const Point where, const int size, const uint32_t in, const uint32_t out)
+{
+    for(int y = -size; y <= size; y++)
+    for(int x = -size; x <= size; x++)
+    {
+        const int xx = x + where.x;
+        const int yy = y + where.y;
+        pixels[xx + yy * width] = in;
+        if(x == -size) pixels[xx + yy * width] = out;
+        if(x == +size) pixels[xx + yy * width] = out;
+        if(y == -size) pixels[xx + yy * width] = out;
+        if(y == +size) pixels[xx + yy * width] = out;
+    }
+}
+
 void xdmap(const Sdl sdl, const Map map, const Point where)
 {
     // This map texture is not apart of the Sdl struct since it must be refreshed
@@ -421,34 +446,9 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
     const uint32_t wht = 0XFFDFEFD7;
     const uint32_t blk = 0XFF000000;
     const uint32_t red = 0XFFD34549;
-    // Draw empty rooms.
-    for(int y = 1; y < map.rows - 1; y++)
-    for(int x = 1; x < map.cols - 1; x++)
-    {
-        // Outlines
-        if(map.walling[y][x] != ' ' && map.walling[y][x + 1] == ' ') pixels[x + y * width] = blk;
-        if(map.walling[y][x] != ' ' && map.walling[y][x - 1] == ' ') pixels[x + y * width] = blk;
-        if(map.walling[y][x] != ' ' && map.walling[y + 1][x] == ' ') pixels[x + y * width] = blk;
-        if(map.walling[y][x] != ' ' && map.walling[y - 1][x] == ' ') pixels[x + y * width] = blk;
-        // Inside.
-        if(map.walling[y][x] == ' ')
-            pixels[x + y * width] = wht;
-    }
-    // Draw hero dot.
-    const int size = 2;
-    for(int y = -size; y <= size; y++)
-    for(int x = -size; x <= size; x++)
-    {
-        const int xx = x + where.x;
-        const int yy = y + where.y;
-        // Inside.
-        pixels[xx + yy * width] = red;
-        // Outside
-        if(x == -size) pixels[xx + yy * width] = blk;
-        if(x == +size) pixels[xx + yy * width] = blk;
-        if(y == -size) pixels[xx + yy * width] = blk;
-        if(y == +size) pixels[xx + yy * width] = blk;
-    }
+    // Draw rooms and hero dot.
+    drooms(pixels, width, map, wht, blk);
+    ddot(pixels, width, where, 2, red, blk);
     // Unlock and send.
     SDL_UnlockTexture(texture);
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };
