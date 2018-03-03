@@ -28,6 +28,8 @@ typedef struct
     int threads;
     // Color key specifies which colors to omit when rendering sprites or surfaces.
     uint32_t key;
+    // Index of the gui.
+    int gui;
 }
 Sdl;
 
@@ -48,3 +50,5 @@ void xdgauge(const Sdl, const Gauge);
 void xdmap(const Sdl, const Map, const Point);
 
 void xdinv(const Sdl, const Inventory);
+
+void xdbars(const Sdl, const Hero, const int ticks);

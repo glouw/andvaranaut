@@ -54,6 +54,7 @@ int main(int argc, char* argv[])
             xdinv(sdl, inv);
             xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, ticks);
             inv = xinvselect(inv, in);
+            xdbars(sdl, me, ticks);
             if(xinvuse(in))
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);

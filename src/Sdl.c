@@ -1,5 +1,6 @@
 #include "Sdl.h"
 
+#include "Bar.h"
 #include "Frame.h"
 #include "Scanline.h"
 #include "Bundle.h"
@@ -136,6 +137,7 @@ Sdl xsetup(const Args args)
     sdl.threads = args.threads;
     sdl.surfaces = xpull(sdl.key);
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
+    sdl.gui = '~' - ' ' + 25;
     return sdl;
 }
 
@@ -301,18 +303,67 @@ void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map ma
     dpanel(sdl, ov, ticks);
 }
 
-// Draws the inventory backpanel.
+// Draws one status bar.
+void xdbar(const Sdl sdl, const Hero hero, const int position, const int ticks, const int size, const Bar bar)
+{
+    SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
+    SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
+    const int w = surface->w;
+    const SDL_Rect glass = { 0, 32, w, w };
+    const SDL_Rect fluid = { 0, (int) bar, w, w };
+    const SDL_Rect empty[] = {
+        { 0, fluid.y + 2 * w, w, w }, // 75%.
+        { 0, fluid.y + 4 * w, w, w }, // 50%.
+        { 0, fluid.y + 6 * w, w, w }, // 25%.
+    };
+    const float max = bar == HP ? hero.hpmax : bar == FATIGUE ? hero.ftgmax : hero.manamax;
+    // Currently highjacks stats for testing.
+    const float amt = max * 0.5f * (sinf(3.1416f * ticks / 60.0f) + 1.0f);
+    for(int i = 0; i < (int) max; i++)
+    {
+        const int ww = size * w;
+        const int yy = sdl.yres - ww * (1 + position);
+        const SDL_Rect to = { ww * i, yy, ww, ww };
+        // Full fluid amount.
+        if(xfl(amt) > i)
+            SDL_RenderCopy(sdl.renderer, texture, &fluid, &to);
+        // Partial fluid amount.
+        if(xfl(amt) == i)
+        {
+            if(xdec(amt) > 0.75f)
+                SDL_RenderCopy(sdl.renderer, texture, &empty[0], &to);
+            else
+            if(xdec(amt) > 0.50f)
+                SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to);
+            else
+            if(xdec(amt) > 0.25f)
+                SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to);
+        }
+        // Glass.
+        SDL_RenderCopy(sdl.renderer, texture, &glass, &to);
+    }
+}
+
+// Draws hero status bars.
+void xdbars(const Sdl sdl, const Hero hero, const int ticks)
+{
+    const int size = 1;
+    xdbar(sdl, hero, 2, ticks, size, HP);
+    xdbar(sdl, hero, 1, ticks, size, MANA);
+    xdbar(sdl, hero, 0, ticks, size, FATIGUE);
+}
+
+// Draws the inventory backpanel. Selected inventory item is highlighted.
 static void dinvbp(const Sdl sdl, const Inventory inv)
 {
-    const int gui = '~' - ' ' + 25;
     const Point white = { 0.0, 512.0 };
     const Point green = { 0.0, 544.0 };
     for(int i = 0; i < inv.items.max; i++)
     {
-        SDL_Texture* const texture = sdl.textures.texture[gui];
-        SDL_Surface* const surface = sdl.surfaces.surface[gui];
+        SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
+        SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
         const int w = surface->w;
-        const int ww = 32;
+        const int ww = 2 * w;
         const int xx = sdl.xres - ww;
         const SDL_Rect from = {
             (int) (i == inv.selected ? green.x : white.x),
