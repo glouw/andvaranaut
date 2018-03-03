@@ -448,7 +448,7 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
     const uint32_t red = 0XFFD34549;
     // Draw rooms and hero dot.
     drooms(pixels, width, map, wht, blk);
-    ddot(pixels, width, where, 2, red, blk);
+    ddot(pixels, width, where, 3, red, blk);
     // Unlock and send.
     SDL_UnlockTexture(texture);
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };
