@@ -2,6 +2,8 @@
 
 typedef enum
 {
-    HP = 128, MANA = 256, FATIGUE = 384
+    HPS = 128,
+    MNA = 256,
+    FTG = 384
 }
 Bar;

@@ -306,41 +306,43 @@ void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map ma
 // Draws one status bar.
 void xdbar(const Sdl sdl, const Hero hero, const int position, const int ticks, const int size, const Bar bar)
 {
+    const int max =
+        bar == HPS ? hero.hpsmax :
+        bar == FTG ? hero.ftgmax : hero.mnamax;
+    const float lvl =
+        bar == HPS ? hero.hps :
+        bar == FTG ? hero.ftg : hero.mna;
+    const float threshold = 0.25f * max;
     SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
     SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
+    const int frame = ticks % 2 == 0;
     const int w = surface->w;
+    const SDL_Rect gleft = { 0,  0, w, w };
     const SDL_Rect glass = { 0, 32, w, w };
-    const SDL_Rect fluid = { 0, (int) bar, w, w };
+    const SDL_Rect grite = { 0, 64, w, w };
+    // Will animate bar if below threshold.
+    const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : w), w, w };
     const SDL_Rect empty[] = {
         { 0, fluid.y + 2 * w, w, w }, // 75%.
         { 0, fluid.y + 4 * w, w, w }, // 50%.
         { 0, fluid.y + 6 * w, w, w }, // 25%.
     };
-    const float max = bar == HP ? hero.hpmax : bar == FATIGUE ? hero.ftgmax : hero.manamax;
     // Currently highjacks stats for testing.
-    const float amt = max * 0.5f * (sinf(3.1416f * ticks / 60.0f) + 1.0f);
-    for(int i = 0; i < (int) max; i++)
+    for(int i = 0; i < max; i++)
     {
         const int ww = size * w;
         const int yy = sdl.yres - ww * (1 + position);
         const SDL_Rect to = { ww * i, yy, ww, ww };
-        // Full fluid amount.
-        if(xfl(amt) > i)
+        // Full fluid level.
+        if(xfl(lvl) > i)
             SDL_RenderCopy(sdl.renderer, texture, &fluid, &to);
-        // Partial fluid amount.
-        if(xfl(amt) == i)
-        {
-            if(xdec(amt) > 0.75f)
-                SDL_RenderCopy(sdl.renderer, texture, &empty[0], &to);
-            else
-            if(xdec(amt) > 0.50f)
-                SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to);
-            else
-            if(xdec(amt) > 0.25f)
-                SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to);
-        }
+        // Partial fluid level.
+        if(xfl(lvl) == i)
+            xdec(lvl) > 0.75f ? SDL_RenderCopy(sdl.renderer, texture, &empty[0], &to) :
+            xdec(lvl) > 0.50f ? SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to) :
+            xdec(lvl) > 0.25f ? SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to) : 0;
         // Glass.
-        SDL_RenderCopy(sdl.renderer, texture, &glass, &to);
+        SDL_RenderCopy(sdl.renderer, texture, i == 0 ? &gleft : i == max - 1 ? &grite : &glass, &to);
     }
 }
 
@@ -348,9 +350,9 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const int ticks, 
 void xdbars(const Sdl sdl, const Hero hero, const int ticks)
 {
     const int size = 1;
-    xdbar(sdl, hero, 2, ticks, size, HP);
-    xdbar(sdl, hero, 1, ticks, size, MANA);
-    xdbar(sdl, hero, 0, ticks, size, FATIGUE);
+    xdbar(sdl, hero, 2, ticks, size, HPS);
+    xdbar(sdl, hero, 1, ticks, size, MNA);
+    xdbar(sdl, hero, 0, ticks, size, FTG);
 }
 
 // Draws the inventory backpanel. Selected inventory item is highlighted.

@@ -35,12 +35,12 @@ typedef struct
     float tall;
     // Vertical velocity.
     float vvel;
-    // Health.
-    float hp;
-    float hpmax;
+    // Hitpoints.
+    float hps;
+    float hpsmax;
     // Mana.
-    float mana;
-    float manamax;
+    float mna;
+    float mnamax;
     // Fatigue
     float ftg;
     float ftgmax;

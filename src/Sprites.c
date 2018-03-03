@@ -289,7 +289,20 @@ static void idle(const Sprites sprites, const int ticks)
     }
 }
 
-void xcaretake(Sprites sprites, const Hero hero, const Map map, const Field field, const int ticks)
+static float wave(const int ticks)
+{
+    return 0.5f * (sinf(3.1416f * ticks / 60.0f) + 1.0f);
+}
+
+Hero xdamage(const Sprites sprites, Hero hero, const int ticks)
+{
+    hero.hps = hero.hpsmax * wave(ticks);
+    hero.mna = hero.mnamax * wave(ticks);
+    hero.ftg = hero.ftgmax * wave(ticks);
+    return hero;
+}
+
+void xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const int ticks)
 {
     arrange(sprites, hero);
     idle(sprites, ticks);

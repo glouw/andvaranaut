@@ -31,10 +31,10 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.yaw = 1.0;
     hero.tall = 0.5f;
     hero.height = hero.tall;
-    hero.hp = 4.4f;
-    hero.hpmax = 10.0f;
-    hero.mana = 4.0f;
-    hero.manamax = 4.0f;
+    hero.hps = 4.4f;
+    hero.hpsmax = 10.0f;
+    hero.mna = 4.0f;
+    hero.mnamax = 4.0f;
     hero.ftg = 6.0f;
     hero.ftgmax = 6.0f;
     hero.wep = LONG;
