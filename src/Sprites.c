@@ -262,7 +262,8 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
                 // Broke a lootbag?
                 if(sprite->ascii == 'd')
                     if(!xitsadd(inv.items, xitrand(ss)))
-                        printf("Backpack full\n");
+                        // Make this a log message in the future.
+                        printf("Inventory full!\n");
                 // If a sprite is dead, the hurt counter resets, so this function is called again.
                 sprites = xhurt(sprites, attack, hero, in, inv, ss, ticks);
                 // Chance sprite will drop loot bag.
@@ -294,7 +295,7 @@ static float wave(const int ticks)
     return 0.5f * (sinf(3.1416f * ticks / 60.0f) + 1.0f);
 }
 
-Hero xdamage(const Sprites sprites, Hero hero, const int ticks)
+static Hero damage(Hero hero, const Sprites sprites, const int ticks)
 {
     hero.hps = hero.hpsmax * wave(ticks);
     hero.mna = hero.mnamax * wave(ticks);
@@ -302,11 +303,13 @@ Hero xdamage(const Sprites sprites, Hero hero, const int ticks)
     return hero;
 }
 
-void xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const int ticks)
+Hero xcaretake(Hero hero, const Sprites sprites, const Map map, const Field field, const int ticks)
 {
     arrange(sprites, hero);
     idle(sprites, ticks);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
     bound(sprites, map);
+    hero = damage(hero, sprites, ticks);
+    return hero;
 }

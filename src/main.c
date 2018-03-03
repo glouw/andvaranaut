@@ -50,8 +50,7 @@ int main(int argc, char* argv[])
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
             current = xstream(current);
             clouds = xstream(clouds);
-            xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, ticks);
-            me = xdamage(wd.sprites[me.floor], me, ticks);
+            me = xcaretake(me, wd.sprites[me.floor], wd.map[me.floor], fd, ticks);
             inv = xinvselect(inv, in);
             xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, ticks);
             xdinv(sdl, inv);
@@ -59,6 +58,7 @@ int main(int argc, char* argv[])
             if(xinvuse(in))
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
+                xwhatis(inv, in, sdl.xres);
                 // TODO: Manage inventory here.
                 // TODO: Draw inventory here.
             }

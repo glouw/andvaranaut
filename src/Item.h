@@ -4,13 +4,14 @@
 
 typedef struct
 {
-    Classification classification;
     int index;
+    Classification c;
+    char* cstr;
 }
 Item;
 
-void xitprint(const Surfaces);
+Item xitnew(const Classification, const int index);
 
 Item xitrand(const Surfaces);
 
-Item xitnone();
+void xitprint(const Item);

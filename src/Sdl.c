@@ -364,14 +364,13 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
         SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
         SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
         const int w = surface->w;
-        const int ww = 2 * w;
-        const int xx = sdl.xres - ww;
+        const int xx = sdl.xres - inv.w;
         const SDL_Rect from = {
             (int) (i == inv.selected ? red.x : wht.x),
             (int) (i == inv.selected ? red.y : wht.y),
             w, w
         };
-        const SDL_Rect to = { xx, ww * i, ww, ww };
+        const SDL_Rect to = { xx, inv.w * i, inv.w, inv.w };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }
@@ -382,15 +381,14 @@ static void dinvits(const Sdl sdl, const Inventory inv)
     for(int i = 0; i < inv.items.max; i++)
     {
         const Item item = inv.items.item[i];
-        if(item.classification == NONE)
+        if(item.c == NONE)
             continue;
-        const int index = xcindex(item.classification);
+        const int index = xcindex(item.c);
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
         const int w = surface->w;
-        const int ww = 32;
-        const int xx = sdl.xres - ww;
-        const SDL_Rect from = { 0, w * item.index, w, w }, to = { xx, ww * i, ww, ww };
+        const int xx = sdl.xres - inv.w;
+        const SDL_Rect from = { 0, w * item.index, w, w }, to = { xx, inv.w * i, inv.w, inv.w };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }
