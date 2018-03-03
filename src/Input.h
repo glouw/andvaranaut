@@ -31,3 +31,5 @@ Input;
 Input xpump(Input);
 
 Input xready(const float sensitivity);
+
+int xinvuse(const Input);

@@ -43,3 +43,8 @@ Input xready(const float sensitivity)
     input.key = SDL_GetKeyboardState(NULL);
     return xpump(input);
 }
+
+int xinvuse(const Input in)
+{
+    return in.key[SDL_SCANCODE_LSHIFT];
+}

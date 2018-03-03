@@ -15,6 +15,4 @@ Inventory xinvnew();
 
 Inventory xinvselect(Inventory inv, const Input);
 
-int xinvuse(const Input);
-
 void xwhatis(const Inventory, const Input, const int xres);

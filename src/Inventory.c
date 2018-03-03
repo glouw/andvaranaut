@@ -30,8 +30,3 @@ void xwhatis(const Inventory inv, const Input in, const int xres)
     if(in.x > xres - inv.w)
         xitprint(inv.items.item[y]);
 }
-
-int xinvuse(const Input in)
-{
-    return in.key[SDL_SCANCODE_LSHIFT];
-}
