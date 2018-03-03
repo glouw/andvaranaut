@@ -220,8 +220,7 @@ void xdgauge(const Sdl sdl, const Gauge g)
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
-        const float scale = 28.0; // Arbitrary.
-        const int width = growth * xmin(sdl.xres, sdl.yres) / scale;
+        const int width = growth * 12;
         const int color = growth * 0xFF;
         const float sens = 2.33;
         const int x = g.points[i].x * sens - (width - sdl.xres) / 2;
@@ -321,13 +320,13 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const int ticks, 
     const SDL_Rect glass = { 0, 32, w, w };
     const SDL_Rect grite = { 0, 64, w, w };
     // Will animate bar if below threshold.
-    const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : w), w, w };
+    const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : 0), w, w };
     const SDL_Rect empty[] = {
         { 0, fluid.y + 2 * w, w, w }, // 75%.
         { 0, fluid.y + 4 * w, w, w }, // 50%.
         { 0, fluid.y + 6 * w, w, w }, // 25%.
     };
-    // Currently highjacks stats for testing.
+    // Draw.
     for(int i = 0; i < max; i++)
     {
         const int ww = size * w;
@@ -358,8 +357,8 @@ void xdbars(const Sdl sdl, const Hero hero, const int ticks)
 // Draws the inventory backpanel. Selected inventory item is highlighted.
 static void dinvbp(const Sdl sdl, const Inventory inv)
 {
-    const Point white = { 0.0, 512.0 };
-    const Point green = { 0.0, 544.0 };
+    const Point wht = { 0.0, 512.0 };
+    const Point red = { 0.0, 528.0 };
     for(int i = 0; i < inv.items.max; i++)
     {
         SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
@@ -368,8 +367,8 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
         const int ww = 2 * w;
         const int xx = sdl.xres - ww;
         const SDL_Rect from = {
-            (int) (i == inv.selected ? green.x : white.x),
-            (int) (i == inv.selected ? green.y : white.y),
+            (int) (i == inv.selected ? red.x : wht.x),
+            (int) (i == inv.selected ? red.y : wht.y),
             w, w
         };
         const SDL_Rect to = {
@@ -408,7 +407,8 @@ void xdinv(const Sdl sdl, const Inventory inv)
 
 void xdmap(const Sdl sdl, const Map map, const Point where)
 {
-    // This map texture is not apart of the Sdl struct since it must be refreshed each frame via creation and destruction.
+    // This map texture is not apart of the Sdl struct since it must be refreshed
+    // each frame via creation and destruction.
     SDL_Texture* const texture = SDL_CreateTexture(
         sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);

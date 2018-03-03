@@ -2,7 +2,7 @@
 
 Inventory xinvnew()
 {
-    const Inventory inv = { xitsnew(8), 0 };
+    const Inventory inv = { xitsnew(10), 0 };
     return inv;
 }
 
