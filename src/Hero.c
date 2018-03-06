@@ -78,23 +78,34 @@ static float hswim(const Hero hero)
     return 0.1f * hero.tall;
 }
 
+// Handles vertical physics like jumping and faling into pits.
 static Hero vert(Hero hero, const Map map, const Input input)
 {
-    const int land = xtile(hero.where, map.floring);
-    const float tall = land ? hero.tall : hswim(hero);
+    const int onland = xtile(hero.where, map.floring);
+    const float tall = onland ? hero.tall : hswim(hero);
+    const int jumped = input.key[SDL_SCANCODE_SPACE];
+    const int crouch = input.key[SDL_SCANCODE_LCTRL];
     // Jump.
-    if(input.key[SDL_SCANCODE_SPACE] && hero.height <= tall) hero.vvel = 0.05f;
+    if(jumped && hero.height <= tall)
+        hero.vvel = 0.05f;
     // Apply.
     hero.height += hero.vvel;
     // Fall.
-    if(hero.height > tall) hero.vvel -= 0.005f; else hero.vvel = 0.0f, hero.height = tall;
+    if(hero.height > tall)
+        hero.vvel -= 0.005f;
+    else
+    {
+        hero.vvel = 0.0f;
+        hero.height = tall;
+    }
     // Clamp jumping and falling.
     const float max = 0.95f;
     const float min = 0.05f;
     if(hero.height > max) hero.height = max;
     if(hero.height < min) hero.height = min;
     // Crouch override - only works on land.
-    if(input.key[SDL_SCANCODE_LCTRL] && land) hero.height = hduck(hero);
+    if(crouch && onland)
+        hero.height = hduck(hero);
     return hero;
 }
 

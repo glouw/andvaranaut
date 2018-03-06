@@ -21,10 +21,13 @@ void xkill(const Sprites sprites)
 
 static Sprites append(Sprites sprites, const Sprite sprite)
 {
+    // Resize if no size.
     if(sprites.max == 0)
         xretoss(sprites.sprite, Sprite, sprites.max = 1);
+    // Resize if capped.
     if(sprites.count >= sprites.max)
         xretoss(sprites.sprite, Sprite, sprites.max *= 2);
+    // Append.
     sprites.sprite[sprites.count++] = sprite;
     return sprites;
 }
@@ -290,26 +293,23 @@ static void idle(const Sprites sprites, const int ticks)
     }
 }
 
-static float wave(const int ticks)
-{
-    return 0.5f * (sinf(3.1416f * ticks / 60.0f) + 1.0f);
-}
-
 static Hero damage(Hero hero, const Sprites sprites, const int ticks)
 {
-    hero.hps = hero.hpsmax * wave(ticks);
-    hero.mna = hero.mnamax * wave(ticks);
-    hero.ftg = hero.ftgmax * wave(ticks);
+    const float wave = 0.5f * (sinf(3.1416f * ticks / 60.0f) + 1.0f);
+    hero.hps = hero.hpsmax * wave;
+    hero.mna = hero.mnamax * wave;
+    hero.ftg = hero.ftgmax * wave;
     return hero;
 }
 
-Hero xcaretake(Hero hero, const Sprites sprites, const Map map, const Field field, const int ticks)
+Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const int ticks)
 {
     arrange(sprites, hero);
     idle(sprites, ticks);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
     bound(sprites, map);
-    hero = damage(hero, sprites, ticks);
-    return hero;
+    // The hero must be damaged here since the sprites
+    // header cannot be included in the hero header.
+    return damage(hero, sprites, ticks);
 }

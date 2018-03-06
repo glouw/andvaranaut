@@ -49,6 +49,186 @@ static Item boot(Item it)
     return it;
 }
 
+static Item chest(Item it)
+{
+    it.cstr = "Chest";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item flesh(Item it)
+{
+    it.cstr = "Flesh";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item food(Item it)
+{
+    it.cstr = "Food";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item glove(Item it)
+{
+    it.cstr = "Glove";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item hat(Item it)
+{
+    it.cstr = "Hat";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item key(Item it)
+{
+    it.cstr = "Key";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item light(Item it)
+{
+    it.cstr = "Light";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item longwep(Item it)
+{
+    it.cstr = "Longwep";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item medwep(Item it)
+{
+    it.cstr = "Medwep";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item money(Item it)
+{
+    it.cstr = "Money";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item music(Item it)
+{
+    it.cstr = "Music";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item potion(Item it)
+{
+    it.cstr = "Potion";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item ring(Item it)
+{
+    it.cstr = "Ring";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item rock(Item it)
+{
+    it.cstr = "Rock";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item scroll(Item it)
+{
+    it.cstr = "Rock";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item shield(Item it)
+{
+    it.cstr = "Shield";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item shortwep(Item it)
+{
+    it.cstr = "Shortwep";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item tool(Item it)
+{
+    it.cstr = "Tool";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item wand(Item it)
+{
+    it.cstr = "Wand";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
+static Item none(Item it)
+{
+    it.cstr = "None";
+    switch(it.index)
+    {
+    }
+    return it;
+}
+
 Item xitnew(const Classification c, const int index)
 {
     Item it;
@@ -58,143 +238,57 @@ Item xitnew(const Classification c, const int index)
     switch((int) c)
     {
     case AMMO:
-        it = ammo(it);
-        break;
+        return ammo(it);
     case AMULET:
-        it = amulet(it);
-        break;
+        return amulet(it);
     case ARMOR:
-        it = armor(it);
-        break;
+        return armor(it);
     case BOOK:
-        it = book(it);
-        break;
+        return book(it);
     case BOOT:
-        it = boot(it);
-        break;
-    // DO the rest when you're not so tired.
+        return boot(it);
     case CHEST:
-        it.cstr = "Chest";
-        switch(index)
-        {
-        }
-        break;
+        return chest(it);
     case FLESH:
-        it.cstr = "Flesh";
-        switch(index)
-        {
-        }
-        break;
+        return flesh(it);
     case FOOD:
-        it.cstr = "Food";
-        switch(index)
-        {
-        }
-        break;
+        return food(it);
     case GLOVE:
-        it.cstr = "Glove";
-        switch(index)
-        {
-        }
-        break;
+        return glove(it);
     case HAT:
-        it.cstr = "Hat";
-        switch(index)
-        {
-        }
-        break;
+        return hat(it);
     case KEY:
-        it.cstr = "Key";
-        switch(index)
-        {
-        }
-        break;
+        return key(it);
     case LIGHT:
-        it.cstr = "Light";
-        switch(index)
-        {
-        }
-        break;
+        return light(it);
     case LONGWEP:
-        it.cstr = "Long Weapon";
-        switch(index)
-        {
-        }
-        break;
+        return longwep(it);
     case MEDWEP:
-        it.cstr = "Medium Weapon";
-        switch(index)
-        {
-        }
-        break;
+        return medwep(it);
     case MONEY:
-        it.cstr = "Money";
-        switch(index)
-        {
-        }
-        break;
+        return money(it);
     case MUSIC:
-        it.cstr = "Music";
-        switch(index)
-        {
-        }
-        break;
+        return music(it);
     case POTION:
-        it.cstr = "Potion";
-        switch(index)
-        {
-        }
-        break;
+        return potion(it);
     case RING:
-        it.cstr = "Ring";
-        switch(index)
-        {
-        }
-        break;
+        return ring(it);
     case ROCK:
-        it.cstr = "Rock";
-        switch(index)
-        {
-        }
-        break;
+        return rock(it);
     case SCROLL:
-        it.cstr = "Scroll";
-        switch(index)
-        {
-        }
-        break;
+        return scroll(it);
     case SHIELD:
-        it.cstr = "Shield";
-        switch(index)
-        {
-        }
-        break;
+        return shield(it);
     case SHORTWEP:
-        it.cstr = "Short Weapon";
-        switch(index)
-        {
-        }
-        break;
+        return shortwep(it);
     case TOOL:
-        it.cstr = "Tool";
-        switch(index)
-        {
-        }
-        break;
+        return tool(it);
     case WAND:
-        it.cstr = "Wand";
-        switch(index)
-        {
-        }
-        break;
+        return wand(it);
     case NONE:
-        it.cstr = "None";
-        switch(index)
-        {
-        }
-        break;
+        return none(it);
     case CLASSIFICATIONS:
-        break;
+        return it;
     }
     return it;
 }

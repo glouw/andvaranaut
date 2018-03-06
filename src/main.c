@@ -5,11 +5,9 @@
 
 int main(int argc, char* argv[])
 {
-    #if 0
-    srand(time(0));
-    #else
-    srand(0);
-    #endif
+    // The only random seeder in the game.
+    // Keep seed at zero to keep the same map for testing.
+    srand(true ? 0 : time(0));
     const int floor = 0;
     const Args args = xparse(argc, argv);
     Sdl sdl = xsetup(args);
@@ -50,7 +48,7 @@ int main(int argc, char* argv[])
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
             current = xstream(current);
             clouds = xstream(clouds);
-            me = xcaretake(me, wd.sprites[me.floor], wd.map[me.floor], fd, ticks);
+            me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, ticks);
             inv = xinvselect(inv, in);
             xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, ticks);
             xdinv(sdl, inv);
