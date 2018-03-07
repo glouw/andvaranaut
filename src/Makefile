@@ -23,6 +23,7 @@ SRCS+= Atom.c
 SRCS+= Attack.c
 SRCS+= Bundle.c
 SRCS+= Classification.c
+SRCS+= Clamped.c
 SRCS+= Flow.c
 SRCS+= Compass.c
 SRCS+= Field.c

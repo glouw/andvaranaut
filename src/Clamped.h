@@ -6,3 +6,5 @@ typedef struct
     int top;
 }
 Clamped;
+
+Clamped xclamp(const int yres, const float bot, const float top);
