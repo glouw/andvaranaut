@@ -22,13 +22,15 @@ static Hit collision(const Point ray, const Line test, char** const block)
 
 static Hits step(Hits hits, const Point where, const Point direction, const Map map)
 {
-    const Point ray = xcmp(where, xshr(where, direction), xsvr(where, direction));
+    const Point hor = xshr(where, direction);
+    const Point ver = xsvr(where, direction);
+    const Point ray = xcmp(where, hor, ver);
     const Point delta = xmul(direction, 0.01f);
     const Point dx = { delta.x, 0.0f };
     const Point dy = { 0.0f, delta.y };
     const Line test = {
-        xadd(ray, xdec(ray.x) == 0.0f ? dx : xdec(ray.y) == 0.0f ? dy : delta),
-        xsub(ray, xdec(ray.x) == 0.0f ? dx : xdec(ray.y) == 0.0f ? dy : delta),
+        xadd(ray, xmag(xsub(hor, ver)) < 0.01f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
+        xsub(ray, xmag(xsub(hor, ver)) < 0.01f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
     };
     // Flooring wall was hit. Push the flooring hit linked list.
     if(xtile(test.a, map.floring) && !xtile(test.b, map.floring))
