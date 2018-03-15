@@ -6,27 +6,30 @@
 
 Projection xproject(const int yres, const int xres, const float focal, const float yaw, const Point corrected, const float height)
 {
-    const Sheer sheer = { 0.0f, 0.0f };
     // The corrected x distance must be clamped to a value small enough otherwise size will
     // exceed the limitations of single precision floating point. The clamp value is arbitrary.
-    const float size = (focal * xres / 2.0f) / (corrected.x < 1e-5f ? 1e-5f : corrected.x);
-    const float mid = yaw * yres / 2.0f;
-    const float bot = mid + (0.0f - height) * size;
-    const float top = mid + (1.0f - height) * size;
-    const Projection projection = {
-        bot, top, xclamp(yres, bot, top), size, height, yres, mid, sheer
-    };
-    return projection;
+    const float min = 1e-5;
+    const float normal = corrected.x < min ? min : corrected.x;
+    Projection p;
+    p.size = 0.5f * focal * xres / normal;
+    p.mid = yaw * yres / 2.0f;
+    p.bot = p.mid + (0.0f - height) * p.size;
+    p.top = p.mid + (1.0f - height) * p.size;
+    p.clamped = xclamp(yres, p.bot, p.top);
+    p.height = height;
+    p.yres = yres;
+    p.sheer.a = 0.0f;
+    p.sheer.b = 0.0f;
+    return p;
 }
 
 Projection xsheer(Projection p, const Sheer s)
 {
-    const Sheer sheer = { fabsf(s.a), fabsf(s.b) };
-    const int up = s.b >= s.a;
-    p.bot += p.size * s.a - (up ? 1.0f : 0.0f); // Pretty ridiculous imo, but there is no other way
-    p.top += p.size * s.b + (up ? 0.0f : 2.0f); // to fix the missing pixels between stacks.
+    p.bot += p.size * s.a - (s.b >= s.a  ? 1.0f : 0.0f); // Pretty ridiculous imo, but there is no other way
+    p.top += p.size * s.b + (s.b >= s.a  ? 0.0f : 2.0f); // to fix the missing pixels between stacks.
     p.clamped = xclamp(p.yres, p.bot, p.top);
-    p.sheer = sheer;
+    p.sheer.a = fabsf(s.a);
+    p.sheer.b = fabsf(s.b);
     return p;
 }
 

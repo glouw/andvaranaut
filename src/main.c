@@ -10,7 +10,6 @@ int main(int argc, char* argv[])
     srand(true ? 0 : time(0));
     const int floor = 0;
     const Args args = xparse(argc, argv);
-    Sdl sdl = xsetup(args);
     World wd = xwinit(32);
     const Point start = wd.map[floor].trapdoors.point[0];
     Hero me = xspawn(args.focal, start, floor);
@@ -21,6 +20,7 @@ int main(int argc, char* argv[])
     Gauge gg = xgnew();
     Field fd = xprepare(wd.map[me.floor], me.aura);
     Inventory inv = xinvnew();
+    Sdl sdl = xsetup(args);
     // X-Resolution 512 reserved for performance testing.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
     {
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
         xpresent(sdl);
         in = xpump(in);
         const int t1 = SDL_GetTicks();
-        const int ms = 1000.0 / args.fps - (t1 - t0);
+        const int ms = 1000.0f / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
     xwclose(wd);
