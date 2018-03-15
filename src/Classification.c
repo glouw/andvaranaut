@@ -11,3 +11,15 @@ int xcindices(const Classification c, const Surfaces ss)
     return c == NONE ? 1 :
         ss.surface[index]->h / ss.surface[index]->w;
 }
+
+int xismelee(const Classification c)
+{
+}
+
+int xisranged(const Classification c)
+{
+}
+
+int xismagic(const Classification c)
+{
+}
