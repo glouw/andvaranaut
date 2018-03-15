@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Attack xgpower(const Gauge g, const Input input, const Weapon w)
+Attack xgpower(const Gauge g, const Input input, const Classification c)
 {
     Attack none;
     xzero(none);
@@ -27,7 +27,7 @@ Attack xgpower(const Gauge g, const Input input, const Weapon w)
             // Hurt factors declare how many enemies may be hurt by a single swipe.
             // A greatword may be able to cleave three enemies at once,
             // while a short sword only one.
-            w == SHORT ? 1 : w == LONG ? 3 : 0
+            3
         };
         // If direction magitude is zero, the unit vector will be NA, so none must be returned.
         return xmag(dir) > 0.0f ? attack : none;

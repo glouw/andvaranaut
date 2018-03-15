@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Weapon.h"
 #include "Sheer.h"
 #include "Line.h"
 #include "Torch.h"
@@ -44,8 +43,6 @@ typedef struct
     // Fatigue
     float ftg;
     float ftgmax;
-    // TBD.
-    Weapon wep;
 }
 Hero;
 

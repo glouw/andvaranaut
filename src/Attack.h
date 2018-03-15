@@ -12,4 +12,4 @@ typedef struct
 }
 Attack;
 
-Attack xgpower(const Gauge, const Input, const Weapon);
+Attack xgpower(const Gauge, const Input, const Classification c);

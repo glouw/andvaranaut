@@ -24,7 +24,7 @@ static Gauge reset(Gauge g)
     return g;
 }
 
-Gauge xgwind(Gauge g, const Weapon weapon, const Input input)
+Gauge xgwind(Gauge g, const Classification c, const Input input)
 {
     if(input.l)
     {

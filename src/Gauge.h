@@ -2,7 +2,7 @@
 
 #include "Point.h"
 #include "Input.h"
-#include "Weapon.h"
+#include "Classification.h"
 
 typedef struct
 {
@@ -18,4 +18,4 @@ Gauge xgnew();
 
 void xgfree(const Gauge);
 
-Gauge xgwind(Gauge, const Weapon, const Input);
+Gauge xgwind(Gauge, const Classification, const Input);

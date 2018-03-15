@@ -62,9 +62,10 @@ int main(int argc, char* argv[])
             }
             else
             {
+                const Classification cl = inv.items.item[inv.selected].c;
                 SDL_SetRelativeMouseMode(SDL_TRUE);
-                const Attack attack = xgpower(gg, in, me.wep);
-                gg = xgwind(gg, me.wep, in);
+                const Attack attack = xgpower(gg, in, cl);
+                gg = xgwind(gg, cl, in);
                 me = xsustain(me, wd.map[me.floor], in, current);
                 xdgauge(sdl, gg);
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], attack, me, in, inv, sdl.surfaces, ticks);

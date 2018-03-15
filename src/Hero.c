@@ -37,7 +37,6 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.mnamax = 4.0f;
     hero.ftg = 6.0f;
     hero.ftgmax = 6.0f;
-    hero.wep = LONG;
     return hero;
 }
 
