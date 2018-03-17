@@ -28,6 +28,8 @@ typedef struct
 }
 Input;
 
+Input xzinput();
+
 Input xpump(Input);
 
 Input xready(const float sensitivity);

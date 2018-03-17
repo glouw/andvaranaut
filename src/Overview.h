@@ -27,6 +27,8 @@ typedef struct
 }
 Overview;
 
+Overview xzov();
+
 Overview xinit();
 
 Overview xupdate(Overview, const Input, const int xres, const int textures);

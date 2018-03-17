@@ -10,4 +10,6 @@ typedef struct
 }
 Atom;
 
+Atom xzatom();
+
 Atom xmaterialize(const Field, const int y, const int x);

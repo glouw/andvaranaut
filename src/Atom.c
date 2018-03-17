@@ -1,5 +1,11 @@
 #include "Atom.h"
 
+Atom xzatom()
+{
+    static Atom atom;
+    return atom;
+}
+
 static float average(const Field field, const int y, const int x)
 {
     float sum = 0.0f;

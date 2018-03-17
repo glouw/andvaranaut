@@ -12,4 +12,6 @@ typedef struct
 }
 Attack;
 
+Attack xzattack();
+
 Attack xgpower(const Gauge, const Input, const Classification c);

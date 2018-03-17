@@ -2,6 +2,12 @@
 
 #include "util.h"
 
+Points xzpoints()
+{
+    static Points points;
+    return points;
+}
+
 Points xpsnew(const int max)
 {
     const Points ps = { xtoss(Point, max), 0, max };

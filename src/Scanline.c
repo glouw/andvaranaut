@@ -2,6 +2,12 @@
 
 #include "util.h"
 
+Scanline xzsl()
+{
+    static Scanline sl;
+    return sl;
+}
+
 static uint32_t shade(const uint32_t pixel, const int shading)
 {
     const uint32_t r = (((pixel >> 0x10) /****/) * shading) >> 0x08; // Shift right by 0x08 is same as

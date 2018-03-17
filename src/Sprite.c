@@ -3,10 +3,15 @@
 #include <ctype.h>
 #include "util.h"
 
+Sprite xzsprite()
+{
+    static Sprite sprite;
+    return sprite;
+}
+
 static Sprite born(const int ascii, const Point where)
 {
-    Sprite s;
-    xzero(s);
+    Sprite s = xzsprite();
     s.ascii = ascii;
     s.where = where;
     s.last = where;

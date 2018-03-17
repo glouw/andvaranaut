@@ -2,10 +2,15 @@
 
 #include "util.h"
 
+Gauge xzgauge()
+{
+    static Gauge gauge;
+    return gauge;
+}
+
 Gauge xgnew()
 {
-    Gauge g;
-    xzero(g);
+    Gauge g = xzgauge();
     // TODO:
     // Maybe have max change with weapon? Stronger weapons have longer windup.
     g.max = 120; /* About two seconds max. */

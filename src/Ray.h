@@ -2,6 +2,7 @@
 
 #include "Projection.h"
 #include "Torch.h"
+#include "Line.h"
 
 // Rays go from the position of the player to the hit position of a wall.
 // Included is the surface and surface offset of the hit position, the corrected (normal)
@@ -18,3 +19,5 @@ typedef struct
     Torch torch;
 }
 Ray;
+
+Ray xzray();

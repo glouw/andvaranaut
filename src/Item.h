@@ -6,11 +6,13 @@ typedef struct
 {
     int index;
     Classification c;
-    char* desc;
+    const char* desc;
     // Classification string.
-    char* cstr;
+    const char* cstr;
 }
 Item;
+
+Item xzitem();
 
 Item xitnew(const Classification, const int index);
 

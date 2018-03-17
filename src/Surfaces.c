@@ -2,6 +2,12 @@
 
 #include "util.h"
 
+Surfaces xzsurf()
+{
+    static Surfaces surf;
+    return surf;
+}
+
 static SDL_Surface* load(const char* const path, const uint32_t key)
 {
     SDL_Surface* const bmp = SDL_LoadBMP(path);

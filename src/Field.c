@@ -6,9 +6,15 @@
 #include <string.h>
 #include <float.h>
 
+Field xzfield()
+{
+    static Field field;
+    return field;
+}
+
 Field xprepare(const Map map, const float aura)
 {
-    Field field;
+    Field field = xzfield();
     field.res = 2; /* Whatever feels best. */
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
@@ -69,16 +75,18 @@ Point xforce(const Field field, const Point from, const Point to, const Map map)
         { +0.0f, -1.0f }, // N
         { +1.0f, -1.0f }, // NE
     };
-    float grads[xlen(v)];
-    xzero(grads);
-    for(int i = 0; i < xlen(v); i++)
+    const int len = xlen(v);
+    float grads[len];
+    for(int i = 0; i < len; i++)
+        grads[i] = 0.0f;
+    for(int i = 0; i < len; i++)
     {
         const Point dir = xadd(v[i], from);
         const int y = field.res * from.y, yy = field.res * dir.y;
         const int x = field.res * from.x, xx = field.res * dir.x;
         if(xon(field, yy, xx)) grads[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
-    const Point grad = v[largest(grads, xlen(v))];
+    const Point grad = v[largest(grads, len)];
     const Point where = xadd(grad, from);
     const int xx = where.x;
     const int yy = where.y;

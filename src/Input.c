@@ -4,6 +4,12 @@
 
 #include <SDL2/SDL.h>
 
+Input xzinput()
+{
+    static Input input;
+    return input;
+}
+
 Input xpump(Input input)
 {
     // Last mouse button states.
@@ -34,8 +40,7 @@ Input xpump(Input input)
 
 Input xready(const float sensitivity)
 {
-    Input input;
-    xzero(input);
+    Input input = xzinput();
     // Mouse.
     input.sx = sensitivity;
     input.sy = sensitivity;

@@ -2,6 +2,12 @@
 
 #include "util.h"
 
+Items xzitems()
+{
+    static Items items;
+    return items;
+}
+
 Items xitsnew(const int max)
 {
     const Items its = { xtoss(Item, max), max };

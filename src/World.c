@@ -3,6 +3,12 @@
 #include "Tris.h"
 #include "util.h"
 
+World xzworld()
+{
+    static World world;
+    return world;
+}
+
 World xwadd(World w, const Map map, const Sprites sprites)
 {
     if(w.count == w.max)

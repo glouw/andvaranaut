@@ -10,6 +10,8 @@ typedef struct
 }
 Points;
 
+Points xzpoints();
+
 Points xpsnew(const int max);
 
 Points xpsadd(Points, const Point);

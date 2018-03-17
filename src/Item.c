@@ -4,6 +4,12 @@
 
 #include <stdlib.h>
 
+Item xzitem()
+{
+    static Item item;
+    return item;
+}
+
 static Item ammo(Item it)
 {
     it.cstr = "Ammo";
@@ -231,8 +237,7 @@ static Item none(Item it)
 
 Item xitnew(const Classification c, const int index)
 {
-    Item it;
-    xzero(it);
+    Item it = xzitem();
     it.index = index;
     it.c = c;
     switch((int) c)

@@ -2,6 +2,12 @@
 
 #include "Scanline.h"
 
+Bundle xzbundle()
+{
+    static Bundle bundle;
+    return bundle;
+}
+
 int xbraster(void* const bundle)
 {
     Bundle* const b = (Bundle*) bundle;

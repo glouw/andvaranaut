@@ -6,3 +6,5 @@ typedef struct
     float b;
 }
 Sheer;
+
+Sheer xzsheer();

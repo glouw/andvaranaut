@@ -17,6 +17,8 @@ typedef struct
 }
 Field;
 
+Field xzfield();
+
 // Collaborative Diffusion path finding.
 void xdiffuse(const Field, const Point where);
 

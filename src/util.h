@@ -27,13 +27,9 @@ int xodd(const int a);
 
 #define xlen(a) ((int) (sizeof(a) / sizeof(*a)))
 
-#define xwipe(t, n) ((t*) calloc((n), sizeof(t)))
-
 #define xtoss(t, n) ((t*) malloc((n) * sizeof(t)))
 
 #define xretoss(ptr, t, n) (ptr = (t*) realloc((ptr), (n) * sizeof(t)))
-
-#define xzero(a) (memset(&(a), 0, sizeof(a)))
 
 #define xmax(a, b) ((a) > (b) ? (a) : (b))
 

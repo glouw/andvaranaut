@@ -2,15 +2,19 @@
 
 #include "util.h"
 
+Attack xzattack()
+{
+    static Attack attack;
+    return attack;
+}
+
 Attack xgpower(const Gauge g, const Input input, const Classification c)
 {
-    Attack none;
-    xzero(none);
     const int last = g.count - 1;
     // The tail must be at least this long.
     const int tail = 6;
     if(g.count < tail)
-        return none;
+        return xzattack();
     // On the mouse left up, calculate the magnitude and direction of attack.
     if(input.lu)
     {
@@ -30,7 +34,7 @@ Attack xgpower(const Gauge g, const Input input, const Classification c)
             3
         };
         // If direction magitude is zero, the unit vector will be NA, so none must be returned.
-        return xmag(dir) > 0.0f ? attack : none;
+        return xmag(dir) > 0.0f ? attack : xzattack();
     }
-    return none;
+    return xzattack();
 }

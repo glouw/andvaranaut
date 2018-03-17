@@ -7,4 +7,6 @@ typedef struct
 }
 Clamped;
 
+Clamped xzclamp();
+
 Clamped xclamp(const int yres, const float bot, const float top);

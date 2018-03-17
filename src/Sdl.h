@@ -33,6 +33,8 @@ typedef struct
 }
 Sdl;
 
+Sdl xzsdl();
+
 Sdl xsetup(const Args);
 
 void xrelease(const Sdl);

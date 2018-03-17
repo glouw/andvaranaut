@@ -2,10 +2,15 @@
 
 #include "util.h"
 
+Flow xzflow()
+{
+    static Flow flow;
+    return flow;
+}
+
 Flow xstart(const float height)
 {
-    Flow f;
-    xzero(f);
+    Flow f = xzflow();
     f.acceleration = 0.00001f;
     f.speed = 0.01f;
     f.direction.x = 1.0f;

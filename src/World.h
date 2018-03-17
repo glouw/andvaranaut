@@ -12,6 +12,8 @@ typedef struct
 }
 World;
 
+World xzworld();
+
 World xwadd(World, const Map, const Sprites);
 
 World xwinit(const int max);

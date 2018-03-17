@@ -6,6 +6,12 @@
 #include "Bundle.h"
 #include "util.h"
 
+Sdl xzsdl()
+{
+    static Sdl sdl;
+    return sdl;
+}
+
 // Assumes renderer is rotated 90 degrees.
 static void churn(const Sdl sdl)
 {
@@ -112,8 +118,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
 Sdl xsetup(const Args args)
 {
     SDL_Init(SDL_INIT_VIDEO);
-    Sdl sdl;
-    xzero(sdl);
+    Sdl sdl = xzsdl();
     sdl.window = SDL_CreateWindow("Andvaranaut",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, args.xres, args.yres, SDL_WINDOW_SHOWN);
     if(sdl.window == NULL)

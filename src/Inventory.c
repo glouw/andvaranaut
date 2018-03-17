@@ -2,6 +2,12 @@
 
 #include "util.h"
 
+Inventory xzinv()
+{
+    static Inventory inv;
+    return inv;
+}
+
 Inventory xinvnew()
 {
     const Inventory inv = { xitsnew(10), 0, 32 };

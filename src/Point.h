@@ -7,6 +7,8 @@ typedef struct
 }
 Point;
 
+Point xzpoint();
+
 Point xtrn(const Point, const float t);
 
 // Returns a point rotated about the origin by right angle degrees.

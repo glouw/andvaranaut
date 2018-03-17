@@ -1,5 +1,11 @@
 #include "Line.h"
 
+Line xzline()
+{
+    static Line line;
+    return line;
+}
+
 Line xrotate(const Line line, const float t)
 {
     const Line rotated = { xtrn(line.a, t), xtrn(line.b, t) };

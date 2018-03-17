@@ -4,22 +4,25 @@
 
 #include <SDL2/SDL.h>
 
+Hero xzhero()
+{
+    static Hero hero;
+    return hero;
+}
+
 // A focal value of 1.0 will create a 90 degree field of view.
 static Line lens(const float focal)
 {
-    Line fov;
-    xzero(fov);
-    fov.a.x = focal;
-    fov.a.y = -1.0f;
-    fov.b.x = focal;
-    fov.b.y = +1.0f;
+    const Line fov = {
+        { focal, -1.0f },
+        { focal, +1.0f },
+    };
     return fov;
 }
 
 Hero xspawn(const float focal, const Point where, const int floor)
 {
-    Hero hero;
-    xzero(hero);
+    Hero hero = xzhero();
     hero.floor = floor;
     hero.fov = lens(focal);
     hero.where = where;
@@ -151,7 +154,7 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     // Reset hero if collision.
     if(xtile(hero.where, map.walling))
     {
-        xzero(hero.velocity);
+        hero.velocity = xzpoint();
         hero.where = last;
     }
     return hero;

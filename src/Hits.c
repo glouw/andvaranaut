@@ -4,6 +4,12 @@
 #include "Line.h"
 #include "util.h"
 
+Hits xzhits()
+{
+    static Hits hits;
+    return hits;
+}
+
 static Hit* push(Hit* ceiling, const Hit hit)
 {
     Hit* temp = xtoss(Hit, 1);
@@ -54,7 +60,5 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
 
 Hits xmarch(const Point where, const Point direction, const Map map)
 {
-    Hits hits;
-    xzero(hits);
-    return step(hits, where, direction, map);
+    return step(xzhits(), where, direction, map);
 }

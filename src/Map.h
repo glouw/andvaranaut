@@ -17,6 +17,8 @@ typedef struct
 }
 Map;
 
+Map xzmap();
+
 Map xmgen(const int rows, const int cols, const Points);
 
 void xmclose(const Map);

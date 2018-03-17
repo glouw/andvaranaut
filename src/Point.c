@@ -6,6 +6,12 @@
 #include <math.h>
 #include <float.h>
 
+Point xzpoint()
+{
+    static Point point;
+    return point;
+}
+
 Point xtrn(const Point a, const float t)
 {
     Point out;

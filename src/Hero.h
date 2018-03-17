@@ -46,6 +46,8 @@ typedef struct
 }
 Hero;
 
+Hero xzhero();
+
 Hero xspawn(const float focal, const Point where, const int floor);
 
 Point xtouch(const Hero, const float reach);

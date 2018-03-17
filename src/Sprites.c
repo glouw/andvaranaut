@@ -8,6 +8,12 @@
 #include <ctype.h>
 #include <math.h>
 
+Sprites xzsprites()
+{
+    static Sprites sprites;
+    return sprites;
+}
+
 Sprites xsnew(const int max)
 {
     const Sprites sprites = { xtoss(Sprite, max), 0, max };
@@ -123,14 +129,14 @@ static void bound(const Sprites sprites, const Map map)
         if(xtile(sprite->where, map.walling))
         {
             xsplace(sprite, xmid(sprite->last));
-            xzero(sprite->velocity);
+            sprite->velocity = xzpoint();
             // TODO: Add a dizzy animation.
         }
         // Stuck in water.
         if(xblok(sprite->where, map.floring) == ' ')
         {
             xsplace(sprite, xmid(sprite->last));
-            xzero(sprite->velocity);
+            sprite->velocity = xzpoint();
             // TODO: Add a scared animation animation.
         }
     }

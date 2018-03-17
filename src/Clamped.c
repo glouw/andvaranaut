@@ -2,6 +2,12 @@
 
 #include "util.h"
 
+Clamped xzclamp()
+{
+    static Clamped clamped;
+    return clamped;
+}
+
 Clamped xclamp(const int yres, const float bot, const float top)
 {
     const Clamped clamp = {

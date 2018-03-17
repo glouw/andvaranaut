@@ -5,10 +5,15 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 
+Overview xzov()
+{
+    static Overview ov;
+    return ov;
+}
+
 Overview xinit()
 {
-    Overview ov;
-    xzero(ov);
+    Overview ov = xzov();
     ov.where.x = -1.0f;
     ov.where.y = -1.0f;
     ov.w = 32;

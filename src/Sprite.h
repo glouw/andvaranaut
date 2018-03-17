@@ -19,6 +19,8 @@ typedef struct
 }
 Sprite;
 
+Sprite xzsprite();
+
 int xsissprite(const int ascii);
 
 int xsiscosmetic(const Sprite* sprite);

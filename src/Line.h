@@ -9,6 +9,8 @@ typedef struct
 }
 Line;
 
+Line xzline();
+
 Line xrotate(const Line, const float t);
 
 Point xlerp(const Line, const float n);

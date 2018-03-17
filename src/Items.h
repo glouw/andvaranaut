@@ -9,6 +9,8 @@ typedef struct
 }
 Items;
 
+Items xzitems();
+
 Items xitsnew(const int max);
 
 int xitsadd(Items, const Item);

@@ -1,14 +1,8 @@
 # Makefile for use with Windows and Linux.
 #
-# If Windows, install MinGW32 and extract the SDL2 development files
-# to the same directory where this repository resides. Add mingw32/bin
-# to path. Once ready, cd to the andvaranaut repo and run:
-#
+# Windows:
 # 		mingw32-make
-#
-# If Linux, use your package manager to get required SDL2 libs. When installed,
-# use the command line to run:
-#
+# Unix:
 # 		make
 
 CC = gcc
@@ -29,6 +23,7 @@ SRCS+= Compass.c
 SRCS+= Field.c
 SRCS+= Gauge.c
 SRCS+= Hero.c
+SRCS+= Hit.c
 SRCS+= Hits.c
 SRCS+= Input.c
 SRCS+= Item.c
@@ -40,8 +35,10 @@ SRCS+= Overview.c
 SRCS+= Point.c
 SRCS+= Points.c
 SRCS+= Projection.c
+SRCS+= Ray.c
 SRCS+= State.c
 SRCS+= Sdl.c
+SRCS+= Sheer.c
 SRCS+= Scanline.c
 SRCS+= Sprite.c
 SRCS+= Sprites.c

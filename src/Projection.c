@@ -4,6 +4,12 @@
 
 #include <math.h>
 
+Projection xzproj()
+{
+    static Projection proj;
+    return proj;
+}
+
 Projection xproject(const int yres, const int xres, const float focal, const float yaw, const Point corrected, const float height)
 {
     // The corrected x distance must be clamped to a value small enough otherwise size will

@@ -14,6 +14,8 @@ typedef struct
 }
 Gauge;
 
+Gauge xzgauge();
+
 Gauge xgnew();
 
 void xgfree(const Gauge);

@@ -12,4 +12,6 @@ typedef struct
 }
 Args;
 
+Args xzargs();
+
 Args xparse(int argc, char* argv[]);

@@ -14,6 +14,8 @@ typedef struct
 }
 Sprites;
 
+Sprites xzsprites();
+
 Sprites xsnew(const int max);
 
 void xkill(const Sprites);

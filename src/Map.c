@@ -5,6 +5,12 @@
 
 #include <math.h>
 
+Map xzmap()
+{
+    static Map map;
+    return map;
+}
+
 void xmprint(char** block, const int rows, const int cols)
 {
     for(int row = 0; row < rows; row++)
@@ -46,8 +52,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors)
         md.b + 1.0f,
         up.a + (float) (rand() % 2)
     };
-    Map map;
-    xzero(map);
+    Map map = xzmap();
     map.rows = rows;
     map.cols = cols;
     map.ceiling = mnew(map.rows, map.cols, '#');

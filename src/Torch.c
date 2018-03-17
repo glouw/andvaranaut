@@ -2,6 +2,12 @@
 
 #include "util.h"
 
+Torch xztorch()
+{
+    static Torch torch;
+    return torch;
+}
+
 int xilluminate(const Torch torch, const float distance)
 {
     return torch.light / distance > 0xFF ? 0xFF : torch.light / distance;
@@ -16,8 +22,7 @@ Torch xburn(const Torch torch)
 
 Torch xsnuff()
 {
-    Torch torch;
-    xzero(torch);
+    Torch torch = xztorch();
     torch.light = 0;
     torch.brightness = 750;
     torch.dlight = torch.brightness / 32; // Arbitrary divisor.

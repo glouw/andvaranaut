@@ -13,6 +13,8 @@ typedef struct
 }
 Flow;
 
+Flow xzflow();
+
 Flow xstart(const float height);
 
 Flow xstream(Flow);
