@@ -11,6 +11,7 @@ typedef struct
     char** floring;
     int rows;
     int cols;
+    // TODO: Add points for special rooms and such.
     Points trapdoors;
     Sheer middle;
     Sheer upper;

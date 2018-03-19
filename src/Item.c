@@ -242,60 +242,34 @@ Item xitnew(const Classification c, const int index)
     it.c = c;
     switch((int) c)
     {
-    case AMMO:
-        return ammo(it);
-    case AMULET:
-        return amulet(it);
-    case ARMOR:
-        return armor(it);
-    case BOOK:
-        return book(it);
-    case BOOT:
-        return boot(it);
-    case CHEST:
-        return chest(it);
-    case FLESH:
-        return flesh(it);
-    case FOOD:
-        return food(it);
-    case GLOVE:
-        return glove(it);
-    case HAT:
-        return hat(it);
-    case KEY:
-        return key(it);
-    case LIGHT:
-        return light(it);
-    case LONGWEP:
-        return longwep(it);
-    case MEDWEP:
-        return medwep(it);
-    case MONEY:
-        return money(it);
-    case MUSIC:
-        return music(it);
-    case POTION:
-        return potion(it);
-    case RING:
-        return ring(it);
-    case ROCK:
-        return rock(it);
-    case SCROLL:
-        return scroll(it);
-    case SHIELD:
-        return shield(it);
-    case SHORTWEP:
-        return shortwep(it);
-    case TOOL:
-        return tool(it);
-    case WAND:
-        return wand(it);
-    case NONE:
-        return none(it);
-    case CLASSIFICATIONS:
+    case     AMMO: return     ammo(it);
+    case   AMULET: return   amulet(it);
+    case    ARMOR: return    armor(it);
+    case     BOOK: return     book(it);
+    case     BOOT: return     boot(it);
+    case    CHEST: return    chest(it);
+    case    FLESH: return    flesh(it);
+    case     FOOD: return     food(it);
+    case    GLOVE: return    glove(it);
+    case      HAT: return      hat(it);
+    case      KEY: return      key(it);
+    case    LIGHT: return    light(it);
+    case  LONGWEP: return  longwep(it);
+    case   MEDWEP: return   medwep(it);
+    case    MONEY: return    money(it);
+    case    MUSIC: return    music(it);
+    case   POTION: return   potion(it);
+    case     RING: return     ring(it);
+    case     ROCK: return     rock(it);
+    case   SCROLL: return   scroll(it);
+    case   SHIELD: return   shield(it);
+    case SHORTWEP: return shortwep(it);
+    case     TOOL: return     tool(it);
+    case     WAND: return     wand(it);
+    case     NONE: return     none(it);
+    default:
         return it;
     }
-    return it;
 }
 
 Item xitrand(const Surfaces ss)

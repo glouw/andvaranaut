@@ -35,8 +35,8 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     const Point dx = { delta.x, 0.0f };
     const Point dy = { 0.0f, delta.y };
     const Line test = {
-        xadd(ray, xmag(xsub(hor, ver)) < 0.01f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
-        xsub(ray, xmag(xsub(hor, ver)) < 0.01f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
+        xadd(ray, xmag(xsub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
+        xsub(ray, xmag(xsub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
     };
     // Flooring wall was hit. Push the flooring hit linked list.
     if(xtile(test.a, map.floring) && !xtile(test.b, map.floring))
