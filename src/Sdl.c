@@ -247,7 +247,7 @@ static void dgrange(const Sdl sdl, const Gauge g, const float sens)
 {
     if(g.count > 0)
     {
-        const float growth = (g.max - g.count) / (float) g.max;
+        const float growth = (g.wind - g.count) / (float) g.wind;
         const int width = growth * 64;
         const int color = growth * 0xFF;
         drect(
@@ -263,7 +263,7 @@ static void dgmagic(const Sdl sdl, const Gauge g, const float sens)
 {
     for(int i = 0; i < g.count; i++)
     {
-        const float growth = (g.max - g.count) / (float) g.max;
+        const float growth = (g.wind - g.count) / (float) g.wind;
         const int width = 6;
         const int color = growth * 0xFF;
         drect(sdl,

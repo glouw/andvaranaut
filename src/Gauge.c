@@ -12,7 +12,7 @@ Gauge xgnew()
 {
     Gauge g = xzgauge();
     g.max = 240;
-    g.wind = 240;
+    g.wind = 60;
     g.points = xtoss(Point, g.max);
     return g;
 }
@@ -33,7 +33,7 @@ Gauge xgwind(Gauge g, const Classification c, const Input input)
     if(input.l)
     {
         // Fizzle out.
-        if(g.count == g.max)
+        if(g.count == g.wind)
             g = reset(g);
         // Trace.
         g.points[g.count].x = (g.mx += input.dx);
