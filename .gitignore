@@ -6,3 +6,4 @@ andvaranaut.exe
 SDL2.dll
 *.db
 art/art.cfg
+*.py
