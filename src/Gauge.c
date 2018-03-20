@@ -11,9 +11,8 @@ Gauge xzgauge()
 Gauge xgnew()
 {
     Gauge g = xzgauge();
-    // TODO:
-    // Maybe have max change with weapon? Stronger weapons have longer windup.
-    g.max = 120; /* About two seconds max. */
+    g.max = 240;
+    g.wind = 240;
     g.points = xtoss(Point, g.max);
     return g;
 }

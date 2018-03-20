@@ -240,7 +240,7 @@ Item xitnew(const Classification c, const int index)
     Item it = xzitem();
     it.index = index;
     it.c = c;
-    switch((int) c)
+    switch(c)
     {
     case     AMMO: return     ammo(it);
     case   AMULET: return   amulet(it);

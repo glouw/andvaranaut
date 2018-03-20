@@ -39,6 +39,8 @@ int xcindices(const Classification, const Surfaces);
 
 int xismelee(const Classification);
 
-int xisranged(const Classification);
+int xisrange(const Classification);
 
 int xismagic(const Classification);
+
+int xisconsumable(const Classification);

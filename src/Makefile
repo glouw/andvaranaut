@@ -5,7 +5,7 @@
 # Unix:
 # 		make
 
-CC = gcc
+CC = g++
 
 NAME = ../andvaranaut
 

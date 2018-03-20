@@ -11,6 +11,7 @@ typedef struct
     Point* points;
     int mx;
     int my;
+    int wind;
 }
 Gauge;
 

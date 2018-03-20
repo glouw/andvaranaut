@@ -65,10 +65,11 @@ int main(int argc, char* argv[])
                 SDL_SetRelativeMouseMode(SDL_TRUE);
                 // Classification of selected inventory item determines attack animation
                 const Classification cl = inv.items.item[inv.selected].c;
+                // Attack must be calculated before gauge is winded as gauge can reset this frame.
                 const Attack atk = xgpower(gg, in, cl);
                 gg = xgwind(gg, cl, in);
                 me = xsustain(me, wd.map[me.floor], in, current);
-                xdgauge(sdl, gg);
+                xdgauge(sdl, gg, cl);
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, sdl.surfaces, ticks);
             }
             xdmap(sdl, wd.map[me.floor], me.where);

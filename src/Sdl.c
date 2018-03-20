@@ -218,22 +218,68 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
         && (to.y > sdl.yres || to.y < -ov.h);
 }
 
-// Draws all power gauge squares.
-// As a trained swordsman your sword will always return to the center of the screen.
-void xdgauge(const Sdl sdl, const Gauge g)
+static void drect(const Sdl sdl, const int x, const int y, const int width, const int color, const int filled)
+{
+    const SDL_Rect square = { x, y, width, width };
+    SDL_SetRenderDrawColor(sdl.renderer, 0xFF, color, 0x00, 0xFF);
+    filled ?
+        SDL_RenderFillRect(sdl.renderer, &square):
+        SDL_RenderDrawRect(sdl.renderer, &square);
+}
+
+// Draws melee gauge.
+static void dgmelee(const Sdl sdl, const Gauge g, const float sens)
 {
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
         const int width = growth * 12;
         const int color = growth * 0xFF;
-        const float sens = 2.33;
-        const int x = g.points[i].x * sens - (width - sdl.xres) / 2;
-        const int y = g.points[i].y * sens - (width - sdl.yres) / 2;
-        const SDL_Rect square = { x, y, width, width };
-        SDL_SetRenderDrawColor(sdl.renderer, 0xFF, color, 0x00, 0xFF);
-        SDL_RenderFillRect(sdl.renderer, &square);
+        drect(sdl,
+            g.points[i].x * sens - (width - sdl.xres) / 2,
+            g.points[i].y * sens - (width - sdl.yres) / 2,
+            width, color, true);
     }
+}
+
+// Draws ranged gauge.
+static void dgrange(const Sdl sdl, const Gauge g, const float sens)
+{
+    if(g.count > 0)
+    {
+        const float growth = (g.max - g.count) / (float) g.max;
+        const int width = growth * 64;
+        const int color = growth * 0xFF;
+        drect(
+            sdl,
+            g.points[g.count - 1].x * sens - (width - sdl.xres) / 2,
+            g.points[g.count - 1].y * sens - (width - sdl.yres) / 2,
+            width, color, false);
+    }
+}
+
+// Draws magic gauge.
+static void dgmagic(const Sdl sdl, const Gauge g, const float sens)
+{
+    for(int i = 0; i < g.count; i++)
+    {
+        const float growth = (g.max - g.count) / (float) g.max;
+        const int width = 6;
+        const int color = growth * 0xFF;
+        drect(sdl,
+            g.points[i].x * sens - (width - sdl.xres) / 2,
+            g.points[i].y * sens - (width - sdl.yres) / 2,
+            width, color, true);
+    }
+}
+
+// Draws all power gauge squares.
+void xdgauge(const Sdl sdl, const Gauge g, const Classification c)
+{
+    const float sens = 2.33;
+    if(xismelee(c)) dgmelee(sdl, g, sens);
+    if(xisrange(c)) dgrange(sdl, g, sens);
+    if(xismagic(c)) dgmagic(sdl, g, sens);
 }
 
 // Draw tiles for the grid layout.
