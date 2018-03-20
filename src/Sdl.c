@@ -250,8 +250,7 @@ static void dgrange(const Sdl sdl, const Gauge g, const float sens)
         const float growth = (g.wind - g.count) / (float) g.wind;
         const int width = growth * 64;
         const int color = growth * 0xFF;
-        drect(
-            sdl,
+        drect(sdl,
             g.points[g.count - 1].x * sens - (width - sdl.xres) / 2,
             g.points[g.count - 1].y * sens - (width - sdl.yres) / 2,
             width, color, false);
