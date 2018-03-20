@@ -26,8 +26,8 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.floor = floor;
     hero.fov = lens(focal);
     hero.where = where;
-    hero.speed = 0.12f;
-    hero.acceleration = 0.0150f;
+    hero.speed = 0.05f;//0.12f
+    hero.acceleration = .015f; //0.0150f
     hero.torch = xsnuff();
     hero.arm = 0.75f;
     hero.aura = 12;
@@ -40,6 +40,9 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.mnamax = 4.0f;
     hero.ftg = 6.0f;
     hero.ftgmax = 6.0f;
+
+    hero.sprint = 1.8; //##4## added for sprint multiplier
+    
     return hero;
 }
 
@@ -137,18 +140,28 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     || input.key[SDL_SCANCODE_D]
     || input.key[SDL_SCANCODE_A])
     {
-        const Point acceleration = accelerate(hero);
+
+	const Point acceleration = accelerate(hero);
         if(input.key[SDL_SCANCODE_W]) hero.velocity = xadd(hero.velocity, acceleration);
         if(input.key[SDL_SCANCODE_S]) hero.velocity = xsub(hero.velocity, acceleration);
         if(input.key[SDL_SCANCODE_D]) hero.velocity = xadd(hero.velocity, xrag(acceleration));
         if(input.key[SDL_SCANCODE_A]) hero.velocity = xsub(hero.velocity, xrag(acceleration));
     }
+    
+
     // Mass spring damper if not accelerating.
-    else hero.velocity = xmul(hero.velocity, 1.0f - hero.acceleration / speed);
+    else hero.velocity = xmul(hero.velocity, 0.5f - hero.acceleration / speed); // hero.velocity, 1.0f - hero.acceleration / speed
     // Current velocity is added to hero velocity if hero is swimming.
     if(swimming) hero.velocity = xadd(hero.velocity, current.velocity);
+
     // Top speed check.
-    if(xmag(hero.velocity) > speed) hero.velocity = xmul(xunt(hero.velocity), speed);
+	//for sprinting uncap speed: ##1## added shift for sprinting
+    if((xmag(hero.velocity) > speed)&&input.key[SDL_SCANCODE_LSHIFT]) hero.velocity = xmul(xunt(hero.velocity), (speed*hero.sprint)); 
+	//for non sprinting revert to this state: ##2##	
+    else if((xmag(hero.velocity) > speed)) hero.velocity = xmul(xunt(hero.velocity), (speed));
+
+
+
     // Moves and checks for a collision.
     hero.where = xadd(hero.where, hero.velocity);
     // Reset hero if collision.

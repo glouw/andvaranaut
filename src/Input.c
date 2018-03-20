@@ -51,5 +51,5 @@ Input xready(const float sensitivity)
 
 int xinvuse(const Input in)
 {
-    return in.key[SDL_SCANCODE_LSHIFT];
+    return in.key[SDL_SCANCODE_RSHIFT]; //##3## changed to Right Shift
 }
