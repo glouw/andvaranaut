@@ -10,6 +10,7 @@ Dependencies:
 
 This project started as a self-study to fast compiling scalable
 C software with fast link time optimization and maximum system portability.
+It is now a Rogue-Lite Dungeon Crawler.
 
 Game mechanics are now being implemented.
 
