@@ -8,11 +8,10 @@ Dependencies:
 
     SDL2-devel
 
-This project started as a self-study to fast compiling scalable
-C software with fast link time optimization and maximum system portability.
-It is now a Rogue-Lite Dungeon Crawler.
+Andvaranaut builds fast on Windows, Linux, and MacOS and avoids OpenGL cross platform
+hell thanks to its unique software graphics engine.
 
-Game mechanics are now being implemented.
+Game mechanics are inspired by DnD's 5e Dungeon Master's Guide.
 
 Source wise:
 
