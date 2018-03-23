@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         if(in.key[SDL_SCANCODE_TAB])
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
-            ov = xupdate(ov, in, sdl.xres, sdl.textures.count);
+            ov = xupdate(ov, in, sdl.xres);
             xmedit(wd.map[me.floor], ov);
             wd.sprites[me.floor] = xlay(wd.sprites[me.floor], wd.map[me.floor], ov);
             xview(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], ticks);

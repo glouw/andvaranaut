@@ -327,7 +327,7 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
 // Draw the selection panel.
 static void dpanel(const Sdl sdl, const Overview ov, const int ticks)
 {
-    for(int i = ov.wheel; i < sdl.textures.count; i++)
+    for(int i = ov.wheel; i <= '~' - ' '; i++)
     {
         const SDL_Rect to = { ov.w * (i - ov.wheel), 0, ov.w, ov.h };
         // Sprites.

@@ -39,8 +39,9 @@ Overview xbackpan(Overview ov, const Point where, const int xres, const int yres
     return ov;
 }
 
-Overview xupdate(Overview ov, const Input input, const int xres, const int textures)
+Overview xupdate(Overview ov, const Input input, const int xres)
 {
+    const int textures = '~' - ' ' + 1;
     // Selecting either 1, 2, or 3 will change the overview party to either the flooring, walling, or ceiling tiles.
     if(input.key[SDL_SCANCODE_1]) ov.party = FLORING;
     if(input.key[SDL_SCANCODE_2]) ov.party = WALLING;
