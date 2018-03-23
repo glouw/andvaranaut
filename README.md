@@ -12,3 +12,17 @@ This project started as a self-study to fast compiling scalable
 C software with fast link time optimization and maximum system portability.
 
 Game mechanics are now being implemented.
+
+Source wise:
+
+    src:
+        Game engine
+
+    art:
+        Game art
+
+    aux:
+        Python scripts for random land generation. Art contains master copies
+
+    screenshots:
+        Self explanatory
