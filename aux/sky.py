@@ -1,8 +1,9 @@
-# This Python2 script generates two Quake-like cloud textures
-# (cloud.bmp and cloud2.bmp) using Tileable Perlin Noise.
-
-# cloud.bmp is the back cloud layer and cloud2.bmp
+# This Python2 script generates two Quake-like cloud textures (cloud.bmp and cloud2.bmp)
+# using Tileable Perlin Noise. cloud.bmp is the back cloud layer and cloud2.bmp
 # is the front cloud layer with a transperancy alpha.
+#
+# Copyright (c) Boojum, Stack Exchange:
+#   https://gamedev.stackexchange.com/questions/23625/how-do-you-generate-tileable-perlin-noise
 
 import random, copy, math
 from PIL import Image, ImageOps
