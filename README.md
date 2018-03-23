@@ -22,7 +22,7 @@ Source wise:
         Game art
 
     aux:
-        Python scripts for random land generation. Art contains master copies
+        Support Python2 scripts (procedural art generation and such). Game will release without aux folder
 
     screenshots:
         Self explanatory
