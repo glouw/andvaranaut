@@ -248,7 +248,7 @@ static void dgrange(const Sdl sdl, const Gauge g, const float sens)
     if(g.count > 0)
     {
         const float growth = (g.wind - g.count) / (float) g.wind;
-        const int width = growth * 64;
+        const int width = growth * 256; // This can be part of the weapon.
         const int color = growth * 0xFF;
         drect(sdl,
             g.points[g.count - 1].x * sens - (width - sdl.xres) / 2,
