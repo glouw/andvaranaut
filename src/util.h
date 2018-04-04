@@ -25,6 +25,8 @@ void xbomb(const char* const message, ...);
 
 int xodd(const int a);
 
+float xsinc(const float x, const float p);
+
 #define xlen(a) ((int) (sizeof(a) / sizeof(*a)))
 
 #define xwipe(t, n) ((t*) calloc((n) , sizeof(t)))
@@ -38,6 +40,8 @@ int xodd(const int a);
 #define xmin(a, b) ((a) < (b) ? (a) : (b))
 
 #define xequals(a, b) (strcmp(a, b) == 0)
+
+#define FPI (3.1416f)
 
 // D&D dice.
 int xd2(), xd4(), xd8(), xd10();

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Point.h"
-#include "Gauge.h"
-#include "Input.h"
 
 typedef struct
 {
@@ -13,5 +11,3 @@ typedef struct
 Attack;
 
 Attack xzattack();
-
-Attack xgpower(const Gauge, const Input, const Classification c);

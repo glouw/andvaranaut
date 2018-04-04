@@ -6,6 +6,7 @@
 #include "Overview.h"
 #include "Flow.h"
 #include "Gauge.h"
+#include "Attack.h"
 
 #include <SDL2/SDL.h>
 
@@ -47,7 +48,7 @@ void xrender(const Sdl, const Hero, const Sprites, const Map, const Flow current
 // Renders the overview of the map and sprites for editing purposes.
 void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks);
 
-void xdgauge(const Sdl, const Gauge, const Classification);
+Attack xdgauge(const Sdl, const Gauge, const Item);
 
 void xdmap(const Sdl, const Map, const Point);
 

@@ -1,6 +1,7 @@
 #include "util.h"
 
 #include <stdarg.h>
+#include <math.h>
 #include <ctype.h>
 
 int xfl(const float x)
@@ -58,6 +59,11 @@ void xbomb(const char* const message, ...)
     vprintf(message, args);
     va_end(args);
     exit(1);
+}
+
+float xsinc(const float x, const float p)
+{
+    return sinf(FPI * x * p) / (FPI * x * p);
 }
 
 int xodd(const int a)

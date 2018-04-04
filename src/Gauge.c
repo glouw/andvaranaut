@@ -12,7 +12,7 @@ Gauge xgnew()
 {
     Gauge g = xzgauge();
     g.max = 240;
-    g.wind = 60;
+    g.wind = 240;
     g.points = xtoss(Point, g.max);
     return g;
 }

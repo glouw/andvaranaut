@@ -46,7 +46,6 @@ SRCS+= Surfaces.c
 SRCS+= Textures.c
 SRCS+= Torch.c
 SRCS+= Tris.c
-SRCS+= Tinn.c
 SRCS+= World.c
 
 # CompSpec defined in windows environment.

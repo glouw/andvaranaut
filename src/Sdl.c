@@ -228,37 +228,69 @@ static void drect(const Sdl sdl, const int x, const int y, const int width, cons
 }
 
 // Draws melee gauge.
-static void dgmelee(const Sdl sdl, const Gauge g, const float sens)
+static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
+    // Animate.
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
         const int width = growth * 12;
         const int color = growth * 0xFF;
         drect(sdl,
+            // Position with respect to middle of screen.
             g.points[i].x * sens - (width - sdl.xres) / 2,
             g.points[i].y * sens - (width - sdl.yres) / 2,
             width, color, true);
     }
+    // Calculate attack.
+    const int last = g.count - 1;
+    // The tail must be at least this long.
+    // On the mouse left up, calculate the magnitude and direction of attack.
+    const int tail = 6;
+    if(g.count < tail)
+        return xzattack();
+    float mag = 0.0f;
+    // Magnitude.
+    for(int i = 0; i < g.count - 1; i++)
+        mag += xmag(xsub(g.points[i + 1], g.points[i + 0]));
+    // Direction.
+    const Point dir = xsub(g.points[last], g.points[last - tail]);
+    const Attack attack = {
+        mag,
+        xunt(dir),
+        // Certain weapons offer more "hurt" factors than others.
+        // Hurt factors declare how many enemies may be hurt by a single swipe.
+        // A greatword may be able to cleave three enemies at once,
+        // while a short sword only one.
+        3
+    };
+    // If direction magitude is zero, the unit vector will be NA, so none must be returned.
+    return xmag(dir) > 0.0f ? attack : xzattack();
 }
 
 // Draws ranged gauge.
-static void dgrange(const Sdl sdl, const Gauge g, const float sens)
+static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
     if(g.count > 0)
     {
-        const float growth = (g.wind - g.count) / (float) g.wind;
-        const int width = growth * 256; // This can be part of the weapon.
-        const int color = growth * 0xFF;
+        const float amp = 360.0f;
+        const float steady = amp / 2.0f;
+        const float width = amp * xsinc(g.count, 0.05f) + steady;
         drect(sdl,
+            // Position with respect to middle of screen.
             g.points[g.count - 1].x * sens - (width - sdl.xres) / 2,
             g.points[g.count - 1].y * sens - (width - sdl.yres) / 2,
-            width, color, false);
+            width, 0x00FFFF, false);
+        const float mag = 1.0f / (steady - width);
+        const Point dir = { 0.0f, -1.0f };
+        const Attack attack = { mag, dir, 1 };
+        return attack;
     }
+    return xzattack();
 }
 
 // Draws magic gauge.
-static void dgmagic(const Sdl sdl, const Gauge g, const float sens)
+static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
     for(int i = 0; i < g.count; i++)
     {
@@ -266,19 +298,24 @@ static void dgmagic(const Sdl sdl, const Gauge g, const float sens)
         const int width = 6;
         const int color = growth * 0xFF;
         drect(sdl,
+            // Position with respect to middle of screen.
             g.points[i].x * sens - (width - sdl.xres) / 2,
             g.points[i].y * sens - (width - sdl.yres) / 2,
             width, color, true);
     }
+    // Check input to output error for all to figure out which shape was drawn.
+    // No need for machine learning like caro's bar friend said.
+    return xzattack();
 }
 
 // Draws all power gauge squares.
-void xdgauge(const Sdl sdl, const Gauge g, const Classification c)
+Attack xdgauge(const Sdl sdl, const Gauge g, const Item it)
 {
     const float sens = 2.33;
-    if(xismelee(c)) dgmelee(sdl, g, sens);
-    if(xisrange(c)) dgrange(sdl, g, sens);
-    if(xismagic(c)) dgmagic(sdl, g, sens);
+    if(xismelee(it.c)) return dgmelee(sdl, g, it, sens);
+    if(xisrange(it.c)) return dgrange(sdl, g, it, sens);
+    if(xismagic(it.c)) return dgmagic(sdl, g, it, sens);
+    return xzattack();
 }
 
 // Draw tiles for the grid layout.
