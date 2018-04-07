@@ -142,7 +142,11 @@ Sdl xsetup(const Args args)
     sdl.threads = args.threads;
     sdl.surfaces = xpull(sdl.key);
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
+    // GUI surfaces start at this index of the surfaces.
     sdl.gui = '~' - ' ' + 25;
+    sdl.wht = 0xFFDFEFD7;
+    sdl.blk = 0xFF000000;
+    sdl.red = 0xFFD34549;
     return sdl;
 }
 
@@ -220,8 +224,12 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 
 static void drect(const Sdl sdl, const int x, const int y, const int width, const int color, const int filled)
 {
+    const int a = (color >> 24) & 0xFF;
+    const int r = (color >> 16) & 0xFF;
+    const int g = (color >>  8) & 0xFF;
+    const int b = (color >>  0) & 0xFF;
     const SDL_Rect square = { x, y, width, width };
-    SDL_SetRenderDrawColor(sdl.renderer, 0xFF, color, 0x00, 0xFF);
+    SDL_SetRenderDrawColor(sdl.renderer, r, g, b, a);
     filled ?
         SDL_RenderFillRect(sdl.renderer, &square):
         SDL_RenderDrawRect(sdl.renderer, &square);
@@ -230,42 +238,29 @@ static void drect(const Sdl sdl, const int x, const int y, const int width, cons
 // Draws melee gauge.
 static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
-    // Animate.
+    // Animate attack.
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
-        const int width = growth * 12;
-        const int color = growth * 0xFF;
-        drect(sdl,
-            // Position with respect to middle of screen.
-            g.points[i].x * sens - (width - sdl.xres) / 2,
-            g.points[i].y * sens - (width - sdl.yres) / 2,
-            width, color, true);
+        const int width = growth * 12; // Hard coded size.
+        const int x = g.points[i].x * sens - (width - sdl.xres) / 2;
+        const int y = g.points[i].y * sens - (width - sdl.yres) / 2;
+        drect(sdl, x, y, width, sdl.wht, true);
     }
     // Calculate attack.
     const int last = g.count - 1;
-    // The tail must be at least this long.
-    // On the mouse left up, calculate the magnitude and direction of attack.
     const int tail = 6;
     if(g.count < tail)
         return xzattack();
     float mag = 0.0f;
-    // Magnitude.
     for(int i = 0; i < g.count - 1; i++)
         mag += xmag(xsub(g.points[i + 1], g.points[i + 0]));
-    // Direction.
+    mag += it.damage;
+    // Hurts is a melee property. For instance, more than one
+    // enemy can be hurt when a warhammer is used.
     const Point dir = xsub(g.points[last], g.points[last - tail]);
-    const Attack attack = {
-        mag,
-        xunt(dir),
-        // Certain weapons offer more "hurt" factors than others.
-        // Hurt factors declare how many enemies may be hurt by a single swipe.
-        // A greatword may be able to cleave three enemies at once,
-        // while a short sword only one.
-        3
-    };
-    // If direction magitude is zero, the unit vector will be NA, so none must be returned.
-    return xmag(dir) > 0.0f ? attack : xzattack();
+    const Attack melee = { mag, xunt(dir), it.hurts, MELEE, 0 };
+    return xmag(dir) > 0.0f ? melee : xzattack();
 }
 
 // Draws ranged gauge.
@@ -273,18 +268,22 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 {
     if(g.count > 0)
     {
-        const float amp = 360.0f;
-        const float steady = amp / 2.0f;
-        const float width = amp * xsinc(g.count, 0.05f) + steady;
-        drect(sdl,
-            // Position with respect to middle of screen.
-            g.points[g.count - 1].x * sens - (width - sdl.xres) / 2,
-            g.points[g.count - 1].y * sens - (width - sdl.yres) / 2,
-            width, 0x00FFFF, false);
+        // Animate attack. Both amplitude and attack are bow properties.
+        // A weaker bow may have longer period and amplitude, for instance.
+        // A longbow may have long period and amplitude but huge attack.
+        // A shortbow may have short period and amplitude and medium attack.
+        const float steady = it.amplitude / 2.0f;
+        const float width = it.amplitude * xsinc(g.count, it.period) + steady;
+        // Hurts is also a bow property. Longbows, for instance, can hurt more than one sprite.
+        const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
+        const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
+        drect(sdl, x, y, width, sdl.wht, false);
+        // Calculate attack.
         const float mag = 1.0f / (steady - width);
+        // Animation direction is constant.
         const Point dir = { 0.0f, -1.0f };
-        const Attack attack = { mag, dir, 1 };
-        return attack;
+        const Attack range = { mag, dir, it.hurts, RANGE, 0 };
+        return range;
     }
     return xzattack();
 }
@@ -292,30 +291,59 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 // Draws magic gauge.
 static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
-    for(int i = 0; i < g.count; i++)
+    if(g.count > 0)
     {
-        const float growth = (g.wind - g.count) / (float) g.wind;
-        const int width = 6;
-        const int color = growth * 0xFF;
-        drect(sdl,
-            // Position with respect to middle of screen.
-            g.points[i].x * sens - (width - sdl.xres) / 2,
-            g.points[i].y * sens - (width - sdl.yres) / 2,
-            width, color, true);
+        const int size = 4; // Must come from Scroll.[ch].
+        const int grid = 64;
+        const Point middle = {
+            sdl.xres / 2,
+            sdl.yres / 2,
+        };
+        const Point shift = {
+            grid / 2,
+            grid / 2,
+        };
+        // Animate attack (inside square for mouse cursor).
+        for(int i = 0; i < g.count; i++)
+        {
+            // Must populate Scroll int array.
+            const Point corner = xsnap(xmul(g.points[i], sens), grid);
+            const Point center = xadd(middle, corner);
+            const Point shifted = xsub(center, shift);
+            drect(sdl, shifted.x, shifted.y, grid, sdl.wht, true);
+            // For the magic scroll export.
+            const int x = corner.x / grid;
+            const int y = corner.y / grid;
+        }
+        // Animate attack (grid squares).
+        for(int x = -size; x <= size; x++)
+        for(int y = -size; y <= size; y++)
+        {
+            const Point which = { x, y };
+            const Point corner = xmul(which, grid);
+            const Point center = xadd(middle, corner);
+            const Point shifted = xsub(center, shift);
+            drect(sdl, shifted.x, shifted.y, grid, sdl.red, false);
+        }
     }
-    // Check input to output error for all to figure out which shape was drawn.
-    // No need for machine learning like caro's bar friend said.
-    return xzattack();
+    // Calculate attack.
+    // Runs through scroll int array and checks for error with all scroll int array shapes.
+    const float mag = 0.0f;
+    const Point dir = { 0.0f, 0.0f };
+    // The magic scroll closest to the drawn gauge shape is calculated in the attack shape.
+    const int scroll = 0;
+    const Attack magic = { mag, dir, 0, MAGIC, scroll };
+    return magic;
 }
 
 // Draws all power gauge squares.
 Attack xdgauge(const Sdl sdl, const Gauge g, const Item it)
 {
     const float sens = 2.33;
-    if(xismelee(it.c)) return dgmelee(sdl, g, it, sens);
-    if(xisrange(it.c)) return dgrange(sdl, g, it, sens);
-    if(xismagic(it.c)) return dgmagic(sdl, g, it, sens);
-    return xzattack();
+    return
+        xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
+        xisrange(it.c) ? dgrange(sdl, g, it, sens) :
+        xismagic(it.c) ? dgmagic(sdl, g, it, sens) : xzattack();
 }
 
 // Draw tiles for the grid layout.
@@ -444,8 +472,8 @@ void xdbars(const Sdl sdl, const Hero hero, const int ticks)
 // Draws the inventory backpanel. Selected inventory item is highlighted.
 static void dinvbp(const Sdl sdl, const Inventory inv)
 {
-    const Point wht = { 0.0, 512.0 };
-    const Point red = { 0.0, 528.0 };
+    const Point whtbp = { 0.0, 512.0 };
+    const Point redbp = { 0.0, 528.0 };
     for(int i = 0; i < inv.items.max; i++)
     {
         SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
@@ -453,8 +481,8 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
         const int w = surface->w;
         const int xx = sdl.xres - inv.w;
         const SDL_Rect from = {
-            (int) (i == inv.selected ? red.x : wht.x),
-            (int) (i == inv.selected ? red.y : wht.y),
+            (int) (i == inv.selected ? redbp.x : whtbp.x),
+            (int) (i == inv.selected ? redbp.y : whtbp.y),
             w, w
         };
         const SDL_Rect to = { xx, inv.w * i, inv.w, inv.w };
@@ -500,6 +528,7 @@ static void drooms(uint32_t* pixels, const int width, const Map map, const uint3
     }
 }
 
+// Like drect, but draws a dot with per pixel access. Does not use SDL_Rect.
 static void ddot(uint32_t* pixels, const int width, const Point where, const int size, const uint32_t in, const uint32_t out)
 {
     for(int y = -size; y <= size; y++)
@@ -528,12 +557,9 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
     SDL_LockTexture(texture, NULL, &screen, &pitch);
     const int width = pitch / sizeof(uint32_t);
     uint32_t* pixels = (uint32_t*) screen;
-    const uint32_t wht = 0XFFDFEFD7;
-    const uint32_t blk = 0XFF000000;
-    const uint32_t red = 0XFFD34549;
     // Draw rooms and hero dot.
-    drooms(pixels, width, map, wht, blk);
-    ddot(pixels, width, where, 3, red, blk);
+    drooms(pixels, width, map, sdl.wht, sdl.blk);
+    ddot(pixels, width, where, 3, sdl.red, sdl.blk);
     // Unlock and send.
     SDL_UnlockTexture(texture);
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };

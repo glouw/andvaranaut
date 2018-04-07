@@ -31,6 +31,10 @@ typedef struct
     uint32_t key;
     // Index of the gui.
     int gui;
+    // Custom gui colors.
+    uint32_t wht;
+    uint32_t blk;
+    uint32_t red;
 }
 Sdl;
 

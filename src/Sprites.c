@@ -241,6 +241,8 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
 {
     if(!in.lu)
         return sprites;
+    if(attack.method == NOATTACK)
+        return sprites;
     const Point hand = xtouch(hero, hero.arm);
     const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
     // Hurt counter indicates how many sprites can be hurt at once. Different weapons have different hurt counters.

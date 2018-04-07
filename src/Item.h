@@ -9,6 +9,12 @@ typedef struct
     const char* desc;
     // Classification string.
     const char* cstr;
+    // Stats,
+    float damage;
+    int hurts;
+    // Additional stats for bows.
+    float amplitude;
+    float period;
 }
 Item;
 
