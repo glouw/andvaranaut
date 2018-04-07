@@ -1,5 +1,6 @@
 #include "Tris.h"
 #include "World.h"
+#include "Scroll.h"
 #include "Inventory.h"
 #include "util.h"
 
@@ -21,6 +22,7 @@ int main(int argc, char* argv[])
     Field fd = xprepare(wd.map[me.floor], me.aura);
     Inventory inv = xinvnew();
     Sdl sdl = xsetup(args);
+    Scroll scroll = xscnew(sdl.surfaces); 
     // X-Resolution 512 reserved for performance testing.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
     {
@@ -64,7 +66,7 @@ int main(int argc, char* argv[])
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
                 const Item it = inv.items.item[inv.selected];
-                const Attack atk = xdgauge(sdl, gg, it);
+                const Attack atk = xdgauge(sdl, gg, it, scroll);
                 gg = xgwind(gg, it.c, in);
                 me = xsustain(me, wd.map[me.floor], in, current);
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, sdl.surfaces, ticks);

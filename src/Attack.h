@@ -9,7 +9,8 @@ typedef struct
     Point dir;
     int hurts;
     Method method;
-    int scroll;
+    // Scroll index.
+    int scindex;
 }
 Attack;
 
