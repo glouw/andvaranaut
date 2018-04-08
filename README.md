@@ -8,8 +8,7 @@ Dependencies:
 
     SDL2-devel
 
-Andvaranaut builds fast on Windows, Linux, and MacOS and avoids OpenGL cross platform
-hell thanks to its unique software graphics engine.
+Andvaranaut builds fast on Windows, Linux, and MacOS with its unique software graphics engine.
 
 Game mechanics are inspired by DnD's 5e Dungeon Master's Guide.
 
