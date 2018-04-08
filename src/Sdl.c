@@ -289,7 +289,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 }
 
 // Draws magic gauge.
-static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float sens, const Scroll sc)
+static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
     if(g.count > 0)
     {
@@ -337,13 +337,13 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
 }
 
 // Draws all power gauge squares.
-Attack xdgauge(const Sdl sdl, const Gauge g, const Item it, const Scroll sc)
+Attack xdgauge(const Sdl sdl, const Gauge g, const Item it)
 {
     const float sens = 2.33;
     return
         xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         xisrange(it.c) ? dgrange(sdl, g, it, sens) :
-        xismagic(it.c) ? dgmagic(sdl, g, it, sens, sc) : xzattack();
+        xismagic(it.c) ? dgmagic(sdl, g, it, sens) : xzattack();
 }
 
 // Draw tiles for the grid layout.

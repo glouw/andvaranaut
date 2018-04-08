@@ -53,7 +53,7 @@ void xrender(const Sdl, const Hero, const Sprites, const Map, const Flow current
 // Renders the overview of the map and sprites for editing purposes.
 void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks);
 
-Attack xdgauge(const Sdl, const Gauge, const Item, const Scroll);
+Attack xdgauge(const Sdl, const Gauge, const Item);
 
 void xdmap(const Sdl, const Map, const Point);
 
