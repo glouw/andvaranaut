@@ -311,9 +311,6 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             const Point center = xadd(middle, corner);
             const Point shifted = xsub(center, shift);
             drect(sdl, shifted.x, shifted.y, grid, sdl.wht, true);
-            // For the magic scroll export.
-            const int x = corner.x / grid;
-            const int y = corner.y / grid;
         }
         // Animate attack (grid squares).
         for(int x = -size; x <= size; x++)
