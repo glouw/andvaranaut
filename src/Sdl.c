@@ -289,28 +289,22 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 }
 
 // Draws magic gauge.
-static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float sens)
+static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float sens, const Inventory inv, const Scroll sc)
 {
     if(g.count > 0)
     {
         const int size = 4; // Must come from Scroll.[ch].
         const int grid = 64;
-        const Point middle = {
-            sdl.xres / 2,
-            sdl.yres / 2,
-        };
-        const Point shift = {
-            grid / 2,
-            grid / 2,
-        };
+        const Point middle = { sdl.xres / 2, sdl.yres / 2, };
+        const Point shift = { grid / 2, grid / 2, };
         // Animate attack (inside square for mouse cursor).
         for(int i = 0; i < g.count; i++)
         {
             // Must populate Scroll int array.
-            const Point corner = xsnap(xmul(g.points[i], sens), grid);
-            const Point center = xadd(middle, corner);
-            const Point shifted = xsub(center, shift);
-            drect(sdl, shifted.x, shifted.y, grid, sdl.wht, true);
+            const Point point = xadd(xmul(g.points[i], sens), shift);
+            const Point corner = xsnap(point, grid);
+            const Point center = xsub(xadd(corner, middle), shift);
+            drect(sdl, center.x, center.y, grid, sdl.wht, true);
         }
         // Animate attack (grid squares).
         for(int x = -size; x <= size; x++)
@@ -318,15 +312,18 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
         {
             const Point which = { x, y };
             const Point corner = xmul(which, grid);
-            const Point center = xadd(middle, corner);
-            const Point shifted = xsub(center, shift);
-            drect(sdl, shifted.x, shifted.y, grid, sdl.red, false);
+            const Point center = xsub(xadd(corner, middle), shift);
+            drect(sdl, center.x, center.y, grid, sdl.red, false);
         }
+        // Draw the cursor.
+        const Point point = xadd(xmul(g.points[g.count - 1], sens), shift);
+        const Point center = xsub(xadd(point, middle), shift);
+        drect(sdl, center.x, center.y, 6, sdl.red, true);
     }
     // Calculate attack.
     // Runs through scroll int array and checks for error with all scroll int array shapes.
-    const float mag = 0.0f;
-    const Point dir = { 0.0f, 0.0f };
+    const float mag = 0.0f; // Error rate.
+    const Point dir = { 0.0f, 0.0f }; // Maybe randomize.
     // The magic scroll closest to the drawn gauge shape is calculated in the attack shape.
     const int scindex = 0;
     const Attack magic = { mag, dir, 0, MAGIC, scindex };
@@ -334,13 +331,14 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
 }
 
 // Draws all power gauge squares.
-Attack xdgauge(const Sdl sdl, const Gauge g, const Item it)
+Attack xdgauge(const Sdl sdl, const Gauge g, const Item it, const Inventory inv, const Scroll sc)
 {
     const float sens = 2.33;
     return
         xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         xisrange(it.c) ? dgrange(sdl, g, it, sens) :
-        xismagic(it.c) ? dgmagic(sdl, g, it, sens) : xzattack();
+        xismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) :
+        xzattack();
 }
 
 // Draw tiles for the grid layout.

@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
                 const Item it = inv.items.item[inv.selected];
-                const Attack atk = xdgauge(sdl, gg, it);
+                const Attack atk = xdgauge(sdl, gg, it, inv, sc);
                 gg = xgwind(gg, it.c, in);
                 me = xsustain(me, wd.map[me.floor], in, current);
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, sdl.surfaces, ticks);

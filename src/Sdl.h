@@ -30,7 +30,7 @@ typedef struct
     int threads;
     // Color key specifies which colors to omit when rendering sprites or surfaces.
     uint32_t key;
-    // Index of the gui.
+    // Index of the gui in Surfaces type.
     int gui;
     // Custom gui colors.
     uint32_t wht;
@@ -53,7 +53,7 @@ void xrender(const Sdl, const Hero, const Sprites, const Map, const Flow current
 // Renders the overview of the map and sprites for editing purposes.
 void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks);
 
-Attack xdgauge(const Sdl, const Gauge, const Item);
+Attack xdgauge(const Sdl sdl, const Gauge g, const Item it, const Inventory inv, const Scroll sc);
 
 void xdmap(const Sdl, const Map, const Point);
 
