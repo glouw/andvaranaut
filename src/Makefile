@@ -1,30 +1,28 @@
 # -----------------------------------------------------------------------------
-# Makefile or use with:
-# 		Linux, MacOS, Windows
+#
+# 							A N D V A R A N A U T
+# 							~~~~~~~~~~~~~~~~~~~~~
+# 							Makefile for use with
+# 							Linux, MacOS, Windows
+#
 # -----------------------------------------------------------------------------
-# ComSpec is referenced in Windows for building on Windows.
+# NOTE:
+# ComSpec is referenced for building on Windows.
 #
-# Windows:
+# Required libraries
 #
-# 		Get all relevent SDL2 development libraries from the
-# 		SDL2 website and place them two folders up from this makefile.
-# 		Run:
+# 	- SDL2-devel
 #
-# 			mingw32-make
+# :: Linux ::
+# Use your package manager and run make.
 #
-# 		Once the binary is built copy over all relevant SDL2 .dll files 
-# 		to where the final binary is.
+# :: MacOS ::
+# Use brew as your package manager and run make.
 #
-# Linux:
-# 		Use your package manager to get all relevant SDL2 development
-# 		libraries and run:
-#
-# 			make
-#
-# MacOS:
-# 		Use brew to get all relevant SDL2 development libraries and run:
-#
-# 			make
+# :: Windows ::
+# Get the libraries from the SDL2 website and place them two folders
+# up from the makefile and run mingw32-make and then copy over the SDL2
+# .dll files to where the andvaranaut executable lies.
 
 # -----------------------------------------------------------------------------
 # Compiler.

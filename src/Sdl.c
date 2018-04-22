@@ -94,6 +94,9 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // NEEDS to be volatile else it exits without segfault on my Thinkpad t43 with
         // either x or y 255 overflow. Assuming integrated graphics driver bug.
         volatile const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
+        // The sprite's latest seen rect is then saved to the sprite.
+        // This will come in handy for ranged attacks or just general mouse targeting.
+        sprite->seen = seen;
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
         if(seen.w <= 0)
             continue;
@@ -222,7 +225,9 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
         && (to.y > sdl.yres || to.y < -ov.h);
 }
 
-static void drect(const Sdl sdl, const int x, const int y, const int width, const int color, const int filled)
+// Draws a rectangle the slow way.
+// if filled is set the rectangle will be filled.
+static void dbox(const Sdl sdl, const int x, const int y, const int width, const int color, const int filled)
 {
     const int a = (color >> 24) & 0xFF;
     const int r = (color >> 16) & 0xFF;
@@ -245,7 +250,7 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
         const int width = growth * 12; // Hard coded size.
         const int x = g.points[i].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[i].y * sens - (width - sdl.yres) / 2;
-        drect(sdl, x, y, width, sdl.wht, true);
+        dbox(sdl, x, y, width, sdl.wht, true);
     }
     // Calculate attack.
     const int last = g.count - 1;
@@ -277,12 +282,17 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         // Hurts is also a bow property. Longbows, for instance, can hurt more than one sprite.
         const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
-        drect(sdl, x, y, width, sdl.wht, false);
+        dbox(sdl, x, y, width, sdl.wht, false);
         // Calculate attack.
+        // TODO: Fix this.
         const float mag = 1.0f / (steady - width);
-        // Animation direction is constant.
-        const Point dir = { 0.0f, -1.0f };
-        const Attack range = { mag, dir, it.hurts, RANGE, 0 };
+        // Direction is overrided with attack point.
+        // The attack point is a random point within the rect.
+        const Point point = {
+            (float) (x + rand() % (int) width),
+            (float) (y + rand() % (int) width),
+        };
+        const Attack range = { mag, point, it.hurts, RANGE, 0 };
         return range;
     }
     return xzattack();
@@ -314,7 +324,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             const Point point = xadd(xmul(g.points[i], sens), shift);
             const Point corner = xsnap(point, grid);
             const Point center = xsub(xadd(corner, middle), shift);
-            drect(sdl, center.x, center.y, grid, sdl.wht, true);
+            dbox(sdl, center.x, center.y, grid, sdl.wht, true);
             // Populate Scroll int array. Was cleared earlier.
             const int x = size + corner.x / grid;
             const int y = size + corner.y / grid;
@@ -333,12 +343,12 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             };
             const Point corner = xmul(which, grid);
             const Point center = xsub(xadd(corner, middle), shift);
-            drect(sdl, center.x, center.y, grid, sdl.red, false);
+            dbox(sdl, center.x, center.y, grid, sdl.red, false);
         }
         // Draw the cursor.
         const Point point = xadd(xmul(g.points[g.count - 1], sens), shift);
         const Point center = xsub(xadd(point, middle), shift);
-        drect(sdl, center.x, center.y, 6, sdl.red, true);
+        dbox(sdl, center.x, center.y, 6, sdl.red, true);
     }
     // Calculate attack.
     // Runs through scroll int array and checks for error with all scroll int array shapes.
@@ -543,7 +553,7 @@ static void drooms(uint32_t* pixels, const int width, const Map map, const uint3
     }
 }
 
-// Like drect, but draws a dot with per pixel access. Does not use SDL_Rect.
+// Like dbox, but with per pixel access for streaming targets. Does not use SDL_Rect.
 static void ddot(uint32_t* pixels, const int width, const Point where, const int size, const uint32_t in, const uint32_t out)
 {
     for(int y = -size; y <= size; y++)

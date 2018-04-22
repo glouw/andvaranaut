@@ -3,6 +3,8 @@
 #include "Point.h"
 #include "State.h"
 
+#include <SDL2/SDL.h>
+
 typedef struct
 {
     Point where;
@@ -16,6 +18,7 @@ typedef struct
     int transparent;
     int ticks;
     float health;
+    SDL_Rect seen;
 }
 Sprite;
 
