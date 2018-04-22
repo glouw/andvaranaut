@@ -1,5 +1,7 @@
 #include "Scroll.h"
 
+#include <float.h>
+
 #include "util.h"
 
 Scroll xsczero()
@@ -8,11 +10,46 @@ Scroll xsczero()
     return sc;
 }
 
+static float err(const float a, const float b)
+{
+    return 0.5f * (a - b) * (a - b);
+}
+
+static float toterr(int* a, int* b, const int size)
+{
+    float sum = 0.0f;
+    for(int i = 0; i < size; i++)
+        sum += err(a[i], b[i]);
+    return sum;
+}
+
+void xsclear(const Scroll sc)
+{
+    for(int i = 0; i < sc.squares; i++)
+        sc.casting[i] = 0;
+}
+
+int xsindex(const Scroll sc)
+{
+    float min = FLT_MAX;
+    int index = 0;
+    for(int i = 0; i < sc.scrolls; i++)
+    {
+        const float err = toterr(sc.casting, sc.castables[i], sc.squares);
+        if(err < min)
+        {
+            min = err;
+            index = i;
+        }
+    }
+    return index;
+}
+
 Scroll xscnew()
 {
     #define SCROLLS (24)
-    #define GRID (9)
-    #define SQUARES (GRID * GRID)
+    #define WIDTH (9)
+    #define SQUARES (WIDTH * WIDTH)
     static const int runes[SCROLLS][SQUARES] = {
         {
             0,0,0,0,0,0,0,0,0,
@@ -260,7 +297,7 @@ Scroll xscnew()
     Scroll sc = xsczero();
     sc.casting = xtoss(int, SQUARES);
     sc.castables = xtoss(int*, SCROLLS);
-    sc.grid = GRID;
+    sc.width = WIDTH;
     sc.squares = SQUARES;
     sc.scrolls = SCROLLS;
     for(int i = 0; i < sc.scrolls; i++)

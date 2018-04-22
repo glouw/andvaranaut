@@ -11,8 +11,8 @@ Gauge xzgauge()
 Gauge xgnew()
 {
     Gauge g = xzgauge();
-    g.max = 240;
-    g.wind = 240;
+    g.max = 600;
+    g.wind = 600;
     g.points = xtoss(Point, g.max);
     return g;
 }
