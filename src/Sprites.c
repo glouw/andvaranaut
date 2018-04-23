@@ -236,19 +236,16 @@ static Sprites drop(Sprites sprites, const Attack attack, const Point where)
     return append(sprites, xsregistrar('d', xadd(where, delta)));
 }
 
-// Hurts the closest sprite.
-Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, const Surfaces ss, const int ticks)
+static Sprites hmelee(Sprites sprites, const Attack attack, const Hero hero, const Inventory inv, const int ticks)
 {
-    if(!in.lu)
-        return sprites;
-    if(attack.method == NOATTACK)
-        return sprites;
     const Point hand = xtouch(hero, hero.arm);
     const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
+    const Item it = inv.items.item[inv.selected];
     // Hurt counter indicates how many sprites can be hurt at once. Different weapons have different hurt counters.
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        printf("  %f %f %f\n", sprite->health, sprite->where.x, sprite->where.y);
         if(xisdead(sprite->state))
             continue;
         if(xsiscosmetic(sprite))
@@ -272,11 +269,12 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
                     (attack.dir.y > 0.0f ? DEADN : DEADS);
                 // Broke a lootbag?
                 if(sprite->ascii == 'd')
-                    if(!xitsadd(inv.items, xitrand(ss)))
+                    // Add an item to the inventory.
+                    if(!xitsadd(inv.items, xitrand()))
                         // Make this a log message in the future.
                         printf("Inventory full!\n");
                 // If a sprite is dead, the hurt counter resets, so this function is called again.
-                sprites = xhurt(sprites, attack, hero, in, inv, ss, ticks);
+                sprites = hmelee(sprites, attack, hero, inv, ticks);
                 // Chance sprite will drop loot bag.
                 return xd10() == 0 ? drop(sprites, attack, sprite->where) : sprites;
             }
@@ -287,6 +285,53 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
         }
     }
     return sprites;
+}
+
+static Sprites hrange(Sprites sprites, const Attack attack, const Hero hero, const Inventory inv, const int ticks)
+{
+    // Remember that attack direction was overrided with a point.
+    //const SDL_Point point = {
+    //    (int) attack.dir.x,
+    //    (int) attack.dir.y,
+    //};
+    const Item it = inv.items.item[inv.selected];
+    // Go through all sprites.
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        printf("  %f %f %f\n", sprite->health, sprite->where.x, sprite->where.y);
+        // If the attack point is within a sprite hitbox then the sprite is hurt.
+        //const int inside = SDL_PointInRect(&point, &sprite->seen);
+        //if(inside)
+        //{
+        //    sprite->state = HURTN;
+        //    sprite->ticks = ticks + 5;
+        //}
+
+    }
+    return sprites;
+}
+
+static Sprites hmagic(Sprites sprites, const Attack attack, const Hero hero, const Inventory inv, const int ticks)
+{
+    const Item it = inv.items.item[inv.selected];
+    return sprites;
+}
+
+// Hurts the closest sprite.
+Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, const int ticks)
+{
+    if(!in.lu)
+        return sprites;
+    switch(attack.method)
+    {
+    case MELEE: return hmelee(sprites, attack, hero, inv, ticks);
+    case RANGE: return hrange(sprites, attack, hero, inv, ticks);
+    case MAGIC: return hmagic(sprites, attack, hero, inv, ticks);
+    // For NOATTACK
+    default:
+        return sprites;
+    }
 }
 
 static void idle(const Sprites sprites, const int ticks)

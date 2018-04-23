@@ -7,7 +7,7 @@ typedef struct
 {
     Items items;
     int selected;
-    int w;
+    int width;
 }
 Inventory;
 

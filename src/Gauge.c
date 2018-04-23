@@ -12,7 +12,6 @@ Gauge xgnew()
 {
     Gauge g = xzgauge();
     g.max = 600;
-    g.wind = 600;
     g.points = xtoss(Point, g.max);
     return g;
 }
@@ -28,12 +27,12 @@ static Gauge reset(Gauge g)
     return g;
 }
 
-Gauge xgwind(Gauge g, const Classification c, const Input input)
+Gauge xgwind(Gauge g, const Input input)
 {
     if(input.l)
     {
         // Fizzle out.
-        if(g.count == g.wind)
+        if(g.count == g.max)
             g = reset(g);
         // Trace.
         g.points[g.count].x = (g.mx += input.dx);

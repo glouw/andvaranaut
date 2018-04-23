@@ -9,6 +9,8 @@ int main(int argc, char* argv[])
     // The only random seeder in the game.
     // Keep seed at zero to keep the same map for testing.
     srand(true ? 0 : time(0));
+    // And here starts the game memory pool.
+    // None of this stuff is freed at the end of main. Gives us a little faster exit.
     const int floor = 0;
     const Args args = xparse(argc, argv);
     World wd = xwinit(32);
@@ -65,11 +67,12 @@ int main(int argc, char* argv[])
             else
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
-                const Item it = inv.items.item[inv.selected];
-                const Attack atk = xdgauge(sdl, gg, it, inv, sc);
-                gg = xgwind(gg, it.c, in);
+                // Attack must be calculated before gauge is wound.
+                const Attack atk = xdgauge(sdl, gg, inv, sc);
+                // TODO: Maybe pass in item wind rate.
+                gg = xgwind(gg, in);
                 me = xsustain(me, wd.map[me.floor], in, current);
-                wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, sdl.surfaces, ticks);
+                wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, ticks);
             }
             xdmap(sdl, wd.map[me.floor], me.where);
         }

@@ -22,6 +22,6 @@ Item xzitem();
 
 Item xitnew(const Classification, const int index);
 
-Item xitrand(const Surfaces);
+Item xitrand();
 
 void xitprint(const Item);

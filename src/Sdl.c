@@ -96,7 +96,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         volatile const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
         // The sprite's latest seen rect is then saved to the sprite.
         // This will come in handy for ranged attacks or just general mouse targeting.
-        sprite->seen = seen;
+        //sprite->seen = seen;
+        printf("..%f %f %f\n", sprite->health, sprite->where.x, sprite->where.y);
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
         if(seen.w <= 0)
             continue;
@@ -361,12 +362,14 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
 }
 
 // Draws all power gauge squares.
-Attack xdgauge(const Sdl sdl, const Gauge g, const Item it, const Inventory inv, const Scroll sc)
+Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll sc)
 {
+    const Item it = inv.items.item[inv.selected];
     const float sens = 2.33;
     return
         xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         xisrange(it.c) ? dgrange(sdl, g, it, sens) :
+        // Magic wand needs inventory access for checking against scrolls.
         xismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) :
         xzattack();
 }
@@ -504,13 +507,13 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
         SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
         SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
         const int w = surface->w;
-        const int xx = sdl.xres - inv.w;
+        const int xx = sdl.xres - inv.width;
         const SDL_Rect from = {
             (int) (i == inv.selected ? redbp.x : whtbp.x),
             (int) (i == inv.selected ? redbp.y : whtbp.y),
             w, w
         };
-        const SDL_Rect to = { xx, inv.w * i, inv.w, inv.w };
+        const SDL_Rect to = { xx, inv.width * i, inv.width, inv.width };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }
@@ -527,8 +530,8 @@ static void dinvits(const Sdl sdl, const Inventory inv)
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
         const int w = surface->w;
-        const int xx = sdl.xres - inv.w;
-        const SDL_Rect from = { 0, w * item.index, w, w }, to = { xx, inv.w * i, inv.w, inv.w };
+        const int xx = sdl.xres - inv.width;
+        const SDL_Rect from = { 0, w * item.index, w, w }, to = { xx, inv.width * i, inv.width, inv.width };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }

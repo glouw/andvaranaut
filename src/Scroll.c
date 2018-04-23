@@ -302,6 +302,11 @@ Scroll xscnew()
     sc.scrolls = SCROLLS;
     for(int i = 0; i < sc.scrolls; i++)
         sc.castables[i] = xtoss(int, sc.squares);
+    // TODO
+    // Since the number of scrolls is hard coded a check must be added here
+    // to ensure that the number of scrolls present in art/items/scroll.bmp
+    // matches the hard coded number of scrolls. The game must exit if this
+    // does not match.
     #undef SCROLLS
     #undef W
     #undef H

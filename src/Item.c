@@ -276,10 +276,10 @@ Item xitnew(const Classification c, const int index)
     }
 }
 
-Item xitrand(const Surfaces ss)
+Item xitrand()
 {
     const Classification c = (Classification) (rand() % (int) CLASSIFICATIONS);
-    const int index = rand() % xcindices(c, ss);
+    const int index = rand() % xcindices(c);
     return xitnew(c, index);
 }
 

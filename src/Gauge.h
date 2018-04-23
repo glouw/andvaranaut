@@ -2,7 +2,6 @@
 
 #include "Point.h"
 #include "Input.h"
-#include "Classification.h"
 
 typedef struct
 {
@@ -11,7 +10,6 @@ typedef struct
     Point* points;
     int mx;
     int my;
-    int wind;
 }
 Gauge;
 
@@ -21,4 +19,4 @@ Gauge xgnew();
 
 void xgfree(const Gauge);
 
-Gauge xgwind(Gauge, const Classification, const Input);
+Gauge xgwind(Gauge, const Input);

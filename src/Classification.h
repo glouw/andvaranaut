@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Surfaces.h"
-
 typedef enum
 {
     AMMO,
@@ -35,7 +33,7 @@ Classification;
 
 int xcindex(const Classification);
 
-int xcindices(const Classification, const Surfaces);
+int xcindices(const Classification);
 
 int xismelee(const Classification);
 

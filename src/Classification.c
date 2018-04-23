@@ -4,13 +4,41 @@
 
 int xcindex(const Classification c)
 {
-    return '~' + 1 - ' ' + c;
+    return '~' + 1 - ' ' + (int) c;
 }
 
-int xcindices(const Classification c, const Surfaces ss)
+int xcindices(const Classification c)
 {
-    const int index = xcindex(c);
-    return c == NONE ? 1 : ss.surface[index]->h / ss.surface[index]->w;
+    switch(c)
+    {
+        // TODO: Fill all these in by hand.
+        case     AMMO: return 4;
+        case   AMULET: return 4;
+        case    ARMOR: return 4;
+        case     BOOK: return 4;
+        case     BOOT: return 4;
+        case    CHEST: return 4;
+        case    FLESH: return 4;
+        case     FOOD: return 4;
+        case    GLOVE: return 4;
+        case      HAT: return 4;
+        case      KEY: return 4;
+        case    LIGHT: return 4;
+        case  LONGWEP: return 4;
+        case   MEDWEP: return 4;
+        case    MONEY: return 4;
+        case    MUSIC: return 4;
+        case   POTION: return 4;
+        case     RING: return 4;
+        case     ROCK: return 4;
+        case   SCROLL: return 4;
+        case   SHIELD: return 4;
+        case SHORTWEP: return 4;
+        case     TOOL: return 4;
+        case     WAND: return 4;
+        default:
+            return 1;
+    }
 }
 
 int xismelee(const Classification c)

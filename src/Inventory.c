@@ -1,5 +1,7 @@
 #include "Inventory.h"
 
+#include <SDL2/SDL.h>
+
 #include "util.h"
 
 Inventory xzinv()
@@ -32,7 +34,7 @@ Inventory xinvselect(Inventory inv, const Input in)
 
 void xwhatis(const Inventory inv, const Input in, const int xres)
 {
-    const int y = in.y / inv.w;
-    if(in.x > xres - inv.w)
+    const int y = in.y / inv.width;
+    if(in.x > xres - inv.width)
         xitprint(inv.items.item[y]);
 }
