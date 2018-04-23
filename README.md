@@ -4,15 +4,13 @@ Andvaranaut aims to be a retro dungeon crawler with procedural dungeon generatio
 
     make -C src; ./andvaranaut
 
-Dependencies:
+# Dependencies
 
     SDL2-devel
 
 Andvaranaut builds fast on Windows, Linux, and MacOS with its unique software graphics engine.
 
-Game mechanics are inspired by DnD's 5e Dungeon Master's Guide.
-
-Source wise:
+# Source wise
 
     src:
         Game engine
@@ -25,3 +23,13 @@ Source wise:
 
     screenshots:
         Self explanatory
+
+# Source Tips
+
+    Headers provide a typedef - associated source file provides functionality for the typedef.
+
+    The first type of a function signifies the function's header and source file typedef.
+
+    Functions starting with an 'x' are exported in the header.
+
+    Global variables are avoided at all costs.
