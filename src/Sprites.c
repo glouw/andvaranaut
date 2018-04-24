@@ -314,6 +314,10 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Hero hero, con
 
 static Sprites hmagic(Sprites sprites, const Attack attack, const Hero hero, const Inventory inv, const int ticks)
 {
+    // TODO
+    // Magic runes will spawn new sprites.
+    // These sprites will do something like heal the hero, teleport the hero, be something like fire
+    // which hurts other sprites, or lift other sprites, and so on.
     const Item it = inv.items.item[inv.selected];
     return sprites;
 }
@@ -352,6 +356,9 @@ static Hero damage(Hero hero, const Sprites sprites, const int ticks)
     hero.hps = hero.hpsmax * wave;
     hero.mna = hero.mnamax * wave;
     hero.ftg = hero.ftgmax * wave;
+    // TODO:
+    // Water and food sprites replenish the hero's fatigue.
+    // Healing wizard sprites heal the hero instead of damaging the hero.
     return hero;
 }
 
@@ -362,7 +369,5 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
     bound(sprites, map);
-    // The hero must be damaged here since the sprites
-    // header cannot be included in the hero header.
     return damage(hero, sprites, ticks);
 }

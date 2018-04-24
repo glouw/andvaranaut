@@ -293,7 +293,6 @@ Scroll xscnew()
             0,0,0,0,0,0,0,0,0,
         }
     };
-    printf("%d\n", xlen(runes));
     Scroll sc = xsczero();
     sc.casting = xtoss(int, SQUARES);
     sc.castables = xtoss(int*, SCROLLS);

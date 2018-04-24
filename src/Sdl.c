@@ -309,15 +309,9 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
         // Pixels for the grid size.
         const int grid = 64;
         // Middle of the screen.
-        const Point middle = {
-            (float) sdl.xres / 2,
-            (float) sdl.yres / 2,
-        };
+        const Point middle = { (float) sdl.xres / 2, (float) sdl.yres / 2 };
         // Half a grid for centering grid squares.
-        const Point shift = {
-            (float) grid / 2,
-            (float) grid / 2,
-        };
+        const Point shift = { (float) grid / 2, (float) grid / 2 };
         // Animate attack (inside square for mouse cursor).
         for(int i = 0; i < g.count; i++)
         {

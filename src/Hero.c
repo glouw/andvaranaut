@@ -191,8 +191,14 @@ int xteleporting(const Hero hero, const Map map, const Input input, const int ti
 Hero xteleport(Hero hero, const Map map)
 {
     // Look up to teleport a floor up. Look down to teleport a floor down.
-    if(tup(hero, map)) hero.floor--;
-    if(tdn(hero, map)) hero.floor++;
+    if(tup(hero, map))
+        hero.floor--;
+    if(tdn(hero, map))
+    {
+        hero.floor++;
+        // Gives a falling effect.
+        hero.height = 0.75;
+    }
     // The teleport effect is done by reseting the hero yaw to the horizon. The torch is also put out.
     hero.yaw = 1.0f;
     hero.torch = xsnuff();
