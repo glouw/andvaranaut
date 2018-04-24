@@ -20,13 +20,12 @@ Sprites xsnew(const int max);
 
 void xkill(const Sprites);
 
-// Arranges sprites furthest to nearest relative to the hero's orientation (angle and position).
-Sprites xorient(const Sprites, const Hero);
+void xorient(const Sprites, const Hero);
 
-// Appends in new sprites with the sprite editor.
+void xplback(const Sprites, const Hero);
+
 Sprites xlay(Sprites, const Map, const Overview);
 
 Sprites xhurt(Sprites, const Attack, const Hero, const Input, const Inventory, const int ticks);
 
-// Updates all sprite data. Damages hero if sprites get close to hero.
 Hero xcaretake(const Sprites, const Hero, const Map, const Field, const int ticks);

@@ -52,11 +52,16 @@ int main(int argc, char* argv[])
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
             current = xstream(current);
             clouds = xstream(clouds);
+
             me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, ticks);
+
             inv = xinvselect(inv, in);
+
             xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, ticks);
             xdinv(sdl, inv);
             xdbars(sdl, me, ticks);
+            xdmap(sdl, wd.map[me.floor], me.where);
+
             if(xinvuse(in))
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
@@ -74,7 +79,6 @@ int main(int argc, char* argv[])
                 me = xsustain(me, wd.map[me.floor], in, current);
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, ticks);
             }
-            xdmap(sdl, wd.map[me.floor], me.where);
         }
         xpresent(sdl);
         in = xpump(in);

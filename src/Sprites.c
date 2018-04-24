@@ -66,18 +66,11 @@ static void push(const Sprites sprites, const Hero hero)
     }
 }
 
-static int backwards(const void* a, const void* b)
+static int comparator(const void* a, const void* b)
 {
     const Point pa = *(const Point*) a;
     const Point pb = *(const Point*) b;
-    return xmag(pa) < xmag(pb) ? +1 : xmag(pa) > xmag(pb) ? -1 : 0;
-}
-
-static int forewards(const void* a, const void* b)
-{
-    const Point pa = *(const Point*) a;
-    const Point pb = *(const Point*) b;
-    return xmag(pa) < xmag(pb) ? -1 : xmag(pa) > xmag(pb) ? +1 : 0;
+    return xmag(pa) < xmag(pb) ? 1 : xmag(pa) > xmag(pb) ? -1 : 0;
 }
 
 static void sort(const Sprites sprites, const Direction direction)
@@ -85,38 +78,31 @@ static void sort(const Sprites sprites, const Direction direction)
     qsort(sprites.sprite, sprites.count, sizeof(Sprite), direction);
 }
 
-static Sprites copy(const Sprites sprites)
-{
-    Sprites temps;
-    temps.count = sprites.count;
-    temps.max = sprites.max;
-    temps.sprite = xtoss(Sprite, sprites.count);
-    memcpy(temps.sprite, sprites.sprite, sprites.count * sizeof(Sprite));
-    return temps;
-}
-
-static void turn(const Sprites sprites, const Hero hero)
+static void turn(const Sprites sprites, const float theta)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        sprite->where = xtrn(sprite->where, -hero.theta);
+        sprite->where = xtrn(sprite->where, theta);
     }
 }
 
-Sprites xorient(const Sprites sprites, const Hero hero)
+void xorient(const Sprites sprites, const Hero hero)
 {
-    const Sprites copied = copy(sprites);
-    pull(copied, hero);
-    turn(copied, hero);
-    sort(copied, backwards);
-    return copied;
+    pull(sprites, hero);
+    turn(sprites, -hero.theta);
+}
+
+void xplback(const Sprites sprites, const Hero hero)
+{
+    turn(sprites, +hero.theta);
+    push(sprites, hero);
 }
 
 static void arrange(const Sprites sprites, const Hero hero)
 {
     pull(sprites, hero);
-    sort(sprites, forewards);
+    sort(sprites, comparator);
     push(sprites, hero);
 }
 
@@ -245,7 +231,6 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Hero hero, con
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        printf("  %f %f %f\n", sprite->health, sprite->where.x, sprite->where.y);
         if(xisdead(sprite->state))
             continue;
         if(xsiscosmetic(sprite))
@@ -299,7 +284,6 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Hero hero, con
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        printf("  %f %f %f\n", sprite->health, sprite->where.x, sprite->where.y);
         // If the attack point is within a sprite hitbox then the sprite is hurt.
         //const int inside = SDL_PointInRect(&point, &sprite->seen);
         //if(inside)
