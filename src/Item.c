@@ -243,7 +243,7 @@ Item xitnew(const Classification c, const int index)
     it.period = 0.05f;
     it.amplitude = 360.0f;
     it.damage = 25.0f;
-    it.hurts = 1;
+    it.hurts = 3;
     switch(c)
     {
     case     AMMO: return     ammo(it);

@@ -96,8 +96,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         volatile const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
         // The sprite's latest seen rect is then saved to the sprite.
         // This will come in handy for ranged attacks or just general mouse targeting.
-        //sprite->seen = seen;
-        printf("..%f %f %f\n", sprite->health, sprite->where.x, sprite->where.y);
+        sprite->seen = seen;
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
         if(seen.w <= 0)
             continue;

@@ -216,7 +216,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     xdiffuse(field, hero.where);
 }
 
-static Sprites drop(Sprites sprites, const Attack attack, const Point where)
+static Sprites dropit(Sprites sprites, const Attack attack, const Point where)
 {
     const Point delta = xmul(xrag(attack.dir), 0.5f);
     return append(sprites, xsregistrar('d', xadd(where, delta)));
@@ -239,33 +239,27 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Hero hero, con
         if(xeql(hand, sprite->where, 2.0f))
         {
             // Hurt direction.
-            sprite->state =
-                side ?
-                (attack.dir.x > 0.0f ? HURTW : HURTE):
-                (attack.dir.y > 0.0f ? HURTN : HURTS);
+            sprite->state = side ? (attack.dir.x > 0.0f ? HURTW : HURTE): (attack.dir.y > 0.0f ? HURTN : HURTS);
             sprite->health -= attack.power;
+            // Timer for idle reset.
+            sprite->ticks = ticks + 5;
             // Sprite dead?
             if(sprite->health <= 0.0f)
             {
                 // Dead direction.
-                sprite->state =
-                    side ?
-                    (attack.dir.x > 0.0f ? DEADW : DEADE):
-                    (attack.dir.y > 0.0f ? DEADN : DEADS);
+                sprite->state = side ? (attack.dir.x > 0.0f ? DEADW : DEADE): (attack.dir.y > 0.0f ? DEADN : DEADS);
                 // Broke a lootbag?
                 if(sprite->ascii == 'd')
                     // Add an item to the inventory.
                     if(!xitsadd(inv.items, xitrand()))
                         // Make this a log message in the future.
                         printf("Inventory full!\n");
-                // If a sprite is dead, the hurt counter resets, so this function is called again.
-                sprites = hmelee(sprites, attack, hero, inv, ticks);
                 // Chance sprite will drop loot bag.
-                return xd10() == 0 ? drop(sprites, attack, sprite->where) : sprites;
+                // This includes opening loot bags.
+                // Stops hurting sprites if loot bag was dropped.
+                return xd10() == 0 ? dropit(sprites, attack, sprite->where) : sprites;
             }
-            // Timer for idle reset.
-            sprite->ticks = ticks + 5;
-            if(++hurts == 3)
+            if(++hurts == it.hurts)
                 return sprites;
         }
     }
@@ -275,23 +269,45 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Hero hero, con
 static Sprites hrange(Sprites sprites, const Attack attack, const Hero hero, const Inventory inv, const int ticks)
 {
     // Remember that attack direction was overrided with a point.
-    //const SDL_Point point = {
-    //    (int) attack.dir.x,
-    //    (int) attack.dir.y,
-    //};
+    const SDL_Point point = {
+        (int) attack.dir.x,
+        (int) attack.dir.y,
+    };
     const Item it = inv.items.item[inv.selected];
     // Go through all sprites.
-    for(int i = 0; i < sprites.count; i++)
+    for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+        if(xisdead(sprite->state))
+            continue;
+        if(xsiscosmetic(sprite))
+            continue;
         // If the attack point is within a sprite hitbox then the sprite is hurt.
-        //const int inside = SDL_PointInRect(&point, &sprite->seen);
-        //if(inside)
-        //{
-        //    sprite->state = HURTN;
-        //    sprite->ticks = ticks + 5;
-        //}
-
+        const int inside = SDL_PointInRect(&point, &sprite->seen);
+        if(inside)
+        {
+            // Hurt direction.
+            sprite->state = HURTS;
+            sprite->ticks = ticks + 5;
+            // Damage the sprite.
+            sprite->health -= attack.power;
+            // Sprite dead?
+            if(sprite->health <= 0.0f)
+            {
+                sprite->state = DEADS;
+                // Broke a lootbag?
+                if(sprite->ascii == 'd')
+                    // Add an item to the inventory.
+                    if(!xitsadd(inv.items, xitrand()))
+                        // Make this a log message in the future.
+                        printf("Inventory full!\n");
+                // Drop chance.
+                return xd10() == 0 ? dropit(sprites, attack, sprite->where) : sprites;
+            }
+            // Hurt counter increments.
+            if(++hurts == it.hurts)
+                return sprites;
+        }
     }
     return sprites;
 }
