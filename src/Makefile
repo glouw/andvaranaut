@@ -1,28 +1,33 @@
 # -----------------------------------------------------------------------------
 #
 # 							A N D V A R A N A U T
-# 							~~~~~~~~~~~~~~~~~~~~~
+# 						 ---------------------------
+# 							 THE DUNGEON CRAWLER
+#
 # 							Makefile for use with
 # 							Linux, MacOS, Windows
 #
 # -----------------------------------------------------------------------------
 # NOTE:
-# ComSpec is referenced for building on Windows.
+# ComSpec is referenced for building on Windows with MINGW32.
 #
 # Required libraries
 #
 # 	- SDL2-devel
 #
-# :: Linux ::
-# Use your package manager and run make.
+# -> Linux
+# Use your package manager to get the required libraries
+# and then run make.
 #
-# :: MacOS ::
-# Use brew as your package manager and run make.
+# -> MacOS
+# Use brew as your package manager, get the required libraries,
+# and then run make.
 #
-# :: Windows ::
-# Get the libraries from the SDL2 website and place them two folders
-# up from the makefile and run mingw32-make and then copy over the SDL2
-# .dll files to where the andvaranaut executable lies.
+# -> Windows
+# Get the required MINGW32 developement libraries from the SDL2 website
+# and place them two folders up from the Makefile and run mingw32-make
+# and then copy over the SDL2 .dll files to where the andvaranaut
+# executable lies.
 
 # -----------------------------------------------------------------------------
 # Compiler.
@@ -70,7 +75,6 @@ SRCS += Point.c
 SRCS += Points.c
 SRCS += Projection.c
 SRCS += Ray.c
-SRCS += State.c
 SRCS += Sdl.c
 SRCS += Sheer.c
 SRCS += Scanline.c
@@ -124,8 +128,10 @@ else
 	MV = mv -f
 endif
 $(BIN): $(SRCS:.c=.o)
-	@echo $(CC) *.o -o $(BIN)
+	@echo LINK $(BIN)
 	@$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
+	@echo "If you are on Windows be sure to copy over all SDL2 .dll"
+	@echo "files to where andvaranaut.exe was placed."
 
 # -----------------------------------------------------------------------------
 # Build Compiler.
@@ -133,7 +139,7 @@ $(BIN): $(SRCS:.c=.o)
 # Dependency files (.d) are generated during build to keep track of
 # which .c files were affected by .h updates.
 %.o : %.c Makefile
-	@echo $(CC) -c $*.c
+	@echo CC $*.c
 	@$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@$(RM) $*.d
 	@$(MV) $*.td $*.d

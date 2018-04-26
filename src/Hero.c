@@ -29,7 +29,7 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.speed = 0.12f;
     hero.acceleration = 0.0150f;
     hero.torch = xsnuff();
-    hero.arm = 0.75f;
+    hero.reach = 0.75f;
     hero.aura = 12;
     hero.yaw = 1.0;
     hero.tall = 0.5f;
@@ -111,9 +111,9 @@ static Hero vert(Hero hero, const Map map, const Input input)
     return hero;
 }
 
-Point xtouch(const Hero hero, const float reach)
+Point xtouch(const Hero hero)
 {
-    const Point reference = { reach, 0.0f };
+    const Point reference = { hero.reach, 0.0f };
     const Point direction = xtrn(reference, hero.theta);
     return xadd(hero.where, direction);
 }

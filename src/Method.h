@@ -2,7 +2,7 @@
 
 typedef enum
 {
-    NOATTACK = 0,
+    NOATTACK,
     MELEE,
     MAGIC,
     RANGE,

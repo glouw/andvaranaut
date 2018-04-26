@@ -55,14 +55,40 @@ Sprite xsregistrar(const int ascii, const Point where)
     return s;
 }
 
+int xishurt(const State state)
+{
+    return state == HURTN
+        || state == HURTE
+        || state == HURTS
+        || state == HURTW;
+}
+
+int xisdead(const State state)
+{
+    return state == DEADN
+        || state == DEADE
+        || state == DEADS
+        || state == DEADW;
+}
+
 int xsissprite(const int ascii)
 {
     return isalpha(ascii);
 }
 
-int xsiscosmetic(const Sprite* sprite)
+int xsiscosmetic(const int ascii)
 {
-    return sprite->ascii == 'a';
+    return ascii == 'a';
+}
+
+int xisuseless(const Sprite* const sprite)
+{
+    return xisdead(sprite->state) || xsiscosmetic(sprite->ascii);
+}
+
+int xisstuck(const Sprite* const sprite)
+{
+    return xisdead(sprite->state) || xishurt(sprite->state);
 }
 
 void xsplace(Sprite* const sprite, const Point to)

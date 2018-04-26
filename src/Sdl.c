@@ -346,10 +346,16 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
     }
     // Calculate attack.
     // Runs through scroll int array and checks for error with all scroll int array shapes.
-    const float mag = 0.0f;
-    const Point dir = { 0.0f, 0.0f };
-    // The magic scroll closest to the drawn gauge shape is placed as a scroll index in the attack type.
+    // The magic scroll closest to the drawn gauge shape is placed as a scroll index.
     const int scindex = xsindex(sc);
+    // Maybe accuracy to scroll gives better attack + item base attack?
+    (void) it;
+    const float mag = 0.0f;
+    // If the scroll index is not found in the inventory the attack will go from MAGIC to NOATTACK.
+    (void) inv;
+    // Direction won't be needed for magic attacks as magic will spawn new sprites, be it food sprites,
+    // attack sprites (fire / ice), etc.
+    const Point dir = { 0.0f, 0.0f };
     const Attack magic = { mag, dir, 0, MAGIC, scindex };
     return magic;
 }

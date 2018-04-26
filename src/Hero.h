@@ -22,7 +22,7 @@ typedef struct
     // Rotation (radians).
     float theta;
     Torch torch;
-    float arm;
+    float reach;
     int floor;
     // A larger aura will attract sprites from further away.
     int aura;
@@ -50,7 +50,7 @@ Hero xzhero();
 
 Hero xspawn(const float focal, const Point where, const int floor);
 
-Point xtouch(const Hero, const float reach);
+Point xtouch(const Hero);
 
 int xteleporting(const Hero, const Map, const Input, const int ticks);
 

@@ -6,89 +6,158 @@
 
 int main(int argc, char* argv[])
 {
-    // The only random seeder in the game.
-    // Keep seed at zero to keep the same map for testing.
-    srand(true ? 0 : time(0));
-    // And here starts the game memory pool.
-    // None of this stuff is freed at the end of main. Gives us a little faster exit.
-    const int floor = 0;
+    // The one and only random seeder. Keep seed constant to keep the same map for testing.
+    srand(true ? 128 : time(0));
+
+    // Parses command line arguments. Uses game defaults if no arguments are passed in.
     const Args args = xparse(argc, argv);
+
+    // Initializes the world with however many floors specified.
     World wd = xwinit(32);
+
+    // The floor the hero starts on.
+    const int floor = 0;
+
+    // Spawns the hero.
     const Point start = wd.map[floor].trapdoors.point[0];
     Hero me = xspawn(args.focal, start, floor);
-    Input in = xready(args.msen);
+
+    // Prepares the overview for the map editor.
     Overview ov = xinit();
+
+    // Prepares the cloud and water currents. Their heights are specified as arguments.
     Flow current = xstart(-1.0f / 6.0f);
     Flow clouds = xstart(10.0f);
+
+    // Prepares the attack gauge.
     Gauge gg = xgnew();
+
+    // Prepares the pathfinder.
     Field fd = xprepare(wd.map[me.floor], me.aura);
+
+    // Prepare the inventory.
     Inventory inv = xinvnew();
+
+    // Prepare the magic scrolls.
     Scroll sc = xscnew();
+
+    // Prepares game input (keyboard, mouse).
+    Input in = xready(args.msen);
+
+    // Prepares game output (sound, audio, video).
     Sdl sdl = xsetup(args);
-    // X-Resolution 512 reserved for performance testing.
+
+    // Game loop. X-Resolution 512 reserved for performance testing. Exits with certain keypress or 'X' window button.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);
-        // Edit mode.
-        // Maybe remove one day? Not really needed with random map generation.
+        /*
+         * Edit Mode
+         * TODO:
+         * Maybe remove edit mode one day?
+         * Not really needed with random map generation.
+         * * * * * * * * * * * */
         if(in.key[SDL_SCANCODE_TAB])
         {
+            // Brings up the ouse cursor.
             SDL_SetRelativeMouseMode(SDL_FALSE);
+
+            // Pans the overview.
             ov = xupdate(ov, in, sdl.xres);
+
+            // Edit walls, celiings, and floors.
             xmedit(wd.map[me.floor], ov);
+
+            // Lays down new sprites.
             wd.sprites[me.floor] = xlay(wd.sprites[me.floor], wd.map[me.floor], ov);
+
+            // Draws the overview to the screen backbuffer.
             xview(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], ticks);
         }
-        // Play mode.
+        /*
+         * Play Mode
+         * * * * * * * * * * * */
         else
         {
+            // Hero teleportation (up and down floors via trapdoors).
             if(xteleporting(me, wd.map[me.floor], in, ticks))
             {
                 me = xteleport(me, wd.map[me.floor]);
+
+                // Old pathfinder freed and a new pathfinder for the new floor is prepared.
                 xruin(fd);
                 fd = xprepare(wd.map[me.floor], me.aura);
             }
+
+            // Overview backpanning keeps overview up to date with hero location.
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
+
+            // Current and cloud movement.
             current = xstream(current);
             clouds = xstream(clouds);
 
+            // Sprite updater for current floor. Returns an updated hero if sprite interaction occured.
             me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, ticks);
 
+            // Inventory selection.
             inv = xinvselect(inv, in);
 
+            // Renders to screen backbuffer floors, ceiling, walls, and then sprites.
             xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, ticks);
+
+            // Draws to screen backbuffer the inventory panel.
             xdinv(sdl, inv);
+
+            // Draws to screen backbuffer health, fatigue, and mana bars.
             xdbars(sdl, me, ticks);
+
+            // Draws to screen backbuffer the game map.
             xdmap(sdl, wd.map[me.floor], me.where);
 
+            // Inventory management.
             if(xinvuse(in))
             {
+                // Brings up the mouse cursor.
                 SDL_SetRelativeMouseMode(SDL_FALSE);
+
+                // Brings up a description of whats pointed at in the inventory.
                 xwhatis(inv, in, sdl.xres);
+
                 // TODO: Manage inventory here.
                 // TODO: Draw inventory here.
             }
+            // World Interaction.
             else
             {
+                // Hides the mouse cursor.
                 SDL_SetRelativeMouseMode(SDL_TRUE);
-                // Attack must be calculated before gauge is wound.
+
+                // NOTE: Attack must be calculated before gauge is wound.
                 const Attack atk = xdgauge(sdl, gg, inv, sc);
                 // TODO: Maybe pass in item wind rate.
                 gg = xgwind(gg, in);
+
+                // Hero self sustain.
                 me = xsustain(me, wd.map[me.floor], in, current);
+
+                // Sprite damaging. May add or remove sprites to game word.
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, ticks);
             }
         }
+
+        // Presents screen backbuffer to screen.
         xpresent(sdl);
+
+        // Updates input.
         in = xpump(in);
+
+        // Caps framerate. Only effective if VSYNC is off.
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0f / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
-    xwclose(wd);
-    xgfree(gg);
-    xrelease(sdl);
-    xruin(fd);
+
+    // No need to free dynamic pooled memory. The OS will do for us which gives us a quick exit.
     return 0;
 }

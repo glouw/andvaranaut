@@ -42,10 +42,7 @@ static void rwall(const Scanline sl, const Ray r)
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
         const Point offset = { (x - r.proj.bot) / r.proj.size, r.offset };
-        xfer(sl, x,
-            offset,
-            r.surface,
-            xilluminate(r.torch, r.corrected.x));
+        xfer(sl, x, offset, r.surface, xilluminate(r.torch, r.corrected.x));
     }
 }
 
@@ -57,10 +54,7 @@ static void rflor(const Scanline sl, const Ray r, const Map map)
         const int tile = xtile(offset, map.floring);
         if(!tile)
             continue;
-        xfer(sl, x,
-            offset,
-            tile,
-            xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 
@@ -72,13 +66,12 @@ static void rceil(const Scanline sl, const Ray r, const Map map)
         const int tile = xtile(offset, map.ceiling);
         if(!tile)
             continue;
-        xfer(sl, x,
-            offset,
-            tile,
-            xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+        xfer(sl, x, offset, tile, xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 
+// NOTE:
+// The sky renderer is ineffecient as it hacks up the elegant shear system.
 static void rsky(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
@@ -94,7 +87,7 @@ static void rsky(const Scanline sl, const Ray r, const Map map, const int floor,
             const Point a = xlerp(r.trace, xccast(xsheer(r.proj, sa), x));
             const Point b = xlerp(r.trace, xccast(xsheer(r.proj, sb), x));
             // Scale multiply enlargen clouds.
-            const float scale = 6.0f;
+            const float scale = 8.0f;
             xfer(sl, x, xdiv(xabs(xsub(a, clouds.where)), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(a, r.trace.a))));
             xfer(sl, x, xdiv(xabs(xsub(b, clouds.where)), scale), '*' - ' ', xilluminate(r.torch, xmag(xsub(b, r.trace.a))));
         }
@@ -104,10 +97,7 @@ static void rsky(const Scanline sl, const Ray r, const Map map, const int floor,
             const Point offset = xlerp(r.trace, xccast(r.proj, x));
             if(xtile(offset, map.ceiling))
                 continue;
-            xfer(sl, x,
-                offset,
-                '#' - ' ',
-                xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+            xfer(sl, x, offset, '#' - ' ', xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
         }
     }
 }
@@ -119,10 +109,7 @@ static void rpit(const Scanline sl, const Ray r, const Map map, const Flow curre
         const Point offset = xlerp(r.trace, xfcast(r.proj, x));
         if(xtile(offset, map.floring))
             continue;
-        xfer(sl, x,
-            xabs(xsub(offset, current.where)),
-            '%' - ' ',
-            xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
+        xfer(sl, x, xabs(xsub(offset, current.where)), '%' - ' ', xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
     }
 }
 

@@ -11,31 +11,30 @@ int xcindices(const Classification c)
 {
     switch(c)
     {
-        // TODO: Fill all these in by hand.
-        case     AMMO: return 4;
-        case   AMULET: return 4;
-        case    ARMOR: return 4;
-        case     BOOK: return 4;
-        case     BOOT: return 4;
-        case    CHEST: return 4;
-        case    FLESH: return 4;
-        case     FOOD: return 4;
-        case    GLOVE: return 4;
-        case      HAT: return 4;
-        case      KEY: return 4;
-        case    LIGHT: return 4;
-        case  LONGWEP: return 4;
-        case   MEDWEP: return 4;
-        case    MONEY: return 4;
-        case    MUSIC: return 4;
-        case   POTION: return 4;
-        case     RING: return 4;
-        case     ROCK: return 4;
-        case   SCROLL: return 4;
-        case   SHIELD: return 4;
-        case SHORTWEP: return 4;
-        case     TOOL: return 4;
-        case     WAND: return 4;
+        case     AMMO: return 28;
+        case   AMULET: return 17;
+        case    ARMOR: return 59;
+        case     BOOK: return 65; // There will be lots of lore to write...
+        case     BOOT: return 10;
+        case    CHEST: return 16;
+        case    FLESH: return 62;
+        case     FOOD: return 43;
+        case    GLOVE: return  4;
+        case      HAT: return 15;
+        case      KEY: return  3;
+        case    LIGHT: return  7;
+        case  LONGWEP: return 33;
+        case   MEDWEP: return  9;
+        case    MONEY: return 60;
+        case    MUSIC: return 15;
+        case   POTION: return 40;
+        case     RING: return 44;
+        case     ROCK: return  8;
+        case   SCROLL: return 26;
+        case   SHIELD: return  7;
+        case SHORTWEP: return 20;
+        case     TOOL: return 20;
+        case     WAND: return 49;
         default:
             return 1;
     }
@@ -79,8 +78,11 @@ int xismagic(const Classification c)
 
 int xisconsumable(const Classification c)
 {
+    // Books for knowledge? Increases skill of some sort?
     return c == BOOK
-        || c == FLESH
+        // Repelenish fatigue.
         || c == FOOD
+        || c == FLESH // Yuck. Eat if you have to.
+        // Repairs items? Repleneshis fatigue and Health?
         || c == TOOL;
 }

@@ -25,7 +25,3 @@ typedef enum
     STATES
 }
 State;
-
-int xishurt(const State state);
-
-int xisdead(const State state);

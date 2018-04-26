@@ -50,7 +50,8 @@ Scroll xscnew()
     #define SCROLLS (24)
     #define WIDTH (9)
     #define SQUARES (WIDTH * WIDTH)
-    static const int runes[SCROLLS][SQUARES] = {
+    // Runes live in .bss.
+    static int runes[SCROLLS][SQUARES] = {
         {
             0,0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,
@@ -300,7 +301,7 @@ Scroll xscnew()
     sc.squares = SQUARES;
     sc.scrolls = SCROLLS;
     for(int i = 0; i < sc.scrolls; i++)
-        sc.castables[i] = xtoss(int, sc.squares);
+        sc.castables[i] = runes[i];
     // TODO
     // Since the number of scrolls is hard coded a check must be added here
     // to ensure that the number of scrolls present in art/items/scroll.bmp
