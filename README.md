@@ -18,7 +18,7 @@ scn: Screenshots
 
 # Source Code Tips
 
-* Headers provide a typede. Associated source file provides functionality for the typedef.
+* Headers provide a typedef. Associated source file provides functionality for the typedef.
 
 * The first type of a function signifies the function's header and source file typedef.
 
