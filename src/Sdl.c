@@ -228,10 +228,10 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 // if filled is set the rectangle will be filled.
 static void dbox(const Sdl sdl, const int x, const int y, const int width, const int color, const int filled)
 {
-    const int a = (color >> 24) & 0xFF;
-    const int r = (color >> 16) & 0xFF;
-    const int g = (color >>  8) & 0xFF;
-    const int b = (color >>  0) & 0xFF;
+    const int a = (color >> 0x18) & 0xFF;
+    const int r = (color >> 0x10) & 0xFF;
+    const int g = (color >> 0x08) & 0xFF;
+    const int b = (color >> 0x00) & 0xFF;
     const SDL_Rect square = { x, y, width, width };
     SDL_SetRenderDrawColor(sdl.renderer, r, g, b, a);
     filled ?
@@ -273,7 +273,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
     if(g.count > 0)
     {
         // Animate attack. Both amplitude and attack are bow properties.
-        // A weaker bow may have longer period and amplitude, for instance.
+        // A weaker bow may have longer period and amplitude.
         // A longbow may have long period and amplitude but huge attack.
         // A shortbow may have short period and amplitude and medium attack.
         const float steady = it.amplitude / 2.0f;
