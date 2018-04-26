@@ -1,4 +1,4 @@
-![Screenshot](screenshots/2018-02-17-143059_600x300_scrot.png)
+![Screenshot](scn/2018-02-17-143059_600x300_scrot.png)
 
 Andvaranaut aims to be a retro dungeon crawler with procedural dungeon generation.
 
