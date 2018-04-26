@@ -12,24 +12,27 @@ Andvaranaut builds fast on Windows, Linux, and MacOS with its unique software gr
 
 # Source wise
 
-    src:
-        Game engine
+src:
+    Game engine
 
-    art:
-        Game art
+art:
+    Game art
 
-    aux:
-        Support Python2 scripts (procedural art generation and such). Game will release without aux folder
+aux:
+    Support Python2 scripts (procedural art generation and such). Game will release without aux folder
 
-    screenshots:
-        Self explanatory
+screenshots:
+    Self explanatory
 
 # Source Tips
 
-    Headers provide a typedef - associated source file provides functionality for the typedef.
+Headers provide a typedef - associated source file provides functionality for the typedef.
 
-    The first type of a function signifies the function's header and source file typedef.
+The first type of a function signifies the function's header and source file typedef.
 
-    Functions starting with an 'x' are exported in the header.
+Functions starting with an 'x' are exported in the header.
 
-    Global variables are avoided at all costs.
+Types that use data (like struct typedefs) have an "xz" prefixed function for setting the type to zero.
+This is done by returning a static initialized version of the struct.
+
+Global variables are avoided at all costs.

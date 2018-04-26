@@ -206,13 +206,12 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     SDL_UnlockTexture(sdl.canvas);
     // The map was rendered on its side. Rotate the map upwards.
     churn(sdl);
-
     // For sprites to be pasted to the screen they must first be orientated
     // to the players gaze. Afterwards they must be placed back.
     xorient(sprites, hero);
     paste(sdl, sprites, zbuff, hero, ticks);
     xplback(sprites, hero);
-
+    // Cleanup.
     free(zbuff);
     free(b);
     free(threads);

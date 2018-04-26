@@ -11,13 +11,13 @@ Args xzargs()
 static void print(const Args args)
 {
     printf(
-    /* 0 */ "-x: X-Resolution             : %d\n"
-    /* 1 */ "-y: Y-Resolution             : %d\n"
-    /* 2 */ "-f: Focal Length             : %f\n"
-    /* 3 */ "-v: VSync                    : %s\n"
-    /* 4 */ "-p: FPS                      : %d\n"
-    /* 5 */ "-m: Mouse Sensitivity        : %f\n"
-    /* 6 */ "-t: CPU Renderer Thread(s)   : %d\n",
+    /* 0 */ "-x: X-Resolution           : %d\n"
+    /* 1 */ "-y: Y-Resolution           : %d\n"
+    /* 2 */ "-f: Focal Length           : %f\n"
+    /* 3 */ "-v: VSync                  : %s\n"
+    /* 4 */ "-p: FPS                    : %d\n"
+    /* 5 */ "-m: Mouse Sensitivity      : %f\n"
+    /* 6 */ "-t: CPU Renderer Thread(s) : %d\n",
     /* 0 */ args.xres,
     /* 1 */ args.yres,
     /* 2 */ (double) args.focal,
