@@ -39,11 +39,7 @@ int main(int argc, char* argv[])
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);
-        /*
-         * Edit Mode
-         * TODO:
-         * Maybe remove edit mode one day?
-         * Not really needed with random map generation.
+        /* Edit Mode
          * * * * * * * * * * * */
         if(in.key[SDL_SCANCODE_TAB])
         {
@@ -58,8 +54,7 @@ int main(int argc, char* argv[])
             // Draws the overview to the screen backbuffer.
             xview(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], ticks);
         }
-        /*
-         * Play Mode
+        /* Play Mode
          * * * * * * * * * * * */
         else
         {
@@ -71,7 +66,6 @@ int main(int argc, char* argv[])
                 xruin(fd);
                 fd = xprepare(wd.map[me.floor], me.aura);
             }
-
             // Overview backpanning keeps overview up to date with hero location.
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
             // Current and cloud movement.

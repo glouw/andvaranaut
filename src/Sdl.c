@@ -19,7 +19,7 @@ static void churn(const Sdl sdl)
         (sdl.xres - sdl.yres) / 2,
         (sdl.yres - sdl.xres) / 2,
         sdl.yres,
-        sdl.xres
+        sdl.xres,
     };
     SDL_RenderCopyEx(sdl.renderer, sdl.canvas, NULL, &dst, -90, NULL, SDL_FLIP_NONE);
 }
@@ -498,8 +498,8 @@ void xdbars(const Sdl sdl, const Hero hero, const int ticks)
 // Draws the inventory backpanel. Selected inventory item is highlighted.
 static void dinvbp(const Sdl sdl, const Inventory inv)
 {
-    const Point whtbp = { 0.0, 512.0 };
-    const Point redbp = { 0.0, 528.0 };
+    const Point wht = { 0.0, 512.0 };
+    const Point red = { 0.0, 528.0 };
     for(int i = 0; i < inv.items.max; i++)
     {
         SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
@@ -507,8 +507,8 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
         const SDL_Rect from = {
-            (int) (i == inv.selected ? redbp.x : whtbp.x),
-            (int) (i == inv.selected ? redbp.y : whtbp.y),
+            (int) (i == inv.selected ? red.x : wht.x),
+            (int) (i == inv.selected ? red.y : wht.y),
             w, w
         };
         const SDL_Rect to = { xx, inv.width * i, inv.width, inv.width };

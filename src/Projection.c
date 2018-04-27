@@ -31,8 +31,10 @@ Projection xproject(const int yres, const int xres, const float focal, const flo
 
 Projection xsheer(Projection p, const Sheer s)
 {
-    p.bot += p.size * s.a - (s.b >= s.a  ? 1.0f : 0.0f); // Pretty ridiculous imo, but there is no other way
-    p.top += p.size * s.b + (s.b >= s.a  ? 0.0f : 2.0f); // to fix the missing pixels between stacks.
+    // Adding in this pixel shifts (1.0 and 2.0) is Pretty ridiculous in my opinion.
+    // Not sure where the math went wrong. Maybe the floats were rounded the wrong way somewhere somehow.
+    p.bot += p.size * s.a - (s.b >= s.a  ? 1.0f : 0.0f);
+    p.top += p.size * s.b + (s.b >= s.a  ? 0.0f : 2.0f);
     p.clamped = xclamp(p.yres, p.bot, p.top);
     p.sheer.a = fabsf(s.a);
     p.sheer.b = fabsf(s.b);
