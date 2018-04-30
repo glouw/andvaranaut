@@ -190,7 +190,7 @@ static void scentsprite(const Field field, const Sprites sprites, const float sc
         // Cosmetic sprites, like flowers and such, do not scent pathfinder,
         // else sprites will never walk through a field of flowers to reach
         // the hero (as romantic as that sounds).
-        if(xsiscosmetic(sprite->ascii))
+        if(xiscosmetic(sprite->ascii))
             continue;
         const int j = field.res * sprite->where.y;
         const int i = field.res * sprite->where.x;

@@ -58,6 +58,21 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
     return seen;
 }
 
+// Draws a rectangle the slow way.
+// if filled is set the rectangle will be filled.
+static void dbox(const Sdl sdl, const int x, const int y, const int width, const int color, const int filled)
+{
+    const int a = (color >> 0x18) & 0xFF;
+    const int r = (color >> 0x10) & 0xFF;
+    const int g = (color >> 0x08) & 0xFF;
+    const int b = (color >> 0x00) & 0xFF;
+    const SDL_Rect square = { x, y, width, width };
+    SDL_SetRenderDrawColor(sdl.renderer, r, g, b, a);
+    filled ?
+        SDL_RenderFillRect(sdl.renderer, &square):
+        SDL_RenderDrawRect(sdl.renderer, &square);
+}
+
 // Pastes all visible sprites on screen. The wall z-buffer will determine when to partially or fully hide a sprite.
 static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, const Hero hero, const int ticks)
 {
@@ -79,6 +94,9 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const int t = my - osize * (sprite->state == LIFTED ? 0.5f : (1.0f - hero.height));
         const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
         const SDL_Rect target = { l + s, t, osize, osize };
+        // Applies a red rectangle around an alive red sprite if sensed.
+        if(xissensible(sprite))
+            dbox(sdl, target.x, target.y, target.w, sdl.red, false);
         // Move onto the next sprite if this sprite is off screen.
         if(target.x + target.w < 0 || target.x >= sdl.xres)
             continue;
@@ -103,7 +121,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         // Apply lighting to the sprite.
         const int modding = xilluminate(hero.torch, sprite->where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
-        // Apply transperancy to the sprite, if required.
+        // Apply transparency to the sprite, if required.
         if(sprite->transparent)
             SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
         // Render the sprite.
@@ -222,21 +240,6 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 {
     return (to.x > sdl.xres || to.x < -ov.w)
         && (to.y > sdl.yres || to.y < -ov.h);
-}
-
-// Draws a rectangle the slow way.
-// if filled is set the rectangle will be filled.
-static void dbox(const Sdl sdl, const int x, const int y, const int width, const int color, const int filled)
-{
-    const int a = (color >> 0x18) & 0xFF;
-    const int r = (color >> 0x10) & 0xFF;
-    const int g = (color >> 0x08) & 0xFF;
-    const int b = (color >> 0x00) & 0xFF;
-    const SDL_Rect square = { x, y, width, width };
-    SDL_SetRenderDrawColor(sdl.renderer, r, g, b, a);
-    filled ?
-        SDL_RenderFillRect(sdl.renderer, &square):
-        SDL_RenderDrawRect(sdl.renderer, &square);
 }
 
 // Draws melee gauge.

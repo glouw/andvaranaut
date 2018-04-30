@@ -19,6 +19,7 @@ typedef struct
     int ticks;
     float health;
     SDL_Rect seen;
+    int sensed;
 }
 Sprite;
 
@@ -30,9 +31,11 @@ int xisdead(const State);
 
 int xsissprite(const int ascii);
 
-int xsiscosmetic(const int ascii);
+int xiscosmetic(const int ascii);
 
 int xisuseless(const Sprite* const);
+
+int xissensible(const Sprite* const);
 
 int xisstuck(const Sprite* const);
 

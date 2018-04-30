@@ -17,6 +17,7 @@ static Sprite born(const int ascii, const Point where)
     s.last = where;
     s.state = IDLE;
     s.health = 1000.0f;
+    s.sensed = true;
     return s;
 }
 
@@ -76,19 +77,24 @@ int xsissprite(const int ascii)
     return isalpha(ascii);
 }
 
-int xsiscosmetic(const int ascii)
+int xiscosmetic(const int ascii)
 {
     return ascii == 'a';
 }
 
 int xisuseless(const Sprite* const sprite)
 {
-    return xisdead(sprite->state) || xsiscosmetic(sprite->ascii);
+    return xisdead(sprite->state) || xiscosmetic(sprite->ascii);
 }
 
 int xisstuck(const Sprite* const sprite)
 {
     return xisdead(sprite->state) || xishurt(sprite->state);
+}
+
+int xissensible(const Sprite* const sprite)
+{
+    return sprite->sensed && !xisuseless(sprite);
 }
 
 void xsplace(Sprite* const sprite, const Point to)
