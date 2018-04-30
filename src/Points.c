@@ -22,7 +22,7 @@ Points xpsadd(Points ps, const Point p)
     return ps;
 }
 
-Points xpspop(const Points ps, const int max)
+Points xpsrandpop(const Points ps, const int max)
 {
     Points out = xpsnew(max);
     for(int i = 0; i < max; i++)

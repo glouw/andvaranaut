@@ -11,9 +11,10 @@ typedef struct
     char** floring;
     int rows;
     int cols;
+    // Trapdoor points for moving up and down map floors.
     Points trapdoors;
-    // TODO:
-    // Add more points for special rooms and such.
+    // Points of interests are used to generate themed rooms.
+    Points interests;
     Sheer middle;
     Sheer upper;
 }
@@ -21,7 +22,7 @@ Map;
 
 Map xzmap();
 
-Map xmgen(const int rows, const int cols, const Points);
+Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests);
 
 void xmclose(const Map);
 
@@ -35,7 +36,7 @@ void xmprint(char** block, const int rows, const int cols);
 
 void xmdump(const Map);
 
-int xmcarvable(const Map map, const int x, const int y);
+int xmcarvable(const Map, const int x, const int y);
 
 void xmroom(const Map map, const Point where, const int w, const int h, const Party);
 

@@ -32,4 +32,6 @@ void xdeposit(const Field, const Point p, const float val);
 
 void xruin(const Field);
 
-int xon(const Field field, const int y, const int x);
+int xon(const Field, const int y, const int x);
+
+int xsensed(const Field, const Point from, const Point to);

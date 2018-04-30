@@ -16,7 +16,7 @@ Points xpsnew(const int max);
 
 Points xpsadd(Points, const Point);
 
-Points xpspop(const Points, const int max);
+Points xpsrandpop(const Points, const int max);
 
 Points xpscat(Points, const Points other);
 

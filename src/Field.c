@@ -59,11 +59,17 @@ static int largest(float* gradients, const int size)
     return index;
 }
 
+// TODO: Use this for sensing sprites in range.
+int xsensed(const Field field, const Point from, const Point to)
+{
+    return xmag(xsub(from, to)) > field.aura / field.res;
+}
+
 Point xforce(const Field field, const Point from, const Point to, const Map map)
 {
     const Point dead = { 0.0f, 0.0f };
     const float dist = xmag(xsub(from, to));
-    if(dist < 1.33f || dist > (field.aura / field.res) - 1)
+    if(dist < 1.33f || dist > field.aura / field.res)
         return dead;
     const Point v[] = {
         { +1.0f, -0.0f }, // E

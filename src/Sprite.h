@@ -19,6 +19,8 @@ typedef struct
     int ticks;
     float health;
     SDL_Rect seen;
+    // TODO: Make moving sprite sensed.
+    // Hence use a multiple of field aura.
     int sensed;
 }
 Sprite;

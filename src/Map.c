@@ -42,7 +42,7 @@ static char** mnew(const int rows, const int cols, const int blok)
     return reset(block, rows, cols, blok);
 }
 
-Map xmgen(const int rows, const int cols, const Points trapdoors)
+Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests)
 {
     const Sheer md = {
         0.0f,
@@ -59,6 +59,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors)
     map.walling = mnew(map.rows, map.cols, '#');
     map.floring = mnew(map.rows, map.cols, '"');
     map.trapdoors = trapdoors;
+    map.interests = interests;
     map.upper = up;
     map.middle = md;
     return map;
