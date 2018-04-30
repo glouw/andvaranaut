@@ -38,7 +38,6 @@ CC = gcc
 # Binary Name.
 # -----------------------------------------------------------------------------
 NAME = ../andvaranaut
-# Windows requires binary to have .exe postfix.
 ifdef ComSpec
 	BIN = $(NAME).exe
 else
@@ -106,7 +105,7 @@ CFLAGS += -Ofast -march=native -pipe
 CFLAGS += -flto
 
 # -----------------------------------------------------------------------------
-# Post Build Linking.
+# Library Flags.
 # -----------------------------------------------------------------------------
 LDFLAGS =
 ifdef ComSpec
@@ -118,7 +117,7 @@ LDFLAGS += -lm
 LDFLAGS += -lSDL2
 
 # -----------------------------------------------------------------------------
-# Build Linker.
+# Linker.
 # -----------------------------------------------------------------------------
 ifdef ComSpec
 	RM = del /F /Q
@@ -134,7 +133,7 @@ $(BIN): $(SRCS:.c=.o)
 	@echo "files to where andvaranaut.exe was placed."
 
 # -----------------------------------------------------------------------------
-# Build Compiler.
+# Compiler.
 # -----------------------------------------------------------------------------
 # Dependency files (.d) are generated during build to keep track of
 # which .c files were affected by .h updates.
@@ -157,5 +156,8 @@ clean:
 	$(RM) $(SRCS:.c=.o)
 	$(RM) $(SRCS:.c=.d)
 
+# -----------------------------------------------------------------------------
+# You actually read the Makefile?
+# -----------------------------------------------------------------------------
 love:
 	@echo "not war?"
