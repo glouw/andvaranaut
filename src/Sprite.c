@@ -17,7 +17,7 @@ static Sprite born(const int ascii, const Point where)
     s.last = where;
     s.state = IDLE;
     s.health = 1000.0f;
-    s.sensed = true;
+    s.sensed = false;
     return s;
 }
 
