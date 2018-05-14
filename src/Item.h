@@ -6,6 +6,7 @@ typedef struct
 {
     int index;
     Classification c;
+    const char* name;
     const char* desc;
     // Classification string.
     const char* cstr;
