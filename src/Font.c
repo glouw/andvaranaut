@@ -39,26 +39,25 @@ static SDL_Rect tmid(const Font f, const int x, const int y, const char* const t
     return target;
 }
 
-static SDL_Texture* tget(const Font f, const Sdl sdl, const char* text)
+static SDL_Texture* tget(const Font f, SDL_Renderer* const rend, const char* text)
 {
     SDL_Surface* const surface = TTF_RenderText_Solid(f.type, text, f.color);
-    SDL_Texture* const texture = SDL_CreateTextureFromSurface(sdl.renderer, surface);
+    SDL_Texture* const texture = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
     return texture;
 }
 
-static void xfput(const Font f, const Sdl sdl, const int x, const int y, const char* const text, const int alpha)
+static void xfput(const Font f, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
 {
-    SDL_Texture* texture = tget(f, sdl, text);
-    //SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+    SDL_Texture* texture = tget(f, rend, text);
     SDL_SetTextureAlphaMod(texture, alpha < 0 ? 0 : alpha);
     const SDL_Rect where = tmid(f, x, y, text);
-    SDL_RenderCopy(sdl.renderer, texture, NULL, &where);
+    SDL_RenderCopy(rend, texture, NULL, &where);
     SDL_DestroyTexture(texture);
 }
 
-void xfwrt(const Font fill, const Font line, const Sdl sdl, const int x, const int y, const char* const text, const int alpha)
+void xfwrt(const Font fill, const Font line, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
 {
-    xfput(fill, sdl, x, y, text, alpha);
-    xfput(line, sdl, x, y, text, alpha);
+    xfput(fill, rend, x, y, text, alpha);
+    xfput(line, rend, x, y, text, alpha);
 }

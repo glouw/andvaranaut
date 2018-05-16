@@ -87,11 +87,14 @@ static Hero vert(Hero hero, const Map map, const Input input)
     const float tall = onland ? hero.tall : hswim(hero);
     const int jumped = input.key[SDL_SCANCODE_SPACE];
     const int crouch = input.key[SDL_SCANCODE_LCTRL];
+
     // Jump.
     if(jumped && hero.height <= tall)
         hero.vvel = 0.05f;
+
     // Apply.
     hero.height += hero.vvel;
+
     // Fall.
     if(hero.height > tall)
         hero.vvel -= 0.005f;
@@ -100,11 +103,13 @@ static Hero vert(Hero hero, const Map map, const Input input)
         hero.vvel = 0.0f;
         hero.height = tall;
     }
+
     // Clamp jumping and falling.
     const float max = 0.95f;
     const float min = 0.05f;
     if(hero.height > max) hero.height = max;
     if(hero.height < min) hero.height = min;
+
     // Crouch override - only works on land.
     if(crouch && onland)
         hero.height = hduck(hero);
@@ -125,12 +130,20 @@ static Point accelerate(const Hero hero)
     return xmul(direction, hero.acceleration);
 }
 
-static Hero move(Hero hero, const Map map, const Input input, const Flow current)
+static Hero move(Hero hero, const Map map, const Input input, const Flow current, Title* tt, const Timer tm)
 {
     const Point last = hero.where;
     const int swimming = hero.height <= hswim(hero);
     const int crouching = hero.height <= hduck(hero);
     const float speed = swimming ? 0.3f * hero.speed : crouching ? 0.5f * hero.speed : hero.speed;
+
+    // Thoughts on swimming.
+    if(swimming && !hero.swam)
+    {
+        hero.swam = true;
+        xttset(tt, tm.renders, tm.renders + 180, "The current is strong...");
+    }
+
     // Acceleration.
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
@@ -145,12 +158,16 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     }
     // Mass spring damper if not accelerating.
     else hero.velocity = xmul(hero.velocity, 1.0f - hero.acceleration / speed);
+
     // Current velocity is added to hero velocity if hero is swimming.
     if(swimming) hero.velocity = xadd(hero.velocity, current.velocity);
+
     // Top speed check.
     if(xmag(hero.velocity) > speed) hero.velocity = xmul(xunt(hero.velocity), speed);
+
     // Moves and checks for a collision.
     hero.where = xadd(hero.where, hero.velocity);
+
     // Reset hero if collision.
     if(xtile(hero.where, map.walling))
     {
@@ -172,18 +189,18 @@ static int tdn(const Hero hero, const Map map)
     return hero.yaw > 1.0f && xmisportal(map.floring, hero.where);
 }
 
-int xteleporting(const Hero hero, const Map map, const Input input, const int ticks)
+int xteleporting(const Hero hero, const Map map, const Input input, const Timer tm)
 {
     static int last;
     // A delay is required between teleports else hero will
     // quickly teleport between adjacent floors with a single key press.
     // The delay is arbitrary.
     const int delay = 2;
-    if(ticks < last + delay)
+    if(tm.ticks < last + delay)
         return false;
     if(!input.key[SDL_SCANCODE_E])
         return false;
-    last = ticks;
+    last = tm.ticks;
     return tup(hero, map)
         || tdn(hero, map);
 }
@@ -219,11 +236,11 @@ Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, con
     return ray;
 }
 
-Hero xsustain(Hero hero, const Map map, const Input input, const Flow current)
+Hero xsustain(Hero hero, const Map map, const Input input, const Flow current, Title* tt, const Timer tm)
 {
     hero = look(hero, input);
     hero = vert(hero, map, input);
-    hero = move(hero, map, input, current);
+    hero = move(hero, map, input, current, tt, tm);
     hero.torch = xburn(hero.torch);
     return hero;
 }

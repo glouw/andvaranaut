@@ -1,22 +1,24 @@
 #pragma once
 
-#include "Sdl.h"
 #include "Font.h"
+
+#include <SDL2/SDL.h>
 
 typedef struct
 {
     int start;
     int now;
     int end;
+    char* str;
 }
 Title;
 
 Title xttzero();
 
-Title xttnew(const int start, const int end);
+void xttnow(Title*, const int now);
 
-Title xttnow(Title tt, const int now);
+void xttset(Title*, const int start, const int end, const char* const text, ...);
 
-Title xttset(Title tt, const int start, const int end);
+Title* xttnew(const int start, const int end, const char* const text);
 
-void xttshow(const Title, const Font fill, const Font line, const Sdl sdl, const char* const text, ...);
+void xttshow(Title*, const Font fill, const Font line, SDL_Renderer* const, const int xres, const int yres);

@@ -2,6 +2,7 @@
 
 #include "Textures.h"
 #include "Sprites.h"
+#include "Timer.h"
 #include "Args.h"
 #include "Overview.h"
 #include "Flow.h"
@@ -48,10 +49,10 @@ void xrelease(const Sdl);
 void xpresent(const Sdl);
 
 // Renders one frame with SDL using hero, sprite, and map data. Ticks determine sprite animation.
-void xrender(const Sdl, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const int ticks);
+void xrender(const Sdl, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const Timer);
 
 // Renders the overview of the map and sprites for editing purposes.
-void xview(const Sdl, const Overview, const Sprites, const Map, const int ticks);
+void xview(const Sdl, const Overview, const Sprites, const Map, const Timer);
 
 Attack xdgauge(const Sdl, const Gauge, const Inventory, const Scroll);
 
@@ -59,4 +60,4 @@ void xdmap(const Sdl, const Map, const Point);
 
 void xdinv(const Sdl, const Inventory);
 
-void xdbars(const Sdl, const Hero, const int ticks);
+void xdbars(const Sdl, const Hero, const Timer);

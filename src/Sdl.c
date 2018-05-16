@@ -74,7 +74,7 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
 }
 
 // Pastes all visible sprites on screen. The wall z-buffer will determine when to partially or fully hide a sprite.
-static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, const Hero hero, const int ticks)
+static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
     // Go through all the sprites.
     for(int which = 0; which < sprites.count; which++)
@@ -107,7 +107,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
         // Determine sprite animation based on ticks.
-        const SDL_Rect image = { w * (ticks % FRAMES), h * sprite->state, w, h };
+        const SDL_Rect image = { w * (tm.ticks % FRAMES), h * sprite->state, w, h };
         // Calculate how much of the sprite is seen.
         // NEEDS to be volatile else it exits without segfault on my Thinkpad t43 with
         // either x or y 255 overflow. Assuming integrated graphics driver bug.
@@ -182,7 +182,7 @@ void xrelease(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const int ticks)
+void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
 {
     // Z-buffer will be populated once the map renderering is finished.
     Point* const zbuff = xtoss(Point, sdl.xres);
@@ -227,7 +227,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // For sprites to be pasted to the screen they must first be orientated
     // to the players gaze. Afterwards they must be placed back.
     xorient(sprites, hero);
-    paste(sdl, sprites, zbuff, hero, ticks);
+    paste(sdl, sprites, zbuff, hero, tm);
     xplback(sprites, hero);
     // Cleanup.
     free(zbuff);
@@ -376,7 +376,7 @@ Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll s
 }
 
 // Draw tiles for the grid layout.
-static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
+static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
 {
     // Clear renderer and draw overview tiles.
     SDL_SetRenderDrawColor(sdl.renderer, 0x00, 0x00, 0x00, 0x00);
@@ -405,7 +405,7 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         const int index = sprite->ascii - ' ';
         const int w = sdl.surfaces.surface[index]->w / FRAMES;
         const int h = sdl.surfaces.surface[index]->h / STATES;
-        const SDL_Rect from = { w * (ticks % FRAMES), h * sprite->state, w, h };
+        const SDL_Rect from = { w * (tm.ticks % FRAMES), h * sprite->state, w, h };
         const SDL_Rect to = {
             // Right above cursor.
             (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
@@ -419,7 +419,7 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
 }
 
 // Draw the selection panel.
-static void dpanel(const Sdl sdl, const Overview ov, const int ticks)
+static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
 {
     for(int i = ov.wheel; i <= '~' - ' '; i++)
     {
@@ -430,7 +430,7 @@ static void dpanel(const Sdl sdl, const Overview ov, const int ticks)
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
             const int h = sdl.surfaces.surface[i]->h / STATES;
             // Copy over the tile. Make animation idle.
-            const SDL_Rect from = { w * (ticks % FRAMES), h * IDLE, w, h };
+            const SDL_Rect from = { w * (tm.ticks % FRAMES), h * IDLE, w, h };
             if(clipping(sdl, ov, to))
                 continue;
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
@@ -440,14 +440,14 @@ static void dpanel(const Sdl sdl, const Overview ov, const int ticks)
     }
 }
 
-void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const int ticks)
+void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
 {
-    dgridl(sdl, ov, sprites, map, ticks);
-    dpanel(sdl, ov, ticks);
+    dgridl(sdl, ov, sprites, map, tm);
+    dpanel(sdl, ov, tm);
 }
 
 // Draws one status bar.
-void xdbar(const Sdl sdl, const Hero hero, const int position, const int ticks, const int size, const Bar bar)
+void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, const int size, const Bar bar)
 {
     const int max =
         bar == HPS ? hero.hpsmax :
@@ -458,7 +458,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const int ticks, 
     const float threshold = 0.25f * max;
     SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
     SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
-    const int frame = ticks % 2 == 0;
+    const int frame = tm.ticks % 2 == 0;
     const int w = surface->w;
     const SDL_Rect gleft = { 0,  0, w, w };
     const SDL_Rect glass = { 0, 32, w, w };
@@ -490,12 +490,12 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const int ticks, 
 }
 
 // Draws hero status bars.
-void xdbars(const Sdl sdl, const Hero hero, const int ticks)
+void xdbars(const Sdl sdl, const Hero hero, const Timer tm)
 {
     const int size = 1;
-    xdbar(sdl, hero, 2, ticks, size, HPS);
-    xdbar(sdl, hero, 1, ticks, size, MNA);
-    xdbar(sdl, hero, 0, ticks, size, FTG);
+    xdbar(sdl, hero, 2, tm, size, HPS);
+    xdbar(sdl, hero, 1, tm, size, MNA);
+    xdbar(sdl, hero, 0, tm, size, FTG);
 }
 
 // Draws the inventory backpanel. Selected inventory item is highlighted.

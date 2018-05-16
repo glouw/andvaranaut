@@ -4,6 +4,7 @@
 #include "Scroll.h"
 #include "Font.h"
 #include "Title.h"
+#include "Timer.h"
 #include "util.h"
 
 // Andvaranaut does not use a single global variable.
@@ -55,8 +56,8 @@ int main(int argc, char* argv[])
     Font fill = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.red, false);
     Font line = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.blk, true);
 
-    // The first title buffer is for the "Andvaranaut" welcoming screen.
-    Title tt = xttnew(0, 90);
+    // Titles present new areas to the player. The title type is the only heap type as it used deep within the engine.
+    Title* tt = xttnew(0, 180, "Andvaranaut");
 
     // Game loop. X-Resolution 512 reserved for performance testing. Exits with certain keypress or 'X' window button.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
@@ -64,8 +65,10 @@ int main(int argc, char* argv[])
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);
 
+        const Timer tm = { renders, ticks };
+
         // Advance the title.
-        tt = xttnow(tt, renders);
+        xttnow(tt, renders);
 
         /* Edit Mode */
         if(in.key[SDL_SCANCODE_TAB])
@@ -83,13 +86,13 @@ int main(int argc, char* argv[])
             wd.sprites[me.floor] = xlay(wd.sprites[me.floor], wd.map[me.floor], ov);
 
             // Draws the overview to the screen backbuffer.
-            xview(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], ticks);
+            xview(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], tm);
         }
         /* Play Mode */
         else
         {
             // Hero teleportation (up and down floors via trapdoors).
-            if(xteleporting(me, wd.map[me.floor], in, ticks))
+            if(xteleporting(me, wd.map[me.floor], in, tm))
             {
                 me = xteleport(me, wd.map[me.floor]);
 
@@ -98,9 +101,8 @@ int main(int argc, char* argv[])
                 fd = xprepare(wd.map[me.floor], me.aura);
 
                 // Set buffer title buffer.
-                tt = xttset(tt, renders, renders + 90);
+                xttset(tt, renders, renders + 120, "Floor %d", me.floor);
             }
-
             // Overview backpanning keeps overview up to date with hero location.
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
 
@@ -109,19 +111,19 @@ int main(int argc, char* argv[])
             clouds = xstream(clouds);
 
             // Sprite updater for current floor. Returns an updated hero if sprite interaction occured.
-            me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, ticks);
+            me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, tm);
 
             // Inventory selection.
             inv = xinvselect(inv, in);
 
             // Renders to screen backbuffer floors, ceiling, walls, and then sprites.
-            xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, ticks);
+            xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
 
             // Draws to screen backbuffer the inventory panel.
             xdinv(sdl, inv);
 
             // Draws to screen backbuffer health, fatigue, and mana bars.
-            xdbars(sdl, me, ticks);
+            xdbars(sdl, me, tm);
 
             // Draws to screen backbuffer the game map.
             xdmap(sdl, wd.map[me.floor], me.where);
@@ -151,16 +153,15 @@ int main(int argc, char* argv[])
                 gg = xgwind(gg, in);
 
                 // Hero self sustain.
-                me = xsustain(me, wd.map[me.floor], in, current);
+                me = xsustain(me, wd.map[me.floor], in, current, tt, tm);
 
                 // Sprite damaging. May add or remove sprites to game word.
-                wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, ticks);
+                wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, tt, tm);
             }
         }
 
-        // Floor title. Note that buffer times must be allocated before a title can be shown.
-        // Maybe put string in tt? Add things like foor to tt aswell? Get rid of varargs?
-        xttshow(tt, fill, line, sdl, tt.start == 0 ? "Andvaranaut" : "Floor %d", me.floor);
+        // Present the title to the middle of the screen.
+        xttshow(tt, fill, line, sdl.renderer, sdl.xres, sdl.yres);
 
         // Presents screen backbuffer to screen.
         xpresent(sdl);

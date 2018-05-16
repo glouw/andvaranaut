@@ -225,16 +225,16 @@ static Sprites dropit(Sprites sprites, const Attack attack, const Point where)
     return append(sprites, xsregistrar('d', xadd(where, delta)));
 }
 
-static void brokelb(const int ascii, const Inventory inv)
+static void brokelb(const int ascii, const Inventory inv, Title* tt, const Timer tm)
 {
     if(ascii == 'd')
         // Add an item to the inventory.
         if(!xitsadd(inv.items, xitrand()))
             // Make this a log message to the screen in the future.
-            printf("Inventory full!\n");
+            xttset(tt, tm.renders, tm.renders + 120, "Inventory Full");
 }
 
-static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv, const int ticks, const Hero hero)
+static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv, Title* tt, const Timer tm, const Hero hero)
 {
     const Point hand = xtouch(hero);
     const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
@@ -257,7 +257,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
                     (attack.dir.x > 0.0f ? DEADW : DEADE):
                     (attack.dir.y > 0.0f ? DEADN : DEADS);
                 // Broke a lootbag?
-                brokelb(sprite->ascii, inv);
+                brokelb(sprite->ascii, inv, tt, tm);
                 // Chance dead sprite sprite will drop loot bag.
                 // This includes loot bags (they can drop extra loot bags).
                 // NOTE: Hurt counter stops when a loot bag is dropped.
@@ -271,7 +271,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
                     (attack.dir.x > 0.0f ? HURTW : HURTE):
                     (attack.dir.y > 0.0f ? HURTN : HURTS);
                 // Timer for idle reset.
-                sprite->ticks = ticks + 5;
+                sprite->ticks = tm.ticks + 5;
             }
             if(++hurts == it.hurts) return sprites;
         }
@@ -279,7 +279,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
     return sprites;
 }
 
-static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv, const int ticks)
+static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv, Title* tt, const Timer tm)
 {
     // Remember that attack direction was overrided with a point.
     const SDL_Point point = {
@@ -302,7 +302,7 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
             {
                 sprite->state = DEADS;
                 // Is the dead sprite a lootbag? If so, randomly add any item to inventory.
-                brokelb(sprite->ascii, inv);
+                brokelb(sprite->ascii, inv, tt, tm);
                 // Chance dead sprite sprite will drop loot bag.
                 // This includes loot bags (they can drop extra loot bags).
                 // NOTE: Hurt counter stops when a loot bag is dropped.
@@ -312,7 +312,7 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
             else
             {
                 sprite->state = HURTS;
-                sprite->ticks = ticks + 5;
+                sprite->ticks = tm.ticks + 5;
             }
             // Hurt counter increments.
             if(++hurts == it.hurts) return sprites;
@@ -321,7 +321,7 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
     return sprites;
 }
 
-static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv, const int ticks, const Hero hero)
+static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv, Title* tt, const Timer tm, const Hero hero)
 {
     // TODO
     // Casting magic scrolls will spawn new sprites.
@@ -331,22 +331,23 @@ static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv,
     (void) attack;
     (void) hero;
     (void) inv;
-    (void) ticks;
+    (void) tm;
+    (void) tt;
     (void) it;
     return sprites;
 }
 
 // Hurts the closest sprite(s) based on weapon "hurt" value.
 // Eg. A weapon with a hurt value of 3 will hurt 3 sprites at most with a single attack.
-Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, const int ticks)
+Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, Title* tt, const Timer tm)
 {
     if(in.lu)
     {
         switch(attack.method)
         {
-        case MELEE: return hmelee(sprites, attack, inv, ticks, hero);
-        case RANGE: return hrange(sprites, attack, inv, ticks);
-        case MAGIC: return hmagic(sprites, attack, inv, ticks, hero);
+        case MELEE: return hmelee(sprites, attack, inv, tt, tm, hero);
+        case RANGE: return hrange(sprites, attack, inv, tt, tm);
+        case MAGIC: return hmagic(sprites, attack, inv, tt, tm, hero);
         // For NOATTACK
         default:
             return sprites;
@@ -355,21 +356,21 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
     return sprites;
 }
 
-static void idle(const Sprites sprites, const int ticks)
+static void idle(const Sprites sprites, const Timer tm)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         if(xisdead(sprite->state))
             continue;
-        if(ticks > sprite->ticks)
+        if(tm.ticks > sprite->ticks)
             sprite->state = IDLE;
     }
 }
 
-static Hero damage(Hero hero, const Sprites sprites, const int ticks)
+static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
 {
-    const float wave = 0.5f * (sinf(3.1416f * ticks / 60.0f) + 1.0f);
+    const float wave = 0.5f * (sinf(FPI * tm.ticks / 60.0f) + 1.0f);
     hero.hps = hero.hpsmax * wave;
     hero.mna = hero.mnamax * wave;
     hero.ftg = hero.ftgmax * wave;
@@ -380,12 +381,12 @@ static Hero damage(Hero hero, const Sprites sprites, const int ticks)
     return hero;
 }
 
-Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const int ticks)
+Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Timer tm)
 {
     arrange(sprites, hero);
-    idle(sprites, ticks);
+    idle(sprites, tm);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
     bound(sprites, map);
-    return damage(hero, sprites, ticks);
+    return damage(hero, sprites, tm);
 }
