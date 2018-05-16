@@ -56,8 +56,9 @@ SRCS += Attack.c
 SRCS += Bundle.c
 SRCS += Classification.c
 SRCS += Clamped.c
-SRCS += Flow.c
 SRCS += Compass.c
+SRCS += Flow.c
+SRCS += Font.c
 SRCS += Field.c
 SRCS += Gauge.c
 SRCS += Hero.c
@@ -115,6 +116,7 @@ ifdef ComSpec
 endif
 LDFLAGS += -lm
 LDFLAGS += -lSDL2
+LDFLAGS += -lSDL2_ttf
 
 # -----------------------------------------------------------------------------
 # Linker.
