@@ -76,6 +76,7 @@ SRCS += Points.c
 SRCS += Projection.c
 SRCS += Ray.c
 SRCS += Sdl.c
+SRCS += Title.c
 SRCS += Sheer.c
 SRCS += Scanline.c
 SRCS += Sprite.c

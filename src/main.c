@@ -3,12 +3,13 @@
 #include "Inventory.h"
 #include "Scroll.h"
 #include "Font.h"
+#include "Title.h"
 #include "util.h"
 
 int main(int argc, char* argv[])
 {
     // The one and only random seeder. Keep seed constant to keep the same map for testing.
-    srand(true ? 128 : time(0));
+    srand(false ? 128 : time(0));
 
     // Parses command line arguments. Uses game defaults if no arguments are passed in.
     const Args args = xparse(argc, argv);
@@ -49,13 +50,19 @@ int main(int argc, char* argv[])
     Sdl sdl = xsetup(args);
 
     // Prepares general display font.
-    Font font = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.red);
+    Font fill = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.red, false);
+    Font line = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.blk, true);
+
+    Title tt = xttnew();
 
     // Game loop. X-Resolution 512 reserved for performance testing. Exits with certain keypress or 'X' window button.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);
+
+        // Advance the title.
+        tt = xttnow(tt, renders);
 
         /* Edit Mode */
         if(in.key[SDL_SCANCODE_TAB])
@@ -86,6 +93,9 @@ int main(int argc, char* argv[])
                 // Old pathfinder freed and a new pathfinder for the new floor is prepared.
                 xruin(fd);
                 fd = xprepare(wd.map[me.floor], me.aura);
+
+                // Set the title start and end.
+                tt = xttset(tt, renders, renders + 90);
             }
 
             // Overview backpanning keeps overview up to date with hero location.
@@ -144,8 +154,8 @@ int main(int argc, char* argv[])
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, ticks);
             }
         }
-
-        xfwrt(font, sdl, 0, 0, "Andvaranaut v0.01");
+        // Floor title.
+        xttshow(tt, fill, line, sdl, "Floor %d", me.floor);
 
         // Presents screen backbuffer to screen.
         xpresent(sdl);
