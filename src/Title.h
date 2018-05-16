@@ -13,7 +13,7 @@ Title;
 
 Title xttzero();
 
-Title xttnew();
+Title xttnew(const int start, const int end);
 
 Title xttnow(Title tt, const int now);
 

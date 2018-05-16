@@ -6,6 +6,8 @@
 #include "Title.h"
 #include "util.h"
 
+// Andvaranaut does not use a single global variable.
+
 int main(int argc, char* argv[])
 {
     // The one and only random seeder. Keep seed constant to keep the same map for testing.
@@ -53,7 +55,8 @@ int main(int argc, char* argv[])
     Font fill = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.red, false);
     Font line = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.blk, true);
 
-    Title tt = xttnew();
+    // The first title buffer is for the "Andvaranaut" welcoming screen.
+    Title tt = xttnew(0, 90);
 
     // Game loop. X-Resolution 512 reserved for performance testing. Exits with certain keypress or 'X' window button.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
@@ -94,7 +97,7 @@ int main(int argc, char* argv[])
                 xruin(fd);
                 fd = xprepare(wd.map[me.floor], me.aura);
 
-                // Set the title start and end.
+                // Set buffer title buffer.
                 tt = xttset(tt, renders, renders + 90);
             }
 
@@ -154,8 +157,10 @@ int main(int argc, char* argv[])
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, ticks);
             }
         }
-        // Floor title.
-        xttshow(tt, fill, line, sdl, "Floor %d", me.floor);
+
+        // Floor title. Note that buffer times must be allocated before a title can be shown.
+        // Maybe put string in tt? Add things like foor to tt aswell? Get rid of varargs?
+        xttshow(tt, fill, line, sdl, tt.start == 0 ? "Andvaranaut" : "Floor %d", me.floor);
 
         // Presents screen backbuffer to screen.
         xpresent(sdl);

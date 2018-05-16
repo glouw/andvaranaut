@@ -16,7 +16,7 @@ Items xitsnew(const int max)
     return its;
 }
 
-static int avail(Items its)
+static int avail(const Items its)
 {
     for(int i = 0; i < its.max; i++)
         if(its.item[i].c == NONE)

@@ -21,7 +21,6 @@ Font xfbuild(const char* const path, const int size, const uint32_t color, const
     f.color.g = (color >> 0x08) & 0xFF;
     f.color.b = (color >> 0x00) & 0xFF;
     // Font Outlining.
-    printf("%d\n", outlined);
     TTF_SetFontOutline(f.type, outlined);
     return f;
 }

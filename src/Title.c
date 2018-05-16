@@ -10,11 +10,6 @@ Title xttzero()
     return title;
 }
 
-Title xttnew()
-{
-    return xttzero();
-}
-
 Title xttnow(Title tt, const int now)
 {
     tt.now = now;
@@ -26,6 +21,11 @@ Title xttset(Title tt, const int start, const int end)
     tt.start = start;
     tt.end = end;
     return tt;
+}
+
+Title xttnew(const int start, const int end)
+{
+    return xttset(xttzero(), start, end);
 }
 
 void xttshow(const Title tt, const Font fill, const Font line, const Sdl sdl, const char* const text, ...)
