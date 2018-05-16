@@ -12,14 +12,17 @@ Font xfbuild(const char* const path, const int size, const uint32_t color, const
 {
     if(!TTF_WasInit())
         TTF_Init();
+
     Font f = xfzero();
     f.type = TTF_OpenFont(path, size);
     if(f.type == NULL)
         xbomb("Could not open %s\n", path);
+
     // Inside color of font.
     f.color.r = (color >> 0x10) & 0xFF;
     f.color.g = (color >> 0x08) & 0xFF;
     f.color.b = (color >> 0x00) & 0xFF;
+
     // Font Outlining.
     TTF_SetFontOutline(f.type, outlined);
     return f;
