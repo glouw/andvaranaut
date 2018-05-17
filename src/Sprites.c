@@ -16,7 +16,7 @@ Sprites xzsprites()
 
 Sprites xsnew(const int max)
 {
-    const Sprites sprites = { xtoss(Sprite, max), 0, max };
+    const Sprites sprites = { xtoss(Sprite, max), 0, max, NOATTACK };
     return sprites;
 }
 
@@ -30,9 +30,11 @@ static Sprites append(Sprites sprites, const Sprite sprite)
     // Resize if no size.
     if(sprites.max == 0)
         xretoss(sprites.sprite, Sprite, sprites.max = 1);
+
     // Resize if capped.
     if(sprites.count >= sprites.max)
         xretoss(sprites.sprite, Sprite, sprites.max *= 2);
+
     // Append.
     sprites.sprite[sprites.count++] = sprite;
     return sprites;
@@ -239,6 +241,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
     const Point hand = xtouch(hero);
     const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
     const Item it = inv.items.item[inv.selected];
+
     // Hurt counter indicates how many sprites can be hurt at once. Different weapons have different hurt counters.
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
@@ -249,6 +252,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
         if(xeql(hand, sprite->where, 2.0f))
         {
             sprite->health -= attack.power;
+
             // Sprite dead?
             if(sprite->health <= 0.0f)
             {
@@ -256,8 +260,10 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
                 sprite->state = side ?
                     (attack.dir.x > 0.0f ? DEADW : DEADE):
                     (attack.dir.y > 0.0f ? DEADN : DEADS);
+
                 // Broke a lootbag?
                 brokelb(sprite->ascii, inv, tt, tm);
+
                 // Chance dead sprite sprite will drop loot bag.
                 // This includes loot bags (they can drop extra loot bags).
                 // NOTE: Hurt counter stops when a loot bag is dropped.
@@ -270,6 +276,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
                 sprite->state = side ?
                     (attack.dir.x > 0.0f ? HURTW : HURTE):
                     (attack.dir.y > 0.0f ? HURTN : HURTS);
+
                 // Timer for idle reset.
                 sprite->ticks = tm.ticks + 5;
             }
@@ -287,22 +294,27 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
         (int) attack.dir.y,
     };
     const Item it = inv.items.item[inv.selected];
+
     // Go through all sprites.
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         if(xisuseless(sprite))
             continue;
+
         // If the attack point is within a sprite hitbox then the sprite is hurt.
         if(SDL_PointInRect(&point, &sprite->seen))
         {
             sprite->health -= attack.power;
+
             // Sprite dead?
             if(sprite->health <= 0.0f)
             {
                 sprite->state = DEADS;
+
                 // Is the dead sprite a lootbag? If so, randomly add any item to inventory.
                 brokelb(sprite->ascii, inv, tt, tm);
+
                 // Chance dead sprite sprite will drop loot bag.
                 // This includes loot bags (they can drop extra loot bags).
                 // NOTE: Hurt counter stops when a loot bag is dropped.
@@ -314,6 +326,7 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
                 sprite->state = HURTS;
                 sprite->ticks = tm.ticks + 5;
             }
+
             // Hurt counter increments.
             if(++hurts == it.hurts) return sprites;
         }
@@ -343,16 +356,19 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
 {
     if(in.lu)
     {
-        switch(attack.method)
-        {
-        case MELEE: return hmelee(sprites, attack, inv, tt, tm, hero);
-        case RANGE: return hrange(sprites, attack, inv, tt, tm);
-        case MAGIC: return hmagic(sprites, attack, inv, tt, tm, hero);
-        // For NOATTACK
-        default:
-            return sprites;
-        }
+        // The last attack method is saved within the sprites container for other objects to know
+        // how the sprites were last impacted.
+        // For example, the hero yaw may get a recoil bump when a bow is shot.
+        sprites.last = attack.method;
+
+        // Do the attack.
+        if(attack.method == MELEE) return hmelee(sprites, attack, inv, tt, tm, hero);
+        if(attack.method == RANGE) return hrange(sprites, attack, inv, tt, tm);
+        if(attack.method == MAGIC) return hmagic(sprites, attack, inv, tt, tm, hero);
     }
+
+    // Of course, if no attack happened, then the sprites were not harmed.
+    sprites.last = NOATTACK;
     return sprites;
 }
 
@@ -361,8 +377,12 @@ static void idle(const Sprites sprites, const Timer tm)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+
+        // Skip dead sprites.
         if(xisdead(sprite->state))
             continue;
+
+        // If the sprite state ticker expired the sprite is now idle.
         if(tm.ticks > sprite->ticks)
             sprite->state = IDLE;
     }
@@ -374,6 +394,7 @@ static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
     hero.hps = hero.hpsmax * wave;
     hero.mna = hero.mnamax * wave;
     hero.ftg = hero.ftgmax * wave;
+
     // TODO:
     // Water and food sprites replenish the hero's fatigue.
     // Healing wizard sprites heal the hero instead of damaging the hero.

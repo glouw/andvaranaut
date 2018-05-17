@@ -55,8 +55,8 @@ static Hero yaw(Hero hero, const Input input)
     const float max = 1.99f;
     const float min = 0.01f;
     hero.yaw =
-        hero.yaw > max ? max : /* Max clamp. */
-        hero.yaw < min ? min : /* Min clamp. */
+        hero.yaw > max ? max : // Max clamp.
+        hero.yaw < min ? min : // Min clamp.
         hero.yaw;
     return hero;
 }
@@ -65,6 +65,7 @@ static Hero look(const Hero hero, const Input input)
 {
     if(input.l)
         return hero;
+
     return yaw(spin(hero, input), input);
 }
 
@@ -192,14 +193,17 @@ static int tdn(const Hero hero, const Map map)
 int xteleporting(const Hero hero, const Map map, const Input input, const Timer tm)
 {
     static int last;
+
     // A delay is required between teleports else hero will
     // quickly teleport between adjacent floors with a single key press.
     // The delay is arbitrary.
     const int delay = 2;
     if(tm.ticks < last + delay)
         return false;
+
     if(!input.key[SDL_SCANCODE_E])
         return false;
+
     last = tm.ticks;
     return tup(hero, map)
         || tdn(hero, map);
@@ -216,6 +220,7 @@ Hero xteleport(Hero hero, const Map map)
         // Gives a falling effect.
         hero.height = 0.75;
     }
+
     // The teleport effect is done by reseting the hero yaw to the horizon. The torch is also put out.
     hero.yaw = 1.0f;
     hero.torch = xsnuff();
@@ -225,15 +230,33 @@ Hero xteleport(Hero hero, const Map map)
 Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, const int xres)
 {
     const Point end = xsub(hit.where, hero.where);
+
     // The corrected point is the normal distance from the hero to where the ray hit.
     const Point corrected = xtrn(end, -hero.theta);
+
     // Wall projections are calculated calculated based hero view parameters, and the corrected distance.
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, xres, hero.fov.a.x, hero.yaw, corrected, hero.height);
+
     // The engine supports lower, eye level, and upper walls.
     const Ray ray = { trace, corrected, xsheer(projection, sheer), hit.surface, hit.offset, hero.torch };
+
     // A ray object will hold enough information to draw a wall projection on the screen with the right lighting value.
     return ray;
+}
+
+Hero xrecoil(Hero hero, const Method method)
+{
+    // Generate recoil if ranged.
+    if(method == RANGE)
+        // TODO
+        // Different weapons have different recoil. Add this in.
+        hero.vyaw = 0.12f;
+
+    // Apply recoil.
+    hero.yaw -= (hero.vyaw *= 0.8f);
+
+    return hero;
 }
 
 Hero xsustain(Hero hero, const Map map, const Input input, const Flow current, Title* tt, const Timer tm)

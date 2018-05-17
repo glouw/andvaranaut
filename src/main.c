@@ -7,8 +7,6 @@
 #include "Timer.h"
 #include "util.h"
 
-// Andvaranaut does not use a single global variable.
-
 int main(int argc, char* argv[])
 {
     // The one and only random seeder. Keep seed constant to keep the same map for testing.
@@ -157,6 +155,9 @@ int main(int argc, char* argv[])
 
                 // Sprite damaging. May add or remove sprites to game word.
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, tt, tm);
+
+                // Add recoil to the hero yaw if the last attack done to sprites was ranged.
+                me = xrecoil(me, wd.sprites[me.floor].last);
             }
         }
 
@@ -174,6 +175,7 @@ int main(int argc, char* argv[])
         const int ms = 1000.0f / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
+
     // No need to free dynamic pooled memory. The OS will do for us which gives us a quick exit.
     return 0;
 }

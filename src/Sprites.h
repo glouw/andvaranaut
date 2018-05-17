@@ -6,12 +6,14 @@
 #include "Field.h"
 #include "Title.h"
 #include "Inventory.h"
+#include "Method.h"
 
 typedef struct
 {
     Sprite* sprite;
     int count;
     int max;
+    Method last;
 }
 Sprites;
 

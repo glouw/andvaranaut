@@ -34,6 +34,7 @@ void xpresent(const Sdl sdl)
 static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Point* const zbuff)
 {
     SDL_Rect seen = frame;
+
     // Clips sprite from the left.
     for(; seen.w > 0; seen.w--, seen.x++)
     {
@@ -43,6 +44,7 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
         if(where.x < zbuff[x].x)
             break;
     }
+
     // Clips sprite from the right.
     for(; seen.w > 0; seen.w--)
     {
@@ -80,13 +82,16 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
     for(int which = 0; which < sprites.count; which++)
     {
         Sprite* const sprite = &sprites.sprite[which];
+
         // Move onto the next sprite if this sprite is behind the player.
         if(sprite->where.x < 0)
             continue;
+
         // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
         const float focal = hero.fov.a.x;
         const int size = (focal * sdl.xres / 2.0f) / sprite->where.x;
         const int osize = xodd(size) ? size + 1 : size;
+
         // Calculate sprite location on screen. Account for hero yaw and height.
         const int my = sdl.yres / 2 * (sprite->state == LIFTED ? 1.0f : (2.0f - hero.yaw));
         const int mx = sdl.xres / 2;
@@ -94,43 +99,55 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const int t = my - osize * (sprite->state == LIFTED ? 0.5f : (1.0f - hero.height));
         const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
         const SDL_Rect target = { l + s, t, osize, osize };
+
         // Applies a red rectangle around an alive red sprite if sensed.
         if(xissensible(sprite))
             dbox(sdl, target.x, target.y, target.w, sdl.red, false);
+
         // Move onto the next sprite if this sprite is off screen.
         if(target.x + target.w < 0 || target.x >= sdl.xres)
             continue;
+
         // Get sprite surface and texture.
         const int selected = sprite->ascii - ' ';
         SDL_Surface* const surface = sdl.surfaces.surface[selected];
         SDL_Texture* const texture = sdl.textures.texture[selected];
         const int w = surface->w / FRAMES;
         const int h = surface->h / STATES;
+
         // Determine sprite animation based on ticks.
         const SDL_Rect image = { w * (tm.ticks % FRAMES), h * sprite->state, w, h };
+
         // Calculate how much of the sprite is seen.
         // NEEDS to be volatile else it exits without segfault on my Thinkpad t43 with
         // either x or y 255 overflow. Assuming integrated graphics driver bug.
         volatile const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
+
         // The sprite's latest seen rect is then saved to the sprite.
         // This will come in handy for ranged attacks or just general mouse targeting.
         sprite->seen = seen;
+
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
         if(seen.w <= 0)
             continue;
+
         // Apply lighting to the sprite.
         const int modding = xilluminate(hero.torch, sprite->where.x);
         SDL_SetTextureColorMod(texture, modding, modding, modding);
+
         // Apply transparency to the sprite, if required.
         if(sprite->transparent)
             SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
+
         // Render the sprite.
         SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
+
         // Remove transperancy from the sprite.
         if(sprite->transparent)
             SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
         // Revert lighting to the sprite.
         SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
     }
@@ -151,6 +168,7 @@ Sdl xsetup(const Args args)
         SDL_RENDERER_ACCELERATED |
         // Screen Vertical Sync on / off.
         (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0x0));
+
     // The canvas texture will be used for per pixel drawings. This will be used to the walls, floors, and ceiling.
     // Notice the flip between yres and xres in the following call for the sdl canvas texture.
     // This was done for fast caching. Upon presenting the canvas will be rotated upwards by 90 degrees.
@@ -186,6 +204,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
 {
     // Z-buffer will be populated once the map renderering is finished.
     Point* const zbuff = xtoss(Point, sdl.xres);
+
     // The display must be locked for per-pixel writes.
     void* screen;
     int pitch;
@@ -193,6 +212,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     const int width = pitch / sizeof(uint32_t);
     uint32_t* pixels = (uint32_t*) screen;
     const Line camera = xrotate(hero.fov, hero.theta);
+
     // Rendering bundles are used for rendering a
     // portion of the map (ceiling, walls, and flooring) to the display.
     // One thread per CPU is allocated.
@@ -211,6 +231,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         b[i].clouds = clouds;
         b[i].map = map;
     };
+
     // Launch all threads and wait for their completion.
     SDL_Thread** const threads = xtoss(SDL_Thread*, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
@@ -220,15 +241,19 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
         int status; /* Ignored */
         SDL_WaitThread(threads[i], &status);
     }
+
     // Per-pixel writes are done. Unlock the display.
     SDL_UnlockTexture(sdl.canvas);
+
     // The map was rendered on its side. Rotate the map upwards.
     churn(sdl);
+
     // For sprites to be pasted to the screen they must first be orientated
     // to the players gaze. Afterwards they must be placed back.
     xorient(sprites, hero);
     paste(sdl, sprites, zbuff, hero, tm);
     xplback(sprites, hero);
+
     // Cleanup.
     free(zbuff);
     free(b);
@@ -254,6 +279,7 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
         const int y = g.points[i].y * sens - (width - sdl.yres) / 2;
         dbox(sdl, x, y, width, sdl.wht, true);
     }
+
     // Calculate attack.
     const int last = g.count - 1;
     const int tail = 6;
@@ -263,6 +289,7 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     for(int i = 0; i < g.count - 1; i++)
         mag += xmag(xsub(g.points[i + 1], g.points[i + 0]));
     mag += it.damage;
+
     // Hurts is a melee property. For instance, more than one
     // enemy can be hurt when a warhammer is used.
     const Point dir = xsub(g.points[last], g.points[last - tail]);
@@ -281,13 +308,16 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         // A shortbow may have short period and amplitude and medium attack.
         const float steady = it.amplitude / 2.0f;
         const float width = it.amplitude * xsinc(g.count, it.period) + steady;
+
         // Hurts is also a bow property. Longbows, for instance, can hurt more than one sprite.
         const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
         dbox(sdl, x, y, width, sdl.wht, false);
+
         // Calculate attack.
         // TODO: Fix this.
         const float mag = 1.0f / (steady - width);
+
         // Direction is overrided with attack point.
         // The attack point is a random point within the rect.
         const Point point = {
@@ -308,12 +338,16 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
     if(g.count > 0)
     {
         const int size = (sc.width - 1) / 2;
+
         // Pixels for the grid size.
         const int grid = 64;
+
         // Middle of the screen.
         const Point middle = { (float) sdl.xres / 2, (float) sdl.yres / 2 };
+
         // Half a grid for centering grid squares.
         const Point shift = { (float) grid / 2, (float) grid / 2 };
+
         // Animate attack (inside square for mouse cursor).
         for(int i = 0; i < g.count; i++)
         {
@@ -321,14 +355,17 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             const Point corner = xsnap(point, grid);
             const Point center = xsub(xadd(corner, middle), shift);
             dbox(sdl, center.x, center.y, grid, sdl.wht, true);
+
             // Populate Scroll int array. Was cleared earlier.
             const int x = size + corner.x / grid;
             const int y = size + corner.y / grid;
+
             // Clamp if over boundry.
             const int xc = x < 0 ? 0 : x >= sc.width ? sc.width - 1 : x;
             const int yc = y < 0 ? 0 : y >= sc.width ? sc.width - 1 : y;
             sc.casting[xc + yc * size] = 1;
         }
+
         // Animate attack (grid squares).
         for(int x = -size; x <= size; x++)
         for(int y = -size; y <= size; y++)
@@ -341,20 +378,25 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             const Point center = xsub(xadd(corner, middle), shift);
             dbox(sdl, center.x, center.y, grid, sdl.red, false);
         }
+
         // Draw the cursor.
         const Point point = xadd(xmul(g.points[g.count - 1], sens), shift);
         const Point center = xsub(xadd(point, middle), shift);
         dbox(sdl, center.x, center.y, 6, sdl.red, true);
     }
+
     // Calculate attack.
     // Runs through scroll int array and checks for error with all scroll int array shapes.
     // The magic scroll closest to the drawn gauge shape is placed as a scroll index.
     const int scindex = xsindex(sc);
+
     // Maybe accuracy to scroll gives better attack + item base attack?
     (void) it;
     const float mag = 0.0f;
+
     // If the scroll index is not found in the inventory the attack will go from MAGIC to NOATTACK.
     (void) inv;
+
     // Direction won't be needed for magic attacks as magic will spawn new sprites, be it food sprites,
     // attack sprites (fire / ice), etc.
     const Point dir = { 0.0f, 0.0f };
@@ -370,6 +412,7 @@ Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll s
     return
         xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         xisrange(it.c) ? dgrange(sdl, g, it, sens) :
+
         // Magic wand needs inventory access for checking against scrolls.
         xismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) :
         xzattack();
@@ -388,16 +431,19 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         const int ascii =
             ov.party == FLORING ? map.floring[j][i] :
             ov.party == CEILING ? map.ceiling[j][i] : map.walling[j][i];
+
         // If empty space then skip the tile.
         const int ch = ascii - ' ';
         if(ch == 0)
             continue;
+
         // Otherwise render the tile.
         const SDL_Rect to = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
         if(clipping(sdl, ov, to))
             continue;
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &to);
     }
+
     // Put down sprites. Sprites will not snap to the grid.
     for(int s = 0; s < sprites.count; s++)
     {
@@ -405,9 +451,11 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         const int index = sprite->ascii - ' ';
         const int w = sdl.surfaces.surface[index]->w / FRAMES;
         const int h = sdl.surfaces.surface[index]->h / STATES;
+
         const SDL_Rect from = { w * (tm.ticks % FRAMES), h * sprite->state, w, h };
+
+        // Right above cursor.
         const SDL_Rect to = {
-            // Right above cursor.
             (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
             (int) ((ov.h * sprite->where.y - ov.h / 1) + ov.py),
             ov.w, ov.h,
@@ -424,11 +472,13 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
     for(int i = ov.wheel; i <= '~' - ' '; i++)
     {
         const SDL_Rect to = { ov.w * (i - ov.wheel), 0, ov.w, ov.h };
+
         // Sprites.
         if(xsissprite(i + ' '))
         {
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
             const int h = sdl.surfaces.surface[i]->h / STATES;
+
             // Copy over the tile. Make animation idle.
             const SDL_Rect from = { w * (tm.ticks % FRAMES), h * IDLE, w, h };
             if(clipping(sdl, ov, to))
@@ -455,14 +505,18 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
     const float lvl =
         bar == HPS ? hero.hps :
         bar == FTG ? hero.ftg : hero.mna;
+
     const float threshold = 0.25f * max;
+
     SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
     SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
+
     const int frame = tm.ticks % 2 == 0;
     const int w = surface->w;
     const SDL_Rect gleft = { 0,  0, w, w };
     const SDL_Rect glass = { 0, 32, w, w };
     const SDL_Rect grite = { 0, 64, w, w };
+
     // Will animate bar if below threshold.
     const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : 0), w, w };
     const SDL_Rect empty[] = {
@@ -470,20 +524,24 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
         { 0, fluid.y + 4 * w, w, w }, // 50%.
         { 0, fluid.y + 6 * w, w, w }, // 25%.
     };
+
     // Draw.
     for(int i = 0; i < max; i++)
     {
         const int ww = size * w;
         const int yy = sdl.yres - ww * (1 + position);
         const SDL_Rect to = { ww * i, yy, ww, ww };
+
         // Full fluid level.
         if(xfl(lvl) > i)
             SDL_RenderCopy(sdl.renderer, texture, &fluid, &to);
+
         // Partial fluid level.
         if(xfl(lvl) == i)
             xdec(lvl) > 0.75f ? SDL_RenderCopy(sdl.renderer, texture, &empty[0], &to) :
             xdec(lvl) > 0.50f ? SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to) :
             xdec(lvl) > 0.25f ? SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to) : 0;
+
         // Glass.
         SDL_RenderCopy(sdl.renderer, texture, i == 0 ? &gleft : i == max - 1 ? &grite : &glass, &to);
     }
@@ -507,8 +565,10 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
     {
         SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
         SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
+
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
+
         const SDL_Rect from = {
             (int) (i == inv.selected ? red.x : wht.x),
             (int) (i == inv.selected ? red.y : wht.y),
@@ -525,8 +585,10 @@ static void dinvits(const Sdl sdl, const Inventory inv)
     for(int i = 0; i < inv.items.max; i++)
     {
         const Item item = inv.items.item[i];
+
         if(item.c == NONE)
             continue;
+
         const int index = xcindex(item.c);
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
@@ -577,18 +639,20 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
 {
     // This map texture is not apart of the Sdl struct since it must be refreshed
     // each frame via creation and destruction.
-    SDL_Texture* const texture = SDL_CreateTexture(
-        sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
+    SDL_Texture* const texture = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
     // Lock.
     void* screen;
     int pitch;
     SDL_LockTexture(texture, NULL, &screen, &pitch);
     const int width = pitch / sizeof(uint32_t);
     uint32_t* pixels = (uint32_t*) screen;
+
     // Draw rooms and hero dot.
     drooms(pixels, width, map, sdl.wht, sdl.blk);
     ddot(pixels, width, where, 3, sdl.red, sdl.blk);
+
     // Unlock and send.
     SDL_UnlockTexture(texture);
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };
