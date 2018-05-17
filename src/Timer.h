@@ -6,3 +6,7 @@ typedef struct
     int ticks;
 }
 Timer;
+
+Timer xztimer();
+
+Timer xtmnew(const int renders, const int ticks);

@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);
 
-        const Timer tm = { renders, ticks };
+        const Timer tm = xtmnew(renders, ticks);
 
         // Advance the title.
         xttnow(tt, renders);
