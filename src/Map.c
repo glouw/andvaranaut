@@ -42,7 +42,7 @@ static char** mnew(const int rows, const int cols, const int blok)
     return reset(block, rows, cols, blok);
 }
 
-Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests)
+Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid)
 {
     const Sheer md = {
         0.0f,
@@ -52,6 +52,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
         md.b + 1.0f,
         up.a + (float) (rand() % 2)
     };
+
     Map map = xzmap();
     map.rows = rows;
     map.cols = cols;
@@ -62,6 +63,8 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
     map.interests = interests;
     map.upper = up;
     map.middle = md;
+    map.grid = grid;
+
     return map;
 }
 

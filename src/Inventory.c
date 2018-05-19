@@ -13,15 +13,18 @@ Inventory xzinv()
 
 Inventory xinvnew()
 {
-    const Inventory inv = { xitsnew(12), 0, 48, -1 };
+    const Inventory inv = { xitsnew(12), 0, 32, -1 };
+
     const Item noob[] = {
         xitnew(SHORTWEP, 0),
         xitnew(WAND, 0),
         xitnew(AMMO, 8),
         xitnew(AMMO, 14),
     };
+
     for(int i = 0; i < xlen(noob); i++)
         xitsadd(inv.items, noob[i]);
+
     return inv;
 }
 

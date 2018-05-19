@@ -9,20 +9,30 @@ typedef struct
     char** ceiling;
     char** walling;
     char** floring;
+
     int rows;
     int cols;
+
     // Trapdoor points for moving up and down map floors.
     Points trapdoors;
+
     // Points of interests are used to generate themed rooms.
     Points interests;
+
+    // These sheers form an optical illusion with the middle and upper ceiling heights.
+    // For example, a larger upper sheer will extend the ceiling depth, and a larger
+    // middle sheer will extend the height of the walls.
     Sheer middle;
     Sheer upper;
+
+    // Each room occupies at most (grid * grid) area of the map.
+    int grid;
 }
 Map;
 
 Map xzmap();
 
-Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests);
+Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid);
 
 void xmclose(const Map);
 

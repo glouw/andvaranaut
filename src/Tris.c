@@ -279,11 +279,11 @@ static void mdups(const Tris edges, const Flags flags)
 }
 
 // ############################################# This is what a bone looks like
-// #            ################################ when generated from an edge.
-// #            #####################          # This here is for wallings, but
-// #  r o o m      c o r r i d o r    r o o m  # apply a chance percentage to the
-// #            #####################          # ceiling and floorings to have the same
-// #            ################################ thing happen.
+// #           #####################           # when generated from an edge.
+// #           #####################           # This here is for wallings, but
+// #  r o o m     c o r r i d o r     r o o m  # apply a chance percentage to the
+// #           #####################           # ceiling and floorings to have the same
+// #           #####################           # thing happen.
 // #############################################
 static void bone(const Map map, const Tri e, const int w, const int h)
 {
@@ -353,7 +353,7 @@ Map xtgen(const Points extra)
         poi = xpsadd(poi, ps.point[--ps.count]);
 
     // Build map.
-    const Map map = xmgen(h, w, tps, poi);
+    const Map map = xmgen(h, w, tps, poi, grid);
     mdups(edges, flags);
     carve(map, edges, flags, grid);
 
