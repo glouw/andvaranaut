@@ -24,5 +24,3 @@ Item xzitem();
 Item xitnew(const Classification, const int index);
 
 Item xitrand();
-
-void xitprint(const Item);

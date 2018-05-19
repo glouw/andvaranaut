@@ -217,6 +217,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // portion of the map (ceiling, walls, and flooring) to the display.
     // One thread per CPU is allocated.
     Bundle* const b = xtoss(Bundle, sdl.threads);
+    *b = xzbundle();
     for(int i = 0; i < sdl.threads; i++)
     {
         b[i].a = (i + 0) * sdl.xres / sdl.threads;
@@ -561,6 +562,7 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
 {
     const Point wht = { 0.0, 512.0 };
     const Point red = { 0.0, 528.0 };
+    const Point grn = { 0.0, 544.0 };
     for(int i = 0; i < inv.items.max; i++)
     {
         SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
@@ -570,8 +572,8 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
         const int xx = sdl.xres - inv.width;
 
         const SDL_Rect from = {
-            (int) (i == inv.selected ? red.x : wht.x),
-            (int) (i == inv.selected ? red.y : wht.y),
+            (int) (i == inv.hilited ? grn.x : i == inv.selected ? red.x : wht.x),
+            (int) (i == inv.hilited ? grn.y : i == inv.selected ? red.y : wht.y),
             w, w
         };
         const SDL_Rect to = { xx, inv.width * i, inv.width, inv.width };

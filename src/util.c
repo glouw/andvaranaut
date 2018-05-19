@@ -4,6 +4,13 @@
 #include <math.h>
 #include <ctype.h>
 
+char* dups(const char *s)
+{
+    char* const d = xtoss(char, strlen (s) + 1);
+    strcpy(d, s);
+    return d;
+}
+
 int xfl(const float x)
 {
     return (int) x - (x < (int) x);

@@ -131,19 +131,12 @@ static Point accelerate(const Hero hero)
     return xmul(direction, hero.acceleration);
 }
 
-static Hero move(Hero hero, const Map map, const Input input, const Flow current, Title* tt, const Timer tm)
+static Hero move(Hero hero, const Map map, const Input input, const Flow current)
 {
     const Point last = hero.where;
     const int swimming = hero.height <= hswim(hero);
     const int crouching = hero.height <= hduck(hero);
     const float speed = swimming ? 0.3f * hero.speed : crouching ? 0.5f * hero.speed : hero.speed;
-
-    // Thoughts on swimming.
-    if(swimming && !hero.swam)
-    {
-        hero.swam = true;
-        xttset(tt, tm.renders, tm.renders + 180, "The current is strong...");
-    }
 
     // Acceleration.
     if(input.key[SDL_SCANCODE_W]
@@ -259,11 +252,11 @@ Hero xrecoil(Hero hero, const Method method)
     return hero;
 }
 
-Hero xsustain(Hero hero, const Map map, const Input input, const Flow current, Title* tt, const Timer tm)
+Hero xsustain(Hero hero, const Map map, const Input input, const Flow current)
 {
     hero = look(hero, input);
     hero = vert(hero, map, input);
-    hero = move(hero, map, input, current, tt, tm);
+    hero = move(hero, map, input, current);
     hero.torch = xburn(hero.torch);
     return hero;
 }

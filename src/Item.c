@@ -268,9 +268,6 @@ Item xitnew(const Classification c, const int index)
     it.amplitude = 360.0f;
     it.damage = 25.0f;
     it.hurts = 3;
-    it.cstr = "";
-    it.name = "";
-    it.desc = "";
     switch(c)
     {
     case     AMMO: return     ammo(it);
@@ -308,9 +305,4 @@ Item xitrand()
     const Classification c = (Classification) (rand() % (int) CLASSIFICATIONS);
     const int index = rand() % xcindices(c);
     return xitnew(c, index);
-}
-
-void xitprint(const Item it)
-{
-    printf("%s\n", it.cstr);
 }

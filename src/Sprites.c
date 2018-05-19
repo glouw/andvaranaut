@@ -2,6 +2,7 @@
 
 #include "Field.h"
 #include "Direction.h"
+#include "Title.h"
 #include "Inventory.h"
 #include "util.h"
 
@@ -227,16 +228,16 @@ static Sprites dropit(Sprites sprites, const Attack attack, const Point where)
     return append(sprites, xsregistrar('d', xadd(where, delta)));
 }
 
-static void brokelb(const int ascii, const Inventory inv, Title* tt, const Timer tm)
+static void brokelb(const int ascii, const Inventory inv, const Timer tm)
 {
     if(ascii == 'd')
         // Add an item to the inventory.
         if(!xitsadd(inv.items, xitrand()))
             // Make this a log message to the screen in the future.
-            xttset(tt, tm.renders, tm.renders + 120, "Inventory Full");
+            xttset(tm.renders, tm.renders + 120, "Inventory Full");
 }
 
-static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv, Title* tt, const Timer tm, const Hero hero)
+static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm, const Hero hero)
 {
     const Point hand = xtouch(hero);
     const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
@@ -262,7 +263,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
                     (attack.dir.y > 0.0f ? DEADN : DEADS);
 
                 // Broke a lootbag?
-                brokelb(sprite->ascii, inv, tt, tm);
+                brokelb(sprite->ascii, inv, tm);
 
                 // Chance dead sprite sprite will drop loot bag.
                 // This includes loot bags (they can drop extra loot bags).
@@ -286,7 +287,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
     return sprites;
 }
 
-static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv, Title* tt, const Timer tm)
+static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm)
 {
     // Remember that attack direction was overrided with a point.
     const SDL_Point point = {
@@ -313,7 +314,7 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
                 sprite->state = DEADS;
 
                 // Is the dead sprite a lootbag? If so, randomly add any item to inventory.
-                brokelb(sprite->ascii, inv, tt, tm);
+                brokelb(sprite->ascii, inv, tm);
 
                 // Chance dead sprite sprite will drop loot bag.
                 // This includes loot bags (they can drop extra loot bags).
@@ -334,7 +335,7 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
     return sprites;
 }
 
-static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv, Title* tt, const Timer tm, const Hero hero)
+static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm, const Hero hero)
 {
     // TODO
     // Casting magic scrolls will spawn new sprites.
@@ -345,14 +346,13 @@ static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv,
     (void) hero;
     (void) inv;
     (void) tm;
-    (void) tt;
     (void) it;
     return sprites;
 }
 
 // Hurts the closest sprite(s) based on weapon "hurt" value.
 // Eg. A weapon with a hurt value of 3 will hurt 3 sprites at most with a single attack.
-Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, Title* tt, const Timer tm)
+Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, const Timer tm)
 {
     if(in.lu)
     {
@@ -362,9 +362,9 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
         sprites.last = attack.method;
 
         // Do the attack.
-        if(attack.method == MELEE) return hmelee(sprites, attack, inv, tt, tm, hero);
-        if(attack.method == RANGE) return hrange(sprites, attack, inv, tt, tm);
-        if(attack.method == MAGIC) return hmagic(sprites, attack, inv, tt, tm, hero);
+        if(attack.method == MELEE) return hmelee(sprites, attack, inv, tm, hero);
+        if(attack.method == RANGE) return hrange(sprites, attack, inv, tm);
+        if(attack.method == MAGIC) return hmagic(sprites, attack, inv, tm, hero);
     }
 
     // Of course, if no attack happened, then the sprites were not harmed.
@@ -391,6 +391,7 @@ static void idle(const Sprites sprites, const Timer tm)
 static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
 {
     const float wave = 0.5f * (sinf(FPI * tm.ticks / 60.0f) + 1.0f);
+
     hero.hps = hero.hpsmax * wave;
     hero.mna = hero.mnamax * wave;
     hero.ftg = hero.ftgmax * wave;

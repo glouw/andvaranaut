@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <limits.h>
 
+// Portable string duplication
+char* dups(const char *s);
+
 // Fast math floor.
 int xfl(const float x);
 

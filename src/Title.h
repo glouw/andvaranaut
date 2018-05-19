@@ -1,24 +1,12 @@
 #pragma once
 
 #include "Font.h"
+#include "Sdl.h"
 
-#include <SDL2/SDL.h>
+void xttadvance(const int now);
 
-typedef struct
-{
-    int start;
-    int now;
-    int end;
-    char* str;
-}
-Title;
+void xttset(const int start, const int end, const char* const text, ...);
 
-Title xttzero();
+void xttinit(const int start, const int end, const char* const text);
 
-void xttnow(Title*, const int now);
-
-void xttset(Title*, const int start, const int end, const char* const text, ...);
-
-Title* xttnew(const int start, const int end, const char* const text);
-
-void xttshow(Title*, const Font fill, const Font line, SDL_Renderer* const, const int xres, const int yres);
+void xttshow(const Font fill, const Font line, const Sdl);

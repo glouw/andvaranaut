@@ -3,7 +3,6 @@
 #include "Sheer.h"
 #include "Method.h"
 #include "Line.h"
-#include "Title.h"
 #include "Timer.h"
 #include "Torch.h"
 #include "Ray.h"
@@ -58,9 +57,6 @@ typedef struct
     // Fatigue.
     float ftg;
     float ftgmax;
-
-    // Prompts.
-    int swam;
 }
 Hero;
 
@@ -74,7 +70,7 @@ int xteleporting(const Hero, const Map, const Input, const Timer);
 
 Hero xteleport(Hero, const Map);
 
-Hero xsustain(Hero, const Map, const Input, const Flow, Title* tt, const Timer);
+Hero xsustain(Hero, const Map, const Input, const Flow);
 
 // Calculates a projection ray based on a wall hit. Shift determines the ceiling height if positive or the water height if negative.
 Ray xcalc(const Hero hero, const Hit, const Sheer, const int yres, const int xres);

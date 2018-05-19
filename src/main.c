@@ -51,11 +51,11 @@ int main(int argc, char* argv[])
     Sdl sdl = xsetup(args);
 
     // Prepares general display font.
-    Font fill = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.red, false);
-    Font line = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.blk, true);
+    Font fill = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.red, 0);
+    Font line = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.blk, 1);
 
     // Titles present new areas to the player. The title type is the only heap type as it used deep within the engine.
-    Title* tt = xttnew(0, 180, "Andvaranaut");
+    xttinit(0, 180, "Andvaranaut");
 
     // Game loop. X-Resolution 512 reserved for performance testing. Exits with certain keypress or 'X' window button.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
         const Timer tm = xtmnew(renders, ticks);
 
         // Advance the title.
-        xttnow(tt, renders);
+        xttadvance(renders);
 
         /* Edit Mode */
         if(in.key[SDL_SCANCODE_TAB])
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
                 fd = xprepare(wd.map[me.floor], me.aura);
 
                 // Set buffer title buffer.
-                xttset(tt, renders, renders + 120, "Floor %d", me.floor);
+                xttset(renders, renders + 120, "Floor %d", me.floor);
             }
             // Overview backpanning keeps overview up to date with hero location.
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
@@ -113,6 +113,7 @@ int main(int argc, char* argv[])
 
             // Inventory selection.
             inv = xinvselect(inv, in);
+            inv = xinvhilite(inv, in, sdl.xres);
 
             // Renders to screen backbuffer floors, ceiling, walls, and then sprites.
             xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
@@ -133,7 +134,7 @@ int main(int argc, char* argv[])
                 SDL_SetRelativeMouseMode(SDL_FALSE);
 
                 // Brings up a description of whats pointed at in the inventory.
-                xwhatis(inv, in, sdl.xres);
+                xwhatis(inv, tm);
 
                 // TODO: Manage inventory here.
                 // TODO: Draw inventory here.
@@ -151,10 +152,10 @@ int main(int argc, char* argv[])
                 gg = xgwind(gg, in);
 
                 // Hero self sustain.
-                me = xsustain(me, wd.map[me.floor], in, current, tt, tm);
+                me = xsustain(me, wd.map[me.floor], in, current);
 
                 // Sprite damaging. May add or remove sprites to game word.
-                wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, tt, tm);
+                wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, tm);
 
                 // Add recoil to the hero yaw if the last attack done to sprites was ranged.
                 me = xrecoil(me, wd.sprites[me.floor].last);
@@ -162,7 +163,7 @@ int main(int argc, char* argv[])
         }
 
         // Present the title to the middle of the screen.
-        xttshow(tt, fill, line, sdl.renderer, sdl.xres, sdl.yres);
+        xttshow(fill, line, sdl);
 
         // Presents screen backbuffer to screen.
         xpresent(sdl);

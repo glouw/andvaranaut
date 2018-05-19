@@ -15,24 +15,32 @@
 typedef struct
 {
     SDL_Window* window;
+
     // Final renderered frame including walls, ceiling, floors, sprites, sprites
     // and any gui related elements if playing, or the editing screen when editing the map.
     SDL_Renderer* renderer;
+
     // For per-pixel access when drawing walls, ceiling, and floors.
     SDL_Texture* canvas;
     int xres;
     int yres;
     int fps;
+
     // All sprite and block surfaces in bitmap format stored in RAM with applied color key.
     Surfaces surfaces;
+
     // All sprite and block surfaces converted from RAM memory in GPU memory with applied color key.
     Textures textures;
+
     // CPU rendering threads.
     int threads;
+
     // Color key specifies which colors to omit when rendering sprites or surfaces.
     uint32_t key;
+
     // Index of the gui in Surfaces type.
     int gui;
+
     // Custom gui colors.
     uint32_t wht;
     uint32_t blk;

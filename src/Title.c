@@ -4,18 +4,26 @@
 
 #include <stdarg.h>
 
-Title xttzero()
+typedef struct
 {
-    static Title title;
-    return title;
+    int start;
+    int now;
+    int end;
+    char* str;
 }
+Title;
 
-void xttnow(Title* tt, const int now)
+// Andvaranaut does not use global variables, but it makes no sense
+// to pass a title pointer to every function that must present a title.
+
+static Title* tt = NULL;
+
+void xttadvance(const int now)
 {
     tt->now = now;
 }
 
-void xttset(Title* tt, const int start, const int end, const char* const text, ...)
+void xttset(const int start, const int end, const char* const text, ...)
 {
     va_list args;
     va_start(args, text);
@@ -24,33 +32,31 @@ void xttset(Title* tt, const int start, const int end, const char* const text, .
     tt->start = start;
     tt->end = end;
 
-    // Spoof snprintf to get varagrs length.
+    // Spoof snprintf to get varargs length.
     const int len = vsnprintf(NULL, 0, text, args);
 
-    // Varags were used. Must rewind.
+    // Varags were fully used. Must rewind.
     va_start(args, text);
 
     // This length builds a char buffer which vsprintf populates. Null byte too.
     // First free whatever came before, even if it is NULL.
     free(tt->str);
-    tt->str = (char*) malloc(sizeof(char) * len + 1);
+    tt->str = xtoss(char, len + 1);
     vsprintf(tt->str, text, args);
 
     // Cleanup
     va_end(args);
 }
 
-Title* xttnew(const int start, const int end, const char* const text)
+void xttinit(const int start, const int end, const char* const text)
 {
-    Title* tt = malloc(sizeof(*tt));
-    *tt = xttzero();
+    tt = xwipe(Title, 1);
 
     // Must use xttset to set text as text is malloc'd through xttset.
-    xttset(tt, start, end, text);
-    return tt;
+    xttset(start, end, text);
 }
 
-void xttshow(Title* tt, const Font fill, const Font line, SDL_Renderer* const rend, const int xres, const int yres)
+void xttshow(const Font fill, const Font line, const Sdl sdl)
 {
     if(tt->now > tt->end)
         return;
@@ -60,5 +66,5 @@ void xttshow(Title* tt, const Font fill, const Font line, SDL_Renderer* const re
     const float alpha = 0xFF * sinf(percent * FPI);
 
     // Write to screen.
-    xfwrt(fill, line, rend, xres / 2, yres / 2, tt->str, alpha);
+    xfwrt(fill, line, sdl.renderer, sdl.xres / 2, sdl.yres / 2, tt->str, alpha);
 }

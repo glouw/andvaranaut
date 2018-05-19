@@ -8,14 +8,14 @@ Font xfzero()
     return font;
 }
 
-Font xfbuild(const char* const path, const int size, const uint32_t color, const int outlined)
+Font xfbuild(const char* const path, const int size, const uint32_t color, const int outline)
 {
     if(!TTF_WasInit())
         TTF_Init();
 
     Font f = xfzero();
-    f.type = TTF_OpenFont(path, size);
-    if(f.type == NULL)
+    f.ttf = TTF_OpenFont(path, size);
+    if(f.ttf == NULL)
         xbomb("Could not open %s\n", path);
 
     // Inside color of font.
@@ -24,43 +24,52 @@ Font xfbuild(const char* const path, const int size, const uint32_t color, const
     f.color.b = (color >> 0x00) & 0xFF;
 
     // Font Outlining.
-    TTF_SetFontOutline(f.type, outlined);
+    TTF_SetFontOutline(f.ttf, outline);
     return f;
 }
 
-static SDL_Rect tmid(const Font f, const int x, const int y, const char* const text)
+static SDL_Texture* tget(const Font f, SDL_Renderer* const rend, const int alpha, const char* text)
 {
-    int w = 0;
-    int h = 0;
-    TTF_SizeText(f.type, text, &w, &h);
-    const SDL_Rect target = {
-        x - w / 2,
-        y - h / 2,
-        w,
-        h,
-    };
-    return target;
-}
-
-static SDL_Texture* tget(const Font f, SDL_Renderer* const rend, const char* text)
-{
-    SDL_Surface* const surface = TTF_RenderText_Solid(f.type, text, f.color);
+    SDL_Surface* const surface = TTF_RenderText_Solid(f.ttf, text, f.color);
     SDL_Texture* const texture = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_SetTextureAlphaMod(texture, alpha < 0 ? 0 : alpha);
     SDL_FreeSurface(surface);
     return texture;
 }
 
-static void xfput(const Font f, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
-{
-    SDL_Texture* texture = tget(f, rend, text);
-    SDL_SetTextureAlphaMod(texture, alpha < 0 ? 0 : alpha);
-    const SDL_Rect where = tmid(f, x, y, text);
-    SDL_RenderCopy(rend, texture, NULL, &where);
-    SDL_DestroyTexture(texture);
-}
-
 void xfwrt(const Font fill, const Font line, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
 {
-    xfput(fill, rend, x, y, text, alpha);
-    xfput(line, rend, x, y, text, alpha);
+    // A string duplicate is used else the original string is chewed up with strtok.
+    char* const copy = dups(text);
+
+    // Separate string by newlines.
+    const char* const delim = "\n";
+    int newline = 0;
+    for(char* tok = strtok(copy, delim); tok; tok = strtok(NULL, delim))
+    {
+        SDL_Texture* tfill = tget(fill, rend, alpha, tok);
+        SDL_Texture* tline = tget(line, rend, alpha, tok);
+        int w = 0;
+        int h = 0;
+        TTF_SizeText(fill.ttf, tok, &w, &h);
+        const SDL_Rect target = {
+            x - w / 2,
+            // Assume height never changes.
+            y - h / 2 + h * newline,
+            w,
+            h,
+        };
+        SDL_RenderCopy(rend, tfill, NULL, &target);
+        SDL_RenderCopy(rend, tline, NULL, &target);
+
+        // Cleanup
+        SDL_DestroyTexture(tfill);
+        SDL_DestroyTexture(tline);
+
+        // Next newline.
+        newline++;
+    }
+
+    // Cleanup.
+    free(copy);
 }

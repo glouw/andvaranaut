@@ -4,7 +4,6 @@
 #include "Attack.h"
 #include "Sprite.h"
 #include "Field.h"
-#include "Title.h"
 #include "Inventory.h"
 #include "Method.h"
 
@@ -29,6 +28,6 @@ void xplback(const Sprites, const Hero);
 
 Sprites xlay(Sprites, const Map, const Overview);
 
-Sprites xhurt(Sprites, const Attack, const Hero, const Input, const Inventory, Title*, const Timer);
+Sprites xhurt(Sprites, const Attack, const Hero, const Input, const Inventory, const Timer);
 
 Hero xcaretake(const Sprites, const Hero, const Map, const Field, const Timer);

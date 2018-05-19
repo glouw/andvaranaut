@@ -2,12 +2,14 @@
 
 #include "Items.h"
 #include "Input.h"
+#include "Timer.h"
 
 typedef struct
 {
     Items items;
     int selected;
     int width;
+    int hilited;
 }
 Inventory;
 
@@ -15,6 +17,8 @@ Inventory xzinv();
 
 Inventory xinvnew();
 
-Inventory xinvselect(Inventory inv, const Input);
+Inventory xinvselect(Inventory, const Input);
 
-void xwhatis(const Inventory, const Input, const int xres);
+Inventory xinvhilite(Inventory, const Input, const int xres);
+
+void xwhatis(const Inventory, const Timer);

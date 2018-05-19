@@ -19,6 +19,7 @@ int xbraster(void* const bundle)
         const Point column = xlerp(b->camera, x / (float) b->sdl.xres);
         const Hits hits = xmarch(b->hero.where, column, b->map);
         const Scanline scanline = { b->sdl, b->pixels, b->width, x };
+
         // The zbuffer for eye level walls is returned for the sprite rendering.
         b->zbuff[x] = xraster(scanline, hits, b->hero, b->current, b->clouds, b->map);
     }
