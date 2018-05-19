@@ -68,6 +68,9 @@ int main(int argc, char* argv[])
         // Advance the title.
         xttadvance(renders);
 
+        // Title for theme change between rooms.
+        xmthemett(wd.map[me.floor], me.where, tm);
+
         /* Edit Mode */
         if(in.key[SDL_SCANCODE_TAB])
         {
@@ -97,9 +100,6 @@ int main(int argc, char* argv[])
                 // Old pathfinder freed and a new pathfinder for the new floor is prepared.
                 xruin(fd);
                 fd = xprepare(wd.map[me.floor], me.aura);
-
-                // Set buffer title buffer.
-                xttset(renders, renders + 120, "Floor %d", me.floor);
             }
             // Overview backpanning keeps overview up to date with hero location.
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);

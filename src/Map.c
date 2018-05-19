@@ -1,6 +1,7 @@
 #include "Map.h"
 
 #include "Sprites.h"
+#include "Title.h"
 #include "util.h"
 
 #include <math.h>
@@ -44,6 +45,7 @@ static char** mnew(const int rows, const int cols, const int blok)
 
 Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid)
 {
+    // Randomize sheers.
     const Sheer md = {
         0.0f,
         md.a + (float) (rand() % 2)
@@ -53,6 +55,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
         up.a + (float) (rand() % 2)
     };
 
+    // Construct map.
     Map map = xzmap();
     map.rows = rows;
     map.cols = cols;
@@ -61,6 +64,10 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
     map.floring = mnew(map.rows, map.cols, '"');
     map.trapdoors = trapdoors;
     map.interests = interests;
+
+    // Generate room themes.
+    map.themes = xthrand(interests.count);
+
     map.upper = up;
     map.middle = md;
     map.grid = grid;
@@ -68,14 +75,68 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
     return map;
 }
 
+// Lookup theme.
+static Theme lutheme(const Map map, const Point where)
+{
+    for(int i = 0; i < map.interests.count; i++)
+        if(xeql(where, map.interests.point[i], map.grid))
+            return map.themes[i];
+    return NO_THEME;
+}
+
+// Theme string.
+static char* themestr(const Map map, const Point where)
+{
+    return xthname(lutheme(map, where));
+}
+
+// Returns true if change in theme with respect to position.
+static int themech(const Map map, const Point where)
+{
+    int change = false;
+
+    // Last theme from last game frame.
+    static Theme last = NO_THEME;
+
+    // Update current theme to this game frame.
+    const Theme now = lutheme(map, where);
+
+    // If the last theme is not the current theme then
+    // there was a theme change.
+    if(now != last)
+        change = true;
+
+    // The theme change is overrided if the point is
+    // going to where there is no theme (like a room to a coridoor).
+    if(now == NO_THEME && last != NO_THEME)
+        change = false;
+
+    // Update the last theme.
+    last = lutheme(map, where);
+
+    return change;
+}
+
+// Theme title.
+void xmthemett(const Map map, const Point where, const Timer tm)
+{
+    if(themech(map, where))
+        xttset(tm.renders, tm.renders + 120, themestr(map, where));
+}
+
 void xmclose(const Map map)
 {
+    // Free internals.
     for(int row = 0; row < map.rows; row++)
     {
         free(map.ceiling[row]);
         free(map.walling[row]);
         free(map.floring[row]);
+        free(map.themes);
+        free(map.trapdoors.point);
+        free(map.interests.point);
     }
+    // Free externals.
     free(map.ceiling);
     free(map.walling);
     free(map.floring);
@@ -97,10 +158,13 @@ void xmedit(const Map map, const Overview ov)
     // Placing - Out of bounds check.
     if(xmout(map, ov.where))
         return;
+
     const int ascii = ov.selected + ' ';
+
     // If the ascii is an alpha character then it is a sprite
     if(xsissprite(ascii))
         return;
+
     // Otherwise place the ascii character.
     const int x = ov.where.x;
     const int y = ov.where.y;
@@ -186,10 +250,12 @@ void xmcorridor(const Map map, const Point a, const Point b)
         step.x > 0.0f ? 1.0f : step.x < 0.0f ? -1.0f : 0.0f,
         step.y > 0.0f ? 1.0f : step.y < 0.0f ? -1.0f : 0.0f,
     };
+
     const int sx = fabsf(step.x);
     const int sy = fabsf(step.y);
     const int dx = delta.x;
     const int dy = delta.y;
+
     int x = a.x;
     int y = a.y;
     for(int i = 0; i < sx; i++) map.walling[y][x += dx] = ' ';
