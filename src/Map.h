@@ -60,3 +60,5 @@ void xmtrapdoors(const Map, const Points trapdoors, const Party);
 void xmcorridor(const Map, const Point a, const Point b);
 
 void xmthemett(const Map, const Point where, const Timer);
+
+Theme xlutheme(const Map, const Point where);

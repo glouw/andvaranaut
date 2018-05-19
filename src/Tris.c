@@ -294,9 +294,11 @@ static void bone(const Map map, const Tri e, const int w, const int h)
     if(xd2() == 0) xmroom(map, e.a, w, h, CEILING);
     if(xd2() == 0) xmroom(map, e.b, w, h, CEILING);
 
+    // TODO:
+    // MAKE THIS GENERATED WITH THEME
     // Flooring generation means pools of water.
-    if(xd8() == 0) xmroom(map, e.a, w / 2, h / 2, FLORING);
-    if(xd8() == 0) xmroom(map, e.b, w / 2, h / 2, FLORING);
+    if(xlutheme(map, e.a) == WATER_WELL) xmroom(map, e.a, w / 2, h / 2, FLORING);
+    if(xlutheme(map, e.b) == WATER_WELL) xmroom(map, e.b, w / 2, h / 2, FLORING);
 
     xmcorridor(map, e.a, e.b);
 }

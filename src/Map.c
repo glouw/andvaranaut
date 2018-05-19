@@ -76,7 +76,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
 }
 
 // Lookup theme.
-static Theme lutheme(const Map map, const Point where)
+Theme xlutheme(const Map map, const Point where)
 {
     for(int i = 0; i < map.interests.count; i++)
         if(xeql(where, map.interests.point[i], map.grid))
@@ -87,7 +87,7 @@ static Theme lutheme(const Map map, const Point where)
 // Theme string.
 static char* themestr(const Map map, const Point where)
 {
-    return xthname(lutheme(map, where));
+    return xthname(xlutheme(map, where));
 }
 
 // Returns true if change in theme with respect to position.
@@ -99,7 +99,7 @@ static int themech(const Map map, const Point where)
     static Theme last = NO_THEME;
 
     // Update current theme to this game frame.
-    const Theme now = lutheme(map, where);
+    const Theme now = xlutheme(map, where);
 
     // If the last theme is not the current theme then
     // there was a theme change.
@@ -112,7 +112,7 @@ static int themech(const Map map, const Point where)
         change = false;
 
     // Update the last theme.
-    last = lutheme(map, where);
+    last = xlutheme(map, where);
 
     return change;
 }
