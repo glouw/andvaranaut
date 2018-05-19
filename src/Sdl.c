@@ -119,9 +119,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const SDL_Rect image = { w * (tm.ticks % FRAMES), h * sprite->state, w, h };
 
         // Calculate how much of the sprite is seen.
-        // NEEDS to be volatile else it exits without segfault on my Thinkpad t43 with
-        // either x or y 255 overflow. Assuming integrated graphics driver bug.
-        volatile const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
+        const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
 
         // The sprite's latest seen rect is then saved to the sprite.
         // This will come in handy for ranged attacks or just general mouse targeting.

@@ -171,7 +171,7 @@ static Points prand(const int w, const int h, const int max, const int grid, con
         };
 
         // Points will be snapped to grid...
-        const Point snapped = xsnap(p, grid);
+        const Point snapped = xmid(xsnap(p, grid));
 
         // ...and only added if the point is unique.
         if(!xpsfind(ps, snapped))
