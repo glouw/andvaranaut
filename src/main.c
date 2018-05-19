@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
     Font line = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.blk, 1);
 
     // Titles present new areas to the player. The title type is the only heap type as it used deep within the engine.
-    xttinit(0, 180, "Andvaranaut");
+    xttinit(0, 180, "Andvaranaut\nPre-Alpha");
 
     // Game loop. X-Resolution 512 reserved for performance testing. Exits with certain keypress or 'X' window button.
     for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)

@@ -42,27 +42,28 @@ void xfwrt(const Font fill, const Font line, SDL_Renderer* const rend, const int
     // A string duplicate is used else the original string is chewed up with strtok.
     char* const copy = dups(text);
 
-    // Separate string by newlines.
+    // Newlines are separated by '\n'.
     const char* const delim = "\n";
     int newline = 0;
     for(char* tok = strtok(copy, delim); tok; tok = strtok(NULL, delim))
     {
+        // Get font textures.
         SDL_Texture* tfill = tget(fill, rend, alpha, tok);
         SDL_Texture* tline = tget(line, rend, alpha, tok);
+
+        // Get font dimensions.
         int w = 0;
         int h = 0;
         TTF_SizeText(fill.ttf, tok, &w, &h);
-        const SDL_Rect target = {
-            x - w / 2,
-            // Assume height never changes.
-            y - h / 2 + h * newline,
-            w,
-            h,
-        };
+
+        // Get target rect. Assume font height never changes.
+        const SDL_Rect target = { x - w / 2, y - h / 2 + h * newline, w, h };
+
+        // Copy over font textures to renderer.
         SDL_RenderCopy(rend, tfill, NULL, &target);
         SDL_RenderCopy(rend, tline, NULL, &target);
 
-        // Cleanup
+        // Cleanup font textures.
         SDL_DestroyTexture(tfill);
         SDL_DestroyTexture(tline);
 
