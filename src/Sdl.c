@@ -172,13 +172,13 @@ Sdl xsetup(const Args args)
     // This was done for fast caching. Upon presenting the canvas will be rotated upwards by 90 degrees.
     // Notice how ARGB8888 is used for the hardware. This is the fastest option for the GPU.
     sdl.canvas = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, args.yres, args.xres);
-    sdl.key = 0x00FFFF;
     sdl.xres = args.xres;
     sdl.yres = args.yres;
     sdl.fps = args.fps;
     sdl.threads = args.threads;
-    sdl.surfaces = xpull(sdl.key);
+    sdl.surfaces = xpull(0x00FFFF);
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
+
     // GUI surfaces start at this index of the surfaces.
     sdl.gui = '~' - ' ' + 25;
     sdl.wht = 0xFFDFEFD7;
@@ -215,7 +215,6 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // portion of the map (ceiling, walls, and flooring) to the display.
     // One thread per CPU is allocated.
     Bundle* const b = xtoss(Bundle, sdl.threads);
-    *b = xzbundle();
     for(int i = 0; i < sdl.threads; i++)
     {
         b[i].a = (i + 0) * sdl.xres / sdl.threads;

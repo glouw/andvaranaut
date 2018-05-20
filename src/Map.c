@@ -169,11 +169,7 @@ void xmpole(const Map map, const Point where, const int ascii)
 {
     const int x = where.x;
     const int y = where.y;
-
-    // No portals can be in the way for the pole placement.
-    if(map.ceiling[y][x] != '~'
-    || map.floring[y][x] != '~')
-        map.ceiling[y][x] = map.walling[y][x] = map.floring[y][x] = ascii;
+    map.ceiling[y][x] = map.walling[y][x] = map.floring[y][x] = ascii;
 }
 
 // Supports for trapdoors are only put down for ceiling parties.

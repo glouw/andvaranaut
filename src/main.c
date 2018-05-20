@@ -10,7 +10,7 @@
 int main(int argc, char* argv[])
 {
     // The one and only random seeder. Keep seed constant to keep the same map for testing.
-    srand(true ? 4096 : time(0));
+    srand(false ? 4096 : time(0));
 
     // Parses command line arguments. Uses game defaults if no arguments are passed in.
     const Args args = xparse(argc, argv);
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
     // Prepares the cloud and water currents. Their heights are specified as arguments.
     Flow current = xstart(-1.0f / 6.0f);
-    Flow clouds = xstart(10.0f);
+    Flow clouds = xstart(6.0f);
 
     // Prepares the attack gauge.
     Gauge gg = xgnew();

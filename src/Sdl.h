@@ -35,9 +35,6 @@ typedef struct
     // CPU rendering threads.
     int threads;
 
-    // Color key specifies which colors to omit when rendering sprites or surfaces.
-    uint32_t key;
-
     // Index of the gui in Surfaces type.
     int gui;
 

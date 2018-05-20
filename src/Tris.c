@@ -299,6 +299,18 @@ static void bone(const Map map, const Tri e, const int w, const int h)
     xmcorridor(map, e.a, e.b);
 }
 
+// Minimum room size.
+static int rmin(const Map map)
+{
+    return map.grid / 8;
+}
+
+// Maximum room size.
+static int rmax(const Map map)
+{
+    return map.grid / 2;
+}
+
 // Themes all the rooms according to their themes.
 static void themeate(const Map map)
 {
@@ -309,8 +321,7 @@ static void themeate(const Map map)
         switch(map.themes[i])
         {
             case WATER_WELL:
-                xmroom(map, where, map.grid / 8, map.grid / 8, FLORING);
-                xmpole(map, where, '#');
+                xmroom(map, where, rmin(map), rmin(map), FLORING);
                 break;
             default:
                 break;
@@ -318,7 +329,7 @@ static void themeate(const Map map)
     }
 }
 
-static void carve(const Map map, const Tris edges, const Flags flags, const int grid)
+static void carve(const Map map, const Tris edges, const Flags flags)
 {
     for(int i = 0; i < edges.count; i++)
     {
@@ -326,10 +337,9 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
         if(xpsame(e.c, flags.one))
             continue;
 
-        const int min = 2;
-        const int size = grid / 2 - min;
-        const int w = min + rand() % size;
-        const int h = min + rand() % size;
+        const int size = rmax(map) - rmin(map);
+        const int w = rmin(map) + rand() % size;
+        const int h = rmin(map) + rand() % size;
         bone(map, e, w, h);
     }
 }
@@ -337,10 +347,10 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
 Map xtgen(const Points extra)
 {
     // These are technically function arguments that are "baked in".
-    const int w = 150;
-    const int h = 200;
-    const int grid = 25;
-    const int rooms = 15 * (1 + xd4());
+    const int w = 200;
+    const int h = 300;
+    const int grid = 30;
+    const int rooms = 30 * (1 + xd2());
     const int ntraps = 3;
     const int border = 2 * grid;
 
@@ -373,7 +383,7 @@ Map xtgen(const Points extra)
     // Builds a basic map and applies room themes.
     const Map map = xmgen(h, w, tps, poi, grid);
     mdups(edges, flags);
-    carve(map, edges, flags, grid);
+    carve(map, edges, flags);
     themeate(map);
 
     // Clean up.

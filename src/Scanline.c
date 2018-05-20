@@ -2,12 +2,6 @@
 
 #include "util.h"
 
-Scanline xzsl()
-{
-    static Scanline sl;
-    return sl;
-}
-
 static uint32_t shade(const uint32_t pixel, const int shading)
 {
     const uint32_t r = (((pixel >> 0x10) /****/) * shading) >> 0x08; // Shift right by 0x08 is same as
@@ -32,8 +26,6 @@ static void pput(const Scanline sl, const int x, const uint32_t pixel)
 static void xfer(const Scanline sl, const int x, const Point offset, const int tile, const int distance)
 {
     const uint32_t color = pget(sl.sdl.surfaces.surface[tile], offset);
-    if(color == sl.sdl.key)
-        return;
     pput(sl, x, shade(color, distance));
 }
 
@@ -70,27 +62,17 @@ static void rceil(const Scanline sl, const Ray r, const Map map)
     }
 }
 
-// NOTE:
-// The sky renderer is ineffecient as it hacks up the elegant shear system.
 static void rsky(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
 {
     // Zeroth floor renders sky.
-    // There are two sky layers: The forground layer, and the behind layer.
-    // The foreground layer is closer, the behind layer is further.
-    // Note that the ray is highjacked and resheered here to save some cycles from recalling another xcalc().
-    const Sheer sa = { 0.0f, clouds.height / 1.0f };
-    const Sheer sb = { 0.0f, clouds.height / 1.5f };
     if(floor == 0)
     {
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
+            const Sheer sa = { 0.0f, clouds.height };
             const Point a = xlerp(r.trace, xccast(xsheer(r.proj, sa), x));
-            const Point b = xlerp(r.trace, xccast(xsheer(r.proj, sb), x));
-
             // Scale multiply enlargen clouds.
-            const float scale = 8.0f;
-            xfer(sl, x, xdiv(xabs(xsub(a, clouds.where)), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(a, r.trace.a))));
-            xfer(sl, x, xdiv(xabs(xsub(b, clouds.where)), scale), '*' - ' ', xilluminate(r.torch, xmag(xsub(b, r.trace.a))));
+            xfer(sl, x, xdiv(xabs(xsub(a, clouds.where)), 8.0f), '&' - ' ', xilluminate(r.torch, xmag(xsub(a, r.trace.a))));
         }
     }
     // Remaining floors render a second ceiling instead.
