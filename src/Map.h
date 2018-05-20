@@ -39,8 +39,6 @@ Map xzmap();
 
 Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid);
 
-void xmclose(const Map);
-
 int xmisportal(char** block, const Point where);
 
 void xmedit(const Map, const Overview);
@@ -49,16 +47,14 @@ int xmout(const Map, const Point where);
 
 void xmprint(char** block, const int rows, const int cols);
 
-void xmdump(const Map);
-
 int xmcarvable(const Map, const int x, const int y);
 
 void xmroom(const Map map, const Point where, const int w, const int h, const Party);
+
+void xmpole(const Map, const Point where, const int ascii);
 
 void xmtrapdoors(const Map, const Points trapdoors, const Party);
 
 void xmcorridor(const Map, const Point a, const Point b);
 
 void xmthemett(const Map, const Point where, const Timer);
-
-Theme xlutheme(const Map, const Point where);

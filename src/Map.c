@@ -12,21 +12,6 @@ Map xzmap()
     return map;
 }
 
-void xmprint(char** block, const int rows, const int cols)
-{
-    for(int row = 0; row < rows; row++)
-    for(int col = 0; col < cols; col++)
-        printf("%c%s", block[row][col], col == cols - 1 ? "\n" : "");
-    putchar('\n');
-}
-
-void xmdump(const Map map)
-{
-    xmprint(map.ceiling, map.rows, map.cols);
-    xmprint(map.walling, map.rows, map.cols);
-    xmprint(map.floring, map.rows, map.cols);
-}
-
 static char** reset(char** block, const int rows, const int cols, const int blok)
 {
     for(int row = 0; row < rows; row++)
@@ -76,7 +61,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
 }
 
 // Lookup theme.
-Theme xlutheme(const Map map, const Point where)
+Theme lutheme(const Map map, const Point where)
 {
     for(int i = 0; i < map.interests.count; i++)
         if(xeql(where, map.interests.point[i], map.grid))
@@ -87,7 +72,7 @@ Theme xlutheme(const Map map, const Point where)
 // Theme string.
 static char* themestr(const Map map, const Point where)
 {
-    return xthname(xlutheme(map, where));
+    return xthname(lutheme(map, where));
 }
 
 // Returns true if change in theme with respect to position.
@@ -99,7 +84,7 @@ static int themech(const Map map, const Point where)
     static Theme last = NO_THEME;
 
     // Update current theme to this game frame.
-    const Theme now = xlutheme(map, where);
+    const Theme now = lutheme(map, where);
 
     // If the last theme is not the current theme then
     // there was a theme change.
@@ -112,7 +97,7 @@ static int themech(const Map map, const Point where)
         change = false;
 
     // Update the last theme.
-    last = xlutheme(map, where);
+    last = lutheme(map, where);
 
     return change;
 }
@@ -120,26 +105,10 @@ static int themech(const Map map, const Point where)
 // Theme title.
 void xmthemett(const Map map, const Point where, const Timer tm)
 {
+    // If there was a theme change in the map with the player position...
     if(themech(map, where))
+        // Set the title for the current room theme.
         xttset(tm.renders, tm.renders + 120, themestr(map, where));
-}
-
-void xmclose(const Map map)
-{
-    // Free internals.
-    for(int row = 0; row < map.rows; row++)
-    {
-        free(map.ceiling[row]);
-        free(map.walling[row]);
-        free(map.floring[row]);
-        free(map.themes);
-        free(map.trapdoors.point);
-        free(map.interests.point);
-    }
-    // Free externals.
-    free(map.ceiling);
-    free(map.walling);
-    free(map.floring);
 }
 
 int xmisportal(char** block, const Point where)
@@ -192,12 +161,27 @@ void xmroom(const Map map, const Point where, const int w, const int h, const Pa
     }
 }
 
-static void supports(const Map map, const int x, const int y)
+void xmpole(const Map map, const Point where, const int ascii)
 {
-    map.walling[y + 1][x + 1] = map.floring[y + 1][x + 1] =
-    map.walling[y + 1][x - 1] = map.floring[y + 1][x - 1] =
-    map.walling[y - 1][x - 1] = map.floring[y - 1][x - 1] =
-    map.walling[y - 1][x + 1] = map.floring[y - 1][x + 1] = '#';
+    const int x = where.x;
+    const int y = where.y;
+
+    // No portals can be in the way for the pole placement.
+    if(map.ceiling[y][x] != '~'
+    && map.floring[y][x] != '~')
+        map.ceiling[y][x] = map.walling[y][x] = map.floring[y][x] = ascii;
+}
+
+// Supports for trapdoors are only put down for ceiling parties.
+static void supports(const Map map, const int x, const int y, const Party p)
+{
+    if(p == CEILING)
+    {
+        map.walling[y + 1][x + 1] = map.floring[y + 1][x + 1] =
+        map.walling[y + 1][x - 1] = map.floring[y + 1][x - 1] =
+        map.walling[y - 1][x - 1] = map.floring[y - 1][x - 1] =
+        map.walling[y - 1][x + 1] = map.floring[y - 1][x + 1] = '#';
+    }
 }
 
 static void platform(const Map map, const int x, const int y, const Party p)
@@ -238,7 +222,7 @@ void xmtrapdoors(const Map map, const Points trapdoors, const Party p)
         const int x = where.x;
         const int y = where.y;
         platform(map, x, y, p);
-        supports(map, x, y);
+        supports(map, x, y, p);
         trapdoor(map, x, y, p);
     }
 }
@@ -251,11 +235,15 @@ void xmcorridor(const Map map, const Point a, const Point b)
         step.y > 0.0f ? 1.0f : step.y < 0.0f ? -1.0f : 0.0f,
     };
 
+    // X and Y steppings.
     const int sx = fabsf(step.x);
     const int sy = fabsf(step.y);
+
+    // Delta step amount.
     const int dx = delta.x;
     const int dy = delta.y;
 
+    // Step along the X deltas first and then the Y deltas.
     int x = a.x;
     int y = a.y;
     for(int i = 0; i < sx; i++) map.walling[y][x += dx] = ' ';

@@ -287,6 +287,7 @@ static void mdups(const Tris edges, const Flags flags)
 // #############################################
 static void bone(const Map map, const Tri e, const int w, const int h)
 {
+    // Rooms are always carved into walls.
     xmroom(map, e.a, w, h, WALLING);
     xmroom(map, e.b, w, h, WALLING);
 
@@ -294,13 +295,27 @@ static void bone(const Map map, const Tri e, const int w, const int h)
     if(xd2() == 0) xmroom(map, e.a, w, h, CEILING);
     if(xd2() == 0) xmroom(map, e.b, w, h, CEILING);
 
-    // TODO:
-    // MAKE THIS GENERATED WITH THEME
-    // Flooring generation means pools of water.
-    if(xlutheme(map, e.a) == WATER_WELL) xmroom(map, e.a, w / 2, h / 2, FLORING);
-    if(xlutheme(map, e.b) == WATER_WELL) xmroom(map, e.b, w / 2, h / 2, FLORING);
-
+    // Corridors are carved between two rooms.
     xmcorridor(map, e.a, e.b);
+}
+
+// Themes all the rooms according to their themes.
+static void themeate(const Map map)
+{
+    // Flooring generation are pools of water if the room theme is right.
+    for(int i = 0; i < map.interests.count; i++)
+    {
+        const Point where = map.interests.point[i];
+        switch(map.themes[i])
+        {
+            case WATER_WELL:
+                xmroom(map, where, map.grid / 8, map.grid / 8, FLORING);
+                xmpole(map, where, '#');
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 static void carve(const Map map, const Tris edges, const Flags flags, const int grid)
@@ -310,6 +325,7 @@ static void carve(const Map map, const Tris edges, const Flags flags, const int 
         const Tri e = edges.tri[i];
         if(xpsame(e.c, flags.one))
             continue;
+
         const int min = 2;
         const int size = grid / 2 - min;
         const int w = min + rand() % size;
@@ -354,10 +370,11 @@ Map xtgen(const Points extra)
     while(ps.count > 0)
         poi = xpsadd(poi, ps.point[--ps.count]);
 
-    // Build map.
+    // Builds a basic map and applies room themes.
     const Map map = xmgen(h, w, tps, poi, grid);
     mdups(edges, flags);
     carve(map, edges, flags, grid);
+    themeate(map);
 
     // Clean up.
     free(tris.tri);

@@ -39,12 +39,3 @@ World xwinit(const int max)
 
     return w;
 }
-
-void xwclose(const World w)
-{
-    for(int i = 0; i < w.count; i++)
-    {
-        xmclose(w.map[i]);
-        xkill(w.sprites[i]);
-    }
-}

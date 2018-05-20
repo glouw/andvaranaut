@@ -21,11 +21,6 @@ Sprites xsnew(const int max)
     return sprites;
 }
 
-void xkill(const Sprites sprites)
-{
-    free(sprites.sprite);
-}
-
 static Sprites append(Sprites sprites, const Sprite sprite)
 {
     // Resize if no size.

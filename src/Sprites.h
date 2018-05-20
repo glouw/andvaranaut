@@ -20,8 +20,6 @@ Sprites xzsprites();
 
 Sprites xsnew(const int max);
 
-void xkill(const Sprites);
-
 void xorient(const Sprites, const Hero);
 
 void xplback(const Sprites, const Hero);
