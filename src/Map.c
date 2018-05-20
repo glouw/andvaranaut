@@ -153,7 +153,11 @@ void xmroom(const Map map, const Point where, const int w, const int h, const Pa
         {
         case WALLING: map.walling[yy][xx] = ' '; break;
         case CEILING: map.ceiling[yy][xx] = ' '; break;
-        case FLORING: map.floring[yy][xx] = ' '; break;
+        case FLORING:
+            // Will not dig out below walls.
+            if(map.walling[yy][xx] == ' ')
+                map.floring[yy][xx] = ' ';
+            break;
         default:
             xbomb("room: party not supported\n");
             break;
@@ -168,7 +172,7 @@ void xmpole(const Map map, const Point where, const int ascii)
 
     // No portals can be in the way for the pole placement.
     if(map.ceiling[y][x] != '~'
-    && map.floring[y][x] != '~')
+    || map.floring[y][x] != '~')
         map.ceiling[y][x] = map.walling[y][x] = map.floring[y][x] = ascii;
 }
 

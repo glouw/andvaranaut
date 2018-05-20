@@ -31,7 +31,7 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.torch = xsnuff();
     hero.reach = 0.75f;
     hero.aura = 12;
-    hero.yaw = 1.0;
+    hero.yaw = 0.1;
     hero.tall = 0.5f;
     hero.height = hero.tall;
     hero.hps = 4.4f;

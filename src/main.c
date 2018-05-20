@@ -10,7 +10,7 @@
 int main(int argc, char* argv[])
 {
     // The one and only random seeder. Keep seed constant to keep the same map for testing.
-    srand(false ? 128 : time(0));
+    srand(true ? 4096 : time(0));
 
     // Parses command line arguments. Uses game defaults if no arguments are passed in.
     const Args args = xparse(argc, argv);
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     xttinit(0, 180, "Andvaranaut\nPre-Alpha");
 
     // Game loop. X-Resolution 512 reserved for performance testing. Exits with certain keypress or 'X' window button.
-    for(int renders = 0; args.xres == 512 ? renders < args.fps : !in.done; renders++)
+    for(int renders = 0; args.xres == 512 ? renders < 20 : !in.done; renders++)
     {
         const int t0 = SDL_GetTicks();
         const int ticks = renders / (args.fps / 6);

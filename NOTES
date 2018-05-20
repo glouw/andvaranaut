@@ -66,6 +66,10 @@ G A M E
 E V E N T S
     - have a vendor with many loot bags. break them. have him get mad.
 
+P U Z Z L E S
+    - door with words above it "password is monkey". Must trick door into saying monkey for door to open.
+    - timer that times down. Must not click button. Must let it expire.
+
 choose inventory
 die on level - lose inventory
 stat levels stay

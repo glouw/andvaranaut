@@ -38,7 +38,7 @@ static void check(const Args args)
     if(args.xres == 512)
         printf(
             "warning: an X-Resolution of 512 is reserved for performance testing\n"
-            "and will exit after 60 frame renders.\n");
+            "and will exit after a certain number of frame renders.\n");
 }
 
 static Args parsed(Args args, int argc, char* argv[])

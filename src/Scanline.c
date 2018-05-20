@@ -74,32 +74,34 @@ static void rceil(const Scanline sl, const Ray r, const Map map)
 // The sky renderer is ineffecient as it hacks up the elegant shear system.
 static void rsky(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
 {
-    for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
+    // Zeroth floor renders sky.
+    // There are two sky layers: The forground layer, and the behind layer.
+    // The foreground layer is closer, the behind layer is further.
+    // Note that the ray is highjacked and resheered here to save some cycles from recalling another xcalc().
+    const Sheer sa = { 0.0f, clouds.height / 1.0f };
+    const Sheer sb = { 0.0f, clouds.height / 1.5f };
+    if(floor == 0)
     {
-        // Zeroth floor renders sky.
-        // There are two sky layers: The forground layer, and the behind layer.
-        // The foreground layer is closer, the behind layer is further.
-        if(floor == 0)
+        for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
-            // Note that the ray is highjacked and resheered here to save some cycles from recalling another xcalc().
-            const Sheer sa = { 0.0f, clouds.height / 1.0f };
-            const Sheer sb = { 0.0f, clouds.height / 1.5f };
             const Point a = xlerp(r.trace, xccast(xsheer(r.proj, sa), x));
             const Point b = xlerp(r.trace, xccast(xsheer(r.proj, sb), x));
+
             // Scale multiply enlargen clouds.
             const float scale = 8.0f;
             xfer(sl, x, xdiv(xabs(xsub(a, clouds.where)), scale), '&' - ' ', xilluminate(r.torch, xmag(xsub(a, r.trace.a))));
             xfer(sl, x, xdiv(xabs(xsub(b, clouds.where)), scale), '*' - ' ', xilluminate(r.torch, xmag(xsub(b, r.trace.a))));
         }
-        // Remaining floors render a second ceiling instead.
-        else
+    }
+    // Remaining floors render a second ceiling instead.
+    else
+        for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
             const Point offset = xlerp(r.trace, xccast(r.proj, x));
             if(xtile(offset, map.ceiling))
                 continue;
             xfer(sl, x, offset, '#' - ' ', xilluminate(r.torch, xmag(xsub(offset, r.trace.a))));
         }
-    }
 }
 
 static void rpit(const Scanline sl, const Ray r, const Map map, const Flow current)
