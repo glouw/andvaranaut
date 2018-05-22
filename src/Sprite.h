@@ -8,17 +8,26 @@
 typedef struct
 {
     Point where;
+
     int ascii;
+
     State state;
+
     float width;
+
     Point last;
     Point velocity;
     float speed;
     float acceleration;
+
     int transparent;
+
     int ticks;
+
     float health;
+
     SDL_Rect seen;
+
     // TODO: Make moving sprite sensed.
     // Hence use a multiple of field aura.
     int sensed;

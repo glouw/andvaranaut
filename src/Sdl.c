@@ -119,14 +119,12 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const SDL_Rect image = { w * (tm.ticks % FRAMES), h * sprite->state, w, h };
 
         // Calculate how much of the sprite is seen.
-        const SDL_Rect seen = clip(sdl, target, sprite->where, zbuff);
-
         // The sprite's latest seen rect is then saved to the sprite.
         // This will come in handy for ranged attacks or just general mouse targeting.
-        sprite->seen = seen;
+        sprite->seen = clip(sdl, target, sprite->where, zbuff);
 
         // Move onto the next sprite if this totally behind a wall and cannot be seen.
-        if(seen.w <= 0)
+        if(sprite->seen.w <= 0)
             continue;
 
         // Apply lighting to the sprite.
@@ -138,7 +136,7 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
             SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
 
         // Render the sprite.
-        SDL_RenderSetClipRect(sdl.renderer, (SDL_Rect*) &seen);
+        SDL_RenderSetClipRect(sdl.renderer, &sprite->seen);
         SDL_RenderCopy(sdl.renderer, texture, &image, &target);
         SDL_RenderSetClipRect(sdl.renderer, NULL);
 
@@ -184,6 +182,7 @@ Sdl xsetup(const Args args)
     sdl.wht = 0xFFDFEFD7;
     sdl.blk = 0xFF000000;
     sdl.red = 0xFFD34549;
+
     return sdl;
 }
 
@@ -314,7 +313,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 
         // Calculate attack.
         // TODO: Fix this.
-        const float mag = 1.0f / (steady - width);
+        const float mag = 100.0f;
 
         // Direction is overrided with attack point.
         // The attack point is a random point within the rect.

@@ -58,3 +58,5 @@ void xmtrapdoors(const Map, const Points trapdoors, const Party);
 void xmcorridor(const Map, const Point a, const Point b);
 
 void xmthemett(const Map, const Point where, const Timer);
+
+void xmdoors(const Map, const int x, const int y);

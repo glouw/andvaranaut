@@ -48,12 +48,10 @@ void xttset(const int start, const int end, const char* const text, ...)
     va_end(args);
 }
 
-void xttinit(const int start, const int end, const char* const text)
+void xttinit()
 {
     tt = xwipe(Title, 1);
-
-    // Must use xttset to set text as text is malloc'd through xttset.
-    xttset(start, end, text);
+    xttset(0, 0, "");
 }
 
 void xttshow(const Font fill, const Font line, const Sdl sdl)

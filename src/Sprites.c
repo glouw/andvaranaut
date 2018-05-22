@@ -407,3 +407,10 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     bound(sprites, map);
     return damage(hero, sprites, tm);
 }
+
+// TODO:
+// Populate map with sprites
+
+// TODO:
+// Run through map points of interests and count alive sprites within POI grids.
+// If sprites all dead then remove '!' blocks on corridors.

@@ -297,6 +297,9 @@ static void bone(const Map map, const Tri e, const int w, const int h)
 
     // Corridors are carved between two rooms.
     xmcorridor(map, e.a, e.b);
+
+    // Doors situated in corridors block rooms from each other.
+    xmdoors(map, e.a.x, e.a.y);
 }
 
 // Minimum room size.
@@ -346,49 +349,46 @@ static void carve(const Map map, const Tris edges, const Flags flags)
 
 Map xtgen(const Points extra)
 {
-    // These are technically function arguments that are "baked in".
-    const int w = 200;
-    const int h = 300;
-    const int grid = 30;
-    const int rooms = 30 * (1 + xd2());
+    // These are technically function arguments that are "baked" into this function.
+    const int w = 150;
+    const int h = 200;
+    const int grid = 30; // Must be even.
+    const int max = 30 * (1 + xd2());
     const int ntraps = 3;
     const int border = 2 * grid;
+
+    if(xodd(grid))
+        xbomb("Grid size must be even\n");
 
     // The triangle type is reused for edges by omitting the third point.
     // The third point is then reused for a flag. For duplication removal our out of bounds checks.
     const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
 
     // Randomize a certain number of rooms. Snap to grid.
-    Points ps = prand(w, h, rooms, grid, border, extra);
+    Points rooms = prand(w, h, max, grid, border, extra);
 
     // Perform delaunay triangulation on points to separate points.
-    const Tris tris = delaunay(ps, w, h, 9 * rooms, flags);
+    const Tris tris = delaunay(rooms , w, h, 9 * max, flags);
 
     // Get edges for corridors.
-    const Tris edges = ecollect(tsnew(27 * rooms), tris, flags);
+    const Tris edges = ecollect(tsnew(27 * max), tris, flags);
 
     // Reverse delete algorithm to create windy corridors.
     revdel(edges, w, h, flags);
 
-    // Transfer over some trapdoors.
-    Points tps = xpsnew(ntraps);
+    // Randomly select which rooms will become trapdoors.
+    Points trapdoors = xpsnew(ntraps);
     for(int i = 0; i < ntraps; i++)
-        tps = xpsadd(tps, ps.point[--ps.count]);
+        trapdoors = xpsadd(trapdoors, rooms.point[rand() % rooms.count]);
 
-    // The remaining points will be points of interest.
-    Points poi = xpsnew(ps.count);
-    while(ps.count > 0)
-        poi = xpsadd(poi, ps.point[--ps.count]);
-
-    // Builds a basic map and applies room themes.
-    const Map map = xmgen(h, w, tps, poi, grid);
+    // Build a basic map and apply room themes.
+    const Map map = xmgen(h, w, trapdoors, rooms, grid);
     mdups(edges, flags);
     carve(map, edges, flags);
     themeate(map);
 
     // Clean up.
     free(tris.tri);
-    free(ps.point);
     free(edges.tri);
 
     return map;

@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
     // Prepares the cloud and water currents. Their heights are specified as arguments.
     Flow current = xstart(-1.0f / 6.0f);
-    Flow clouds = xstart(6.0f);
+    Flow clouds = xstart(9.0f);
 
     // Prepares the attack gauge.
     Gauge gg = xgnew();
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
     Font line = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.blk, 1);
 
     // Titles present new areas to the player. The title type is the only heap type as it used deep within the engine.
-    xttinit(0, 180, "Andvaranaut\nPre-Alpha");
+    xttinit();
 
     // Game loop. X-Resolution 512 reserved for performance testing. Exits with certain keypress or 'X' window button.
     for(int renders = 0; args.xres == 512 ? renders < 20 : !in.done; renders++)

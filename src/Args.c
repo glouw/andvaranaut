@@ -108,7 +108,7 @@ static Args defaults()
     Args args = xzargs();
     args.xres = 1320;
     args.yres = 700;
-    args.focal = 1.0f;
+    args.focal = 0.8f;
     args.vsync = true;
     args.fps = 60;
     args.msen = 0.007f;

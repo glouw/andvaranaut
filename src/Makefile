@@ -1,11 +1,11 @@
 # -----------------------------------------------------------------------------
 #
-# 							A N D V A R A N A U T
-# 						 ---------------------------
-# 							 THE DUNGEON CRAWLER
+#                            A N D V A R A N A U T
+#                          ------------------------
+#                             THE DUNGEON CRAWLER
 #
-# 							Makefile for use with
-# 							Linux, MacOS, Windows
+#                            Makefile for use with
+#                            Linux, MacOS, Windows
 #
 # -----------------------------------------------------------------------------
 # NOTE:
@@ -32,11 +32,13 @@
 # -----------------------------------------------------------------------------
 # Compiler.
 # -----------------------------------------------------------------------------
+
 CC = gcc
 
 # -----------------------------------------------------------------------------
 # Binary Name.
 # -----------------------------------------------------------------------------
+
 NAME = ../andvaranaut
 ifdef ComSpec
 	BIN = $(NAME).exe
@@ -47,6 +49,7 @@ endif
 # -----------------------------------------------------------------------------
 # Source Files.
 # -----------------------------------------------------------------------------
+
 SRCS =
 SRCS += main.c
 SRCS += util.c
@@ -93,24 +96,31 @@ SRCS += World.c
 # -----------------------------------------------------------------------------
 # Compiler Flags.
 # -----------------------------------------------------------------------------
+
 CFLAGS =
 ifdef ComSpec
 	CFLAGS += -I../../SDL2-2.0.7/i686-w64-mingw32/include
 endif
+
 # Standard.
 CFLAGS += -std=c99
+
 # Warnings.
 CFLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
+
 # Debugging.
 CFLAGS += -g
+
 # General optimizations.
 CFLAGS += -Ofast -march=native -pipe
+
 # Link time optimizations.
 CFLAGS += -flto
 
 # -----------------------------------------------------------------------------
 # Library Flags.
 # -----------------------------------------------------------------------------
+
 LDFLAGS =
 ifdef ComSpec
 	LDFLAGS += -L../../SDL2-2.0.7/i686-w64-mingw32/lib
@@ -124,6 +134,7 @@ LDFLAGS += -lSDL2_ttf
 # -----------------------------------------------------------------------------
 # Linker.
 # -----------------------------------------------------------------------------
+
 ifdef ComSpec
 	RM = del /F /Q
 	MV = ren
@@ -131,6 +142,7 @@ else
 	RM = rm -f
 	MV = mv -f
 endif
+
 $(BIN): $(SRCS:.c=.o)
 	@echo LINK $(BIN)
 	@$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
@@ -142,6 +154,7 @@ $(BIN): $(SRCS:.c=.o)
 # -----------------------------------------------------------------------------
 # Dependency files (.d) are generated during build to keep track of
 # which .c files were affected by .h updates.
+
 %.o : %.c Makefile
 	@echo CC $*.c
 	@$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
@@ -153,6 +166,7 @@ $(BIN): $(SRCS:.c=.o)
 # -----------------------------------------------------------------------------
 # Cleaner.
 # -----------------------------------------------------------------------------
+
 clean:
 	$(RM) vgcore.*
 	$(RM) cachegrind.out.*
@@ -164,5 +178,6 @@ clean:
 # -----------------------------------------------------------------------------
 # You actually read the Makefile?
 # -----------------------------------------------------------------------------
+
 love:
 	@echo "not war?"

@@ -202,6 +202,15 @@ static void platform(const Map map, const int x, const int y, const Party p)
     }
 }
 
+void xmdoors(const Map map, const int x, const int y)
+{
+    const int end = map.grid / 2;
+    if(map.walling[y + 0][x + end] == ' ') map.walling[y + 0][x + end] = '!';
+    if(map.walling[y + 0][x - end] == ' ') map.walling[y + 0][x - end] = '!';
+    if(map.walling[y + end][x + 0] == ' ') map.walling[y + end][x + 0] = '!';
+    if(map.walling[y - end][x + 0] == ' ') map.walling[y - end][x + 0] = '!';
+}
+
 static void trapdoor(const Map map, const int x, const int y, const Party p)
 {
     switch(p)
