@@ -21,6 +21,7 @@ static void churn(const Sdl sdl)
         sdl.yres,
         sdl.xres,
     };
+
     SDL_RenderCopyEx(sdl.renderer, sdl.canvas, NULL, &dst, -90, NULL, SDL_FLIP_NONE);
 }
 
@@ -39,8 +40,10 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
     for(; seen.w > 0; seen.w--, seen.x++)
     {
         const int x = seen.x;
+
         if(x < 0 || x >= sdl.xres)
             continue;
+
         if(where.x < zbuff[x].x)
             break;
     }
@@ -49,8 +52,10 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
+
         if(x < 0 || x >= sdl.xres)
             continue;
+
         if(where.x < zbuff[x].x)
         {
             seen.w = seen.w + 1;
@@ -68,8 +73,10 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
     const int r = (color >> 0x10) & 0xFF;
     const int g = (color >> 0x08) & 0xFF;
     const int b = (color >> 0x00) & 0xFF;
+
     const SDL_Rect square = { x, y, width, width };
     SDL_SetRenderDrawColor(sdl.renderer, r, g, b, a);
+
     filled ?
         SDL_RenderFillRect(sdl.renderer, &square):
         SDL_RenderDrawRect(sdl.renderer, &square);
@@ -153,14 +160,17 @@ Sdl xsetup(const Args args)
 {
     SDL_Init(SDL_INIT_VIDEO);
     Sdl sdl = xzsdl();
+
     sdl.window = SDL_CreateWindow("Andvaranaut",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         args.xres,
         args.yres,
         SDL_WINDOW_SHOWN);
+
     if(sdl.window == NULL)
         xbomb("error: could not open window\n");
+
     sdl.renderer = SDL_CreateRenderer(
         sdl.window,
         -1,
@@ -179,6 +189,7 @@ Sdl xsetup(const Args args)
         SDL_TEXTUREACCESS_STREAMING,
         args.yres,
         args.xres);
+
     sdl.xres = args.xres;
     sdl.yres = args.yres;
     sdl.fps = args.fps;
@@ -191,6 +202,7 @@ Sdl xsetup(const Args args)
     sdl.wht = 0xFFDFEFD7;
     sdl.blk = 0xFF000000;
     sdl.red = 0xFFD34549;
+    sdl.yel = 0xFFDBD75D;
 
     return sdl;
 }
@@ -200,8 +212,11 @@ void xrelease(const Sdl sdl)
 {
     xclean(sdl.surfaces);
     xpurge(sdl.textures);
+
     SDL_DestroyTexture(sdl.canvas);
+
     SDL_Quit();
+
     SDL_DestroyWindow(sdl.window);
     SDL_DestroyRenderer(sdl.renderer);
 }
@@ -240,8 +255,10 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
 
     // Launch all threads and wait for their completion.
     SDL_Thread** const threads = xtoss(SDL_Thread*, sdl.threads);
+
     for(int i = 0; i < sdl.threads; i++)
         threads[i] = SDL_CreateThread(xbraster, "n/a", &b[i]);
+
     for(int i = 0; i < sdl.threads; i++)
     {
         int status; /* Ignored */
@@ -289,8 +306,10 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     // Calculate attack.
     const int last = g.count - 1;
     const int tail = 6;
+
     if(g.count < tail)
         return xzattack();
+
     float mag = 0.0f;
     for(int i = 0; i < g.count - 1; i++)
         mag += xmag(xsub(g.points[i + 1], g.points[i + 0]));
@@ -360,6 +379,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             const Point point = xadd(xmul(g.points[i], sens), shift);
             const Point corner = xsnap(point, grid);
             const Point center = xsub(xadd(corner, middle), shift);
+
             dbox(sdl, center.x, center.y, grid, sdl.wht, true);
 
             // Populate Scroll int array. Was cleared earlier.
@@ -382,12 +402,14 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             };
             const Point corner = xmul(which, grid);
             const Point center = xsub(xadd(corner, middle), shift);
+
             dbox(sdl, center.x, center.y, grid, sdl.red, false);
         }
 
         // Draw the cursor.
         const Point point = xadd(xmul(g.points[g.count - 1], sens), shift);
         const Point center = xsub(xadd(point, middle), shift);
+
         dbox(sdl, center.x, center.y, 6, sdl.red, true);
     }
 
@@ -418,7 +440,6 @@ Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll s
     return
         xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         xisrange(it.c) ? dgrange(sdl, g, it, sens) :
-
         // Magic wand needs inventory access for checking against scrolls.
         xismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) :
         xzattack();
@@ -440,13 +461,16 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
 
         // If empty space then skip the tile.
         const int ch = ascii - ' ';
+
         if(ch == 0)
             continue;
 
         // Otherwise render the tile.
         const SDL_Rect to = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
+
         if(clipping(sdl, ov, to))
             continue;
+
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &to);
     }
 
@@ -466,8 +490,10 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
             (int) ((ov.h * sprite->where.y - ov.h / 1) + ov.py),
             ov.w, ov.h,
         };
+
         if(clipping(sdl, ov, to))
             continue;
+
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[index], &from, &to);
     }
 }
@@ -487,8 +513,10 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
 
             // Copy over the tile. Make animation idle.
             const SDL_Rect from = { w * (tm.ticks % FRAMES), h * IDLE, w, h };
+
             if(clipping(sdl, ov, to))
                 continue;
+
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
         }
         // Blocks.
@@ -508,6 +536,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
     const int max =
         bar == HPS ? hero.hpsmax :
         bar == FTG ? hero.ftgmax : hero.mnamax;
+
     const float lvl =
         bar == HPS ? hero.hps :
         bar == FTG ? hero.ftg : hero.mna;
@@ -519,6 +548,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
 
     const int frame = tm.ticks % 2 == 0;
     const int w = surface->w;
+
     const SDL_Rect gleft = { 0,  0, w, w };
     const SDL_Rect glass = { 0, 32, w, w };
     const SDL_Rect grite = { 0, 64, w, w };
@@ -600,9 +630,11 @@ static void dinvits(const Sdl sdl, const Inventory inv)
         const int index = xcindex(item.c);
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
+
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
         const SDL_Rect from = { 0, w * item.index, w, w }, to = { xx, inv.width * i, inv.width, inv.width };
+
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }
@@ -618,12 +650,17 @@ static void drooms(uint32_t* pixels, const int width, const Map map, const uint3
     for(int y = 1; y < map.rows - 1; y++)
     for(int x = 1; x < map.cols - 1; x++)
     {
+        // Paint the walls.
         if(map.walling[y][x] != ' ' && map.walling[y][x + 1] == ' ') pixels[x + y * width] = out;
         if(map.walling[y][x] != ' ' && map.walling[y][x - 1] == ' ') pixels[x + y * width] = out;
         if(map.walling[y][x] != ' ' && map.walling[y + 1][x] == ' ') pixels[x + y * width] = out;
         if(map.walling[y][x] != ' ' && map.walling[y - 1][x] == ' ') pixels[x + y * width] = out;
-        if(map.walling[y][x] == ' ')
-            pixels[x + y * width] = in;
+
+        // Paint the free space.
+        if(map.walling[y][x] == ' ') pixels[x + y * width] = in;
+
+        // Doors must not be drawn.
+        if(map.walling[y][x] == '!') pixels[x + y * width] = in;
     }
 }
 
@@ -635,7 +672,9 @@ static void ddot(uint32_t* pixels, const int width, const Point where, const int
     {
         const int xx = x + where.x;
         const int yy = y + where.y;
+
         pixels[xx + yy * width] = in;
+
         if(x == -size) pixels[xx + yy * width] = out;
         if(x == +size) pixels[xx + yy * width] = out;
         if(y == -size) pixels[xx + yy * width] = out;

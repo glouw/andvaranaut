@@ -42,6 +42,7 @@ typedef struct
     uint32_t wht;
     uint32_t blk;
     uint32_t red;
+    uint32_t yel;
 }
 Sdl;
 

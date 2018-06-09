@@ -51,8 +51,9 @@ int main(int argc, char* argv[])
     Sdl sdl = xsetup(args);
 
     // Prepares general display font.
-    Font fill = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.red, 0);
-    Font line = xfbuild("art/gui/SDS_8x8.ttf", 32, sdl.blk, 1);
+    const char* const fpath = "art/gui/SDS_8x8.ttf";
+    const Font fill = xfbuild(fpath, 32, sdl.red, 0);
+    const Font line = xfbuild(fpath, 32, sdl.blk, 1);
 
     // Titles present new areas to the player. The title type is the only heap type as it used deep within the engine.
     xttinit();
