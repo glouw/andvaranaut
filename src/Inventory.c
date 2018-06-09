@@ -72,7 +72,7 @@ void xwhatis(const Inventory inv, const Timer tm)
     if(tilechange(inv) && inv.hilited < inv.items.max)
     {
         const Item it = inv.items.item[inv.hilited];
-        xttset(tm.renders, tm.renders + 90, "%s\n%s\n%s\nDamage: %0.1f",
+        xttset(tm.renders, tm.renders + 90, true, "%s\n%s\n%s\nDamage: %0.1f",
             it.cstr, it.desc, it.name, (double) it.damage);
     }
 }

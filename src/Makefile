@@ -28,10 +28,16 @@
 # and place them two folders up from the Makefile and run mingw32-make
 # and then copy over the SDL2 .dll files to where the andvaranaut
 # executable lies.
+#
+# For a quicker compile, run:
+#     make -j10
 
 # -----------------------------------------------------------------------------
 # Compiler.
 # -----------------------------------------------------------------------------
+# The entirety of the Andvaranaut source compiles cleanly with a C++ compiler.
+# This extra effort was maintained in the hopes that this project one day grows
+# with the helping hand of the open-source world.
 
 CC = gcc
 
@@ -78,6 +84,7 @@ SRCS += Point.c
 SRCS += Points.c
 SRCS += Projection.c
 SRCS += Ray.c
+SRCS += Rooms.c
 SRCS += Sdl.c
 SRCS += Title.c
 SRCS += Theme.c

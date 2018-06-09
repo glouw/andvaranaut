@@ -5,6 +5,7 @@
 #include "Overview.h"
 #include "Sheer.h"
 #include "Theme.h"
+#include "Rooms.h"
 
 typedef struct
 {
@@ -19,10 +20,7 @@ typedef struct
     // Trapdoor points for moving up and down map floors.
     Points trapdoors;
 
-    // Each point of interest will have its own themed room.
-    // That is, the number of themes is equal to the number of interest points.
-    Points interests;
-    Theme* themes;
+    Rooms rooms;
 
     // These sheers form an optical illusion with the middle and upper ceiling heights.
     // For example, a larger upper sheer will extend the ceiling depth, and a larger

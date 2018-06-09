@@ -48,11 +48,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
     map.walling = mnew(map.rows, map.cols, '#');
     map.floring = mnew(map.rows, map.cols, '"');
     map.trapdoors = trapdoors;
-    map.interests = interests;
-
-    // Generate room themes.
-    map.themes = xthrand(interests.count);
-
+    map.rooms = xrsinit(interests);
     map.upper = up;
     map.middle = md;
     map.grid = grid;
@@ -63,9 +59,9 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
 // Lookup theme.
 Theme lutheme(const Map map, const Point where)
 {
-    for(int i = 0; i < map.interests.count; i++)
-        if(xeql(where, map.interests.point[i], map.grid))
-            return map.themes[i];
+    for(int i = 0; i < map.rooms.count; i++)
+        if(xeql(where, map.rooms.where[i], map.grid))
+            return map.rooms.themes[i];
     return NO_THEME;
 }
 
@@ -108,7 +104,7 @@ void xmthemett(const Map map, const Point where, const Timer tm)
     // If there was a theme change in the map with the player position...
     if(themech(map, where))
         // Set the title for the current room theme.
-        xttset(tm.renders, tm.renders + 120, themestr(map, where));
+        xttset(tm.renders, tm.renders + 120, false, themestr(map, where));
 }
 
 int xmisportal(char** block, const Point where)

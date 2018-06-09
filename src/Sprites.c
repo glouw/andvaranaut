@@ -229,7 +229,7 @@ static void brokelb(const int ascii, const Inventory inv, const Timer tm)
         // Add an item to the inventory.
         if(!xitsadd(inv.items, xitrand()))
             // Make this a log message to the screen in the future.
-            xttset(tm.renders, tm.renders + 120, "Inventory Full");
+            xttset(tm.renders, tm.renders + 120, false, "Inventory Full");
 }
 
 static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm, const Hero hero)

@@ -145,6 +145,8 @@ int main(int argc, char* argv[])
                 // Hides the mouse cursor.
                 SDL_SetRelativeMouseMode(SDL_TRUE);
 
+                xttstuckclear();
+
                 // NOTE: Attack must be calculated before gauge is wound.
                 const Attack atk = xdgauge(sdl, gg, inv, sc);
 

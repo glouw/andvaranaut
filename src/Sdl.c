@@ -154,7 +154,11 @@ Sdl xsetup(const Args args)
     SDL_Init(SDL_INIT_VIDEO);
     Sdl sdl = xzsdl();
     sdl.window = SDL_CreateWindow("Andvaranaut",
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, args.xres, args.yres, SDL_WINDOW_SHOWN);
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        args.xres,
+        args.yres,
+        SDL_WINDOW_SHOWN);
     if(sdl.window == NULL)
         xbomb("error: could not open window\n");
     sdl.renderer = SDL_CreateRenderer(
@@ -169,7 +173,12 @@ Sdl xsetup(const Args args)
     // Notice the flip between yres and xres in the following call for the sdl canvas texture.
     // This was done for fast caching. Upon presenting the canvas will be rotated upwards by 90 degrees.
     // Notice how ARGB8888 is used for the hardware. This is the fastest option for the GPU.
-    sdl.canvas = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, args.yres, args.xres);
+    sdl.canvas = SDL_CreateTexture(
+        sdl.renderer,
+        SDL_PIXELFORMAT_ARGB8888,
+        SDL_TEXTUREACCESS_STREAMING,
+        args.yres,
+        args.xres);
     sdl.xres = args.xres;
     sdl.yres = args.yres;
     sdl.fps = args.fps;
@@ -572,6 +581,7 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
             (int) (i == inv.hilited ? grn.y : i == inv.selected ? red.y : wht.y),
             w, w
         };
+
         const SDL_Rect to = { xx, inv.width * i, inv.width, inv.width };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }

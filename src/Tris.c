@@ -318,10 +318,10 @@ static int rmax(const Map map)
 static void themeate(const Map map)
 {
     // Flooring generation are pools of water if the room theme is right.
-    for(int i = 0; i < map.interests.count; i++)
+    for(int i = 0; i < map.rooms.count; i++)
     {
-        const Point where = map.interests.point[i];
-        switch(map.themes[i])
+        const Point where = map.rooms.where[i];
+        switch(map.rooms.themes[i])
         {
             case WATER_WELL:
                 xmroom(map, where, rmin(map), rmin(map), FLORING);
