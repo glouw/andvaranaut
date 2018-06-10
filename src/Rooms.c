@@ -8,7 +8,7 @@ Rooms xrsinit(const Points interests)
     const Rooms rooms = {
         interests.point,
         xthrand(count),
-        xtoss(int, count),
+        xwipe(int, count),
         count
     };
     return rooms;

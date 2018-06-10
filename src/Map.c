@@ -149,11 +149,12 @@ void xmroom(const Map map, const Point where, const int w, const int h, const Pa
         {
         case WALLING: map.walling[yy][xx] = ' '; break;
         case CEILING: map.ceiling[yy][xx] = ' '; break;
+        // Will not dig out below walls.
         case FLORING:
-            // Will not dig out below walls.
             if(map.walling[yy][xx] == ' ')
                 map.floring[yy][xx] = ' ';
             break;
+
         default:
             xbomb("room: party not supported\n");
             break;

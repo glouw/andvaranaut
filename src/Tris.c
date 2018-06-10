@@ -359,7 +359,7 @@ Map xtgen(const Points extra)
     const int h = 200;
     const int grid = 30; // Must be even.
     const int max = 30 * (1 + xd2());
-    const int ntraps = 3;
+    const int ntraps = 2;
     const int border = 2 * grid;
 
     if(xodd(grid))

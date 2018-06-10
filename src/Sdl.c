@@ -546,7 +546,6 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
     SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
     SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
 
-    const int frame = tm.ticks % 2 == 0;
     const int w = surface->w;
 
     const SDL_Rect gleft = { 0,  0, w, w };
@@ -554,6 +553,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
     const SDL_Rect grite = { 0, 64, w, w };
 
     // Will animate bar if below threshold.
+    const int frame = tm.ticks % 2 == 0;
     const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : 0), w, w };
     const SDL_Rect empty[] = {
         { 0, fluid.y + 2 * w, w, w }, // 75%.
