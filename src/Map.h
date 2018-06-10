@@ -20,6 +20,7 @@ typedef struct
     // Trapdoor points for moving up and down map floors.
     Points trapdoors;
 
+    // Room information, eg. room location, number of agents (sprites), theme, etc.
     Rooms rooms;
 
     // These sheers form an optical illusion with the middle and upper ceiling heights.
@@ -43,11 +44,9 @@ void xmedit(const Map, const Overview);
 
 int xmout(const Map, const Point where);
 
-void xmprint(char** block, const int rows, const int cols);
-
 int xmcarvable(const Map, const int x, const int y);
 
-void xmroom(const Map map, const Point where, const int w, const int h, const Party);
+void xmroom(const Map, const Point where, const int w, const int h, const Party);
 
 void xmpole(const Map, const Point where, const int ascii);
 

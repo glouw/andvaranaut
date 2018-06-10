@@ -124,6 +124,7 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
     }
 }
 
+// Returns wall z-buffer.
 static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     const Ray ray = xcalc(hero, hits.walling, map.middle, sl.sdl.yres, sl.sdl.xres);
@@ -133,16 +134,8 @@ static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const 
     return ray.corrected;
 }
 
-static void highlited(const Scanline sl)
-{
-    for(int x = 0; x < sl.sdl.yres; x++)
-        pput(sl, x, 0xFF0000);
-}
-
 Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
-    if(false)
-        highlited(sl);
     rupper(sl, hits, hero, map, clouds);
     rlower(sl, hits, hero, map, current);
     return rmiddle(sl, hits, hero, map);

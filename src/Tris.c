@@ -44,6 +44,7 @@ static void emark(Tris edges, const Flags flags)
         {
             if(i == j)
                 continue;
+
             const Tri other = edges.tri[j];
             if(alligned(edge, other))
                 edges.tri[j].c = flags.one;
@@ -129,7 +130,6 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
             // Get triangles where point lies inside their circumcenter...
             if(incircum(tri, p))
                 in = tsadd(in, tri);
-
             // And get triangles where point lies outside of their circumcenter.
             else out = tsadd(out, tri);
         }
@@ -147,9 +147,11 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
         // FAST SHALLOW COPY - ORIGINAL POINTER LOST. SEE NOTE ABOVE.
         tris = out;
     }
+
     free(dummy);
     free(in.tri);
     free(edges.tri);
+
     return tris;
 }
 
@@ -214,8 +216,10 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
         for(int i = 0; i < edges.count; i++)
         {
             const Tri edge = edges.tri[i];
+
             if(xpsame(edge.c, flags.one))
                 continue;
+
             if(xpsame(edge.a, removed))
                 reach = tsadd(reach, edge);
         }
@@ -326,6 +330,7 @@ static void themeate(const Map map)
             case WATER_WELL:
                 xmroom(map, where, rmin(map), rmin(map), FLORING);
                 break;
+
             default:
                 break;
         }
