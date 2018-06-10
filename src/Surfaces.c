@@ -41,7 +41,7 @@ Surfaces xpull(const uint32_t key)
         /* ' */ "art/tiles/board.bmp",
         /* ( */ "art/tiles/grass.bmp",
         /* ) */ "art/tiles/dirt.bmp",
-        /* * */ "art/tiles/cloud2.bmp",
+        /* * */ "art/tiles/error.bmp",
         /* + */ "art/tiles/error.bmp",
         /* , */ "art/tiles/error.bmp",
         /* - */ "art/tiles/error.bmp",
