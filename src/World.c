@@ -31,7 +31,16 @@ World xwinit(const int max)
 
     // The zeroth floor does not take any extra trapdoor arguments because there are no trapdoors in the sky.
     for(int i = 0; i < max; i++)
-        w = xwadd(w, xtgen(i == 0 ? xpsnew(0) : w.map[i - 1].trapdoors), xsnew(32));
+    {
+        w = xwadd(w,
+            // Build map.
+            xtgen(i == 0 ? xpsnew(0) : w.map[i - 1].trapdoors),
+            // Allocate space for sprites.
+            xsnew(32));
+
+        // Populate sprites according to map.
+        w.sprites[i] = xspopulate(w.sprites[i], w.map[i]);
+    }
 
     // Ceiling trapdoor connection starts from floor 1 because floor 0 has a sky and skies do not have trapdoors.
     for(int i = 0; i < max; i++) xmtrapdoors(w.map[i], w.map[i - 0].trapdoors, FLORING);

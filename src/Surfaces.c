@@ -13,24 +13,29 @@ static SDL_Surface* load(const char* const path, const uint32_t key)
     SDL_Surface* const bmp = SDL_LoadBMP(path);
     if(bmp == NULL)
         xbomb("%s\n", SDL_GetError());
+
     // Color keys can not be set in SDL when an alpha channel is present.
     SDL_PixelFormat* const allocation = SDL_AllocFormat(SDL_PIXELFORMAT_RGB888);
     SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);
     SDL_FreeFormat(allocation);
     SDL_FreeSurface(bmp);
+
     const uint32_t r = 0xFF & (key >> 0x10);
     const uint32_t g = 0xFF & (key >> 0x08);
     const uint32_t b = 0xFF & (key >> 0x00);
     SDL_SetColorKey(converted, SDL_TRUE, SDL_MapRGB(converted->format, r, g, b));
+
     return converted;
 }
 
 Surfaces xpull(const uint32_t key)
 {
     static const char* const names[] = {
+
         // ASCII representable indices are used for sprites and tiles.
         // Alpha ASCII is for sprites.
         // Non-Alpha ASCII is for tiles.
+
         /*   */ "art/tiles/delete.bmp",
         /* ! */ "art/tiles/error.bmp",
         /* " */ "art/tiles/floor.bmp",
@@ -126,7 +131,9 @@ Surfaces xpull(const uint32_t key)
         /* | */ "art/tiles/error.bmp",
         /* } */ "art/tiles/error.bmp",
         /* ~ */ "art/tiles/trap_door.bmp",
+
         // Items.
+
         /* ~ +  1 */ "art/items/ammo.bmp",
         /* ~ +  2 */ "art/items/amulet.bmp",
         /* ~ +  3 */ "art/items/armor.bmp",
@@ -151,13 +158,18 @@ Surfaces xpull(const uint32_t key)
         /* ~ + 22 */ "art/items/shortwep.bmp",
         /* ~ + 23 */ "art/items/tool.bmp",
         /* ~ + 24 */ "art/items/wand.bmp",
+
         // GUI.
+
         /* ~ + 25 */ "art/gui/gui.bmp",
     };
+
     const int count = xlen(names);
     SDL_Surface** const surface = xtoss(SDL_Surface*, count);
+
     for(int i = 0; i < count; i++)
         surface[i] = load(names[i], key);
+
     const Surfaces surfaces = { surface, count };
     return surfaces;
 }
@@ -166,5 +178,6 @@ void xclean(const Surfaces surfaces)
 {
     for(int i = 0; i < surfaces.count; i++)
         SDL_FreeSurface(surfaces.surface[i]);
+
     free(surfaces.surface);
 }

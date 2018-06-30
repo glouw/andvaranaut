@@ -23,8 +23,10 @@ static char** reset(char** block, const int rows, const int cols, const int blok
 static char** mnew(const int rows, const int cols, const int blok)
 {
     char** block = xtoss(char*, rows);
+
     for(int row = 0; row < rows; row++)
         block[row] = xtoss(char, cols);
+
     return reset(block, rows, cols, blok);
 }
 
@@ -42,13 +44,17 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
 
     // Construct map.
     Map map = xzmap();
+
     map.rows = rows;
     map.cols = cols;
+
     map.ceiling = mnew(map.rows, map.cols, '#');
     map.walling = mnew(map.rows, map.cols, '#');
     map.floring = mnew(map.rows, map.cols, '"');
+
     map.trapdoors = trapdoors;
     map.rooms = xrsinit(interests);
+
     map.upper = up;
     map.middle = md;
     map.grid = grid;
@@ -60,7 +66,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
 Theme lutheme(const Map map, const Point where)
 {
     for(int i = 0; i < map.rooms.count; i++)
-        if(xeql(where, map.rooms.where[i], map.grid))
+        if(xeql(where, map.rooms.wheres[i], map.grid))
             return map.rooms.themes[i];
     return NO_THEME;
 }
@@ -149,8 +155,8 @@ void xmroom(const Map map, const Point where, const int w, const int h, const Pa
         {
         case WALLING: map.walling[yy][xx] = ' '; break;
         case CEILING: map.ceiling[yy][xx] = ' '; break;
-        // Will not dig out below walls.
         case FLORING:
+            // Will only dig out if nothing is above.
             if(map.walling[yy][xx] == ' ')
                 map.floring[yy][xx] = ' ';
             break;
@@ -225,8 +231,10 @@ void xmtrapdoors(const Map map, const Points trapdoors, const Party p)
     for(int i = 0; i < trapdoors.count; i++)
     {
         const Point where = trapdoors.point[i];
+
         const int x = where.x;
         const int y = where.y;
+
         platform(map, x, y, p);
         supports(map, x, y, p);
         trapdoor(map, x, y, p);

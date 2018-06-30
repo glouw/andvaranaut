@@ -5,9 +5,12 @@
 
 typedef struct
 {
-    Point* where;
+    Point* wheres;
+
     Theme* themes;
+
     int* agents;
+
     int count;
 }
 Rooms;

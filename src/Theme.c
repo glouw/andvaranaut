@@ -19,17 +19,21 @@ char* xthname(const Theme th)
 {
     switch(th)
     {
-    default:
-    case NO_THEME:
+    case NO_THEME: default:
         return (char*) "An Empty Room";
+
     case HALL_OF_THE_DEAD:
         return (char*) "Hall of the Dead";
+
     case DEAD_KNIGHT_PARTY:
         return (char*) "Dead Knight Party";
+
     case NICE_GARDEN:
         return (char*) "A Nice Garden";
+
     case TIMS_HOUSE:
         return (char*) "Timothy's House";
+
     case WATER_WELL:
         return (char*) "A Well of Water";
     }

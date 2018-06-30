@@ -16,6 +16,7 @@ static Tris tsadd(Tris tris, const Tri tri)
 {
     if(tris.count == tris.max)
         xbomb("tris size limitation reached\n");
+
     tris.tri[tris.count++] = tri;
     return tris;
 }
@@ -321,13 +322,13 @@ static int rmax(const Map map)
 // Themes all the rooms according to their themes.
 static void themeate(const Map map)
 {
-    // Flooring generation are pools of water if the room theme is right.
     for(int i = 0; i < map.rooms.count; i++)
     {
-        const Point where = map.rooms.where[i];
+        const Point where = map.rooms.wheres[i];
         switch(map.rooms.themes[i])
         {
             case WATER_WELL:
+                // Pools of water are rooms carved out of the floor.
                 xmroom(map, where, rmin(map), rmin(map), FLORING);
                 break;
 

@@ -228,7 +228,7 @@ static void brokelb(const int ascii, const Inventory inv, const Timer tm)
     if(ascii == 'd')
         // Add an item to the inventory.
         if(!xitsadd(inv.items, xitrand()))
-            // Make this a log message to the screen in the future.
+            // Log message to the screen.
             xttset(tm.renders, tm.renders + 120, false, "Inventory Full");
 }
 
@@ -401,15 +401,22 @@ static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
 Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Timer tm)
 {
     arrange(sprites, hero);
+
     idle(sprites, tm);
+
     route(sprites, field, map, hero);
+
     move(sprites, field, hero.where, map);
+
     bound(sprites, map);
+
     return damage(hero, sprites, tm);
 }
 
-// TODO:
-// Populate map with sprites
+Sprites xspopulate(Sprites sprites, const Map m)
+{
+    return sprites;
+}
 
 // TODO:
 // Run through map points of interests and count alive sprites within POI grids.
