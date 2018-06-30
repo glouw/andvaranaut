@@ -5,14 +5,7 @@
 static Rooms spy(Rooms rms)
 {
     for(int i = 0; i < rms.count; i++)
-    {
-        switch(rms.themes[i])
-        {
-        default:
-            rms.agents[i] = 4;
-            break;
-        }
-    }
+        rms.agents[i] = 4;
     return rms;
 }
 

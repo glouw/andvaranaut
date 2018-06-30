@@ -30,22 +30,26 @@ Sprite xsregistrar(const int ascii, const Point where)
     case 'a':
         s.width = 0.60f;
         break;
+
     // Outlaw.
     case 'b':
         s.speed = 0.033f;
         s.acceleration = 0.0025f;
         s.width = 0.66f;
         break;
+
     // Loot bag.
     case 'd':
         s.width = 1.00f;
         s.health = 1.0f;
         break;
+
     // Tree trunk.
     case 'e':
         s.width = 1.00f;
         s.health = 1.0f;
         break;
+
     // Tree leaves.
     case 'f':
         s.ascii = 'f';

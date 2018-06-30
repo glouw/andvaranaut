@@ -413,8 +413,28 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     return damage(hero, sprites, tm);
 }
 
+static Sprites pngarden(Sprites sprites, const Point mid, const int agents, const int grid)
+{
+    for(int i = 0; i < agents; i++)
+        sprites = append(sprites, xsregistrar('a', xrand(mid, grid)));
+    return sprites;
+}
+
 Sprites xspopulate(Sprites sprites, const Map m)
 {
+    for(int i = 0; i < m.rooms.count; i++)
+    {
+        const Point mid = m.rooms.wheres[i];
+        const int agents = m.rooms.agents[i];
+        switch(m.rooms.themes[i])
+        {
+        case NICE_GARDEN:
+            sprites = pngarden(sprites, mid, agents, m.grid);
+            break;
+        default:
+            break;
+        }
+    }
     return sprites;
 }
 
