@@ -30,6 +30,8 @@ int xodd(const int a);
 
 float xsinc(const float x, const float p);
 
+#define xfrand() (rand() / (float) INT_MAX)
+
 #define xlen(a) ((int) (sizeof(a) / sizeof(*a)))
 
 #define xwipe(t, n) ((t*) calloc((n) , sizeof(t)))

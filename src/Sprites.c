@@ -164,15 +164,18 @@ static void scentwall(const Field field, const Point where, const Map map, const
     const int b = field.res * where.y + field.aura; // Bottom.
     const int l = field.res * where.x - field.aura; // Left.
     const int r = field.res * where.x + field.aura; // Right.
+
     for(int j = t; j <= b; j++)
     for(int i = l; i <= r; i++)
     {
         const int x = i / field.res;
         const int y = j / field.res;
+
         if(xon(field, j, i))
         {
             // Walls.
             field.mesh[j][i] = map.walling[y][x] == ' ' ? 0.0f : -scent;
+
             // Water.
             if(map.floring[y][x] == ' ')
                 field.mesh[j][i] = -scent;
@@ -185,11 +188,13 @@ static void scentsprite(const Field field, const Sprites sprites, const float sc
     for(int s = 0; s < sprites.count; s++)
     {
         Sprite* const sprite = &sprites.sprite[s];
+
         // Cosmetic sprites, like flowers and such, do not scent pathfinder,
         // else sprites will never walk through a field of flowers to reach
         // the hero (as romantic as that sounds).
         if(xiscosmetic(sprite->ascii))
             continue;
+
         const int j = field.res * sprite->where.y;
         const int i = field.res * sprite->where.x;
         for(int a = -field.res / 2; a <= field.res / 2; a++)
@@ -337,11 +342,13 @@ static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv,
     // These sprites will do something like heal the hero, teleport the hero, or be something like fire
     // which hurts, heals, or teleports other sprites.
     const Item it = inv.items.item[inv.selected];
+
     (void) attack;
     (void) hero;
     (void) inv;
     (void) tm;
     (void) it;
+
     return sprites;
 }
 
@@ -358,7 +365,9 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
 
         // Do the attack.
         if(attack.method == MELEE) return hmelee(sprites, attack, inv, tm, hero);
+
         if(attack.method == RANGE) return hrange(sprites, attack, inv, tm);
+
         if(attack.method == MAGIC) return hmagic(sprites, attack, inv, tm, hero);
     }
 
@@ -442,18 +451,13 @@ Sprites xspopulate(Sprites sprites, const Map m)
         const int agents = m.rooms.agents[i];
         switch(m.rooms.themes[i])
         {
-        case HALL_OF_THE_DEAD:
-            printf("%f %f hall of the dead\n", mid.x, mid.y);
-            break;
         case NICE_GARDEN:
-            printf("%f %f nice garden\n", mid.x, mid.y);
             sprites = pngarden(sprites, m, mid, agents);
             break;
         default:
             break;
         }
     }
-    puts("");
     return sprites;
 }
 
