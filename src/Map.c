@@ -187,7 +187,7 @@ static void supports(const Map map, const int x, const int y, const Party p)
     }
 }
 
-static void platform(const Map map, const int x, const int y, const Party p)
+void xmplatform(const Map map, const int x, const int y, const Party p)
 {
     for(int j = -1; j <= 1; j++)
     for(int k = -1; k <= 1; k++)
@@ -235,7 +235,7 @@ void xmtrapdoors(const Map map, const Points trapdoors, const Party p)
         const int x = where.x;
         const int y = where.y;
 
-        platform(map, x, y, p);
+        xmplatform(map, x, y, p);
         supports(map, x, y, p);
         trapdoor(map, x, y, p);
     }

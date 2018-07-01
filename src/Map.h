@@ -57,3 +57,5 @@ void xmcorridor(const Map, const Point a, const Point b);
 void xmthemett(const Map, const Point where, const Timer);
 
 void xmdoors(const Map, const int x, const int y);
+
+void xmplatform(const Map, const int x, const int y, const Party);

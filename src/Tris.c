@@ -330,6 +330,10 @@ static void themeate(const Map map)
             case WATER_WELL:
                 // Pools of water are rooms carved out of the floor.
                 xmroom(map, where, rmin(map), rmin(map), FLORING);
+
+                // In there is no platform from a trapdoor then this platform will
+                // catch the player from falling in water.
+                xmplatform(map, where.x, where.y, FLORING);
                 break;
 
             default:

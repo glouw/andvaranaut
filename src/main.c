@@ -10,7 +10,7 @@
 int main(int argc, char* argv[])
 {
     // The one and only random seeder. Keep seed constant to keep the same map for testing.
-    srand(false ? 4096 : time(0));
+    srand(true ? 1530469541 : time(0));
 
     // Parses command line arguments. Uses game defaults if no arguments are passed in.
     const Args args = xparse(argc, argv);
