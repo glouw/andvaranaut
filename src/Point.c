@@ -154,7 +154,7 @@ Point xsnap(const Point a, const int grid)
 
 Point xrand(Point a, const int grid)
 {
-    a.x += (rand() % (grid / 2)) - grid / 4;
-    a.y += (rand() % (grid / 2)) - grid / 4;
+    a.x += rand() % grid - grid / 2;
+    a.y += rand() % grid - grid / 2;
     return a;
 }

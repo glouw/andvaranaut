@@ -413,10 +413,24 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     return damage(hero, sprites, tm);
 }
 
-static Sprites pngarden(Sprites sprites, const Point mid, const int agents, const int grid)
+static Point freerand(const Point mid, const Map m)
+{
+    const Point where = xrand(mid, m.grid);
+    const int x = where.x;
+    const int y = where.y;
+    // No wall. Must have floor.
+    return m.walling[y][x] == ' '
+        && m.floring[y][x] != ' ' ? where : freerand(mid, m);
+}
+
+// Populates a room with a nice garden of sprites.
+static Sprites pngarden(Sprites sprites, const Map m, const Point mid, const int agents)
 {
     for(int i = 0; i < agents; i++)
-        sprites = append(sprites, xsregistrar('a', xrand(mid, grid)));
+    {
+        const Point where = freerand(mid, m);
+        sprites = append(sprites, xsregistrar('a', where));
+    }
     return sprites;
 }
 
@@ -428,13 +442,18 @@ Sprites xspopulate(Sprites sprites, const Map m)
         const int agents = m.rooms.agents[i];
         switch(m.rooms.themes[i])
         {
+        case HALL_OF_THE_DEAD:
+            printf("%f %f hall of the dead\n", mid.x, mid.y);
+            break;
         case NICE_GARDEN:
-            sprites = pngarden(sprites, mid, agents, m.grid);
+            printf("%f %f nice garden\n", mid.x, mid.y);
+            sprites = pngarden(sprites, m, mid, agents);
             break;
         default:
             break;
         }
     }
+    puts("");
     return sprites;
 }
 

@@ -211,7 +211,7 @@ Hero xteleport(Hero hero, const Map map)
     {
         hero.floor++;
         // Gives a falling effect.
-        hero.height = 0.75;
+        hero.height = 0.80;
     }
 
     // The teleport effect is done by reseting the hero yaw to the horizon. The torch is also put out.

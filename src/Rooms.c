@@ -5,7 +5,14 @@
 static Rooms spy(Rooms rms)
 {
     for(int i = 0; i < rms.count; i++)
-        rms.agents[i] = 4;
+        switch(rms.themes[i])
+        {
+        case NICE_GARDEN:
+            rms.agents[i] = 256;
+            break;
+        default:
+            break;
+        }
     return rms;
 }
 
