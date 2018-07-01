@@ -1,10 +1,15 @@
-![Screenshot](scn/2018-02-17-143059_600x300_scrot.png)
+![](art/scn/2018-02-17-143059_600x300_scrot.png)
 
-Andvaranaut aims to be a retro dungeon crawler with procedural dungeon generation.
+# Andvaranaut
+A retro dungeon crawler with procedural dungeon generation.
 
 Item art by Platino.
 
+![](art/scn/platino.png)
+
 Color pallette by DawnBringer.
+
+![](art/scn/bigfoot_v3.png)
 
 # Building
 
