@@ -3,6 +3,12 @@
 # Andvaranaut
 A retro dungeon crawler with procedural dungeon generation.
 
+# Building
+
+See the Makefile for instructions on how to bulid for Linux, MacOS, and Windows.
+
+# Credits
+
 Item art by Platino.
 
 ![](art/scn/platino.png)
@@ -10,7 +16,3 @@ Item art by Platino.
 Color pallette by DawnBringer.
 
 ![](art/scn/bigfoot_v3.png)
-
-# Building
-
-See the Makefile for instructions on how to bulid for Linux, MacOS, and Windows.
