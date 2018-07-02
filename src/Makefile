@@ -14,6 +14,7 @@
 # Required libraries
 #
 # 	- SDL2-devel
+# 	- SDL2-ttf
 #
 # -> Linux
 # Use your package manager to get the required libraries
