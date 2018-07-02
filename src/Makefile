@@ -27,7 +27,7 @@
 # -> Windows
 # Get the required MINGW32 developement libraries from the SDL2 website
 # and place them two folders up from the Makefile and run mingw32-make
-# and then copy over the SDL2 .dll files to where the andvaranaut
+# and then copy over the SDL2.dll files to where the andvaranaut
 # executable lies.
 #
 # For a quicker compile, run:
@@ -154,8 +154,8 @@ endif
 $(BIN): $(SRCS:.c=.o)
 	@echo LINK $(BIN)
 	@$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
-	@echo "If you are on Windows be sure to copy over all SDL2 .dll"
-	@echo "files to where andvaranaut.exe was placed."
+	@echo "If you are on Windows be sure to copy over all SDL2.dll and SDL2-ttf.dll"
+	@echo "files to wherever andvaranaut.exe is."
 
 # -----------------------------------------------------------------------------
 # Compiler.
