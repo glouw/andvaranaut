@@ -16,3 +16,10 @@ Item art by Platino.
 Color pallette by DawnBringer.
 
 ![](art/scn/bigfoot_v3.png)
+
+# Source Hints
+Andvaranaut compiles cleanly with many ISO C99 / C++98 compliant compilers across multiple platforms.
+
+Andvaranaut builds very quickly (6.23 seconds on an Intel(R) Core(TM) i5-3320M CPU @ 2.60GHz).
+
+Andvaranaut uses a software graphics engine built on SDL2 to aid cross system portability.
