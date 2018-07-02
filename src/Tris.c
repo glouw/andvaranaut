@@ -180,6 +180,7 @@ static Points prand(const int w, const int h, const int max, const int grid, con
         if(!xpsfind(ps, snapped))
             ps = xpsadd(ps, snapped);
     }
+
     return ps;
 }
 
@@ -302,9 +303,6 @@ static void bone(const Map map, const Tri e, const int w, const int h)
 
     // Corridors are carved between two rooms.
     xmcorridor(map, e.a, e.b);
-
-    // Doors situated in corridors block rooms from each other.
-    xmdoors(map, e.a.x, e.a.y);
 }
 
 // Minimum room size.
@@ -347,6 +345,7 @@ static void carve(const Map map, const Tris edges, const Flags flags)
     for(int i = 0; i < edges.count; i++)
     {
         const Tri e = edges.tri[i];
+
         if(xpsame(e.c, flags.one))
             continue;
 

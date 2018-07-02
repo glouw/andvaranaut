@@ -40,9 +40,12 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov)
 {
     if(xmout(map, ov.where))
         return sprites;
+
     const int ascii = ov.selected + ' ';
+
     if(xsissprite(ascii))
         sprites = append(sprites, xsregistrar(ascii, ov.where));
+
     return sprites;
 }
 
@@ -424,9 +427,10 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
 
 static Point freerand(const Point mid, const Map m)
 {
-    const Point where = xrand(mid, m.grid);
+    const Point where = xrand(mid, m.grid / 1.5);
     const int x = where.x;
     const int y = where.y;
+
     // No wall. Must have floor.
     return m.walling[y][x] == ' '
         && m.floring[y][x] != ' ' ? where : freerand(mid, m);
@@ -435,11 +439,17 @@ static Point freerand(const Point mid, const Map m)
 // Populates a room with a nice garden of sprites.
 static Sprites pngarden(Sprites sprites, const Map m, const Point mid, const int agents)
 {
-    for(int i = 0; i < agents; i++)
+    // Flowers and nice things. Reserve one for the caretaker.
+    for(int i = 0; i < agents - 1; i++)
     {
         const Point where = freerand(mid, m);
         sprites = append(sprites, xsregistrar('a', where));
     }
+
+    // Caretaker.
+    const Point where = freerand(mid, m);
+    sprites = append(sprites, xsregistrar('b', where));
+
     return sprites;
 }
 
@@ -449,18 +459,46 @@ Sprites xspopulate(Sprites sprites, const Map m)
     {
         const Point mid = m.rooms.wheres[i];
         const int agents = m.rooms.agents[i];
+
         switch(m.rooms.themes[i])
         {
         case NICE_GARDEN:
             sprites = pngarden(sprites, m, mid, agents);
             break;
+
+        case NO_THEME:
+            break;
+
+        // TODO: TEMP
         default:
+            sprites = append(sprites, xsregistrar('b', freerand(mid, m)));
             break;
         }
     }
     return sprites;
 }
 
-// TODO:
-// Run through map points of interests and count alive sprites within POI grids.
-// If sprites all dead then remove '!' blocks on corridors.
+// Count all the sprites in a room and assigns count to map room agents.
+// Room agent count only applies to alive sprites and non-cosmetic sprites.
+// Can be multi-threaded.
+Map xscount(const Sprites sprites, Map m)
+{
+    for(int i = 0; i < m.rooms.count; i++)
+    {
+        m.rooms.agents[i] = 0;
+        for(int s = 0; s < sprites.count; s++)
+        {
+            Sprite* const sprite = &sprites.sprite[s];
+
+            // Cosmetic sprites do not count as active agents.
+            if(xiscosmetic(sprite->ascii))
+                continue;
+
+            // Only sprites within a room which are alive count as active agents.
+            if(xeql(sprite->where, m.rooms.wheres[i], m.grid))
+                if(sprite->health > 0.0f)
+                    m.rooms.agents[i]++;
+        }
+    }
+    return m;
+}

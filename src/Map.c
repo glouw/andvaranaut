@@ -205,15 +205,6 @@ void xmplatform(const Map map, const int x, const int y, const Party p)
     }
 }
 
-void xmdoors(const Map map, const int x, const int y)
-{
-    const int end = map.grid / 2;
-    if(map.walling[y + 0][x + end] == ' ') map.walling[y + 0][x + end] = '!';
-    if(map.walling[y + 0][x - end] == ' ') map.walling[y + 0][x - end] = '!';
-    if(map.walling[y + end][x + 0] == ' ') map.walling[y + end][x + 0] = '!';
-    if(map.walling[y - end][x + 0] == ' ') map.walling[y - end][x + 0] = '!';
-}
-
 static void trapdoor(const Map map, const int x, const int y, const Party p)
 {
     switch(p)
@@ -262,4 +253,44 @@ void xmcorridor(const Map map, const Point a, const Point b)
     int y = a.y;
     for(int i = 0; i < sx; i++) map.walling[y][x += dx] = ' ';
     for(int i = 0; i < sy; i++) map.walling[y += dy][x] = ' ';
+}
+
+static void cross(const Map map, const int x, const int y, const char a, const char b)
+{
+    const int end = map.grid / 2;
+    if(map.walling[y + 0][x + end] == a) map.walling[y + 0][x + end] = b;
+    if(map.walling[y + 0][x - end] == a) map.walling[y + 0][x - end] = b;
+    if(map.walling[y + end][x + 0] == a) map.walling[y + end][x + 0] = b;
+    if(map.walling[y - end][x + 0] == a) map.walling[y - end][x + 0] = b;
+}
+
+// Adds doors to block corridoors.
+static void door(const Map map, const int x, const int y)
+{
+    cross(map, x, y, ' ', '!');
+}
+
+// Adds a passge to a formerly blocked corridoor.
+static void pass(const Map map, const int x, const int y)
+{
+    cross(map, x, y, '!', ' ');
+}
+
+// Barricades a room from other rooms only if there are agents in the room.
+void xmbarricade(const Map map)
+{
+    // Barricade first.
+    for(int i = 0; i < map.rooms.count; i++)
+    {
+        const Point mid = map.rooms.wheres[i];
+        door(map, mid.x, mid.y);
+    }
+    // Then remove barricades when rooms have zero agents left.
+    for(int i = 0; i < map.rooms.count; i++)
+    {
+        const Point mid = map.rooms.wheres[i];
+
+        if(map.rooms.agents[i] == 0)
+            pass(map, mid.x, mid.y);
+    }
 }

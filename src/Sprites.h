@@ -33,3 +33,5 @@ Hero xcaretake(const Sprites, const Hero, const Map, const Field, const Timer);
 Sprites xsgen(const int max, const Map);
 
 Sprites xspopulate(Sprites, const Map);
+
+Map xscount(const Sprites, Map);

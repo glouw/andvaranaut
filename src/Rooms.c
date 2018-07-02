@@ -8,9 +8,16 @@ static Rooms spy(Rooms rms)
         switch(rms.themes[i])
         {
         case NICE_GARDEN:
-            rms.agents[i] = 256;
+            rms.agents[i] = 512;
             break;
+
+        case NO_THEME:
+            rms.agents[i] = 0;
+            break;
+
+        // TODO: TEMP
         default:
+            rms.agents[i] = 1;
             break;
         }
     return rms;
@@ -21,7 +28,7 @@ Rooms xrsinit(const Points interests)
     // The number of rooms.
     const int count = interests.count;
 
-    Rooms rooms = {
+    const Rooms rooms = {
         interests.point,
 
         // Room themes are randomized.
@@ -34,7 +41,5 @@ Rooms xrsinit(const Points interests)
     };
 
     // Calculate number of agents per room.
-    rooms = spy(rooms);
-
-    return rooms;
+    return spy(rooms);
 }

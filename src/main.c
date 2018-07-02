@@ -128,6 +128,12 @@ int main(int argc, char* argv[])
             // Draws to screen backbuffer the game map.
             xdmap(sdl, wd.map[me.floor], me.where);
 
+            // Determine room agent count.
+            wd.map[me.floor] = xscount(wd.sprites[me.floor], wd.map[me.floor]);
+
+            // Barricade or unbarricade room doors based on room agent count.
+            xmbarricade(wd.map[me.floor]);
+
             // Inventory management.
             if(xinvuse(in))
             {

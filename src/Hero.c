@@ -52,8 +52,8 @@ static Hero spin(Hero hero, const Input input)
 static Hero yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dy * input.sy;
-    const float max = 1.99f;
-    const float min = 0.01f;
+    const float max = 1.80f;
+    const float min = 0.20f;
     hero.yaw =
         hero.yaw > max ? max : // Max clamp.
         hero.yaw < min ? min : // Min clamp.
