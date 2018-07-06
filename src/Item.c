@@ -199,53 +199,53 @@ static Item armor(Item it)
     it.cstr = "Armor";
     switch(it.index)
     {
-        case 0:
-            it.name = "Bronze Chainmail of Immortal Souls";
-            break;
+    case 0:
+        it.name = "Bronze Chainmail of Immortal Souls";
+        break;
 
-        case 1:
-            it.name = "Bronze Chainmail of Divine Bloodlust";
-            break;
+    case 1:
+        it.name = "Bronze Chainmail of Divine Bloodlust";
+        break;
 
-        case 2:
-            it.name = "Mithril Chainmail of Chestguard";
-            break;
+    case 2:
+        it.name = "Mithril Chainmail of Chestguard";
+        break;
 
-        case 3:
-            it.name = "Adamant Chainmail of Pride's Fall";
-            break;
+    case 3:
+        it.name = "Adamant Chainmail of Pride's Fall";
+        break;
 
-        case 4:
-            it.name = "Bronze Chainmail of the Lone Wolf";
-            break;
+    case 4:
+        it.name = "Bronze Chainmail of the Lone Wolf";
+        break;
 
-        case 5:
-            it.name = "Mithril Chainmail of Delusions";
-            break;
+    case 5:
+        it.name = "Mithril Chainmail of Delusions";
+        break;
 
-        case 6:
-            it.name = "Gold Chainmail of Relentless Voices";
-            break;
+    case 6:
+        it.name = "Gold Chainmail of Relentless Voices";
+        break;
 
-        case 7:
-            it.name = "Mithril Chainmail of Recoil";
-            break;
+    case 7:
+        it.name = "Mithril Chainmail of Recoil";
+        break;
 
-        case 8:
-            it.name = "Mithril Chainmail of Broken Bones";
-            break;
+    case 8:
+        it.name = "Mithril Chainmail of Broken Bones";
+        break;
 
-        case 9:
-            it.name = "Steel Chainmail of Riddles";
-            break;
+    case 9:
+        it.name = "Steel Chainmail of Riddles";
+        break;
 
-        case 10:
-            it.name = "Adamant Chainmail of Unholy Blight";
-            break;
+    case 10:
+        it.name = "Adamant Chainmail of Unholy Blight";
+        break;
 
-        case 11:
-            it.name = "Poly Chainmail of Dark Magic";
-            break;
+    case 11:
+        it.name = "Poly Chainmail of Dark Magic";
+        break;
     }
     return it;
 }
