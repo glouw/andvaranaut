@@ -13,8 +13,107 @@ Item xzitem()
 static Item ammo(Item it)
 {
     it.cstr = "Ammo";
+
+    // Items do not need descriptions.
+    it.desc = "";
+
     switch(it.index)
     {
+    case 0:
+        it.name = "Silver Bullets";
+        break;
+
+    case 1:
+        it.name = "Regular Bullets";
+        break;
+
+    case 2:
+        it.name = "Poorman's Bullets";
+        break;
+
+    case 3:
+        it.name = "Popcap Bullets";
+        break;
+
+    case 4:
+        it.name = "Pearls";
+        break;
+
+    case 5:
+        it.name = "River Pebbels";
+        break;
+
+    case 6:
+        it.name = "Stone Bits";
+        break;
+
+    case 7:
+        it.name = "Hunter's Bow";
+        break;
+
+    case 8:
+        it.name = "Orcish Bow";
+        break;
+
+    case 9:
+        it.name = "Peasant Bow";
+        break;
+
+    case 10:
+        it.name = "Elvish Bow";
+        break;
+
+    case 11:
+        it.name = "Sling";
+        break;
+
+    case 12:
+        it.name = "Crossbow";
+        break;
+
+    case 13:
+        it.name = "Mithril Arrows";
+        break;
+
+    case 14:
+        it.name = "Iron Arrows";
+        break;
+
+    case 15:
+        it.name = "Gold Tip Arrows";
+        break;
+
+    case 16:
+        it.name = "Bone Arrows";
+        break;
+
+    case 17:
+        it.name = "Adament Arrows";
+        break;
+
+    case 18:
+        it.name = "Barbed Arrows";
+        break;
+
+    case 19:
+        it.name = "Dart";
+        break;
+
+    case 20:
+        it.name = "Shurikens";
+        break;
+
+    case 21:
+        it.name = "Boomerang";
+        break;
+
+    case 22:
+        it.name = "Dwarven One-Handed Cannon";
+        break;
+
+    case 23:
+        it.name = "Dwarven Two-Handed Cannon";
+        break;
     }
     return it;
 }
@@ -24,6 +123,90 @@ static Item amulet(Item it)
     it.cstr = "Amulet";
     switch(it.index)
     {
+    case 0:
+        it.name = "The Emblem of Reincarnation";
+        it.desc = "";
+        break;
+
+    case 1:
+        it.name = "The Aura of Endurance";
+        it.desc = "";
+        break;
+
+    case 2:
+        it.name = "The Whisper of Panic";
+        it.desc = "";
+        break;
+
+    case 3:
+        it.name = "The Fortified Secrets of Power";
+        it.desc = "";
+        break;
+
+    case 4:
+        it.name = "The Enhanced Aspect of Auras";
+        it.desc = "";
+        break;
+
+    case 5:
+        it.name = "The Mighty Mark of Hunger";
+        it.desc = "";
+        break;
+
+    case 6:
+        it.name = "The Vampiric Hymn of Magical Defenses";
+        it.desc = "";
+        break;
+
+    case 7:
+        it.name = "The Gift of Prime Loss";
+        it.desc = "";
+        break;
+
+    case 8:
+        it.name = "The Emblem of Strengthened Storms";
+        it.desc = "";
+        break;
+
+    case 9:
+        it.name = "The Hymn of Eternal Potency";
+        it.desc = "";
+        break;
+
+    case 10:
+        it.name = "The Spark of Sight";
+        it.desc = "";
+        break;
+
+    case 11:
+        it.name = "The Enchantment of Success";
+        it.desc = "";
+        break;
+
+    case 12:
+        it.name = "The Grace of Haste";
+        it.desc = "";
+        break;
+
+    case 13:
+        it.name = "The Fortified Charge of Cover";
+        it.desc = "";
+        break;
+
+    case 14:
+        it.name = "The Lesser Bond of Cover";
+        it.desc = "";
+        break;
+
+    case 15:
+        it.name = "The Brilliant Infusion of Danger";
+        it.desc = "";
+        break;
+
+    case 16:
+        it.name = "The Light Seal of Disbelief";
+        it.desc = "";
+        break;
     }
     return it;
 }
@@ -268,6 +451,7 @@ Item xitnew(const Classification c, const int index)
     it.amplitude = 360.0f;
     it.damage = 25.0f;
     it.hurts = 3;
+
     switch(c)
     {
     case     AMMO: return     ammo(it);

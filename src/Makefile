@@ -107,9 +107,6 @@ ifdef ComSpec
 	CFLAGS += -I../../SDL2-2.0.7/i686-w64-mingw32/include
 endif
 
-# Standard.
-CFLAGS += -std=c99
-
 # Warnings.
 CFLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
 

@@ -11,7 +11,7 @@ int xcindices(const Classification c)
 {
     switch(c)
     {
-        case     AMMO: return 28;
+        case     AMMO: return 25;
         case   AMULET: return 17;
         case    ARMOR: return 59;
         case     BOOK: return 65; // There will be lots of lore to write...
