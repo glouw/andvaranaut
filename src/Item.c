@@ -697,30 +697,30 @@ static Item scroll(Item it)
     it.cstr = "Scroll";
     switch(it.index)
     {
-        case  0: it.name = "Odal"  , it.desc = "Home";    break;
-        case  1: it.name = "Daeg"  , it.desc = "Day";     break;
-        case  2: it.name = "Jera"  , it.desc = "Harvest"; break;
-        case  3: it.name = "Lagu"  , it.desc = "Water";   break;
-        case  4: it.name = "Man"   , it.desc = "Human";   break;
-        case  5: it.name = "Eh"    , it.desc = "Horse";   break;
-        case  6: it.name = "Beorc" , it.desc = "Puriry";  break;
-        case  7: it.name = "Tyr"   , it.desc = "Arrow";   break;
-        case  8: it.name = "Sigel" , it.desc = "Sun";     break;
-        case  9: it.name = "Elhaz" , it.desc = "Elk";     break;
-        case 10: it.name = "Peorth", it.desc = "Dice";    break;
-        case 11: it.name = "Eoh"   , it.desc = "Yew";     break;
-        case 12: it.name = "Ng"    , it.desc = "Hero";    break;
-        case 13: it.name = "Is"    , it.desc = "Ice";     break;
-        case 14: it.name = "Nyd"   , it.desc = "Need";    break;
-        case 15: it.name = "Hagal" , it.desc = "Hail";    break;
-        case 16: it.name = "Wynn"  , it.desc = "Wind";    break;
-        case 17: it.name = "Gifu"  , it.desc = "Gift";    break;
-        case 18: it.name = "Ken"   , it.desc = "Wood";    break;
-        case 19: it.name = "Rad"   , it.desc = "Wheel";   break;
-        case 20: it.name = "As"    , it.desc = "God";     break;
-        case 21: it.name = "Thorn" , it.desc = "Giant";   break;
-        case 22: it.name = "Ur"    , it.desc = "Ox";      break;
-        case 23: it.name = "Feoh"  , it.desc = "Cattle";  break;
+    case  0: it.name = "Odal"  , it.desc = "Home";    break;
+    case  1: it.name = "Daeg"  , it.desc = "Day";     break;
+    case  2: it.name = "Jera"  , it.desc = "Harvest"; break;
+    case  3: it.name = "Lagu"  , it.desc = "Water";   break;
+    case  4: it.name = "Man"   , it.desc = "Human";   break;
+    case  5: it.name = "Eh"    , it.desc = "Horse";   break;
+    case  6: it.name = "Beorc" , it.desc = "Puriry";  break;
+    case  7: it.name = "Tyr"   , it.desc = "Arrow";   break;
+    case  8: it.name = "Sigel" , it.desc = "Sun";     break;
+    case  9: it.name = "Elhaz" , it.desc = "Elk";     break;
+    case 10: it.name = "Peorth", it.desc = "Dice";    break;
+    case 11: it.name = "Eoh"   , it.desc = "Yew";     break;
+    case 12: it.name = "Ng"    , it.desc = "Hero";    break;
+    case 13: it.name = "Is"    , it.desc = "Ice";     break;
+    case 14: it.name = "Nyd"   , it.desc = "Need";    break;
+    case 15: it.name = "Hagal" , it.desc = "Hail";    break;
+    case 16: it.name = "Wynn"  , it.desc = "Wind";    break;
+    case 17: it.name = "Gifu"  , it.desc = "Gift";    break;
+    case 18: it.name = "Ken"   , it.desc = "Wood";    break;
+    case 19: it.name = "Rad"   , it.desc = "Wheel";   break;
+    case 20: it.name = "As"    , it.desc = "God";     break;
+    case 21: it.name = "Thorn" , it.desc = "Giant";   break;
+    case 22: it.name = "Ur"    , it.desc = "Ox";      break;
+    case 23: it.name = "Feoh"  , it.desc = "Cattle";  break;
     }
     return it;
 }
