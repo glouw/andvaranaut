@@ -4,6 +4,9 @@
 
 #include <stdlib.h>
 
+// All these names were created with Fantasy Name Generators:
+// http://www.fantasynamegenerators.com
+
 Item xzitem()
 {
     static Item item;
@@ -196,6 +199,53 @@ static Item armor(Item it)
     it.cstr = "Armor";
     switch(it.index)
     {
+        case 0:
+            it.name = "Bronze Chainmail of Immortal Souls";
+            break;
+
+        case 1:
+            it.name = "Bronze Chainmail of Divine Bloodlust";
+            break;
+
+        case 2:
+            it.name = "Mithril Chainmail of Chestguard";
+            break;
+
+        case 3:
+            it.name = "Adamant Chainmail of Pride's Fall";
+            break;
+
+        case 4:
+            it.name = "Bronze Chainmail of the Lone Wolf";
+            break;
+
+        case 5:
+            it.name = "Mithril Chainmail of Delusions";
+            break;
+
+        case 6:
+            it.name = "Gold Chainmail of Relentless Voices";
+            break;
+
+        case 7:
+            it.name = "Mithril Chainmail of Recoil";
+            break;
+
+        case 8:
+            it.name = "Mithril Chainmail of Broken Bones";
+            break;
+
+        case 9:
+            it.name = "Steel Chainmail of Riddles";
+            break;
+
+        case 10:
+            it.name = "Adamant Chainmail of Unholy Blight";
+            break;
+
+        case 11:
+            it.name = "Poly Chainmail of Dark Magic";
+            break;
     }
     return it;
 }
@@ -205,265 +255,265 @@ static Item book(Item it)
     it.cstr = "Book";
     switch(it.index)
     {
-        case 0:
-            it.name = "Duke Of The Nation";
-            break;
-
-        case 1:
-            it.name = "Criminal Of The Night";
-            break;
-
-        case 2:
-            it.name = "Humans Without Duty";
-            break;
-
-        case 3:
-            it.name = "Descendants Of The Day";
-            break;
-
-        case 4:
-            it.name = "Slaves And Friends";
-            break;
-
-        case 5:
-            it.name = "Defenders And Swindlers";
-            break;
-
-        case 6:
-            it.name = "Ruins With Money";
-            break;
-
-        case 7:
-            it.name = "Sword Of History";
-            break;
-
-        case 8:
-            it.name = "Dead At The Beginning";
-            break;
-
-        case 9:
-            it.name = "Cleaning Up My Destiny";
-            break;
-
-        case 10:
-            it.name = "Defender With Pride";
-            break;
-
-        case 11:
-            it.name = "Human Without Courage";
-            break;
-
-        case 12:
-            it.name = "Blacksmiths Of Hell";
-            break;
-
-        case 13:
-            it.name = "Invaders Of The Great";
-            break;
-
-        case 14:
-            it.name = "Slaves And Phantoms";
-            break;
-
-        case 15:
-            it.name = "Heroes And Heirs";
-            break;
-
-        case 16:
-            it.name = "Vengeance Of Heaven";
-            break;
-
-        case 17:
-            it.name = "Culmination Of Fire";
-            break;
-
-        case 18:
-            it.name = "Commanding The Depths";
-            break;
-
-        case 19:
-            it.name = "Searching In Nightmares";
-            break;
-
-        case 20:
-            it.name = "Butcher Of The Ancestors";
-            break;
-
-        case 21:
-            it.name = "Priestess Of The Great";
-            break;
-
-        case 22:
-            it.name = "Hunters Without A Goal";
-            break;
-
-        case 23:
-            it.name = "Wolves Without Courage";
-            break;
-
-        case 24:
-            it.name = "Bandits And Foreigners";
-            break;
-
-        case 25:
-            it.name = "Strangers And Foes";
-            break;
-
-        case 26:
-            it.name = "Crossbow Of The Ancestors";
-            break;
-
-        case 27:
-            it.name = "Luck Of Dread";
-            break;
-
-        case 28:
-            it.name = "Challenging The Immortals";
-            break;
-
-        case 29:
-            it.name = "Dwelling In The Emperor";
-            break;
-
-        case 30:
-            it.name = "Criminal Of Utopia";
-            break;
-
-        case 31:
-            it.name = "Friend Without Time";
-            break;
-
-        case 32:
-            it.name = "Enemies With Silver";
-            break;
-
-        case 33:
-            it.name = "Priests Of The Plague";
-            break;
-
-        case 34:
-            it.name = "Giants And Heirs";
-            break;
-
-        case 35:
-            it.name = "Hunters And Mice";
-            break;
-
-        case 36:
-            it.name = "Nation Without Flaws";
-            break;
-
-        case 37:
-            it.name = "Revenge Of The Frontline";
-            break;
-
-        case 38:
-            it.name = "Running In The Hunter";
-            break;
-
-        case 39:
-            it.name = "Rescue At The Mist";
-            break;
-
-        case 40:
-            it.name = "Gangster With Immortality";
-            break;
-
-        case 41:
-            it.name = "Blacksmith Of Freedom";
-            break;
-
-        case 42:
-            it.name = "Wives Without Direction";
-            break;
-
-        case 43:
-            it.name = "Women With Silver";
-            break;
-
-        case 44:
-            it.name = "Spies And Strangers";
-            break;
-
-        case 45:
-            it.name = "Thieves And Kings";
-            break;
-
-        case 46:
-            it.name = "World Of The Ancients";
-            break;
-
-        case 47:
-            it.name = "Effect Of Hope";
-            break;
-
-        case 48:
-            it.name = "Deceiving The Forest";
-            break;
-
-        case 49:
-            it.name = "Remember The Forest";
-            break;
-
-        case 50:
-            it.name = "Woman Of Glory";
-            break;
-
-        case 51:
-            it.name = "Agent With Silver";
-            break;
-
-        case 52:
-            it.name = "Foes Of The River";
-            break;
-
-        case 53:
-            it.name = "Robots With Money";
-            break;
-
-        case 54:
-            it.name = "Women And Criminals";
-            break;
-
-        case 55:
-            it.name = "Officers And Rats";
-            break;
-
-        case 56:
-            it.name = "Country Of Glory";
-            break;
-
-        case 57:
-            it.name = "Will Of My Imagination";
-            break;
-
-        case 58:
-            it.name = "Traces In The Jungle";
-            break;
-
-        case 59:
-            it.name = "Dancing In The Animals";
-            break;
-
-        case 60:
-            it.name = "Assassin Of Stone";
-            break;
-
-        case 61:
-            it.name = "Criminal Of Earth";
-            break;
-
-        case 62:
-            it.name = "Blacksmiths Of The Stockades";
-            break;
-
-        case 63:
-            it.name = "Humans With Pride";
-            break;
-
-        case 64:
-            it.name = "Owls And Dogs";
-            break;
+    case 0:
+        it.name = "Duke Of The Nation";
+        break;
+
+    case 1:
+        it.name = "Criminal Of The Night";
+        break;
+
+    case 2:
+        it.name = "Humans Without Duty";
+        break;
+
+    case 3:
+        it.name = "Descendants Of The Day";
+        break;
+
+    case 4:
+        it.name = "Slaves And Friends";
+        break;
+
+    case 5:
+        it.name = "Defenders And Swindlers";
+        break;
+
+    case 6:
+        it.name = "Ruins With Money";
+        break;
+
+    case 7:
+        it.name = "Sword Of History";
+        break;
+
+    case 8:
+        it.name = "Dead At The Beginning";
+        break;
+
+    case 9:
+        it.name = "Cleaning Up My Destiny";
+        break;
+
+    case 10:
+        it.name = "Defender With Pride";
+        break;
+
+    case 11:
+        it.name = "Human Without Courage";
+        break;
+
+    case 12:
+        it.name = "Blacksmiths Of Hell";
+        break;
+
+    case 13:
+        it.name = "Invaders Of The Great";
+        break;
+
+    case 14:
+        it.name = "Slaves And Phantoms";
+        break;
+
+    case 15:
+        it.name = "Heroes And Heirs";
+        break;
+
+    case 16:
+        it.name = "Vengeance Of Heaven";
+        break;
+
+    case 17:
+        it.name = "Culmination Of Fire";
+        break;
+
+    case 18:
+        it.name = "Commanding The Depths";
+        break;
+
+    case 19:
+        it.name = "Searching In Nightmares";
+        break;
+
+    case 20:
+        it.name = "Butcher Of The Ancestors";
+        break;
+
+    case 21:
+        it.name = "Priestess Of The Great";
+        break;
+
+    case 22:
+        it.name = "Hunters Without A Goal";
+        break;
+
+    case 23:
+        it.name = "Wolves Without Courage";
+        break;
+
+    case 24:
+        it.name = "Bandits And Foreigners";
+        break;
+
+    case 25:
+        it.name = "Strangers And Foes";
+        break;
+
+    case 26:
+        it.name = "Crossbow Of The Ancestors";
+        break;
+
+    case 27:
+        it.name = "Luck Of Dread";
+        break;
+
+    case 28:
+        it.name = "Challenging The Immortals";
+        break;
+
+    case 29:
+        it.name = "Dwelling In The Emperor";
+        break;
+
+    case 30:
+        it.name = "Criminal Of Utopia";
+        break;
+
+    case 31:
+        it.name = "Friend Without Time";
+        break;
+
+    case 32:
+        it.name = "Enemies With Silver";
+        break;
+
+    case 33:
+        it.name = "Priests Of The Plague";
+        break;
+
+    case 34:
+        it.name = "Giants And Heirs";
+        break;
+
+    case 35:
+        it.name = "Hunters And Mice";
+        break;
+
+    case 36:
+        it.name = "Nation Without Flaws";
+        break;
+
+    case 37:
+        it.name = "Revenge Of The Frontline";
+        break;
+
+    case 38:
+        it.name = "Running In The Hunter";
+        break;
+
+    case 39:
+        it.name = "Rescue At The Mist";
+        break;
+
+    case 40:
+        it.name = "Gangster With Immortality";
+        break;
+
+    case 41:
+        it.name = "Blacksmith Of Freedom";
+        break;
+
+    case 42:
+        it.name = "Wives Without Direction";
+        break;
+
+    case 43:
+        it.name = "Women With Silver";
+        break;
+
+    case 44:
+        it.name = "Spies And Strangers";
+        break;
+
+    case 45:
+        it.name = "Thieves And Kings";
+        break;
+
+    case 46:
+        it.name = "World Of The Ancients";
+        break;
+
+    case 47:
+        it.name = "Effect Of Hope";
+        break;
+
+    case 48:
+        it.name = "Deceiving The Forest";
+        break;
+
+    case 49:
+        it.name = "Remember The Forest";
+        break;
+
+    case 50:
+        it.name = "Woman Of Glory";
+        break;
+
+    case 51:
+        it.name = "Agent With Silver";
+        break;
+
+    case 52:
+        it.name = "Foes Of The River";
+        break;
+
+    case 53:
+        it.name = "Robots With Money";
+        break;
+
+    case 54:
+        it.name = "Women And Criminals";
+        break;
+
+    case 55:
+        it.name = "Officers And Rats";
+        break;
+
+    case 56:
+        it.name = "Country Of Glory";
+        break;
+
+    case 57:
+        it.name = "Will Of My Imagination";
+        break;
+
+    case 58:
+        it.name = "Traces In The Jungle";
+        break;
+
+    case 59:
+        it.name = "Dancing In The Animals";
+        break;
+
+    case 60:
+        it.name = "Assassin Of Stone";
+        break;
+
+    case 61:
+        it.name = "Criminal Of Earth";
+        break;
+
+    case 62:
+        it.name = "Blacksmiths Of The Stockades";
+        break;
+
+    case 63:
+        it.name = "Humans With Pride";
+        break;
+
+    case 64:
+        it.name = "Owls And Dogs";
+        break;
     }
     return it;
 }
