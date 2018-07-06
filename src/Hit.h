@@ -10,5 +10,3 @@ typedef struct hit
     struct hit* next;
 }
 Hit;
-
-Hit xzhit();

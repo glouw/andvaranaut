@@ -1,10 +1,5 @@
-#include "Tris.h"
 #include "World.h"
-#include "Inventory.h"
-#include "Scroll.h"
-#include "Font.h"
 #include "Title.h"
-#include "Timer.h"
 #include "util.h"
 
 int main(int argc, char* argv[])

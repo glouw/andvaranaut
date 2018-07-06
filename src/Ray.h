@@ -19,5 +19,3 @@ typedef struct
     Torch torch;
 }
 Ray;
-
-Ray xzray();
