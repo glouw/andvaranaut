@@ -34,26 +34,32 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     const Point delta = xmul(direction, 0.01f);
     const Point dx = { delta.x, 0.0f };
     const Point dy = { 0.0f, delta.y };
+
     const Line test = {
         xadd(ray, xmag(xsub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
         xsub(ray, xmag(xsub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
     };
+
     // Flooring wall was hit. Push the flooring hit linked list.
     if(xtile(test.a, map.floring) && !xtile(test.b, map.floring))
         hits.floring = push(hits.floring, collision(ray, test, map.floring));
+
     // Ceiling wall was hit. Push the ceiling hit linked list.
     if(xtile(test.a, map.ceiling) && !xtile(test.b, map.ceiling))
         hits.ceiling = push(hits.ceiling, collision(ray, test, map.ceiling));
+
     // Eye walling hit.
     // A linked list is not needed: Thanks to eye level projections,
     // only one projection is needed as every projection behind will
     // be overlapped by the first projection.
     if(xtile(test.a, map.walling) && !hits.walling.surface)
         hits.walling = collision(ray, test, map.walling);
+
     // Done when a wall was hit and a ceiling wall exists above the wall and
     // a floor wall exist below the wall.
     if(hits.walling.surface && xtile(test.a, map.ceiling) && xtile(test.a, map.floring))
         return hits;
+
     // Otherwise, keep on stepping.
     return step(hits, ray, direction, map);
 }
