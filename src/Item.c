@@ -232,7 +232,7 @@ static Item armor(Item it)
         break;
 
     case 8:
-        it.name = "Mithril Chainmail of Broken Bones";
+        it.name = "Charcoal Chainmail of Broken Bones";
         break;
 
     case 9:
@@ -245,6 +245,194 @@ static Item armor(Item it)
 
     case 11:
         it.name = "Poly Chainmail of Dark Magic";
+        break;
+
+    case 12:
+        it.name = "Copper Chain Rings";
+        break;
+
+    case 13:
+        it.name = "Bronze Chain Rings";
+        break;
+
+    case 14:
+        it.name = "Mithril Chain Rings";
+        break;
+
+    case 15:
+        it.name = "Adamant Chain Rings";
+        break;
+
+    case 16:
+        it.name = "Copper Chain Rings";
+        break;
+
+    case 17:
+        it.name = "Mithril Chain Rings";
+        break;
+
+    case 18:
+        it.name = "Gold Chain Rings";
+        break;
+
+    case 19:
+        it.name = "Mithril Chain Rings";
+        break;
+
+    case 20:
+        it.name = "Charcoal Chain Rings";
+        break;
+
+    case 21:
+        it.name = "Steel Chain Rings";
+        break;
+
+    case 22:
+        it.name = "Adamant Chain Rings";
+        break;
+
+    case 23:
+        it.name = "Poly Chain Rings";
+        break;
+
+    case 24:
+        it.name = "Greatcloak of Blind Whispers";
+        break;
+
+    case 25:
+        it.name = "Drape of Blessed Glory";
+        break;
+
+    case 26:
+        it.name = "Wool Mantle of Distant Powers";
+        break;
+
+    case 27:
+        it.name = "Possessed Scaled Shroud";
+        break;
+
+    case 28:
+        it.name = "Cloth Greatcloak of Haunted Justice";
+        break;
+
+    case 29:
+        it.name = "Exile Embroided Wrap";
+        break;
+
+    case 30:
+        it.name = "Warlord's Padded Greatcloak";
+        break;
+
+    case 31:
+        it.name = "Lightning Mantle of Secrets";
+        break;
+
+    case 32:
+        it.name = "Dragon Shroud of the Talon";
+        break;
+
+    case 33:
+        it.name = "Doom's Wool Drape";
+        break;
+
+    case 34:
+        it.name = "Piece of Cloth";
+        break;
+
+    case 35:
+        it.name = "Dirty Rags";
+        break;
+
+    case 36:
+        it.name = "Copper Chestguard of Fleeting Kings";
+        break;
+
+    case 37:
+        it.name = "Bronze Chestguard of Hallowed Wars";
+        break;
+
+    case 38:
+        it.name = "Steel Breastplate";
+        break;
+
+    case 39:
+        it.name = "Studded Steel Breastplate";
+        break;
+
+    case 40:
+        it.name = "Mithril Chestgaurd of Conquered Worlds";
+        break;
+
+    case 41:
+        it.name = "Steel Plated Cuirass";
+        break;
+
+    case 42:
+        it.name = "Heavy Steel Plated Cuirass";
+        break;
+
+    case 43:
+        it.name = "Storm-Forged Steel Cuirass of the Gods";
+        break;
+
+    case 44:
+        it.name = "Common Clothes";
+        break;
+
+    case 45:
+        it.name = "Kimono of the Apprentice";
+        break;
+
+    case 46:
+        it.name = "Kimono of Festivities";
+        break;
+
+    case 47:
+        it.name = "Kimono of the Western Sea";
+        break;
+
+    case 48:
+        it.name = "Kimono of the Fisherman";
+        break;
+
+    case 49:
+        it.name = "Common Headscarf";
+        break;
+
+    case 50:
+        it.name = "Desert Headscarf";
+        break;
+
+    case 51:
+        it.name = "Red Cape of Riding";
+        break;
+
+    case 52:
+        it.name = "Iron Chainmail";
+        break;
+
+    case 53:
+        it.name = "Gold Chainmail";
+        break;
+
+    case 54:
+        it.name = "Steel Chaimail";
+        break;
+
+    case 55:
+        it.name = "Bronze Chainmail";
+        break;
+
+    case 56:
+        it.name = "Charcoal Chainmail";
+        break;
+
+    case 57:
+        it.name = "Wooden Chest Armor";
+        break;
+
+    case 58:
+        it.name = "Hide Skin";
         break;
     }
     return it;
