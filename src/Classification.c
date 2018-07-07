@@ -35,6 +35,7 @@ int xcindices(const Classification c)
         case SHORTWEP: return 20;
         case     TOOL: return 20;
         case     WAND: return 49;
+
         default:
             return 1;
     }

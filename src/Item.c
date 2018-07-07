@@ -115,12 +115,14 @@ static Item ammo(Item it)
         it.name = "Dwarven Two-Handed Cannon";
         break;
     }
+
     return it;
 }
 
 static Item amulet(Item it)
 {
     it.cstr = "Amulet";
+
     switch(it.index)
     {
     case 0:
@@ -191,12 +193,14 @@ static Item amulet(Item it)
         it.name = "The Light Seal of Disbelief";
         break;
     }
+
     return it;
 }
 
 static Item armor(Item it)
 {
     it.cstr = "Armor";
+
     switch(it.index)
     {
     case 0:
@@ -435,12 +439,14 @@ static Item armor(Item it)
         it.name = "Hide Skin";
         break;
     }
+
     return it;
 }
 
 static Item book(Item it)
 {
     it.cstr = "Book";
+
     switch(it.index)
     {
     case 0:
@@ -703,12 +709,14 @@ static Item book(Item it)
         it.name = "Owls And Dogs";
         break;
     }
+
     return it;
 }
 
 static Item boot(Item it)
 {
     it.cstr = "Boot";
+
     switch(it.index)
     {
     case 0:
@@ -751,138 +759,406 @@ static Item boot(Item it)
         it.name = "Sprinters of the Champion";
         break;
     }
+
     return it;
 }
 
 static Item chest(Item it)
 {
     it.cstr = "Chest";
+
     switch(it.index)
     {
+    case 0:
+        it.name = "Small Locked Chest";
+        break;
+
+    case 1:
+        it.name = "Large Locked Chest";
+        break;
+
+    case 2:
+        it.name = "Broken Chest";
+        break;
+
+    case 3:
+        it.name = "Small Locked Safe";
+        break;
+
+    case 4:
+        it.name = "Large Locked Safe";
+        break;
+
+    case 5:
+        it.name = "Broken Safe";
+        break;
+
+    case 6:
+        it.name = "Broken Safe";
+        break;
+
+    case 7:
+        it.name = "Crystal Enclosure";
+        break;
+
+    case 8:
+        it.name = "Broken Crystal Enclosure";
+        break;
+
+    case 9:
+        it.name = "Gold Pouch";
+        break;
+
+    case 10:
+        it.name = "Mystic Gold Pouch";
+        break;
+
+    case 11:
+        it.name = "Expensive Gold Pouch";
+        break;
+
+    case 12:
+        it.name = "Hungry Gold Pouch";
+        break;
+
+    case 13:
+        it.name = "Barrel of Common Goods";
+        break;
+
+    case 14:
+        it.name = "Barrel of Rare Goods";
+        break;
+
+    case 15:
+        it.name = "Broken Barrel of Common Goods";
+        break;
+
+    case 16:
+        it.name = "Broken Barrel of Expensive Goods";
+        break;
     }
+
     return it;
 }
 
 static Item flesh(Item it)
 {
     it.cstr = "Flesh";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item food(Item it)
 {
     it.cstr = "Food";
+
     switch(it.index)
     {
+    case 0:
+        it.name = "Cramp Lion";
+        break;
+
+    case 1:
+        it.name = "Stag’s Ear";
+        break;
+
+    case 2:
+        it.name = "Luminescent Lichen";
+        break;
+
+    case 3:
+        it.name = "Orange Jelly Drop";
+        break;
+
+    case 4:
+        it.name = "Mossy Hair Lichen";
+        break;
+
+    case 5:
+        it.name = "Scaly Swamp Russula";
+        break;
+
+    case 6:
+        it.name = "Hypoxylon Lichen";
+        break;
+
+    case 7:
+        it.name = "Questionable Felt Lichen";
+        break;
+
+    case 8:
+        it.name = "Marasmiellus Spindles";
+        break;
+
+    case 9:
+        it.name = "Powdered Pored Bolete";
+        break;
+
+    case 10:
+        it.name = "Fly Blewit";
+        break;
+
+    case 11:
+        it.name = "Snow-white Egg Bird's Nest Fungus";
+        break;
+
+    case 12:
+        it.name = "Viscid Destroyer Fungi";
+        break;
+
+    case 13:
+        it.name = "Tumbling Waxcap";
+        break;
+
+    case 14:
+        it.name = "Cloudy Widow";
+        break;
+
+    case 15:
+        it.name = "Green-belted Mans Fingers";
+        break;
+
+    case 16:
+        it.name = "Hygroscopic Waxycap";
+        break;
+
+    case 17:
+        it.name = "Onger";
+        break;
+
+    case 18:
+        it.name = "Nilery";
+        break;
+
+    case 19:
+        it.name = "Kime";
+        break;
+
+    case 20:
+        it.name = "Sun Guanabana";
+        break;
+
+    case 21:
+        it.name = "Iggeomquat";
+        break;
+
+    case 22:
+        it.name = "River Mango";
+        break;
+
+    case 23:
+        it.name = "Klorang";
+        break;
+
+    case 24:
+        it.name = "Sun Cawesh";
+        break;
+
+    case 25:
+        it.name = "Summer Babaco";
+        break;
+
+    case 26:
+        it.name = "Dragon Bean";
+        break;
+
+    case 27:
+        it.name = "Kastrialon";
+        break;
+
+    case 28:
+        it.name = "Teobaco";
+        break;
+
+    case 29:
+        it.name = "Wrurreorang";
+        break;
+
+    case 30:
+        it.name = "Eale";
+        break;
+
+    case 31:
+        it.name = "Ogliaguaro";
+        break;
+
+    case 32:
+        it.name = "Natine";
+        break;
+
+    case 33:
+        it.name = "Lembas";
+        break;
+
+    case 34:
+        it.name = "Lembas Delight";
+        break;
+
+    case 35:
+        it.name = "Klegriariac Bonbons";
+        break;
+
+    case 36:
+        it.name = "Crown Honey Snacks";
+        break;
+
+    case 37:
+        it.name = "Barrel of Mead";
+        break;
+
+    case 38:
+        it.name = "Lump of Honey Sugar";
+        break;
+
+    case 39:
+        it.name = "River Mango Pie";
+        break;
+
+    case 40:
+        it.name = "Natine Chocolate Bar";
+        break;
+
+    case 41:
+        it.name = "Bruggearind Fortune Cake";
+        break;
+
+    case 42:
+        it.name = "Slossimelo Sweet Bun";
+        break;
     }
+
     return it;
 }
 
 static Item glove(Item it)
 {
     it.cstr = "Glove";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item hat(Item it)
 {
     it.cstr = "Hat";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item key(Item it)
 {
     it.cstr = "Key";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item light(Item it)
 {
     it.cstr = "Light";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item longwep(Item it)
 {
     it.cstr = "Longwep";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item medwep(Item it)
 {
     it.cstr = "Medwep";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item money(Item it)
 {
     it.cstr = "Money";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item music(Item it)
 {
     it.cstr = "Music";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item potion(Item it)
 {
     it.cstr = "Potion";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item ring(Item it)
 {
     it.cstr = "Ring";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item rock(Item it)
 {
     it.cstr = "Rock";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item scroll(Item it)
 {
     it.cstr = "Scroll";
+
     switch(it.index)
     {
     case  0: it.name = "Odal"  , it.desc = "Home";    break;
@@ -910,51 +1186,62 @@ static Item scroll(Item it)
     case 22: it.name = "Ur"    , it.desc = "Ox";      break;
     case 23: it.name = "Feoh"  , it.desc = "Cattle";  break;
     }
+
     return it;
 }
 
 static Item shield(Item it)
 {
     it.cstr = "Shield";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item shortwep(Item it)
 {
     it.cstr = "Shortwep";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item tool(Item it)
 {
     it.cstr = "Tool";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item wand(Item it)
 {
     it.cstr = "Wand";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
 static Item none(Item it)
 {
     it.cstr = "None";
+
     switch(it.index)
     {
     }
+
     return it;
 }
 
@@ -970,6 +1257,7 @@ Item xitnew(const Classification c, const int index)
 
     switch(c)
     {
+
     case     AMMO: return     ammo(it);
     case   AMULET: return   amulet(it);
     case    ARMOR: return    armor(it);
@@ -995,6 +1283,7 @@ Item xitnew(const Classification c, const int index)
     case     TOOL: return     tool(it);
     case     WAND: return     wand(it);
     case     NONE: return     none(it);
+
     default:
         return it;
     }
