@@ -1257,7 +1257,6 @@ Item xitnew(const Classification c, const int index)
 
     switch(c)
     {
-
     case     AMMO: return     ammo(it);
     case   AMULET: return   amulet(it);
     case    ARMOR: return    armor(it);
