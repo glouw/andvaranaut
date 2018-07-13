@@ -67,7 +67,7 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
 
 // Draws a rectangle the slow way.
 // if filled is set the rectangle will be filled.
-static void dbox(const Sdl sdl, const int x, const int y, const int width, const int color, const int filled)
+static void dbox(const Sdl sdl, const int x, const int y, const int width, const uint32_t color, const int filled)
 {
     const int a = (color >> 0x18) & 0xFF;
     const int r = (color >> 0x10) & 0xFF;
@@ -302,7 +302,7 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
-        const int width = growth * 12; // Hard coded size.
+        const int width = growth * 16; // Hard coded size.
 
         // Draw.
         const Point mid = {
@@ -310,7 +310,8 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
             (width - sdl.yres) / 2,
         };
         const Point where = xsub(xmul(g.points[i], sens), mid);
-        dbox(sdl, where.x, where.y, width, sdl.red, true);
+        const uint32_t color = ((int) (0xFF * growth) << 0x10) | 0xFF;
+        dbox(sdl, where.x, where.y, width, color, true);
     }
 
     // Calculate attack.
@@ -436,7 +437,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
 Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll sc)
 {
     const Item it = inv.items.item[inv.selected];
-    const float sens = 1.5f;
+    const float sens = 2.0f;
     return
         xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         xisrange(it.c) ? dgrange(sdl, g, it, sens) :
