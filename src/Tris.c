@@ -360,7 +360,7 @@ Map xtgen(const Points extra)
 {
     // These are technically function arguments that are "baked" into this function.
     const int w = 150;
-    const int h = 200;
+    const int h = 350;
     const int grid = 30; // Must be even.
     const int max = 30 * (1 + xd2());
     const int ntraps = 2;

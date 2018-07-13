@@ -107,10 +107,6 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
         const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
         const SDL_Rect target = { l + s, t, osize, osize };
 
-        // Applies a red rectangle around an alive red sprite if sensed.
-        if(xissensible(sprite))
-            dbox(sdl, target.x, target.y, target.w, sdl.red, false);
-
         // Move onto the next sprite if this sprite is off screen.
         if(target.x + target.w < 0 || target.x >= sdl.xres)
             continue;
@@ -293,11 +289,6 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 // Draws melee gauge.
 static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
-    // Do not start animating until tail is long enough.
-    const int tail = 5;
-    if(g.count < tail)
-        return xzattack();
-
     // Animate attack.
     for(int i = 0; i < g.count; i++)
     {
@@ -314,6 +305,11 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
         dbox(sdl, where.x, where.y, width, color, true);
     }
 
+    // Do not start calculating attack until tail is long enough.
+    const int tail = 10;
+    if(g.count < tail)
+        return xzattack();
+
     // Calculate attack.
     const float mag = xgmag(g, it.damage);
 
@@ -322,7 +318,7 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     const int last = g.count - 1;
     const Point dir = xsub(g.points[last], g.points[last - tail]);
     const Attack melee = { mag, xunt(dir), it.hurts, MELEE, 0 };
-    return xmag(dir) > 0.0f ? melee : xzattack();
+    return melee;
 }
 
 // Draws ranged gauge.
@@ -334,13 +330,13 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         // A weaker bow may have longer period and amplitude.
         // A longbow may have long period and amplitude but huge attack.
         // A shortbow may have short period and amplitude and medium attack.
-        const float steady = it.amplitude / 2.0f;
-        const float width = it.amplitude * xsinc(g.count, it.period) + steady;
+        const int steady = it.amplitude / 2.0f;
+        const int width = it.amplitude * xsinc(g.count, it.period) + steady;
 
         // Hurts is also a bow property. Longbows, for instance, can hurt more than one sprite.
         const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
-        dbox(sdl, x, y, width, sdl.wht, false);
+        dbox(sdl, x, y, width, sdl.red, false);
 
         // Calculate attack.
         // TODO: Fix this.
@@ -349,8 +345,8 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         // Direction is overrided with attack point.
         // The attack point is a random point within the rect.
         const Point point = {
-            (float) (x + rand() % (int) width),
-            (float) (y + rand() % (int) width),
+            (float) (x + rand() % (width == 0 ? 1 : width)), // Divide by zero check.
+            (float) (y + rand() % (width == 0 ? 1 : width)),
         };
         const Attack range = { mag, point, it.hurts, RANGE, 0 };
         return range;

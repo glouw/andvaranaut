@@ -240,10 +240,73 @@ static void brokelb(const int ascii, const Inventory inv, const Timer tm)
             xttset(tm.renders, tm.renders + 120, false, "Inventory Full");
 }
 
+static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
+{
+    const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
+
+    sprite->health -= attack.power;
+
+    // Sprite dead?
+    if(sprite->health <= 0.0f)
+    {
+        // Dead direction.
+        switch(attack.method)
+        {
+            case MELEE:
+                sprite->state = side ?
+                    (attack.dir.x > 0.0f ? DEADW : DEADE):
+                    (attack.dir.y > 0.0f ? DEADN : DEADS);
+                break;
+
+            case RANGE:
+                // Since attack direction was overrided for where the sprite was
+                // hit in the rectangle, attack direction cannot be used, so default
+                // the hurt direction to something.
+                sprite->state = HURTS;
+                break;
+
+            default:
+                break;
+        }
+
+        // Broke a lootbag? Add item to inventory.
+        brokelb(sprite->ascii, inv, tm);
+
+        // There is a percent chance that a lootbag will drop if a sprite died.
+        // Hilariously, lootbags count as sprites, so "killing" a lootbag may drop another lootbag.
+        if(xd10() == 0)
+            return dropit(sprites, attack, sprite->where);
+    }
+    // Sprite hurt.
+    else
+    {
+        // Hurt direction.
+        switch(attack.method)
+        {
+        case MELEE:
+            sprite->state = side ?
+                (attack.dir.x > 0.0f ? HURTW : HURTE):
+                (attack.dir.y > 0.0f ? HURTN : HURTS);
+            break;
+
+        case RANGE:
+            // Refer to the dead direction comment above...
+            sprite->state = HURTS;
+            break;
+
+        default:
+            break;
+        }
+
+        // Timer for idle reset.
+        sprite->ticks = tm.ticks + 5;
+    }
+    return sprites;
+}
+
 static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm, const Hero hero)
 {
     const Point hand = xtouch(hero);
-    const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
     const Item it = inv.items.item[inv.selected];
 
     // Hurt counter indicates how many sprites can be hurt at once. Different weapons have different hurt counters.
@@ -252,39 +315,13 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
         Sprite* const sprite = &sprites.sprite[i];
         if(xisuseless(sprite))
             continue;
+
         // Sprite hurt?
         if(xeql(hand, sprite->where, 2.0f))
         {
-            sprite->health -= attack.power;
-
-            // Sprite dead?
-            if(sprite->health <= 0.0f)
-            {
-                // Dead direction.
-                sprite->state = side ?
-                    (attack.dir.x > 0.0f ? DEADW : DEADE):
-                    (attack.dir.y > 0.0f ? DEADN : DEADS);
-
-                // Broke a lootbag?
-                brokelb(sprite->ascii, inv, tm);
-
-                // Chance dead sprite sprite will drop loot bag.
-                // This includes loot bags (they can drop extra loot bags).
-                // NOTE: Hurt counter stops when a loot bag is dropped.
-                return xd10() == 0 ? dropit(sprites, attack, sprite->where) : sprites;
-            }
-            // Sprite hurt.
-            else
-            {
-                // Hurt direction.
-                sprite->state = side ?
-                    (attack.dir.x > 0.0f ? HURTW : HURTE):
-                    (attack.dir.y > 0.0f ? HURTN : HURTS);
-
-                // Timer for idle reset.
-                sprite->ticks = tm.ticks + 5;
-            }
-            if(++hurts == it.hurts) return sprites;
+            sprites = hurt(sprites, sprite, attack, inv, tm);
+            if(++hurts == it.hurts)
+                return sprites;
         }
     }
     return sprites;
@@ -292,7 +329,8 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
 
 static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm)
 {
-    // Remember that attack direction was overrided with a point.
+    // Remember that attack direction was overrided with a point which now
+    // determines where in the rectangle the sprite was shot.
     const SDL_Point point = {
         (int) attack.dir.x,
         (int) attack.dir.y,
@@ -309,30 +347,9 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
         // If the attack point is within a sprite hitbox then the sprite is hurt.
         if(SDL_PointInRect(&point, &sprite->seen))
         {
-            sprite->health -= attack.power;
-
-            // Sprite dead?
-            if(sprite->health <= 0.0f)
-            {
-                sprite->state = DEADS;
-
-                // Is the dead sprite a lootbag? If so, randomly add any item to inventory.
-                brokelb(sprite->ascii, inv, tm);
-
-                // Chance dead sprite sprite will drop loot bag.
-                // This includes loot bags (they can drop extra loot bags).
-                // NOTE: Hurt counter stops when a loot bag is dropped.
-                return xd10() == 0 ? dropit(sprites, attack, sprite->where) : sprites;
-            }
-            // Sprite hurt.
-            else
-            {
-                sprite->state = HURTS;
-                sprite->ticks = tm.ticks + 5;
-            }
-
-            // Hurt counter increments.
-            if(++hurts == it.hurts) return sprites;
+            sprites = hurt(sprites, sprite, attack, inv, tm);
+            if(++hurts == it.hurts)
+                return sprites;
         }
     }
     return sprites;

@@ -27,10 +27,6 @@ typedef struct
     float health;
 
     SDL_Rect seen;
-
-    // TODO: Make moving sprite sensed.
-    // Hence use a multiple of field aura.
-    int sensed;
 }
 Sprite;
 
@@ -45,8 +41,6 @@ int xsissprite(const int ascii);
 int xiscosmetic(const int ascii);
 
 int xisuseless(const Sprite* const);
-
-int xissensible(const Sprite* const);
 
 int xisstuck(const Sprite* const);
 

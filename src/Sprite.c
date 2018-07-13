@@ -17,7 +17,6 @@ static Sprite born(const int ascii, const Point where)
     s.last = where;
     s.state = IDLE;
     s.health = 1000.0f;
-    s.sensed = false;
     return s;
 }
 
@@ -94,11 +93,6 @@ int xisuseless(const Sprite* const sprite)
 int xisstuck(const Sprite* const sprite)
 {
     return xisdead(sprite->state) || xishurt(sprite->state);
-}
-
-int xissensible(const Sprite* const sprite)
-{
-    return sprite->sensed && !xisuseless(sprite);
 }
 
 void xsplace(Sprite* const sprite, const Point to)
