@@ -336,7 +336,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         // Hurts is also a bow property. Longbows, for instance, can hurt more than one sprite.
         const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
-        dbox(sdl, x, y, width, sdl.red, false);
+        dbox(sdl, x, y, width, sdl.wht, false);
 
         // Calculate attack.
         // TODO: Fix this.

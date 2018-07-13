@@ -75,7 +75,8 @@ static int done()
 
 void xttshow(const Font fill, const Font line, const Sdl sdl)
 {
-    if(done()) return;
+    if(done())
+        return;
 
     // Alpha is calculated using a half sine wave from the start and end percentage.
     const float percent = (tt->now - tt->start) / (float) (tt->end - tt->start);
@@ -83,7 +84,7 @@ void xttshow(const Font fill, const Font line, const Sdl sdl)
     const float alpha = max * sinf(percent * FPI);
 
     // Write to screen.
-    xfwrt( fill, line, sdl.renderer,
+    xfwrt(fill, line, sdl.renderer,
         sdl.xres / 2,
         sdl.yres / 2,
         tt->str,

@@ -312,3 +312,22 @@ Scroll xscnew()
     #undef H
     return sc;
 }
+
+char* xsstr(const Scroll sc, const int scindex)
+{
+    // Space for squares, newlines, and NULL byte;
+    const int chars = sc.squares + sc.width + 1;
+    char* const str = xtoss(char, chars);
+
+    for(int i = 0, index = 0; i < chars; i++)
+        str[i] =
+            // Newline position?
+            i % (sc.width + 1) == 0 ? '\n'
+            // Otherwise, square position.
+            : sc.castables[scindex][index++] ? 'x' : '-';
+
+    // Null byte.
+    str[chars] = '\0';
+
+    return str;
+}

@@ -1,7 +1,7 @@
 ![](art/scn/2018-02-17-143059_600x300_scrot.png)
 
 # Andvaranaut
-A retro dungeon crawler with procedural dungeon generation.
+A dungeon crawler with procedural dungeon generation, puzzles, and more!
 
 # Building
 

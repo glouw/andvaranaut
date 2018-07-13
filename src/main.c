@@ -47,8 +47,9 @@ int main(int argc, char* argv[])
 
     // Prepares general display font.
     const char* const fpath = "art/gui/SDS_8x8.ttf";
-    const Font fill = xfbuild(fpath, 32, sdl.red, 0);
-    const Font line = xfbuild(fpath, 32, sdl.blk, 1);
+    const int fsize = 24;
+    const Font fill = xfbuild(fpath, fsize, sdl.wht, 0);
+    const Font line = xfbuild(fpath, fsize, sdl.blk, 1);
 
     // Titles present new areas to the player. The title type is the only heap type as it used deep within the engine.
     xttinit();
@@ -136,7 +137,7 @@ int main(int argc, char* argv[])
                 SDL_SetRelativeMouseMode(SDL_FALSE);
 
                 // Brings up a description of whats pointed at in the inventory.
-                xwhatis(inv, tm);
+                xwhatis(inv, sc, tm);
 
                 // TODO: Manage inventory here.
                 // TODO: Draw inventory here.

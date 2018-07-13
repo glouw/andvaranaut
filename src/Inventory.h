@@ -2,6 +2,7 @@
 
 #include "Items.h"
 #include "Input.h"
+#include "Scroll.h"
 #include "Timer.h"
 
 typedef struct
@@ -21,4 +22,4 @@ Inventory xinvselect(Inventory, const Input);
 
 Inventory xinvhilite(Inventory, const Input, const int xres);
 
-void xwhatis(const Inventory, const Timer);
+void xwhatis(const Inventory, const Scroll, const Timer);

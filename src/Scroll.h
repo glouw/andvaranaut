@@ -15,3 +15,5 @@ Scroll xscnew();
 int xsindex(const Scroll);
 
 void xsclear(const Scroll);
+
+char* xsstr(const Scroll, const int scindex);

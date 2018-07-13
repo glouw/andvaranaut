@@ -20,6 +20,10 @@ Inventory xinvnew()
         xitnew(WAND, 0),
         xitnew(AMMO, 8),
         xitnew(AMMO, 14),
+        xitnew(SCROLL, 3),
+        xitnew(SCROLL, 1),
+        xitnew(SCROLL, 9),
+        xitnew(SCROLL, 12),
     };
 
     for(int i = 0; i < xlen(noob); i++)
@@ -67,12 +71,41 @@ static int tilechange(const Inventory inv)
     return change;
 }
 
-void xwhatis(const Inventory inv, const Timer tm)
+void xwhatis(const Inventory inv, const Scroll sc, const Timer tm)
 {
     if(tilechange(inv) && inv.hilited < inv.items.max)
     {
+        const int a = tm.renders;
+        const int b = tm.renders + 90;
         const Item it = inv.items.item[inv.hilited];
-        xttset(tm.renders, tm.renders + 90, true, "%s\n%s\n%s\nDamage: %0.1f",
-            it.cstr, it.desc, it.name, (double) it.damage);
+
+        // Scroll info (including sign).
+        if(it.c == SCROLL)
+        {
+            char* const squares = xsstr(sc, it.index);
+            xttset(a, b, true,
+                "%s\n" // C-string
+                "%s\n" // Description.
+                "%s\n" // Name.
+                "%s\n" // Squares
+                ,
+                it.cstr,
+                it.desc,
+                it.name,
+                squares);
+            free(squares);
+        }
+        // General item info.
+        else
+            xttset(a, b, true,
+                "%s\n" // C-string
+                "%s\n" // Description
+                "%s\n" // Name.
+                "Damage: %0.1f\n"
+                ,
+                it.cstr,
+                it.desc,
+                it.name,
+                (double) it.damage);
     }
 }
