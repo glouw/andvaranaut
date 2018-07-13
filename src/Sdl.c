@@ -298,8 +298,8 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
         const int green = 0xFF * growth;
         const uint32_t color = (0xFF << 0x10) | (green << 0x08);
         const Point mid = {
-            (width - sdl.xres) / 2,
-            (width - sdl.yres) / 2,
+            (width - sdl.xres) / 2.0f,
+            (width - sdl.yres) / 2.0f,
         };
         const Point where = xsub(xmul(g.points[i], sens), mid);
         dbox(sdl, where.x, where.y, width, color, true);
@@ -349,6 +349,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
             (float) (y + rand() % (width == 0 ? 1 : width)),
         };
         const Attack range = { mag, point, it.hurts, RANGE, 0 };
+
         return range;
     }
     return xzattack();

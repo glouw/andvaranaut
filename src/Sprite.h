@@ -36,6 +36,8 @@ int xishurt(const State);
 
 int xisdead(const State);
 
+int xisalive(const State);
+
 int xsissprite(const int ascii);
 
 int xiscosmetic(const int ascii);

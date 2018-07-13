@@ -262,7 +262,7 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
                 // Since attack direction was overrided for where the sprite was
                 // hit in the rectangle, attack direction cannot be used, so default
                 // the hurt direction to something.
-                sprite->state = HURTS;
+                sprite->state = DEADS;
                 break;
 
             default:
@@ -454,10 +454,10 @@ static Point freerand(const Point mid, const Map m)
 }
 
 // Populates a room with a nice garden of sprites.
-static Sprites pngarden(Sprites sprites, const Map m, const Point mid, const int agents)
+static Sprites pngarden(Sprites sprites, const Map m, const Point mid)
 {
     // Flowers and nice things. Reserve one for the caretaker.
-    for(int i = 0; i < agents - 1; i++)
+    for(int i = 0; i < 128; i++)
     {
         const Point where = freerand(mid, m);
         sprites = append(sprites, xsregistrar('a', where));
@@ -475,18 +475,14 @@ Sprites xspopulate(Sprites sprites, const Map m)
     for(int i = 0; i < m.rooms.count; i++)
     {
         const Point mid = m.rooms.wheres[i];
-        const int agents = m.rooms.agents[i];
 
         switch(m.rooms.themes[i])
         {
         case NICE_GARDEN:
-            sprites = pngarden(sprites, m, mid, agents);
+            sprites = pngarden(sprites, m, mid);
             break;
 
-        case NO_THEME:
-            break;
-
-        // TODO: TEMP
+        // TODO: TEMP. Just puts a guy in a room for now as a test.
         default:
             sprites = append(sprites, xsregistrar('b', freerand(mid, m)));
             break;
@@ -513,7 +509,7 @@ Map xscount(const Sprites sprites, Map m)
 
             // Only sprites within a room which are alive count as active agents.
             if(xeql(sprite->where, m.rooms.wheres[i], m.grid))
-                if(sprite->health > 0.0f)
+                if(xisalive(sprite->state))
                     m.rooms.agents[i]++;
         }
     }

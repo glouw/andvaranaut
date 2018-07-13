@@ -9,6 +9,7 @@ typedef struct
     Point dir;
     int hurts;
     Method method;
+
     // Scroll index.
     int scindex;
 }

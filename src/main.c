@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     // Prepares general display font.
     const char* const fpath = "art/gui/SDS_8x8.ttf";
     const int fsize = 24;
-    const Font fill = xfbuild(fpath, fsize, sdl.wht, 0);
+    const Font fill = xfbuild(fpath, fsize, sdl.red, 0);
     const Font line = xfbuild(fpath, fsize, sdl.blk, 1);
 
     // Titles present new areas to the player. The title type is the only heap type as it used deep within the engine.

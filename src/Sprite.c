@@ -75,6 +75,11 @@ int xisdead(const State state)
         || state == DEADW;
 }
 
+int xisalive(const State state)
+{
+    return !xisdead(state);
+}
+
 int xsissprite(const int ascii)
 {
     return isalpha(ascii);
