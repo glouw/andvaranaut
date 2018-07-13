@@ -290,13 +290,6 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
         && (to.y > sdl.yres || to.y < -ov.h);
 }
 
-static Point moffset(const Sdl sdl, const Gauge g, const int tail)
-{
-    const Point dir = xunt(xgsum(g, tail));
-    printf("%f %f\n", dir.x, dir.y);
-    return xdiv(xmul(dir, xmin(sdl.xres, sdl.yres)), 3.0);
-}
-
 // Draws melee gauge.
 static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
@@ -316,10 +309,8 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
             (width - sdl.xres) / 2,
             (width - sdl.yres) / 2,
         };
-        const Point start = moffset(sdl, g, tail);
         const Point where = xsub(xmul(g.points[i], sens), mid);
-        const Point cursor = xsub(where, start);
-        dbox(sdl, cursor.x, cursor.y, width, sdl.wht, true);
+        dbox(sdl, where.x, where.y, width, sdl.red, true);
     }
 
     // Calculate attack.
