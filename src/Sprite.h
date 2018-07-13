@@ -42,6 +42,8 @@ int xsissprite(const int ascii);
 
 int xiscosmetic(const int ascii);
 
+int xisinanimate(const int ascii);
+
 int xisuseless(const Sprite* const);
 
 int xisstuck(const Sprite* const);

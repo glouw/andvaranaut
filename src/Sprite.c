@@ -85,9 +85,15 @@ int xsissprite(const int ascii)
     return isalpha(ascii);
 }
 
+// Cannot be hurt with melee and ranged weapons.
 int xiscosmetic(const int ascii)
 {
     return ascii == 'a';
+}
+
+int xisinanimate(const int ascii)
+{
+    return ascii == 'd';
 }
 
 int xisuseless(const Sprite* const sprite)

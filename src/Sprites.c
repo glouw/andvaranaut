@@ -507,6 +507,10 @@ Map xscount(const Sprites sprites, Map m)
             if(xiscosmetic(sprite->ascii))
                 continue;
 
+            // Nor do inanimate objects.
+            if(xisinanimate(sprite->ascii))
+                continue;
+
             // Only sprites within a room which are alive count as active agents.
             if(xeql(sprite->where, m.rooms.wheres[i], m.grid))
                 if(xisalive(sprite->state))
