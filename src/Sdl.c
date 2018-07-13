@@ -364,7 +364,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
         const int size = (sc.width - 1) / 2;
 
         // Pixels for the grid size.
-        const int grid = 64;
+        const int grid = sdl.yres / (sc.width / 0.8f);
 
         // Middle of the screen.
         const Point middle = { (float) sdl.xres / 2, (float) sdl.yres / 2 };
