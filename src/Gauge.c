@@ -43,3 +43,20 @@ Gauge xgwind(Gauge g, const Input input)
     else g = reset(g);
     return g;
 }
+
+float xgmag(const Gauge g, const float damage)
+{
+    float mag = 0.0f;
+    for(int i = 0; i < g.count - 1; i++)
+        mag += xmag(xsub(g.points[i + 1], g.points[i + 0]));
+    mag += damage;
+    return mag;
+}
+
+Point xgsum(const Gauge g, const int count)
+{
+    Point sum = xzpoint();
+    for(int i = 0; i < count; i++)
+        sum = xadd(sum, g.points[i]);
+    return sum;
+}

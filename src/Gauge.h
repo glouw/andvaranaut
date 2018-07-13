@@ -20,3 +20,7 @@ Gauge xgnew();
 void xgfree(const Gauge);
 
 Gauge xgwind(Gauge, const Input);
+
+float xgmag(const Gauge, const float damage);
+
+Point xgsum(const Gauge g, const int count);

@@ -290,33 +290,44 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
         && (to.y > sdl.yres || to.y < -ov.h);
 }
 
+static Point moffset(const Sdl sdl, const Gauge g, const int tail)
+{
+    const Point dir = xunt(xgsum(g, tail));
+    printf("%f %f\n", dir.x, dir.y);
+    return xdiv(xmul(dir, xmin(sdl.xres, sdl.yres)), 3.0);
+}
+
 // Draws melee gauge.
 static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
+    // Do not start animating until tail is long enough.
+    const int tail = 5;
+    if(g.count < tail)
+        return xzattack();
+
     // Animate attack.
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
         const int width = growth * 12; // Hard coded size.
-        const int x = g.points[i].x * sens - (width - sdl.xres) / 2;
-        const int y = g.points[i].y * sens - (width - sdl.yres) / 2;
-        dbox(sdl, x, y, width, sdl.wht, true);
+
+        // Draw.
+        const Point mid = {
+            (width - sdl.xres) / 2,
+            (width - sdl.yres) / 2,
+        };
+        const Point start = moffset(sdl, g, tail);
+        const Point where = xsub(xmul(g.points[i], sens), mid);
+        const Point cursor = xsub(where, start);
+        dbox(sdl, cursor.x, cursor.y, width, sdl.wht, true);
     }
 
     // Calculate attack.
-    const int last = g.count - 1;
-    const int tail = 6;
-
-    if(g.count < tail)
-        return xzattack();
-
-    float mag = 0.0f;
-    for(int i = 0; i < g.count - 1; i++)
-        mag += xmag(xsub(g.points[i + 1], g.points[i + 0]));
-    mag += it.damage;
+    const float mag = xgmag(g, it.damage);
 
     // Hurts is a melee property. For instance, more than one
     // enemy can be hurt when a warhammer is used.
+    const int last = g.count - 1;
     const Point dir = xsub(g.points[last], g.points[last - tail]);
     const Attack melee = { mag, xunt(dir), it.hurts, MELEE, 0 };
     return xmag(dir) > 0.0f ? melee : xzattack();
@@ -402,14 +413,12 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             };
             const Point corner = xmul(which, grid);
             const Point center = xsub(xadd(corner, middle), shift);
-
             dbox(sdl, center.x, center.y, grid, sdl.red, false);
         }
 
         // Draw the cursor.
         const Point point = xadd(xmul(g.points[g.count - 1], sens), shift);
         const Point center = xsub(xadd(point, middle), shift);
-
         dbox(sdl, center.x, center.y, 6, sdl.red, true);
     }
 
@@ -436,7 +445,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
 Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll sc)
 {
     const Item it = inv.items.item[inv.selected];
-    const float sens = 2.33;
+    const float sens = 1.5f;
     return
         xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         xisrange(it.c) ? dgrange(sdl, g, it, sens) :
