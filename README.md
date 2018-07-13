@@ -1,4 +1,4 @@
-![](art/scn/2018-02-17-143059_600x300_scrot.png)
+![](art/screenshots/2018-02-17-143059_600x300_scrot.png)
 
 # Andvaranaut
 A dungeon crawler with procedural dungeon generation, puzzles, and more!
@@ -11,11 +11,11 @@ See the Makefile for instructions on how to bulid for Linux, MacOS, and Windows.
 
 Item art by Platino.
 
-![](art/scn/platino.png)
+![](art/screenshots/platino.png)
 
 Color pallette by DawnBringer.
 
-![](art/scn/bigfoot_v3.png)
+![](art/screenshots/bigfoot_v3.png)
 
 # Source Hints
 Andvaranaut compiles cleanly with many ISO C99 / C++98 compliant compilers across multiple platforms.
