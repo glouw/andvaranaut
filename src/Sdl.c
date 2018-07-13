@@ -302,15 +302,15 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
-        const int width = growth * 16; // Hard coded size.
-
-        // Draw.
+        const int size = 16; /* Whatever feels best. */
+        const int width = growth * size;
+        const int green = 0xFF * growth;
+        const uint32_t color = (0xFF << 0x10) | (green << 0x08);
         const Point mid = {
             (width - sdl.xres) / 2,
             (width - sdl.yres) / 2,
         };
         const Point where = xsub(xmul(g.points[i], sens), mid);
-        const uint32_t color = ((int) (0xFF * growth) << 0x10) | 0xFF;
         dbox(sdl, where.x, where.y, width, color, true);
     }
 
