@@ -85,6 +85,7 @@ SRCS += Points.c
 SRCS += Projection.c
 SRCS += Rooms.c
 SRCS += Sdl.c
+SRCS += State.c
 SRCS += Title.c
 SRCS += Theme.c
 SRCS += Timer.c

@@ -1040,6 +1040,21 @@ static Item glove(Item it)
 
     switch(it.index)
     {
+    case 0:
+        it.name = "Honor's Embroided Handguards";
+        break;
+
+    case 1:
+        it.name = "Quilted Gloves";
+        break;
+
+    case 2:
+        it.name = "Vengeance Quilted Hands";
+        break;
+
+    case 3:
+        it.name = "Gladiator's Gloves of Immortal";
+        break;
     }
 
     return it;

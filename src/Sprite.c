@@ -59,27 +59,6 @@ Sprite xsregistrar(const int ascii, const Point where)
     return s;
 }
 
-int xishurt(const State state)
-{
-    return state == HURTN
-        || state == HURTE
-        || state == HURTS
-        || state == HURTW;
-}
-
-int xisdead(const State state)
-{
-    return state == DEADN
-        || state == DEADE
-        || state == DEADS
-        || state == DEADW;
-}
-
-int xisalive(const State state)
-{
-    return !xisdead(state);
-}
-
 int xsissprite(const int ascii)
 {
     return isalpha(ascii);
