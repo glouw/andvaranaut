@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Font.h"
 #include "Sdl.h"
+#include "Ttf.h"
 
 void xttadvance(const int now);
 
@@ -9,7 +9,7 @@ void xttset(const int start, const int end, const int linger, const char* const 
 
 void xttinit();
 
-void xttshow(const Font fill, const Font line, const Sdl);
+void xttshow(const Ttf, const Sdl);
 
 void xttclear();
 

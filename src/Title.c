@@ -73,7 +73,7 @@ static int done()
     return !tt->linger && tt->now > tt->end;
 }
 
-void xttshow(const Font fill, const Font line, const Sdl sdl)
+void xttshow(const Ttf ttf, const Sdl sdl)
 {
     if(done())
         return;
@@ -84,7 +84,7 @@ void xttshow(const Font fill, const Font line, const Sdl sdl)
     const float alpha = max * sinf(percent * FPI);
 
     // Write to screen.
-    xfwrt(fill, line, sdl.renderer,
+    xfwrt(ttf.fill, ttf.line, sdl.renderer,
         sdl.xres / 2,
         sdl.yres / 2,
         tt->str,

@@ -1,3 +1,7 @@
-[ ] name all items
-[ ] add bomb sprite to break down '!' doors (can also hurt enemies).
+[ ] finish item descriptions
+[ ] add bomb sprite to break down '!' doors (can also hurt enemies)
 [x] remove lootbags as agent count for rooms.
+[ ] work on room themes
+[ ] implement magic effects
+[ ] tie items to attack
+[ ] maybe remove all comments and restart documentation

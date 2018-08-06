@@ -48,3 +48,5 @@ int xisstuck(const Sprite* const);
 Sprite xsregistrar(const int ascii, const Point where);
 
 void xsplace(Sprite* const, const Point);
+
+int xismute(Sprite* const sprite);

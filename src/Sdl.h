@@ -9,6 +9,7 @@
 #include "Gauge.h"
 #include "Scroll.h"
 #include "Attack.h"
+#include "Ttf.h"
 
 #include <SDL2/SDL.h>
 
@@ -55,7 +56,7 @@ void xrelease(const Sdl);
 void xpresent(const Sdl);
 
 // Renders one frame with SDL using hero, sprite, and map data. Ticks determine sprite animation.
-void xrender(const Sdl, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const Timer);
+void xrender(const Sdl, const Ttf, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const Timer);
 
 // Renders the overview of the map and sprites for editing purposes.
 void xview(const Sdl, const Overview, const Sprites, const Map, const Timer);

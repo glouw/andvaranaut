@@ -28,7 +28,7 @@ Font xfbuild(const char* const path, const int size, const uint32_t color, const
     return f;
 }
 
-static SDL_Texture* tget(const Font f, SDL_Renderer* const rend, const int alpha, const char* text)
+SDL_Texture* xtget(const Font f, SDL_Renderer* const rend, const int alpha, const char* text)
 {
     SDL_Surface* const surface = TTF_RenderText_Solid(f.ttf, text, f.color);
     SDL_Texture* const texture = SDL_CreateTextureFromSurface(rend, surface);
@@ -48,8 +48,8 @@ void xfwrt(const Font fill, const Font line, SDL_Renderer* const rend, const int
     for(char* tok = strtok(copy, delim); tok; tok = strtok(NULL, delim))
     {
         // Get font textures.
-        SDL_Texture* tfill = tget(fill, rend, alpha, tok);
-        SDL_Texture* tline = tget(line, rend, alpha, tok);
+        SDL_Texture* tfill = xtget(fill, rend, alpha, tok);
+        SDL_Texture* tline = xtget(line, rend, alpha, tok);
 
         // Get font dimensions.
         int w = 0;

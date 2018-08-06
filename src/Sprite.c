@@ -104,3 +104,8 @@ void xsplace(Sprite* const sprite, const Point to)
     sprite->last = sprite->where;
     sprite->where = to;
 }
+
+int xismute(Sprite* const sprite)
+{
+    return sprite->speech.count == 0;
+}

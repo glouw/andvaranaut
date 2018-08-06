@@ -82,8 +82,26 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
         SDL_RenderDrawRect(sdl.renderer, &square);
 }
 
+// Speech renderer.
+static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SDL_Rect target, const Timer tm)
+{
+    if(xisdead(sprite->state) || xismute(sprite))
+        return;
+
+    const int index = tm.ticks % sprite->speech.count;
+    const char* const sentence = sprite->speech.sentences[index];
+    SDL_Texture* const fill = xtget(ttf.fill, sdl.renderer, 0xFF, sentence);
+    SDL_Texture* const line = xtget(ttf.line, sdl.renderer, 0xFF, sentence);
+
+    SDL_RenderCopy(sdl.renderer, fill, NULL, &target);
+    SDL_RenderCopy(sdl.renderer, line, NULL, &target);
+
+    SDL_DestroyTexture(fill);
+    SDL_DestroyTexture(line);
+}
+
 // Pastes all visible sprites on screen. The wall z-buffer will determine when to partially or fully hide a sprite.
-static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
+static void paste(const Sdl sdl, const Ttf ttf, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
     // Go through all the sprites.
     for(int which = 0; which < sprites.count; which++)
@@ -152,15 +170,8 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
 
         // If the sprite is within earshot to hero, render speech sentences.
         // NOTE: Sprites where oriented to players gaze. Their relative position to the player is recalculated.
-        if(sprite->speech.count == 0)
-            continue;
-        if(xeql(xadd(hero.where, sprite->where), hero.where, 2.0f))
-        {
-            const int index = tm.ticks % sprite->speech.count;
-            const char* const sentence = sprite->speech.sentences[index];
-            printf("%s\n", sentence);
-            //const SDL_Texture* text = tget(sdl.font, sdl.renderer, 0xFF, sentence);
-        }
+        if(xeql(xadd(hero.where, sprite->where), hero.where, 4.0f))
+            rspeech(sprite, sdl, ttf, target, tm);
     }
 }
 
@@ -230,7 +241,7 @@ void xrelease(const Sdl sdl)
     SDL_DestroyRenderer(sdl.renderer);
 }
 
-void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
+void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
 {
     // Z-buffer will be populated once the map renderering is finished.
     Point* const zbuff = xtoss(Point, sdl.xres);
@@ -283,7 +294,7 @@ void xrender(const Sdl sdl, const Hero hero, const Sprites sprites, const Map ma
     // For sprites to be pasted to the screen they must first be orientated
     // to the players gaze. Afterwards they must be placed back.
     xorient(sprites, hero);
-    paste(sdl, sprites, zbuff, hero, tm);
+    paste(sdl, ttf, sprites, zbuff, hero, tm);
     xplback(sprites, hero);
 
     // Cleanup.

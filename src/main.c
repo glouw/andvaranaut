@@ -46,10 +46,7 @@ int main(int argc, char* argv[])
     Sdl sdl = xsetup(args);
 
     // Prepares general display font.
-    const char* const fpath = "art/gui/SDS_8x8.ttf";
-    const int fsize = 24;
-    const Font fill = xfbuild(fpath, fsize, sdl.red, 0);
-    const Font line = xfbuild(fpath, fsize, sdl.blk, 1);
+    const Ttf ttf = xttfnew("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
 
     // Titles present new areas to the player. The title type is the only heap type as it used deep within the engine.
     xttinit();
@@ -113,7 +110,7 @@ int main(int argc, char* argv[])
             inv = xinvhilite(inv, in, sdl.xres);
 
             // Renders to screen backbuffer floors, ceiling, walls, and then sprites.
-            xrender(sdl, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
+            xrender(sdl, ttf, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
 
             // Draws to screen backbuffer the inventory panel.
             xdinv(sdl, inv);
@@ -168,7 +165,7 @@ int main(int argc, char* argv[])
         }
 
         // Present the title to the middle of the screen.
-        xttshow(fill, line, sdl);
+        xttshow(ttf, sdl);
 
         // Presents screen backbuffer to screen.
         xpresent(sdl);

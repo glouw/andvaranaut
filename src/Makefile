@@ -88,6 +88,7 @@ SRCS += Sdl.c
 SRCS += Speech.c
 SRCS += State.c
 SRCS += Title.c
+SRCS += Ttf.c
 SRCS += Theme.c
 SRCS += Timer.c
 SRCS += Scanline.c
