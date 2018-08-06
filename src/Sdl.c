@@ -382,8 +382,8 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         // Direction is overrided with attack point.
         // The attack point is a random point within the rect.
         const Point point = {
-            (float) (x + rand() % (width == 0 ? 1 : width)), // Divide by zero check.
-            (float) (y + rand() % (width == 0 ? 1 : width)),
+            (float) (x + rand() % (width < 1 ? 1 : width)), // Divide by zero check.
+            (float) (y + rand() % (width < 1 ? 1 : width)),
         };
         const Attack range = { mag, point, it.hurts, RANGE, 0 };
 
