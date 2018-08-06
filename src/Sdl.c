@@ -149,6 +149,18 @@ static void paste(const Sdl sdl, const Sprites sprites, Point* const zbuff, cons
 
         // Revert lighting to the sprite.
         SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
+
+        // If the sprite is within earshot to hero, render speech sentences.
+        // NOTE: Sprites where oriented to players gaze. Their relative position to the player is recalculated.
+        if(sprite->speech.count == 0)
+            continue;
+        if(xeql(xadd(hero.where, sprite->where), hero.where, 2.0f))
+        {
+            const int index = tm.ticks % sprite->speech.count;
+            const char* const sentence = sprite->speech.sentences[index];
+            printf("%s\n", sentence);
+            //const SDL_Texture* text = tget(sdl.font, sdl.renderer, 0xFF, sentence);
+        }
     }
 }
 
@@ -157,7 +169,8 @@ Sdl xsetup(const Args args)
     SDL_Init(SDL_INIT_VIDEO);
     Sdl sdl = xzsdl();
 
-    sdl.window = SDL_CreateWindow("Andvaranaut",
+    sdl.window = SDL_CreateWindow(
+        "Andvaranaut",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         args.xres,

@@ -126,71 +126,71 @@ static Item amulet(Item it)
     switch(it.index)
     {
     case 0:
-        it.name = "The Emblem of Reincarnation";
+        it.name = "Emblem of Reincarnation";
         break;
 
     case 1:
-        it.name = "The Aura of Endurance";
+        it.name = "Aura of Endurance";
         break;
 
     case 2:
-        it.name = "The Whisper of Panic";
+        it.name = "Whisper of Panic";
         break;
 
     case 3:
-        it.name = "The Fortified Secrets of Power";
+        it.name = "Fortified Secrets of Power";
         break;
 
     case 4:
-        it.name = "The Enhanced Aspect of Auras";
+        it.name = "Enhanced Aspect of Auras";
         break;
 
     case 5:
-        it.name = "The Mighty Mark of Hunger";
+        it.name = "Mighty Mark of Hunger";
         break;
 
     case 6:
-        it.name = "The Vampiric Hymn of Magical Defenses";
+        it.name = "Vampiric Hymn of Magical Defenses";
         break;
 
     case 7:
-        it.name = "The Gift of Prime Loss";
+        it.name = "Gift of Prime Loss";
         break;
 
     case 8:
-        it.name = "The Emblem of Strengthened Storms";
+        it.name = "Emblem of Strengthened Storms";
         break;
 
     case 9:
-        it.name = "The Hymn of Eternal Potency";
+        it.name = "Hymn of Eternal Potency";
         break;
 
     case 10:
-        it.name = "The Spark of Sight";
+        it.name = "Spark of Sight";
         break;
 
     case 11:
-        it.name = "The Enchantment of Success";
+        it.name = "Enchantment of Success";
         break;
 
     case 12:
-        it.name = "The Grace of Haste";
+        it.name = "Grace of Haste";
         break;
 
     case 13:
-        it.name = "The Fortified Charge of Cover";
+        it.name = "Fortified Charge of Cover";
         break;
 
     case 14:
-        it.name = "The Lesser Bond of Cover";
+        it.name = "Lesser Bond of Cover";
         break;
 
     case 15:
-        it.name = "The Brilliant Infusion of Danger";
+        it.name = "Brilliant Infusion of Danger";
         break;
 
     case 16:
-        it.name = "The Light Seal of Disbelief";
+        it.name = "Light Seal of Disbelief";
         break;
     }
 
@@ -863,7 +863,7 @@ static Item food(Item it)
         break;
 
     case 1:
-        it.name = "Stag’s Ear";
+        it.name = "Stag Ear";
         break;
 
     case 2:
@@ -1066,6 +1066,65 @@ static Item hat(Item it)
 
     switch(it.index)
     {
+    case 0:
+        it.name = "Pot of Cooking";
+        break;
+
+    case 1:
+        it.name = "Soldier's Titanium Headcover";
+        break;
+
+    case 2:
+        it.name = "Plate Faceguard of Condemned Worlds";
+        break;
+
+    case 3:
+        it.name = "Vindication Steel Headcover";
+        break;
+
+    case 4:
+        it.name = "Ivory Gaze of Fleeting Sorrow";
+        break;
+
+    case 5:
+        it.name = "Vindication Faceguard of Slaughter";
+        break;
+
+    case 6:
+        it.name = "Hide Helm of Unholy Visions";
+        break;
+
+    case 7:
+        it.name = "Steel Cap of Relentless Visions";
+        break;
+
+    case 8:
+        it.name = "Steel Facemask of Relentless Visions";
+        break;
+
+    case 9:
+        it.name = "Desolation Cloth Coif";
+        break;
+
+    case 10:
+        it.name = "Wizard's Deep Blue Hat";
+        break;
+
+    case 11:
+        it.name = "Dunce Cap";
+        break;
+
+    case 12:
+        it.name = "Metal Head Ring";
+        break;
+
+    case 13:
+        it.name = "Crown of the Blackthorn";
+        break;
+
+    case 14:
+        it.name = "Crown of the Shattered Plain's King";
+        break;
     }
 
     return it;
@@ -1077,6 +1136,17 @@ static Item key(Item it)
 
     switch(it.index)
     {
+    case 0:
+        it.name = "Silver Key";
+        break;
+
+    case 1:
+        it.name = "Iron Key";
+        break;
+
+    case 2:
+        it.name = "ID Card";
+        break;
     }
 
     return it;
@@ -1176,30 +1246,125 @@ static Item scroll(Item it)
 
     switch(it.index)
     {
-    case  0: it.name = "Odal"  , it.desc = "Home";    break;
-    case  1: it.name = "Daeg"  , it.desc = "Day";     break;
-    case  2: it.name = "Jera"  , it.desc = "Harvest"; break;
-    case  3: it.name = "Lagu"  , it.desc = "Water";   break;
-    case  4: it.name = "Man"   , it.desc = "Human";   break;
-    case  5: it.name = "Eh"    , it.desc = "Horse";   break;
-    case  6: it.name = "Beorc" , it.desc = "Puriry";  break;
-    case  7: it.name = "Tyr"   , it.desc = "Arrow";   break;
-    case  8: it.name = "Sigel" , it.desc = "Sun";     break;
-    case  9: it.name = "Elhaz" , it.desc = "Elk";     break;
-    case 10: it.name = "Peorth", it.desc = "Dice";    break;
-    case 11: it.name = "Eoh"   , it.desc = "Yew";     break;
-    case 12: it.name = "Ng"    , it.desc = "Hero";    break;
-    case 13: it.name = "Is"    , it.desc = "Ice";     break;
-    case 14: it.name = "Nyd"   , it.desc = "Need";    break;
-    case 15: it.name = "Hagal" , it.desc = "Hail";    break;
-    case 16: it.name = "Wynn"  , it.desc = "Wind";    break;
-    case 17: it.name = "Gifu"  , it.desc = "Gift";    break;
-    case 18: it.name = "Ken"   , it.desc = "Wood";    break;
-    case 19: it.name = "Rad"   , it.desc = "Wheel";   break;
-    case 20: it.name = "As"    , it.desc = "God";     break;
-    case 21: it.name = "Thorn" , it.desc = "Giant";   break;
-    case 22: it.name = "Ur"    , it.desc = "Ox";      break;
-    case 23: it.name = "Feoh"  , it.desc = "Cattle";  break;
+    case  0:
+        it.name = "Odal";
+        it.desc = "Home";
+        break;
+
+    case  1:
+        it.name = "Daeg";
+        it.desc = "Day";
+        break;
+
+    case  2:
+        it.name = "Jera";
+        it.desc = "Harvest";
+        break;
+
+    case  3:
+        it.name = "Lagu";
+        it.desc = "Water";
+        break;
+
+    case  4:
+        it.name = "Man";
+        it.desc = "Human";
+        break;
+
+    case  5:
+        it.name = "Eh";
+        it.desc = "Horse";
+        break;
+
+    case  6:
+        it.name = "Beorc";
+        it.desc = "Puriry";
+        break;
+
+    case  7:
+        it.name = "Tyr";
+        it.desc = "Arrow";
+        break;
+
+    case  8:
+        it.name = "Sigel";
+        it.desc = "Sun";
+        break;
+
+    case  9:
+        it.name = "Elhaz";
+        it.desc = "Elk";
+        break;
+
+    case 10:
+        it.name = "Peorth";
+        it.desc = "Dice";
+        break;
+
+    case 11:
+        it.name = "Eoh";
+        it.desc = "Yew";
+        break;
+
+    case 12:
+        it.name = "Ng";
+        it.desc = "Hero";
+        break;
+
+    case 13:
+        it.name = "Is";
+        it.desc = "Ice";
+        break;
+
+    case 14:
+        it.name = "Nyd";
+        it.desc = "Need";
+        break;
+
+    case 15:
+        it.name = "Hagal";
+        it.desc = "Hail";
+        break;
+
+    case 16:
+        it.name = "Wynn";
+        it.desc = "Wind";
+        break;
+
+    case 17:
+        it.name = "Gifu";
+        it.desc = "Gift";
+        break;
+
+    case 18:
+        it.name = "Ken";
+        it.desc = "Wood";
+        break;
+
+    case 19:
+        it.name = "Rad";
+        it.desc = "Wheel";
+        break;
+
+    case 20:
+        it.name = "As";
+        it.desc = "God";
+        break;
+
+    case 21:
+        it.name = "Thorn";
+        it.desc = "Giant";
+        break;
+
+    case 22:
+        it.name = "Ur";
+        it.desc = "Ox";
+        break;
+
+    case 23:
+        it.name = "Feoh";
+        it.desc = "Cattle";
+        break;
     }
 
     return it;

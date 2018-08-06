@@ -2,6 +2,7 @@
 
 #include "Point.h"
 #include "State.h"
+#include "Speech.h"
 
 #include <SDL2/SDL.h>
 
@@ -27,6 +28,8 @@ typedef struct
     float health;
 
     SDL_Rect seen;
+
+    Speech speech;
 }
 Sprite;
 

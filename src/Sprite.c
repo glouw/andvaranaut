@@ -17,6 +17,7 @@ static Sprite born(const int ascii, const Point where)
     s.last = where;
     s.state = IDLE;
     s.health = 1000.0f;
+    s.speech = xzsp();
     return s;
 }
 
@@ -32,10 +33,23 @@ Sprite xsregistrar(const int ascii, const Point where)
 
     // Outlaw.
     case 'b':
+    {
         s.speed = 0.033f;
         s.acceleration = 0.0025f;
         s.width = 0.66f;
+        static const char* const sentences[] = {
+            "Hey there!",
+            "How are you doing today?",
+            "MY",
+            "SENTENCES",
+            "WILL",
+            "LOOP",
+            "This is my last message.",
+        };
+        for(int i = 0; i < xlen(sentences); i++)
+            s.speech = xspappend(s.speech, sentences[i]);
         break;
+    }
 
     // Loot bag.
     case 'd':
