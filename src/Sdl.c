@@ -65,8 +65,7 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
     return seen;
 }
 
-// Draws a rectangle the slow way.
-// If filled is set the rectangle will be filled.
+// Draws a rectangle the slow way. If filled is set the rectangle will be filled.
 static void dbox(const Sdl sdl, const int x, const int y, const int width, const uint32_t color, const int filled)
 {
     const int a = (color >> 0x18) & 0xFF;
@@ -85,30 +84,24 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
 // Speech renderer.
 static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SDL_Rect target, const Timer tm)
 {
-    if(xisdead(sprite->state) || xismute(sprite))
-        return;
-
     const int index = (tm.ticks / 6) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
+
     SDL_Texture* const fill = xtget(ttf.fill, sdl.renderer, 0xFF, sentence);
     SDL_Texture* const line = xtget(ttf.line, sdl.renderer, 0xFF, sentence);
 
     int w = 0;
     int h = 0;
     TTF_SizeText(ttf.fill.type, sentence, &w, &h);
-
     const int xmid = target.x + target.w / 2.0f;
-
     const SDL_Rect to = {
         xmid - w / 2,
         target.y + target.h / 3, // TODO: Maybe tune the offset per sprite?
-        w,
-        h,
+        w, h
     };
 
     SDL_RenderCopy(sdl.renderer, fill, NULL, &to);
     SDL_RenderCopy(sdl.renderer, line, NULL, &to);
-
     SDL_DestroyTexture(fill);
     SDL_DestroyTexture(line);
 }
@@ -182,8 +175,12 @@ static void paste(const Sdl sdl, const Ttf ttf, const Sprites sprites, Point* co
         SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
 
         // If the sprite is within earshot to hero, render speech sentences.
+        if(xisdead(sprite->state) || xismute(sprite))
+            continue;
+
         // NOTE: Sprites where oriented to players gaze. Their relative position to the player is recalculated.
-        if(xeql(xadd(hero.where, sprite->where), hero.where, 10.0f))
+        const Point recalc = xadd(hero.where, sprite->where);
+        if(xeql(recalc, hero.where, 10.0f))
             rspeech(sprite, sdl, ttf, target, tm);
     }
 }
