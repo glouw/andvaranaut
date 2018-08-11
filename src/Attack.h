@@ -12,6 +12,8 @@ typedef struct
 
     // Scroll index.
     int scindex;
+
+    Point point;
 }
 Attack;
 

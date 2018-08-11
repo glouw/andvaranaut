@@ -353,8 +353,8 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     // Hurts is a melee property. For instance, more than one
     // enemy can be hurt when a warhammer is used.
     const int last = g.count - 1;
-    const Point dir = xsub(g.points[last], g.points[last - tail]);
-    const Attack melee = { mag, xunt(dir), it.hurts, MELEE, 0 };
+    const Point dir = xunt(xsub(g.points[last], g.points[last - tail]));
+    const Attack melee = { mag, dir, it.hurts, MELEE, 0, xzpoint() };
     return melee;
 }
 
@@ -379,13 +379,13 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         // TODO: Fix this.
         const float mag = 100.0f;
 
-        // Direction is overrided with attack point.
-        // The attack point is a random point within the rect.
         const Point point = {
             (float) (x + rand() % (width < 1 ? 1 : width)), // Divide by zero check.
             (float) (y + rand() % (width < 1 ? 1 : width)),
         };
-        const Attack range = { mag, point, it.hurts, RANGE, 0 };
+        const Point dir = { 0.0f, -1.0f };
+        // The unit vector
+        const Attack range = { mag, dir, it.hurts, RANGE, 0, point };
 
         return range;
     }
@@ -463,7 +463,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
     // Direction won't be needed for magic attacks as magic will spawn new sprites, be it food sprites,
     // attack sprites (fire / ice), etc.
     const Point dir = { 0.0f, 0.0f };
-    const Attack magic = { mag, dir, 0, MAGIC, scindex };
+    const Attack magic = { mag, dir, 0, MAGIC, scindex, xzpoint() };
     return magic;
 }
 

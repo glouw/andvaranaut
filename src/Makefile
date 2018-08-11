@@ -152,7 +152,7 @@ $(BIN): $(SRCS:.c=.o)
 	@echo LINK $(BIN)
 	@$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
 	@echo "If you are on Windows be sure to copy over all SDL2.dll and SDL2-ttf.dll"
-	@echo "files to wherever andvaranaut.exe is."
+	@echo "files to where andvaranaut.exe was placed."
 
 # -----------------------------------------------------------------------------
 # Compiler.

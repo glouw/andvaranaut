@@ -112,19 +112,19 @@ static void bound(const Sprites sprites, const Map map)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+
         // Stuck in a wall.
         if(xtile(sprite->where, map.walling))
         {
             xsplace(sprite, xmid(sprite->last));
             sprite->velocity = xzpoint();
-            // TODO: Add a dizzy animation.
         }
+
         // Stuck in water.
         if(xblok(sprite->where, map.floring) == ' ')
         {
             xsplace(sprite, xmid(sprite->last));
             sprite->velocity = xzpoint();
-            // TODO: Add a scared animation animation.
         }
     }
 }
@@ -137,21 +137,24 @@ static void move(const Sprites sprites, const Field field, const Point to, const
         if(xisstuck(sprite))
             continue;
         const Point dir = xforce(field, sprite->where, to, map);
+
         // No force of direction...
         if(dir.x == 0.0f && dir.y == 0.0f)
         {
             // Some sprites do not move.
             if(sprite->speed == 0.0f)
                 continue;
-            // Then slow down.
+
+            // Slow down.
             sprite->velocity = xmul(sprite->velocity, 1.0f - sprite->acceleration / sprite->speed);
         }
-        // Otherwise speed up.
+        // Speed up.
         else
         {
             const Point acc = xmul(dir, sprite->acceleration);
             sprite->velocity = xadd(sprite->velocity, acc);
-            // And then check top speed...
+
+            // Check top speed.
             if(xmag(sprite->velocity) > sprite->speed)
                 // And cap speed if the top speed is surpassed.
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
@@ -192,9 +195,6 @@ static void scentsprite(const Field field, const Sprites sprites, const float sc
     {
         Sprite* const sprite = &sprites.sprite[s];
 
-        // Cosmetic sprites, like flowers and such, do not scent pathfinder,
-        // else sprites will never walk through a field of flowers to reach
-        // the hero (as romantic as that sounds).
         if(xiscosmetic(sprite->ascii))
             continue;
 
@@ -203,7 +203,6 @@ static void scentsprite(const Field field, const Sprites sprites, const float sc
         for(int a = -field.res / 2; a <= field.res / 2; a++)
         for(int b = -field.res / 2; b <= field.res / 2; b++)
             if(xon(field, j + a, i + b))
-                // Sprite scents stack.
                 field.mesh[j + a][i + b] -= scent;
     }
 }
@@ -215,13 +214,12 @@ static void scenthero(const Field field, const Point where, const float scent)
     field.mesh[j][i] = scent;
 }
 
-// Collaborative diffusion with various object scents.
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
     const float scent = 1000.0f;
     scentwall(field, hero.where, map, scent);
     scentsprite(field, sprites, scent);
-    scenthero(field, hero.where, 100.0f * scent); // Why this much more scent?
+    scenthero(field, hero.where, 100.0f * scent);
     xdiffuse(field, hero.where);
 }
 
@@ -234,9 +232,7 @@ static Sprites dropit(Sprites sprites, const Attack attack, const Point where)
 static void brokelb(const int ascii, const Inventory inv, const Timer tm)
 {
     if(ascii == 'd')
-        // Add an item to the inventory.
         if(!xitsadd(inv.items, xitrand()))
-            // Log message to the screen.
             xttset(tm.renders, tm.renders + 120, false, "Inventory Full");
 }
 
@@ -246,59 +242,24 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
 
     sprite->health -= attack.power;
 
-    // Sprite dead?
     if(sprite->health <= 0.0f)
     {
-        // Dead direction.
-        switch(attack.method)
-        {
-            case MELEE:
-                sprite->state = side ?
-                    (attack.dir.x > 0.0f ? DEADW : DEADE):
-                    (attack.dir.y > 0.0f ? DEADN : DEADS);
-                break;
+        sprite->state = side ?
+            (attack.dir.x > 0.0f ? DEADW : DEADE):
+            (attack.dir.y > 0.0f ? DEADN : DEADS);
 
-            case RANGE:
-                // Since attack direction was overrided for where the sprite was
-                // hit in the rectangle, attack direction cannot be used, so default
-                // the hurt direction to something.
-                sprite->state = DEADS;
-                break;
-
-            default:
-                break;
-        }
-
-        // Broke a lootbag? Add item to inventory.
         brokelb(sprite->ascii, inv, tm);
 
-        // There is a percent chance that a lootbag will drop if a sprite died.
-        // Hilariously, lootbags count as sprites, so "killing" a lootbag may drop another lootbag.
+        // Lootbags count as sprites, so killing a lootbag may drop another lootbag.
         if(xd10() == 0)
             return dropit(sprites, attack, sprite->where);
     }
-    // Sprite hurt.
     else
     {
-        // Hurt direction.
-        switch(attack.method)
-        {
-        case MELEE:
-            sprite->state = side ?
-                (attack.dir.x > 0.0f ? HURTW : HURTE):
-                (attack.dir.y > 0.0f ? HURTN : HURTS);
-            break;
+        sprite->state = side ?
+            (attack.dir.x > 0.0f ? HURTW : HURTE):
+            (attack.dir.y > 0.0f ? HURTN : HURTS);
 
-        case RANGE:
-            // Refer to the dead direction comment above...
-            sprite->state = HURTS;
-            break;
-
-        default:
-            break;
-        }
-
-        // Timer for idle reset.
         sprite->ticks = tm.ticks + 5;
     }
     return sprites;
@@ -309,14 +270,13 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
     const Point hand = xtouch(hero);
     const Item it = inv.items.item[inv.selected];
 
-    // Hurt counter indicates how many sprites can be hurt at once. Different weapons have different hurt counters.
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+
         if(xisuseless(sprite))
             continue;
 
-        // Sprite hurt?
         if(xeql(hand, sprite->where, 2.0f))
         {
             sprites = hurt(sprites, sprite, attack, inv, tm);
@@ -329,23 +289,22 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
 
 static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm)
 {
-    // Remember that attack direction was overrided with a point which now
-    // determines where in the rectangle the sprite was shot.
     const SDL_Point point = {
-        (int) attack.dir.x,
-        (int) attack.dir.y,
+        (int) attack.point.x,
+        (int) attack.point.y,
     };
     const Item it = inv.items.item[inv.selected];
 
-    // Go through all sprites.
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+
         if(xisuseless(sprite))
             continue;
 
-        // If the attack point is within a sprite hitbox then the sprite is hurt.
-        if(SDL_PointInRect(&point, &sprite->seen))
+        const int hit = SDL_PointInRect(&point, &sprite->seen);
+
+        if(hit)
         {
             sprites = hurt(sprites, sprite, attack, inv, tm);
             if(++hurts == it.hurts)
@@ -384,11 +343,14 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
         sprites.last = attack.method;
 
         // Do the attack.
-        if(attack.method == MELEE) return hmelee(sprites, attack, inv, tm, hero);
+        if(attack.method == MELEE)
+            return hmelee(sprites, attack, inv, tm, hero);
 
-        if(attack.method == RANGE) return hrange(sprites, attack, inv, tm);
+        if(attack.method == RANGE)
+            return hrange(sprites, attack, inv, tm);
 
-        if(attack.method == MAGIC) return hmagic(sprites, attack, inv, tm, hero);
+        if(attack.method == MAGIC)
+            return hmagic(sprites, attack, inv, tm, hero);
     }
 
     // Of course, if no attack happened, then the sprites were not harmed.
@@ -402,11 +364,9 @@ static void idle(const Sprites sprites, const Timer tm)
     {
         Sprite* const sprite = &sprites.sprite[i];
 
-        // Skip dead sprites.
         if(xisdead(sprite->state))
             continue;
 
-        // If the sprite state ticker expired the sprite is now idle.
         if(tm.ticks > sprite->ticks)
             sprite->state = IDLE;
     }
@@ -456,7 +416,7 @@ static Point freerand(const Point mid, const Map m)
 // Populates a room with a nice garden of sprites.
 static Sprites pngarden(Sprites sprites, const Map m, const Point mid)
 {
-    // Flowers and nice things. Reserve one for the caretaker.
+    // Flowers.
     for(int i = 0; i < 128; i++)
     {
         const Point where = freerand(mid, m);
@@ -491,9 +451,6 @@ Sprites xspopulate(Sprites sprites, const Map m)
     return sprites;
 }
 
-// Count all the sprites in a room and assigns count to map room agents.
-// Room agent count only applies to alive sprites and non-cosmetic sprites.
-// Can be multi-threaded.
 Map xscount(const Sprites sprites, Map m)
 {
     for(int i = 0; i < m.rooms.count; i++)
@@ -503,18 +460,17 @@ Map xscount(const Sprites sprites, Map m)
         {
             Sprite* const sprite = &sprites.sprite[s];
 
-            // Cosmetic sprites do not count as active agents.
             if(xiscosmetic(sprite->ascii))
                 continue;
 
-            // Nor do inanimate objects.
             if(xisinanimate(sprite->ascii))
                 continue;
 
-            // Only sprites within a room which are alive count as active agents.
+            if(xisdead(sprite->state))
+                continue;
+
             if(xeql(sprite->where, m.rooms.wheres[i], m.grid))
-                if(xisalive(sprite->state))
-                    m.rooms.agents[i]++;
+                m.rooms.agents[i]++;
         }
     }
     return m;
