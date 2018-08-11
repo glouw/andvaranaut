@@ -21,7 +21,6 @@ static void churn(const Sdl sdl)
         sdl.yres,
         sdl.xres,
     };
-
     SDL_RenderCopyEx(sdl.renderer, sdl.canvas, NULL, &dst, -90, NULL, SDL_FLIP_NONE);
 }
 
