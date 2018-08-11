@@ -5,7 +5,7 @@
 
 typedef struct
 {
-    TTF_Font* ttf;
+    TTF_Font* type;
     SDL_Color color;
 }
 Font;

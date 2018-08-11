@@ -14,8 +14,8 @@ Font xfbuild(const char* const path, const int size, const uint32_t color, const
         TTF_Init();
 
     Font f = xfzero();
-    f.ttf = TTF_OpenFont(path, size);
-    if(f.ttf == NULL)
+    f.type = TTF_OpenFont(path, size);
+    if(f.type == NULL)
         xbomb("Could not open %s\n", path);
 
     // Inside color of font.
@@ -24,13 +24,13 @@ Font xfbuild(const char* const path, const int size, const uint32_t color, const
     f.color.b = (color >> 0x00) & 0xFF;
 
     // Font Outlining.
-    TTF_SetFontOutline(f.ttf, outline);
+    TTF_SetFontOutline(f.type, outline);
     return f;
 }
 
 SDL_Texture* xtget(const Font f, SDL_Renderer* const rend, const int alpha, const char* text)
 {
-    SDL_Surface* const surface = TTF_RenderText_Solid(f.ttf, text, f.color);
+    SDL_Surface* const surface = TTF_RenderText_Solid(f.type, text, f.color);
     SDL_Texture* const texture = SDL_CreateTextureFromSurface(rend, surface);
     SDL_SetTextureAlphaMod(texture, alpha < 0 ? 0 : alpha);
     SDL_FreeSurface(surface);
@@ -54,7 +54,7 @@ void xfwrt(const Font fill, const Font line, SDL_Renderer* const rend, const int
         // Get font dimensions.
         int w = 0;
         int h = 0;
-        TTF_SizeText(fill.ttf, tok, &w, &h);
+        TTF_SizeText(fill.type, tok, &w, &h);
 
         // Get target rect. Assume font height never changes.
         const SDL_Rect target = { x - w / 2, y - h / 2 + h * newline, w, h };

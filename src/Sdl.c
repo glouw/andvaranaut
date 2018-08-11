@@ -95,7 +95,7 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SD
 
     int w = 0;
     int h = 0;
-    TTF_SizeText(ttf.fill.ttf, sentence, &w, &h);
+    TTF_SizeText(ttf.fill.type, sentence, &w, &h);
 
     const int xmid = target.x + target.w / 2.0f;
 
