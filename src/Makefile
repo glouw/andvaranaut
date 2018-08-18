@@ -107,7 +107,7 @@ SRCS += World.c
 
 CFLAGS =
 ifdef ComSpec
-	CFLAGS += -I../../SDL2-2.0.7/i686-w64-mingw32/include
+CFLAGS += -I../../SDL2-2.0.7/i686-w64-mingw32/include
 endif
 
 # Warnings.
@@ -128,9 +128,9 @@ CFLAGS += -flto
 
 LDFLAGS =
 ifdef ComSpec
-	LDFLAGS += -L../../SDL2-2.0.7/i686-w64-mingw32/lib
-	LDFLAGS += -lmingw32
-	LDFLAGS += -lSDL2main
+LDFLAGS += -L../../SDL2-2.0.7/i686-w64-mingw32/lib
+LDFLAGS += -lmingw32
+LDFLAGS += -lSDL2main
 endif
 LDFLAGS += -lm
 LDFLAGS += -lSDL2
@@ -141,11 +141,11 @@ LDFLAGS += -lSDL2_ttf
 # -----------------------------------------------------------------------------
 
 ifdef ComSpec
-	RM = del /F /Q
-	MV = ren
+RM = del /F /Q
+MV = ren
 else
-	RM = rm -f
-	MV = mv -f
+RM = rm -f
+MV = mv -f
 endif
 
 $(BIN): $(SRCS:.c=.o)

@@ -1,1 +1,4 @@
-[ ] Bow sometimes segfaults when hit enemy
+[x] Bow sometimes segfaults when hit enemy
+    -> Resolved: lootbags were dropping out of map range.
+
+[ ] Some rooms have two themes.
