@@ -571,7 +571,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
         bar == HPS ? hero.hps :
         bar == FTG ? hero.ftg : hero.mna;
 
-    const float threshold = 0.25f * max;
+    const float threshold = hero.warning * max;
 
     SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
     SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];

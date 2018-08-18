@@ -57,6 +57,8 @@ typedef struct
     // Fatigue.
     float ftg;
     float ftgmax;
+
+    float warning;
 }
 Hero;
 
@@ -70,7 +72,7 @@ int xteleporting(const Hero, const Map, const Input, const Timer);
 
 Hero xteleport(Hero, const Map);
 
-Hero xsustain(Hero, const Map, const Input, const Flow);
+Hero xsustain(Hero, const Map, const Input, const Flow current, const Timer);
 
 // Calculates a projection ray based on a wall hit. Shift determines the ceiling height if positive or the water height if negative.
 Ray xcalc(const Hero hero, const Hit, const Sheer, const int yres, const int xres);

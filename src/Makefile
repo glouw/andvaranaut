@@ -36,11 +36,13 @@
 # -----------------------------------------------------------------------------
 # Compiler.
 # -----------------------------------------------------------------------------
-# The entirety of the Andvaranaut source compiles cleanly with a C++ compiler.
-# This extra effort was maintained in the hopes that this project one day grows
-# with the helping hand of the open-source world.
+CC  = gcc -std=c99
+CXX = g++ -std=c++98
 
-CC = gcc
+# Although Andvaranaut was written in C, the entirety of its source compiles
+# cleanly with a C++ compiler.
+# You may select your compiler here (either CC or CXX defined above).
+CMP = $(CC)
 
 # -----------------------------------------------------------------------------
 # Binary Name.
@@ -48,9 +50,9 @@ CC = gcc
 
 NAME = ../andvaranaut
 ifdef ComSpec
-	BIN = $(NAME).exe
+BIN = $(NAME).exe
 else
-	BIN = $(NAME)
+BIN = $(NAME)
 endif
 
 # -----------------------------------------------------------------------------
@@ -105,36 +107,36 @@ SRCS += World.c
 # Compiler Flags.
 # -----------------------------------------------------------------------------
 
-CFLAGS =
+CMP_FLAGS =
 ifdef ComSpec
-CFLAGS += -I../../SDL2-2.0.7/i686-w64-mingw32/include
+CMP_FLAGS += -I../../SDL2-2.0.7/i686-w64-mingw32/include
 endif
 
 # Warnings.
-CFLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
+CMP_FLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
 
 # Debugging.
-CFLAGS += -g
+CMP_FLAGS += -g
 
 # General optimizations.
-CFLAGS += -Ofast -march=native -pipe
+CMP_FLAGS += -Ofast -march=native -pipe
 
 # Link time optimizations.
-CFLAGS += -flto
+CMP_FLAGS += -flto
 
 # -----------------------------------------------------------------------------
 # Library Flags.
 # -----------------------------------------------------------------------------
 
-LDFLAGS =
+LIB_FLAGS =
 ifdef ComSpec
-LDFLAGS += -L../../SDL2-2.0.7/i686-w64-mingw32/lib
-LDFLAGS += -lmingw32
-LDFLAGS += -lSDL2main
+LIB_FLAGS += -L../../SDL2-2.0.7/i686-w64-mingw32/lib
+LIB_FLAGS += -lmingw32
+LIB_FLAGS += -lSDL2main
 endif
-LDFLAGS += -lm
-LDFLAGS += -lSDL2
-LDFLAGS += -lSDL2_ttf
+LIB_FLAGS += -lm
+LIB_FLAGS += -lSDL2
+LIB_FLAGS += -lSDL2_ttf
 
 # -----------------------------------------------------------------------------
 # Linker.
@@ -150,7 +152,7 @@ endif
 
 $(BIN): $(SRCS:.c=.o)
 	@echo LINK $(BIN)
-	@$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
+	@$(CMP) $(CMP_FLAGS) $(SRCS:.c=.o) $(LIB_FLAGS) -o $(BIN)
 	@echo "If you are on Windows be sure to copy over all SDL2.dll and SDL2-ttf.dll"
 	@echo "files to where andvaranaut.exe was placed."
 
@@ -161,8 +163,8 @@ $(BIN): $(SRCS:.c=.o)
 # which .c files were affected by .h updates.
 
 %.o : %.c Makefile
-	@echo CC $*.c
-	@$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
+	@echo COMPILE $*.c
+	@$(CMP) $(CMP_FLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@$(RM) $*.d
 	@$(MV) $*.td $*.d
 %.d: ;

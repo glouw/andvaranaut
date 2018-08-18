@@ -40,6 +40,7 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.mnamax = 4.0f;
     hero.ftg = 6.0f;
     hero.ftgmax = 6.0f;
+    hero.warning = 0.25f;
     return hero;
 }
 
@@ -252,11 +253,22 @@ Hero xrecoil(Hero hero, const Method method)
     return hero;
 }
 
-Hero xsustain(Hero hero, const Map map, const Input input, const Flow current)
+static Hero breath(Hero hero, const Timer tm)
+{
+    if(hero.ftg / hero.ftgmax < hero.warning)
+    {
+        const float bob = 0.001f * sinf(FPI * tm.renders / 30.0f);
+        hero.yaw += bob;
+    }
+    return hero;
+}
+
+Hero xsustain(Hero hero, const Map map, const Input input, const Flow current, const Timer tm)
 {
     hero = look(hero, input);
     hero = vert(hero, map, input);
     hero = move(hero, map, input, current);
+    hero = breath(hero, tm);
     hero.torch = xburn(hero.torch);
     return hero;
 }

@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
                 gg = xgwind(gg, in);
 
                 // Hero self sustain.
-                me = xsustain(me, wd.map[me.floor], in, current);
+                me = xsustain(me, wd.map[me.floor], in, current, tm);
 
                 // Sprite damaging. May add or remove sprites to game word.
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, tm);
