@@ -290,8 +290,8 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
 static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm)
 {
     const SDL_Point point = {
-        (int) attack.point.x,
-        (int) attack.point.y,
+        (int) attack.reticule.x,
+        (int) attack.reticule.y,
     };
     const Item it = inv.items.item[inv.selected];
 

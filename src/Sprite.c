@@ -17,7 +17,57 @@ static Sprite born(const int ascii, const Point where)
     s.last = where;
     s.state = IDLE;
     s.health = 1000.0f;
-    s.speech = xzsp();
+    return s;
+}
+
+// Flower.
+static Sprite _a_(Sprite s)
+{
+    s.width = 0.60f;
+    return s;
+}
+
+// Outlaw.
+static Sprite _b_(Sprite s)
+{
+    s.speed = 0.033f;
+    s.acceleration = 0.0025f;
+    s.width = 0.66f;
+    static const char* const sentences[] = {
+        "Hey there!",
+        "How are you doing today?",
+        "MY",
+        "SENTENCES",
+        "WILL",
+        "LOOP",
+        "This is my last message.",
+    };
+    for(int i = 0; i < xlen(sentences); i++)
+        s.speech = xspappend(s.speech, sentences[i]);
+    return s;
+}
+
+// Lootbag.
+static Sprite _d_(Sprite s)
+{
+    s.width = 1.00f;
+    s.health = 1.0f;
+    return s;
+}
+
+// Tree trunk.
+static Sprite _e_(Sprite s)
+{
+    s.width = 1.00f;
+    s.health = 1.0f;
+    return s;
+}
+
+// Tree leaves.
+static Sprite _f_(Sprite s)
+{
+    s.width = 1.00f;
+    s.health = 1.0f;
     return s;
 }
 
@@ -26,49 +76,11 @@ Sprite xsregistrar(const int ascii, const Point where)
     Sprite s = born(ascii, where);
     switch(s.ascii)
     {
-    // Flower.
-    case 'a':
-        s.width = 0.60f;
-        break;
-
-    // Outlaw.
-    case 'b':
-    {
-        s.speed = 0.033f;
-        s.acceleration = 0.0025f;
-        s.width = 0.66f;
-        static const char* const sentences[] = {
-            "Hey there!",
-            "How are you doing today?",
-            "MY",
-            "SENTENCES",
-            "WILL",
-            "LOOP",
-            "This is my last message.",
-        };
-        for(int i = 0; i < xlen(sentences); i++)
-            s.speech = xspappend(s.speech, sentences[i]);
-        break;
-    }
-
-    // Loot bag.
-    case 'd':
-        s.width = 1.00f;
-        s.health = 1.0f;
-        break;
-
-    // Tree trunk.
-    case 'e':
-        s.width = 1.00f;
-        s.health = 1.0f;
-        break;
-
-    // Tree leaves.
-    case 'f':
-        s.ascii = 'f';
-        s.width = 1.00f;
-        s.health = 1.0f;
-        break;
+    case 'a': return _a_(s);
+    case 'b': return _b_(s);
+    case 'd': return _d_(s);
+    case 'e': return _e_(s);
+    case 'f': return _f_(s);
     }
     return s;
 }

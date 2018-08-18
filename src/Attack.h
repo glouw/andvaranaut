@@ -13,7 +13,8 @@ typedef struct
     // Scroll index.
     int scindex;
 
-    Point point;
+    // For ranged attacks a target reticule is used.
+    Point reticule;
 }
 Attack;
 

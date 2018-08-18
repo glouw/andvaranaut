@@ -360,32 +360,31 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
     if(g.count > 0)
     {
         // Animate attack. Both amplitude and attack are bow properties.
-        // A weaker bow may have longer period and amplitude.
-        // A longbow may have long period and amplitude but huge attack.
-        // A shortbow may have short period and amplitude and medium attack.
-        const int steady = it.amplitude / 2.0f;
-        const int width = it.amplitude * xsinc(g.count, it.period) + steady;
+        const int state = it.amplitude / 2.0f;
+        const int width = it.amplitude * xsinc(g.count, it.period) + state;
 
-        // Hurts is also a bow property. Longbows, for instance, can hurt more than one sprite.
+        // <Hurts> is also a bow property. Longbows, for instance, can hurt more than one sprite.
         const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
         dbox(sdl, x, y, width, sdl.wht, false);
 
-        // Calculate attack.
+        // Calculate range attack based on sinc steady state.
         // TODO: Fix this.
         const float mag = 100.0f;
 
-        const Point point = {
+        // A random point in the target reticule is chosen.
+        const Point reticule = {
             (float) (x + rand() % (width < 1 ? 1 : width)), // Divide by zero check.
             (float) (y + rand() % (width < 1 ? 1 : width)),
         };
-        const Point dir = { 0.0f, -1.0f };
-        // The unit vector
-        const Attack range = { mag, dir, it.hurts, RANGE, 0, point };
 
+        // Range attacks will just have south facing hurt animation drawn.
+        const Point dir = { 0.0f, -1.0f };
+
+        const Attack range = { mag, dir, it.hurts, RANGE, 0, reticule };
         return range;
     }
-    return xzattack();
+    else return xzattack();
 }
 
 // Draws magic gauge.

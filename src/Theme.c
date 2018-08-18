@@ -5,13 +5,14 @@
 Theme* xthrand(const int count)
 {
     Theme* const th = xwipe(Theme, count);
+
+    // Generate a random theme for each room.
     for(int i = 0; i < count; i++)
     {
-        // Random theme for a room (this includes NOTHEME which is not desirable).
-        th[i] = (Theme) (rand() % (int) THEMES);
-        if(th[i] == NO_THEME)
-            th[i] = NICE_GARDEN;
+        const Theme theme = (Theme) (rand() % (int) THEMES);
+        th[i] = (theme == NO_THEME) ? TIMS_HOUSE : theme;
     }
+
     return th;
 }
 
