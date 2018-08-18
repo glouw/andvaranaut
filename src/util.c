@@ -6,7 +6,7 @@
 
 char* dups(const char *s)
 {
-    char* const d = xtoss(char, strlen (s) + 1);
+    char* const d = xtoss(char, strlen(s) + 1);
     strcpy(d, s);
     return d;
 }

@@ -325,17 +325,17 @@ static void themeate(const Map map)
         const Point where = map.rooms.wheres[i];
         switch(map.rooms.themes[i])
         {
-            case WATER_WELL:
-                // Pools of water are rooms carved out of the floor.
-                xmroom(map, where, rmin(map), rmin(map), FLORING);
+        case WATER_WELL:
+            // Pools of water are rooms carved out of the floor.
+            xmroom(map, where, rmin(map), rmin(map), FLORING);
 
-                // In there is no platform from a trapdoor then this platform will
-                // catch the player from falling in water.
-                xmplatform(map, where.x, where.y, FLORING);
-                break;
+            // In there is no platform from a trapdoor then this platform will
+            // catch the player from falling in water.
+            xmplatform(map, where.x, where.y, FLORING);
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
     }
 }

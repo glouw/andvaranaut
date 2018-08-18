@@ -54,47 +54,47 @@ static Args parsed(Args args, int argc, char* argv[])
             const char option = argv[i][1];
             switch(option)
             {
-                /* X-Resolution. */
-                case 'x':
-                    args.xres =
-                        strtod(next, NULL);
-                    break;
-                /* Y-Resolution. */
-                case 'y':
-                    args.yres =
-                        strtod(next, NULL);
-                    break;
-                /* Focal Length. */
-                case 'f':
-                    args.focal =
-                        strtof(next, NULL);
-                    break;
-                /* VSync. */
-                case 'v':
-                    args.vsync =
-                        xequals(next, "true")  ? 1 : xequals(next, "t") ? 1 :
-                        xequals(next, "false") ? 0 : xequals(next, "f") ? 0 :
-                        strtod(next, NULL) != 0;
-                    break;
-                /* Frames per Second. */
-                case 'p':
-                    args.fps =
-                        strtod(next, NULL);
-                    break;
-                /* Mouse Sensitivity. */
-                case 'm':
-                    args.msen =
-                        strtof(next, NULL);
-                    break;
-                /* CPU Threads for the Renderer. */
-                case 't':
-                    args.threads =
-                        strtod(next, NULL);
-                    break;
-                /* Option not recognized. */
-                default:
-                    xbomb("error: option -%c not recognized\n", option);
-                    break;
+            /* X-Resolution. */
+            case 'x':
+                args.xres =
+                    strtod(next, NULL);
+                break;
+            /* Y-Resolution. */
+            case 'y':
+                args.yres =
+                    strtod(next, NULL);
+                break;
+            /* Focal Length. */
+            case 'f':
+                args.focal =
+                    strtof(next, NULL);
+                break;
+            /* VSync. */
+            case 'v':
+                args.vsync =
+                    xequals(next, "true")  ? 1 : xequals(next, "t") ? 1 :
+                    xequals(next, "false") ? 0 : xequals(next, "f") ? 0 :
+                    strtod(next, NULL) != 0;
+                break;
+            /* Frames per Second. */
+            case 'p':
+                args.fps =
+                    strtod(next, NULL);
+                break;
+            /* Mouse Sensitivity. */
+            case 'm':
+                args.msen =
+                    strtof(next, NULL);
+                break;
+            /* CPU Threads for the Renderer. */
+            case 't':
+                args.threads =
+                    strtod(next, NULL);
+                break;
+            /* Option not recognized. */
+            default:
+                xbomb("error: option -%c not recognized\n", option);
+                break;
             }
         }
     }
