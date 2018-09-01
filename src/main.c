@@ -4,7 +4,7 @@
 
 int main(int argc, char* argv[])
 {
-    srand(false ? 1530469541 : time(0));
+    srand(time(NULL));
 
     const Args args = xparse(argc, argv);
 
