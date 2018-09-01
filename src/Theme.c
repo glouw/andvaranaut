@@ -27,7 +27,7 @@ char* xthname(const Theme th)
         return (char*) "Hall of the Dead";
 
     case DEAD_KNIGHT_PARTY:
-        return (char*) "Dead Knight Party";
+        return (char*) "A Party of Dead Knights";
 
     case NICE_GARDEN:
         return (char*) "A Nice Garden";

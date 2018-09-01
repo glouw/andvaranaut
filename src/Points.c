@@ -22,6 +22,16 @@ Points xpsadd(Points ps, const Point p)
     return ps;
 }
 
+// Add a unique point to <a> from <b>
+Points xpsadduq(Points a, const Points b)
+{
+    const Point point = b.point[rand() % b.count];
+    if(xpsfind(a, point) == false)
+        return xpsadd(a, point);
+    else
+        return xpsadduq(a, b);
+}
+
 Points xpscat(Points ps, const Points other)
 {
     for(int i = 0; i < other.count; i++)
@@ -32,7 +42,7 @@ Points xpscat(Points ps, const Points other)
 int xpsfind(const Points ps, const Point p)
 {
     for(int i = 0; i < ps.count; i++)
-        if(xpsame(ps.point[i], p))
+        if(xeql(ps.point[i], p, 1.0))
             return true;
     return false;
 }

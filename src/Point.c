@@ -146,8 +146,8 @@ Point xabs(const Point a)
 Point xsnap(const Point a, const int grid)
 {
     const Point out = {
-        (float) xfl(a.x / grid) * grid,
-        (float) xfl(a.y / grid) * grid,
+        (float) (xfl(a.x / grid) * grid),
+        (float) (xfl(a.y / grid) * grid),
     };
     return out;
 }
@@ -163,4 +163,9 @@ Point xrand(Point a, const int grid)
     a.y += 0.75f * (xfrand() - 0.5f);
 
     return a;
+}
+
+void xpprint(const Point a)
+{
+    printf("%f %f\n", (double) a.x, (double) a.y);
 }

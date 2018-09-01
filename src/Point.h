@@ -59,3 +59,5 @@ Point xabs(const Point);
 Point xsnap(const Point, const int grid);
 
 Point xrand(Point, const int grid);
+
+void xpprint(const Point);

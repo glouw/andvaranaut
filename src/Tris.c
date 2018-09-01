@@ -387,8 +387,9 @@ Map xtgen(const Points extra)
 
     // Randomly select which rooms will become trapdoors.
     Points trapdoors = xpsnew(ntraps);
+
     for(int i = 0; i < ntraps; i++)
-        trapdoors = xpsadd(trapdoors, rooms.point[rand() % rooms.count]);
+        trapdoors = xpsadduq(trapdoors, rooms);
 
     // Build a basic map and apply room themes.
     const Map map = xmgen(h, w, trapdoors, rooms, grid);
