@@ -2,12 +2,6 @@
 
 #include "util.h"
 
-Textures xztex(void)
-{
-    static Textures tex;
-    return tex;
-}
-
 Textures xcache(const Surfaces surfaces, SDL_Renderer* const renderer)
 {
     const int count = surfaces.count;
