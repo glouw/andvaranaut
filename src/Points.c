@@ -22,14 +22,10 @@ Points xpsadd(Points ps, const Point p)
     return ps;
 }
 
-// Add a unique point to <a> from <b>
 Points xpsadduq(Points a, const Points b)
 {
     const Point point = b.point[rand() % b.count];
-    if(xpsfind(a, point) == false)
-        return xpsadd(a, point);
-    else
-        return xpsadduq(a, b);
+    return xpsfind(a, point) ? xpsadduq(a, b) : xpsadd(a, point);
 }
 
 Points xpscat(Points ps, const Points other)
