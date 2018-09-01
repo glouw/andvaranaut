@@ -89,16 +89,20 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SD
     SDL_Texture* const fill = xtget(ttf.fill, sdl.renderer, 0xFF, sentence);
     SDL_Texture* const line = xtget(ttf.line, sdl.renderer, 0xFF, sentence);
 
+    // Get font dimensions.
     int w = 0;
     int h = 0;
     TTF_SizeText(ttf.fill.type, sentence, &w, &h);
-    const int xmid = target.x + target.w / 2.0f;
+
+    // Calculate where sentence will be placed on screen.
     const SDL_Rect to = {
-        xmid - w / 2,
+        target.x + target.w / 2 - w / 2,
         target.y + target.h / 3, // TODO: Maybe tune the offset per sprite?
-        w, h
+        w,
+        h,
     };
 
+    // Transfer and cleanup.
     SDL_RenderCopy(sdl.renderer, fill, NULL, &to);
     SDL_RenderCopy(sdl.renderer, line, NULL, &to);
     SDL_DestroyTexture(fill);
