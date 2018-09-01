@@ -14,9 +14,7 @@ typedef struct
 }
 Title;
 
-// Andvaranaut does not use global variables, but it makes no sense
-// to pass a title pointer to every function that must present a title.
-
+// Makes little sense to pass a title object to every function.
 static Title* tt = NULL;
 
 void xttadvance(const int now)
@@ -32,23 +30,17 @@ void xttset(const int start, const int end, const int linger, const char* const 
     // If lingering the max alpha for the alpha will be used after 50% sine in/out fade.
     tt->linger = linger;
 
-    // Set the start and end time.
     tt->start = start;
     tt->end = end;
 
-    // Spoof snprintf to get varargs length.
     const int len = vsnprintf(NULL, 0, text, args);
 
-    // Varags were fully used. Must rewind.
     va_start(args, text);
 
-    // This length builds a char buffer which vsprintf populates. Null byte too.
-    // First free whatever came before, even if it is NULL.
     free(tt->str);
     tt->str = xtoss(char, len + 1);
     vsprintf(tt->str, text, args);
 
-    // Cleanup
     va_end(args);
 }
 
@@ -78,12 +70,10 @@ void xttshow(const Ttf ttf, const Sdl sdl)
     if(done())
         return;
 
-    // Alpha is calculated using a half sine wave from the start and end percentage.
     const float percent = (tt->now - tt->start) / (float) (tt->end - tt->start);
     const float max = 0xFF;
     const float alpha = max * sinf(percent * FPI);
 
-    // Write to screen.
     xfwrt(ttf.fill, ttf.line, sdl.renderer,
         sdl.xres / 2,
         sdl.yres / 2,

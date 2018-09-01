@@ -11,7 +11,4 @@ Textures;
 
 Textures xztex();
 
-// Stores a copy of all the surfaces in GPU memory.
 Textures xcache(const Surfaces, SDL_Renderer* const renderer);
-
-void xpurge(const Textures);

@@ -12,10 +12,11 @@ Projection xzproj()
 
 Projection xproject(const int yres, const int xres, const float focal, const float yaw, const Point corrected, const float height)
 {
+    const float min = 1e-5;
     // The corrected x distance must be clamped to a value small enough otherwise size will
     // exceed the limitations of single precision floating point. The clamp value is arbitrary.
-    const float min = 1e-5;
     const float normal = corrected.x < min ? min : corrected.x;
+
     Projection p;
     p.size = 0.5f * focal * xres / normal;
     p.mid = yaw * yres / 2.0f;
@@ -26,6 +27,7 @@ Projection xproject(const int yres, const int xres, const float focal, const flo
     p.yres = yres;
     p.sheer.a = 0.0f;
     p.sheer.b = 0.0f;
+
     return p;
 }
 
@@ -35,9 +37,11 @@ Projection xsheer(Projection p, const Sheer s)
     // Not sure where the math went wrong. Maybe the floats were rounded the wrong way somewhere somehow.
     p.bot += p.size * s.a - (s.b >= s.a  ? 1.0f : 0.0f);
     p.top += p.size * s.b + (s.b >= s.a  ? 0.0f : 2.0f);
+
     p.clamped = xclamp(p.yres, p.bot, p.top);
     p.sheer.a = fabsf(s.a);
     p.sheer.b = fabsf(s.b);
+
     return p;
 }
 

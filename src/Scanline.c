@@ -6,7 +6,7 @@ static uint32_t shade(const uint32_t pixel, const int shading)
 {
     const uint32_t r = (((pixel >> 0x10) /****/) * shading) >> 0x08; // Shift right by 0x08 is same as
     const uint32_t g = (((pixel >> 0x08) & 0xFF) * shading) >> 0x08; // dividing by 256. Somehow
-    const uint32_t b = (((pixel /*****/) & 0xFF) * shading) >> 0x08; // ofast was not catching this.
+    const uint32_t b = (((pixel /*****/) & 0xFF) * shading) >> 0x08; // gcc -Ofast was not catching this.
     return r << 0x10 | g << 0x08 | b;
 }
 
@@ -124,7 +124,7 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
     }
 }
 
-// Returns wall z-buffer.
+// Returns wall z-buffer for sprite clipping.
 static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     const Ray ray = xcalc(hero, hits.walling, map.middle, sl.sdl.yres, sl.sdl.xres);

@@ -105,9 +105,8 @@ Overview xupdate(Overview ov, const Input input, const int xres)
     }
     else ov.velocity = xmul(ov.velocity, 1.0f - ov.acceleration / ov.speed);
 
-    // Top speed check.
+    // Arrow key top speed check.
     if(xmag(ov.velocity) > ov.speed) ov.velocity = xmul(xunt(ov.velocity), ov.speed);
-
     // Due to integer rounding, velocities less than one must be ignored.
     if(fabsf(ov.velocity.x) < 1.0f) ov.velocity.x = 0.0f;
     if(fabsf(ov.velocity.y) < 1.0f) ov.velocity.y = 0.0f;
@@ -115,5 +114,6 @@ Overview xupdate(Overview ov, const Input input, const int xres)
     // Add velocity to pan.
     ov.px += ov.velocity.x;
     ov.py += ov.velocity.y;
+
     return ov;
 }

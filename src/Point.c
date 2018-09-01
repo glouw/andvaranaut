@@ -154,11 +154,9 @@ Point xsnap(const Point a, const int grid)
 
 Point xrand(Point a, const int grid)
 {
-    // On grid randomness.
     a.x += rand() % grid - grid / 2.0f;
     a.y += rand() % grid - grid / 2.0f;
 
-    // Add a bit of entropy to get off grid.
     a.x += 0.75f * (xfrand() - 0.5f);
     a.y += 0.75f * (xfrand() - 0.5f);
 

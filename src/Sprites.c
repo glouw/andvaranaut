@@ -32,6 +32,7 @@ static Sprites append(Sprites sprites, const Sprite sprite)
 
     // Append.
     sprites.sprite[sprites.count++] = sprite;
+
     return sprites;
 }
 
@@ -354,6 +355,7 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
 
     // Of course, if no attack happened, then the sprites were not harmed.
     sprites.last = NOATTACK;
+
     return sprites;
 }
 
@@ -383,6 +385,7 @@ static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
     // Water and food sprites replenish the hero's fatigue.
     // Healing wizard sprites heal the hero instead of damaging the hero.
     (void) sprites;
+
     return hero;
 }
 
@@ -415,8 +418,8 @@ static Point freerand(const Point mid, const Map m)
 // Populates a room with a nice garden of sprites.
 static Sprites pngarden(Sprites sprites, const Map m, const Point mid)
 {
-    // Flowers.
-    for(int i = 0; i < 128; i++)
+    const int flowers = 128;
+    for(int i = 0; i < flowers; i++)
     {
         const Point where = freerand(mid, m);
         sprites = append(sprites, xsregistrar('a', where));
@@ -441,7 +444,7 @@ Sprites xspopulate(Sprites sprites, const Map m)
             sprites = pngarden(sprites, m, mid);
             break;
 
-        // TODO: TEMP. Just puts a guy in a room for now as a test.
+        // TODO: TEMP. Just puts a guy in a room for now so that each room has some sort of placeholder.
         default:
             sprites = append(sprites, xsregistrar('b', freerand(mid, m)));
             break;

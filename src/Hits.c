@@ -48,19 +48,16 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     if(xtile(test.a, map.ceiling) && !xtile(test.b, map.ceiling))
         hits.ceiling = push(hits.ceiling, collision(ray, test, map.ceiling));
 
-    // Eye walling hit.
-    // A linked list is not needed: Thanks to eye level projections,
-    // only one projection is needed as every projection behind will
-    // be overlapped by the first projection.
+    // Eye walling hit: A linked list is not neededt hanks to eye level projections.
+    // Only one projection is needed as every projection behind will be overlapped by the first projection.
     if(xtile(test.a, map.walling) && !hits.walling.surface)
         hits.walling = collision(ray, test, map.walling);
 
-    // Done when a wall was hit and a ceiling wall exists above the wall and
-    // a floor wall exist below the wall.
+    // Done when a wall was hit and a ceiling wall exists above the wall and a floor wall exist below the wall.
     if(hits.walling.surface && xtile(test.a, map.ceiling) && xtile(test.a, map.floring))
         return hits;
 
-    // Otherwise, keep on stepping.
+    // Keep on stepping if not step.
     return step(hits, ray, direction, map);
 }
 

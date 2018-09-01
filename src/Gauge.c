@@ -31,16 +31,15 @@ Gauge xgwind(Gauge g, const Input input)
 {
     if(input.l)
     {
-        // Fizzle out.
         if(g.count == g.max)
             g = reset(g);
-        // Trace.
+
         g.points[g.count].x = (g.mx += input.dx);
         g.points[g.count].y = (g.my += input.dy);
         g.count++;
     }
-    // Done winding.
     else g = reset(g);
+
     return g;
 }
 

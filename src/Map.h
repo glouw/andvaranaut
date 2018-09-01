@@ -59,3 +59,9 @@ void xmthemett(const Map, const Point where, const Timer);
 void xmplatform(const Map, const int x, const int y, const Party);
 
 void xmbarricade(const Map);
+
+int xmrmin(const Map);
+
+int xmrmax(const Map);
+
+void xmthemeate(const Map);

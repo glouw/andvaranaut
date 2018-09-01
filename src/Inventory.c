@@ -37,10 +37,10 @@ static int inside(const Inventory inv, const Input in, const int xres)
     return in.x > xres - inv.width;
 }
 
+// There are only four fingers (minus the thumb) on your left hand,
+// which makes inventory selection at best the first four items.
 Inventory xinvselect(Inventory inv, const Input in)
 {
-    // There are only four fingers (minus the thumb) on your left hand,
-    // which makes inventory selection at best the first four items.
     if(in.key[SDL_SCANCODE_1]) inv.selected = 0;
     if(in.key[SDL_SCANCODE_2]) inv.selected = 1;
     if(in.key[SDL_SCANCODE_3]) inv.selected = 2;
@@ -50,22 +50,18 @@ Inventory xinvselect(Inventory inv, const Input in)
 
 Inventory xinvhilite(Inventory inv, const Input in, const int xres)
 {
-    // The -1 will signal outside of inventory.
     inv.hilited = !xinvuse(in) ? -1 : inside(inv, in, xres) ? in.y / inv.width : -1;
     return inv;
 }
 
 static int tilechange(const Inventory inv)
 {
-    // Last hilited value.
     static int last;
 
-    // A tile change occurs when the last hilited value changed.
     int change = false;
     if(inv.hilited != -1 && inv.hilited != last)
         change = true;
 
-    // Update last hilite value.
     last = inv.hilited;
 
     return change;
@@ -79,7 +75,7 @@ void xwhatis(const Inventory inv, const Scroll sc, const Timer tm)
         const int b = tm.renders + 90;
         const Item it = inv.items.item[inv.hilited];
 
-        // Scroll info (including sign).
+        // Scroll info (draws casting shape to screen).
         if(it.c == SCROLL)
         {
             char* const squares = xsstr(sc, it.index);

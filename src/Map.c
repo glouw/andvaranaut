@@ -32,6 +32,8 @@ static char** mnew(const int rows, const int cols, const int blok)
 
 Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid)
 {
+    // Sheers indicate the height of either the eye level middle wall (md)
+    // or the upper level wall (up).
     // Randomize sheers.
     const Sheer md = {
         0.0f,
@@ -62,7 +64,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
     return map;
 }
 
-// Lookup theme.
+// Lookup (find) theme.
 Theme lutheme(const Map map, const Point where)
 {
     for(int i = 0; i < map.rooms.count; i++)
@@ -71,7 +73,7 @@ Theme lutheme(const Map map, const Point where)
     return NO_THEME;
 }
 
-// Theme string.
+// Returns string of theme if found.
 static char* themestr(const Map map, const Point where)
 {
     return xthname(lutheme(map, where));
@@ -82,23 +84,16 @@ static int themech(const Map map, const Point where)
 {
     int change = false;
 
-    // Last theme from last game frame.
     static Theme last = NO_THEME;
 
-    // Update current theme to this game frame.
     const Theme now = lutheme(map, where);
 
-    // If the last theme is not the current theme then
-    // there was a theme change.
     if(now != last)
         change = true;
 
-    // The theme change is overrided if the point is
-    // going to where there is no theme (like a room to a coridoor).
     if(now == NO_THEME && last != NO_THEME)
         change = false;
 
-    // Update the last theme.
     last = lutheme(map, where);
 
     return change;
@@ -107,9 +102,7 @@ static int themech(const Map map, const Point where)
 // Theme title.
 void xmthemett(const Map map, const Point where, const Timer tm)
 {
-    // If there was a theme change in the map with the player position...
     if(themech(map, where))
-        // Set the title for the current room theme.
         xttset(tm.renders, tm.renders + 120, false, themestr(map, where));
 }
 
@@ -126,7 +119,6 @@ int xmout(const Map map, const Point where)
 
 void xmedit(const Map map, const Overview ov)
 {
-    // Placing - Out of bounds check.
     if(xmout(map, ov.where))
         return;
 
@@ -240,15 +232,12 @@ void xmcorridor(const Map map, const Point a, const Point b)
         step.y > 0.0f ? 1.0f : step.y < 0.0f ? -1.0f : 0.0f,
     };
 
-    // X and Y steppings.
     const int sx = fabsf(step.x);
     const int sy = fabsf(step.y);
 
-    // Delta step amount.
     const int dx = delta.x;
     const int dy = delta.y;
 
-    // Step along the X deltas first and then the Y deltas.
     int x = a.x;
     int y = a.y;
     for(int i = 0; i < sx; i++) map.walling[y][x += dx] = ' ';
@@ -276,21 +265,54 @@ static void pass(const Map map, const int x, const int y)
     cross(map, x, y, '!', ' ');
 }
 
-// Barricades a room from other rooms only if there are agents in the room.
+// Barricades (first) a room from other rooms only if there are agents in the room.
 void xmbarricade(const Map map)
 {
-    // Barricade first.
     for(int i = 0; i < map.rooms.count; i++)
     {
         const Point mid = map.rooms.wheres[i];
         door(map, mid.x, mid.y);
     }
-    // Then remove barricades when rooms have zero agents left.
     for(int i = 0; i < map.rooms.count; i++)
     {
         const Point mid = map.rooms.wheres[i];
 
         if(map.rooms.agents[i] == 0)
             pass(map, mid.x, mid.y);
+    }
+}
+
+// Minimum room size.
+int xmrmin(const Map map)
+{
+    return map.grid / 8;
+}
+
+// Maximum room size.
+int xmrmax(const Map map)
+{
+    return map.grid / 2;
+}
+
+// Generates room tiles based on room theme.
+void xmthemeate(const Map map)
+{
+    for(int i = 0; i < map.rooms.count; i++)
+    {
+        const Point where = map.rooms.wheres[i];
+        switch(map.rooms.themes[i])
+        {
+        case WATER_WELL:
+            // Pools of water are rooms carved out of the floor.
+            xmroom(map, where, xmrmin(map), xmrmin(map), FLORING);
+
+            // In there is no platform from a trapdoor then this platform will
+            // catch the player from falling in water.
+            xmplatform(map, where.x, where.y, FLORING);
+            break;
+
+        default:
+            break;
+        }
     }
 }

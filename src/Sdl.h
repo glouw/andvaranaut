@@ -51,8 +51,6 @@ Sdl xzsdl();
 
 Sdl xsetup(const Args);
 
-void xrelease(const Sdl);
-
 void xpresent(const Sdl);
 
 // Renders one frame with SDL using hero, sprite, and map data. Ticks determine sprite animation.

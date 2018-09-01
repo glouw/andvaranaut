@@ -25,5 +25,6 @@ Speech xspappend(Speech sp, const char* sentence)
 
     // Append.
     sp.sentences[sp.count++] = (char*) sentence;
+
     return sp;
 }

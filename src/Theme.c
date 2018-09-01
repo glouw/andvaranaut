@@ -6,7 +6,6 @@ Theme* xthrand(const int count)
 {
     Theme* const th = xwipe(Theme, count);
 
-    // Generate a random theme for each room.
     for(int i = 0; i < count; i++)
     {
         const Theme theme = (Theme) (rand() % (int) THEMES);

@@ -200,12 +200,14 @@ static void sort(const Tris edges)
     qsort(edges.tri, edges.count, sizeof(Tri), descending);
 }
 
+// Returns true if two points are connected.
 static int connected(const Point a, const Point b, const Tris edges, const Flags flags)
 {
     Points todo = xpsnew(edges.max);
     Points done = xpsnew(edges.max);
     Tris reach = tsnew(edges.max);
     todo = xpsadd(todo, a);
+
     int connection = false;
     while(todo.count != 0 && connection != true)
     {
@@ -239,9 +241,11 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
                 todo = xpsadd(todo, reach.tri[i].b);
         }
     }
+
     free(todo.point);
     free(reach.tri);
     free(done.point);
+
     return connection;
 }
 
@@ -252,6 +256,8 @@ static void revdel(Tris edges, const int w, const int h, const Flags flags)
     for(int i = 0; i < edges.count; i++)
     {
         Tri* edge = &edges.tri[i];
+
+        // Flag out of bound edges.
         if(outob(edge->a, w, h)
         || outob(edge->b, w, h))
         {
@@ -259,13 +265,13 @@ static void revdel(Tris edges, const int w, const int h, const Flags flags)
             continue;
         }
 
-        // Break the connection.
+        // Break connection.
         edge->c = flags.one;
 
         // If two points are not connected in anyway then reconnect.
         // Occasionally a loop will be created as edges are doubled (sibling reversed)
-        // and not perfectly paired when sorted by magnitude. This benefits the map design -
-        // perfectly linear dungeons are too boring to play.
+        // and not perfectly paired when sorted by magnitude.
+        // This benefits the map design; perfectly linear dungeons are boring.
         if(!connected(edge->a, edge->b, edges, flags)) edge->c = flags.zer;
     }
 }
@@ -304,41 +310,6 @@ static void bone(const Map map, const Tri e, const int w, const int h)
     xmcorridor(map, e.a, e.b);
 }
 
-// Minimum room size.
-static int rmin(const Map map)
-{
-    return map.grid / 8;
-}
-
-// Maximum room size.
-static int rmax(const Map map)
-{
-    return map.grid / 2;
-}
-
-// Themes all the rooms according to their themes.
-static void themeate(const Map map)
-{
-    for(int i = 0; i < map.rooms.count; i++)
-    {
-        const Point where = map.rooms.wheres[i];
-        switch(map.rooms.themes[i])
-        {
-        case WATER_WELL:
-            // Pools of water are rooms carved out of the floor.
-            xmroom(map, where, rmin(map), rmin(map), FLORING);
-
-            // In there is no platform from a trapdoor then this platform will
-            // catch the player from falling in water.
-            xmplatform(map, where.x, where.y, FLORING);
-            break;
-
-        default:
-            break;
-        }
-    }
-}
-
 static void carve(const Map map, const Tris edges, const Flags flags)
 {
     for(int i = 0; i < edges.count; i++)
@@ -348,9 +319,9 @@ static void carve(const Map map, const Tris edges, const Flags flags)
         if(xpsame(e.c, flags.one))
             continue;
 
-        const int size = rmax(map) - rmin(map);
-        const int w = rmin(map) + rand() % size;
-        const int h = rmin(map) + rand() % size;
+        const int size = xmrmax(map) - xmrmin(map);
+        const int w = xmrmin(map) + rand() % size;
+        const int h = xmrmin(map) + rand() % size;
         bone(map, e, w, h);
     }
 }
@@ -368,35 +339,28 @@ Map xtgen(const Points extra)
     if(xodd(grid))
         xbomb("Grid size must be even\n");
 
-    // The triangle type is reused for edges by omitting the third point.
-    // The third point is then reused for a flag. For duplication removal our out of bounds checks.
+    // The triangle type is reused for edges by omitting the third point which is
+    // reused for a flag for duplicate edge removal or out of bounds checks.
     const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
 
-    // Randomize a certain number of rooms. Snap to grid.
     Points rooms = prand(w, h, max, grid, border, extra);
 
-    // Perform delaunay triangulation on points to separate points.
     const Tris tris = delaunay(rooms , w, h, 9 * max, flags);
 
-    // Get edges for corridors.
     const Tris edges = ecollect(tsnew(27 * max), tris, flags);
 
-    // Reverse delete algorithm to create windy corridors.
     revdel(edges, w, h, flags);
 
     // Randomly select which rooms will become trapdoors.
     Points trapdoors = xpsnew(ntraps);
-
     for(int i = 0; i < ntraps; i++)
         trapdoors = xpsadduq(trapdoors, rooms);
 
-    // Build a basic map and apply room themes.
+    // Build a basic map and, carve out rooms.
     const Map map = xmgen(h, w, trapdoors, rooms, grid);
     mdups(edges, flags);
     carve(map, edges, flags);
-    themeate(map);
 
-    // Clean up.
     free(tris.tri);
     free(edges.tri);
 

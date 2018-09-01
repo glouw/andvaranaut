@@ -12,7 +12,7 @@ Sdl xzsdl()
     return sdl;
 }
 
-// Assumes renderer is rotated 90 degrees.
+// Rotates renderer 90 degrees and copies to backbuffer.
 static void churn(const Sdl sdl)
 {
     const SDL_Rect dst = {
@@ -24,18 +24,18 @@ static void churn(const Sdl sdl)
     SDL_RenderCopyEx(sdl.renderer, sdl.canvas, NULL, &dst, -90, NULL, SDL_FLIP_NONE);
 }
 
-// Presents the entire renderer to the screen.
+// Presents backbuffer to the screen.
 void xpresent(const Sdl sdl)
 {
     SDL_RenderPresent(sdl.renderer);
 }
 
-// Clips a sprite, left and right, based on zbuffer.
+// Clips a sprite, left and right, based on zbuffer ray caster.
 static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Point* const zbuff)
 {
     SDL_Rect seen = frame;
 
-    // Clips sprite from the left.
+    // Left clip.
     for(; seen.w > 0; seen.w--, seen.x++)
     {
         const int x = seen.x;
@@ -47,7 +47,7 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
             break;
     }
 
-    // Clips sprite from the right.
+    // Right clip.
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
@@ -61,10 +61,11 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
             break;
         }
     }
+
     return seen;
 }
 
-// Draws a rectangle the slow way. If filled is set the rectangle will be filled.
+// Draws a rectangle the slow way.
 static void dbox(const Sdl sdl, const int x, const int y, const int width, const uint32_t color, const int filled)
 {
     const int a = (color >> 0x18) & 0xFF;
@@ -80,7 +81,7 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
         SDL_RenderDrawRect(sdl.renderer, &square);
 }
 
-// Speech renderer.
+// Renders character speech.
 static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SDL_Rect target, const Timer tm)
 {
     const int index = (tm.ticks / 6) % sprite->speech.count;
@@ -109,10 +110,9 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SD
     SDL_DestroyTexture(line);
 }
 
-// Pastes all visible sprites on screen. The wall z-buffer will determine when to partially or fully hide a sprite.
+// Pastes all visible sprites on screen.
 static void paste(const Sdl sdl, const Ttf ttf, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
-    // Go through all the sprites.
     for(int which = 0; which < sprites.count; which++)
     {
         Sprite* const sprite = &sprites.sprite[which];
@@ -174,17 +174,17 @@ static void paste(const Sdl sdl, const Ttf ttf, const Sprites sprites, Point* co
         if(sprite->transparent)
             SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
-        // Revert lighting to the sprite.
+        // Revert lighting to the sprite for the map editor panel.
         SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
 
-        // If the sprite is within earshot to hero, render speech sentences.
-        if(xisdead(sprite->state) || xismute(sprite))
-            continue;
-
-        // NOTE: Sprites where oriented to players gaze. Their relative position to the player is recalculated.
-        const Point recalc = xadd(hero.where, sprite->where);
-        if(xeql(recalc, hero.where, 10.0f))
-            rspeech(sprite, sdl, ttf, target, tm);
+        // If the sprite is within earshot of hero then render speech sentences.
+        if(!xisdead(sprite->state) && !xismute(sprite))
+        {
+            // NOTE: Sprites where oriented to players gaze.
+            // Their relative position to the player is recalculated.
+            if(xeql(xadd(hero.where, sprite->where), hero.where, hero.aura))
+                rspeech(sprite, sdl, ttf, target, tm);
+        }
     }
 }
 
@@ -212,10 +212,10 @@ Sdl xsetup(const Args args)
         // Screen Vertical Sync on / off.
         (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0x0));
 
-    // The canvas texture will be used for per pixel drawings. This will be used to the walls, floors, and ceiling.
-    // Notice the flip between yres and xres in the following call for the sdl canvas texture.
-    // This was done for fast caching. Upon presenting the canvas will be rotated upwards by 90 degrees.
-    // Notice how ARGB8888 is used for the hardware. This is the fastest option for the GPU.
+    // The canvas texture will be used for per pixel drawings for the walls, floors, and ceiling.
+    // Notice the flip between yres and xres for the sdl canvas texture.
+    // This was done for fast caching. Upon presenting, the canvas will be rotated upwards by 90 degrees.
+    // Notice how ARGB8888 is used for the hardware. This is the fastest option for the CPU / GPU translations via SDL2.
     sdl.canvas = SDL_CreateTexture(
         sdl.renderer,
         SDL_PIXELFORMAT_ARGB8888,
@@ -227,7 +227,7 @@ Sdl xsetup(const Args args)
     sdl.yres = args.yres;
     sdl.fps = args.fps;
     sdl.threads = args.threads;
-    sdl.surfaces = xpull(0x00FFFF);
+    sdl.surfaces = xpull();
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
 
     // GUI surfaces start at this index of the surfaces.
@@ -238,20 +238,6 @@ Sdl xsetup(const Args args)
     sdl.yel = 0xFFDBD75D;
 
     return sdl;
-}
-
-// Cleanup at program exit.
-void xrelease(const Sdl sdl)
-{
-    xclean(sdl.surfaces);
-    xpurge(sdl.textures);
-
-    SDL_DestroyTexture(sdl.canvas);
-
-    SDL_Quit();
-
-    SDL_DestroyWindow(sdl.window);
-    SDL_DestroyRenderer(sdl.renderer);
 }
 
 void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
@@ -265,10 +251,12 @@ void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprite
     SDL_LockTexture(sdl.canvas, NULL, &screen, &pitch);
     const int width = pitch / sizeof(uint32_t);
     uint32_t* pixels = (uint32_t*) screen;
+
+    // The camera is orientated to the players gaze.
     const Line camera = xrotate(hero.fov, hero.theta);
 
     // Rendering bundles are used for rendering a
-    // portion of the map (ceiling, walls, and flooring) to the display.
+    // portion of the map (ceiling, walls, and flooring) to the backbuffer.
     // One thread per CPU is allocated.
     Bundle* const b = xtoss(Bundle, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
@@ -286,26 +274,27 @@ void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprite
         b[i].map = map;
     };
 
-    // Launch all threads and wait for their completion.
+    // Launch all threads.
     SDL_Thread** const threads = xtoss(SDL_Thread*, sdl.threads);
-
     for(int i = 0; i < sdl.threads; i++)
         threads[i] = SDL_CreateThread(xbraster, "n/a", &b[i]);
 
+    // Wait for thread completion.
     for(int i = 0; i < sdl.threads; i++)
     {
         int status; /* Ignored */
         SDL_WaitThread(threads[i], &status);
     }
 
-    // Per-pixel writes are done. Unlock the display.
+    // Per-pixel writes for the floor, wall, and ceiling are now
+    // complete for the entire backbuffer; unlock the display.
     SDL_UnlockTexture(sdl.canvas);
 
-    // The map was rendered on its side. Rotate the map upwards.
+    // The map was rendered on its side for cache efficiency. Rotate the map upwards.
     churn(sdl);
 
     // For sprites to be pasted to the screen they must first be orientated
-    // to the players gaze. Afterwards they must be placed back.
+    // to the player's gaze. Afterwards they must be placed back.
     xorient(sprites, hero);
     paste(sdl, ttf, sprites, zbuff, hero, tm);
     xplback(sprites, hero);
@@ -316,21 +305,14 @@ void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprite
     free(threads);
 }
 
-// Returns true if a tile is clipped off the screen.
-static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
-{
-    return (to.x > sdl.xres || to.x < -ov.w)
-        && (to.y > sdl.yres || to.y < -ov.h);
-}
-
-// Draws melee gauge.
+// Draws melee gauge and calculates attack.
 static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
     // Animate attack.
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
-        const int size = 16; /* Whatever feels best. */
+        const int size = 16; // Whatever feels best.
         const int width = growth * size;
         const int green = 0xFF * growth;
         const uint32_t color = (0xFF << 0x10) | (green << 0x08);
@@ -342,16 +324,13 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
         dbox(sdl, where.x, where.y, width, color, true);
     }
 
-    // Do not start calculating attack until tail is long enough.
     const int tail = 10;
     if(g.count < tail)
         return xzattack();
 
-    // Calculate attack.
     const float mag = xgmag(g, it.damage);
 
-    // Hurts is a melee property. For instance, more than one
-    // enemy can be hurt when a warhammer is used.
+    // Hurts is a melee property. For instance, more than one enemy can be hurt when a warhammer is used.
     const int last = g.count - 1;
     const Point dir = xunt(xsub(g.points[last], g.points[last - tail]));
     const Attack melee = { mag, dir, it.hurts, MELEE, 0, xzpoint() };
@@ -386,6 +365,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         const Point dir = { 0.0f, -1.0f };
 
         const Attack range = { mag, dir, it.hurts, RANGE, 0, reticule };
+
         return range;
     }
     else return xzattack();
@@ -479,6 +459,13 @@ Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll s
         xzattack();
 }
 
+// Returns true if a tile is clipped off the screen.
+static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
+{
+    return (to.x > sdl.xres || to.x < -ov.w)
+        && (to.y > sdl.yres || to.y < -ov.h);
+}
+
 // Draw tiles for the grid layout.
 static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
 {
@@ -539,13 +526,12 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
     {
         const SDL_Rect to = { ov.w * (i - ov.wheel), 0, ov.w, ov.h };
 
-        // Sprites.
+        // Draw sprite on panel.
         if(xsissprite(i + ' '))
         {
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
             const int h = sdl.surfaces.surface[i]->h / STATES;
 
-            // Copy over the tile. Make animation idle.
             const SDL_Rect from = { w * (tm.ticks % FRAMES), h * IDLE, w, h };
 
             if(clipping(sdl, ov, to))
@@ -553,18 +539,19 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
 
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
         }
-        // Blocks.
+        // Draw tile block on [anel.
         else SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], NULL, &to);
     }
 }
 
+// View the map editor.
 void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
 {
     dgridl(sdl, ov, sprites, map, tm);
     dpanel(sdl, ov, tm);
 }
 
-// Draws one status bar.
+// Draws status bar (one of health, magic, or fatigue).
 void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, const int size, const Bar bar)
 {
     const int max =
@@ -586,7 +573,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
     const SDL_Rect glass = { 0, 32, w, w };
     const SDL_Rect grite = { 0, 64, w, w };
 
-    // Will animate bar if below threshold.
+    // Will animate bar to flicker if below threshold.
     const int frame = tm.ticks % 2 == 0;
     const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : 0), w, w };
     const SDL_Rect empty[] = {
@@ -595,7 +582,6 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
         { 0, fluid.y + 6 * w, w, w }, // 25%.
     };
 
-    // Draw.
     for(int i = 0; i < max; i++)
     {
         const int ww = size * w;
@@ -612,12 +598,12 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
             xdec(lvl) > 0.50f ? SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to) :
             xdec(lvl) > 0.25f ? SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to) : 0;
 
-        // Glass.
+        // Glass around fluid.
         SDL_RenderCopy(sdl.renderer, texture, i == 0 ? &gleft : i == max - 1 ? &grite : &glass, &to);
     }
 }
 
-// Draws hero status bars.
+// Draws all hero status bars (health, mana, and fatigue).
 void xdbars(const Sdl sdl, const Hero hero, const Timer tm)
 {
     const int size = 1;
@@ -673,12 +659,14 @@ static void dinvits(const Sdl sdl, const Inventory inv)
     }
 }
 
+// Draws the inventory.
 void xdinv(const Sdl sdl, const Inventory inv)
 {
     dinvbp(sdl, inv);
     dinvits(sdl, inv);
 }
 
+// Draws the map rooms.
 static void drooms(uint32_t* pixels, const int width, const Map map, const uint32_t in, const uint32_t out)
 {
     for(int y = 1; y < map.rows - 1; y++)
@@ -716,10 +704,10 @@ static void ddot(uint32_t* pixels, const int width, const Point where, const int
     }
 }
 
+// Draws the map.
 void xdmap(const Sdl sdl, const Map map, const Point where)
 {
-    // This map texture is not apart of the Sdl struct since it must be refreshed
-    // each frame via creation and destruction.
+    // This map texture is not apart of the Sdl struct since it must be refreshed each frame via creation and destruction.
     SDL_Texture* const texture = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 

@@ -50,6 +50,7 @@ Scroll xscnew()
     #define SCROLLS (24)
     #define WIDTH (9)
     #define SQUARES (WIDTH * WIDTH)
+
     // Runes live in .bss.
     static int runes[SCROLLS][SQUARES] = {
         {
@@ -294,6 +295,7 @@ Scroll xscnew()
             0,0,0,0,0,0,0,0,0,
         }
     };
+
     Scroll sc = xsczero();
     sc.casting = xtoss(int, SQUARES);
     sc.castables = xtoss(int*, SCROLLS);
@@ -302,14 +304,12 @@ Scroll xscnew()
     sc.scrolls = SCROLLS;
     for(int i = 0; i < sc.scrolls; i++)
         sc.castables[i] = runes[i];
-    // TODO
-    // Since the number of scrolls is hard coded a check must be added here
+
+    // TODO: Since the number of scrolls is hard coded a check must be added here
     // to ensure that the number of scrolls present in art/items/scroll.bmp
     // matches the hard coded number of scrolls. The game must exit if this
     // does not match.
-    #undef SCROLLS
-    #undef W
-    #undef H
+
     return sc;
 }
 
@@ -317,7 +317,7 @@ char* xsstr(const Scroll sc, const int scindex)
 {
     // Space for squares, newlines, and NULL byte;
     const int chars = sc.squares + sc.width + 1;
-    char* const str = xtoss(char, chars);
+    char* const str = xwipe(char, chars);
 
     for(int i = 0, index = 0; i < chars; i++)
         str[i] =
@@ -325,9 +325,6 @@ char* xsstr(const Scroll sc, const int scindex)
             i % (sc.width + 1) == 0 ? '\n'
             // Otherwise, square position.
             : sc.castables[scindex][index++] ? 'x' : '-';
-
-    // Null byte.
-    str[chars] = '\0';
 
     return str;
 }

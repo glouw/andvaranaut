@@ -10,9 +10,9 @@ Hero xzhero()
     return hero;
 }
 
-// A focal value of 1.0 will create a 90 degree field of view.
 static Line lens(const float focal)
 {
+    // A focal value of 1.0 will create a 90 degree field of view.
     const Line fov = {
         { focal, -1.0f },
         { focal, +1.0f },
@@ -56,8 +56,8 @@ static Hero yaw(Hero hero, const Input input)
     const float max = 1.80f;
     const float min = 0.20f;
     hero.yaw =
-        hero.yaw > max ? max : // Max clamp.
-        hero.yaw < min ? min : // Min clamp.
+        hero.yaw > max ? max :
+        hero.yaw < min ? min :
         hero.yaw;
     return hero;
 }
@@ -188,9 +188,6 @@ int xteleporting(const Hero hero, const Map map, const Input input, const Timer 
 {
     static int last;
 
-    // A delay is required between teleports else hero will
-    // quickly teleport between adjacent floors with a single key press.
-    // The delay is arbitrary.
     const int delay = 2;
     if(tm.ticks < last + delay)
         return false;
@@ -239,15 +236,13 @@ Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, con
     return ray;
 }
 
+// Generate recoil if ranged.
 Hero xrecoil(Hero hero, const Method method)
 {
-    // Generate recoil if ranged.
     if(method == RANGE)
-        // TODO
-        // Different weapons have different recoil. Add this in.
+        // TODO: Different weapons have different recoil. Add this in.
         hero.vyaw = 0.12f;
 
-    // Apply recoil.
     hero.yaw -= (hero.vyaw *= 0.8f);
 
     return hero;
