@@ -24,8 +24,8 @@ typedef struct
 }
 Item;
 
-Item xzitem();
+Item xzitem(void);
 
 Item xitnew(const Classification, const int index);
 
-Item xitrand();
+Item xitrand(void);

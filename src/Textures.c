@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Textures xztex()
+Textures xztex(void)
 {
     static Textures tex;
     return tex;

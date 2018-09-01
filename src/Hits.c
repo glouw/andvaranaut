@@ -4,7 +4,7 @@
 #include "Line.h"
 #include "util.h"
 
-Hits xzhits()
+Hits xzhits(void)
 {
     static Hits hits;
     return hits;

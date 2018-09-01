@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Args xzargs()
+Args xzargs(void)
 {
     static Args args;
     return args;
@@ -103,7 +103,7 @@ static Args parsed(Args args, int argc, char* argv[])
     return args;
 }
 
-static Args defaults()
+static Args defaults(void)
 {
     Args args = xzargs();
     args.xres = 1320;

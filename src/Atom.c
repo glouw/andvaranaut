@@ -1,6 +1,6 @@
 #include "Atom.h"
 
-Atom xzatom()
+Atom xzatom(void)
 {
     static Atom atom;
     return atom;

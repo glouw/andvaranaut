@@ -1,6 +1,6 @@
 #include "Timer.h"
 
-Timer xztimer()
+Timer xztimer(void)
 {
     static Timer timer;
     return timer;

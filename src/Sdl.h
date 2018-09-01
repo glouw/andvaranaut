@@ -47,16 +47,14 @@ typedef struct
 }
 Sdl;
 
-Sdl xzsdl();
+Sdl xzsdl(void);
 
 Sdl xsetup(const Args);
 
 void xpresent(const Sdl);
 
-// Renders one frame with SDL using hero, sprite, and map data. Ticks determine sprite animation.
 void xrender(const Sdl, const Ttf, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const Timer);
 
-// Renders the overview of the map and sprites for editing purposes.
 void xview(const Sdl, const Overview, const Sprites, const Map, const Timer);
 
 Attack xdgauge(const Sdl, const Gauge, const Inventory, const Scroll);

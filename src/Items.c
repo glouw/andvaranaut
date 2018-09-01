@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Items xzitems()
+Items xzitems(void)
 {
     static Items items;
     return items;

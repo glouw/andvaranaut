@@ -22,5 +22,4 @@ typedef struct
 }
 Bundle;
 
-// Bundle rasterer. Renders scanlines <a> to <b>. Thread safe.
 int xbraster(void* const bundle);

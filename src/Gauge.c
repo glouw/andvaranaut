@@ -2,13 +2,13 @@
 
 #include "util.h"
 
-Gauge xzgauge()
+Gauge xzgauge(void)
 {
     static Gauge gauge;
     return gauge;
 }
 
-Gauge xgnew()
+Gauge xgnew(void)
 {
     Gauge g = xzgauge();
     g.max = 600;

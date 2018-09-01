@@ -4,7 +4,7 @@
 
 #include <SDL2/SDL.h>
 
-Input xzinput()
+Input xzinput(void)
 {
     static Input input;
     return input;

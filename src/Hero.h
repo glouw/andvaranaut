@@ -16,16 +16,17 @@ typedef struct
     // Field of view.
     Line fov;
 
-    // Position and velocity vectors.
+    // Vectors.
     Point where;
     Point velocity;
 
-    // Max speed.
+    // Max speed and acceleration scalars.
     float speed;
     float acceleration;
 
-    // Rotation (radians).
+    // Rotation in radians.
     float theta;
+
     Torch torch;
     float reach;
     int floor;
@@ -35,15 +36,17 @@ typedef struct
 
     // Head up and down.
     float yaw;
-    float vyaw; // Velocity yaw from recoil.
 
-    // Height varies.
+    // Velocity yaw from recoil.
+    float vyaw;
+
+    // Height varies with jumping, crouching, and swimming.
     float height;
 
     // Tallness does not vary. Height references tallness for jumping and crouching.
     float tall;
 
-    // Vertical velocity.
+    // Vertical velocity when jumping and falling.
     float vvel;
 
     // Hitpoints.
@@ -58,11 +61,12 @@ typedef struct
     float ftg;
     float ftgmax;
 
+    // When fatigue is low, warning indicators go off (fatigue bar flashes and hero starts to breathe heavily).
     float warning;
 }
 Hero;
 
-Hero xzhero();
+Hero xzhero(void);
 
 Hero xspawn(const float focal, const Point where, const int floor);
 
@@ -74,7 +78,6 @@ Hero xteleport(Hero, const Map);
 
 Hero xsustain(Hero, const Map, const Input, const Flow current, const Timer);
 
-// Calculates a projection ray based on a wall hit. Shift determines the ceiling height if positive or the water height if negative.
 Ray xcalc(const Hero hero, const Hit, const Sheer, const int yres, const int xres);
 
 Hero xrecoil(Hero, const Method);

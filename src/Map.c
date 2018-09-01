@@ -6,7 +6,7 @@
 
 #include <math.h>
 
-Map xzmap()
+Map xzmap(void)
 {
     static Map map;
     return map;

@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Clamped xzclamp()
+Clamped xzclamp(void)
 {
     static Clamped clamped;
     return clamped;

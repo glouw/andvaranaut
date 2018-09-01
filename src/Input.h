@@ -34,7 +34,7 @@ typedef struct
 }
 Input;
 
-Input xzinput();
+Input xzinput(void);
 
 Input xpump(Input);
 

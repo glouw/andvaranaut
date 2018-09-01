@@ -3,7 +3,7 @@
 #include "Tris.h"
 #include "util.h"
 
-World xzworld()
+World xzworld(void)
 {
     static World world;
     return world;

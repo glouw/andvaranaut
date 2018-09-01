@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include "util.h"
 
-Sprite xzsprite()
+Sprite xzsprite(void)
 {
     static Sprite sprite;
     return sprite;

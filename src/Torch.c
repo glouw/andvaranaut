@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Torch xztorch()
+Torch xztorch(void)
 {
     static Torch torch;
     return torch;
@@ -20,7 +20,7 @@ Torch xburn(const Torch torch)
     return temp.light > temp.brightness ? torch : temp;
 }
 
-Torch xsnuff()
+Torch xsnuff(void)
 {
     Torch torch = xztorch();
     torch.light = 0;

@@ -1,11 +1,8 @@
 #pragma once
 
-// Sprites have state. These states are laid out in order
-// by row a sprite's sprite sheet.
-
 typedef enum
 {
-    // In hot pursuit of the player.
+    // Pursuing player.
     CHASING,
 
     // Sprite is lifted into the air

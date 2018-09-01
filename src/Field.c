@@ -6,7 +6,7 @@
 #include <string.h>
 #include <float.h>
 
-Field xzfield()
+Field xzfield(void)
 {
     static Field field;
     return field;

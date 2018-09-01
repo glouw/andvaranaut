@@ -10,7 +10,7 @@ typedef struct
 }
 Font;
 
-Font xfzero();
+Font xfzero(void);
 
 Font xfbuild(const char* const path, const int size, const uint32_t color, const int outline);
 

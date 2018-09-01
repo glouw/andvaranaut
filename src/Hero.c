@@ -4,7 +4,7 @@
 
 #include <SDL2/SDL.h>
 
-Hero xzhero()
+Hero xzhero(void)
 {
     static Hero hero;
     return hero;
@@ -205,9 +205,11 @@ Hero xteleport(Hero hero, const Map map)
     // Look up to teleport a floor up. Look down to teleport a floor down.
     if(tup(hero, map))
         hero.floor--;
+
     if(tdn(hero, map))
     {
         hero.floor++;
+
         // Gives a falling effect.
         hero.height = 0.80;
     }
@@ -215,9 +217,11 @@ Hero xteleport(Hero hero, const Map map)
     // The teleport effect is done by reseting the hero yaw to the horizon. The torch is also put out.
     hero.yaw = 1.0f;
     hero.torch = xsnuff();
+
     return hero;
 }
 
+// Calculates a projection ray based on a wall hit. Shift determines the ceiling height if positive or the water height if negative.
 Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, const int xres)
 {
     const Point end = xsub(hit.where, hero.where);

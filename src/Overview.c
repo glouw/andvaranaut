@@ -5,13 +5,13 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 
-Overview xzov()
+Overview xzov(void)
 {
     static Overview ov;
     return ov;
 }
 
-Overview xinit()
+Overview xinit(void)
 {
     Overview ov = xzov();
     ov.where.x = -1.0f;

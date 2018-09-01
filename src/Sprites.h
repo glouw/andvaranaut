@@ -18,7 +18,7 @@ typedef struct
 }
 Sprites;
 
-Sprites xzsprites();
+Sprites xzsprites(void);
 
 Sprites xsnew(const int max);
 

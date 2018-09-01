@@ -33,7 +33,7 @@ typedef struct
 }
 Sprite;
 
-Sprite xzsprite();
+Sprite xzsprite(void);
 
 int xsissprite(const int ascii);
 

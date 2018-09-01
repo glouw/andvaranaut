@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Points xzpoints()
+Points xzpoints(void)
 {
     static Points points;
     return points;

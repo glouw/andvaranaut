@@ -8,7 +8,7 @@
 #include <ctype.h>
 #include <math.h>
 
-Sprites xzsprites()
+Sprites xzsprites(void)
 {
     static Sprites sprites;
     return sprites;

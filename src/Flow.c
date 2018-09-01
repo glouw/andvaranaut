@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Flow xzflow()
+Flow xzflow(void)
 {
     static Flow flow;
     return flow;

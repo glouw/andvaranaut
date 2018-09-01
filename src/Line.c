@@ -1,6 +1,6 @@
 #include "Line.h"
 
-Line xzline()
+Line xzline(void)
 {
     static Line line;
     return line;

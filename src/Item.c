@@ -7,7 +7,7 @@
 // All these names were created with Fantasy Name Generators:
 // http://www.fantasynamegenerators.com
 
-Item xzitem()
+Item xzitem(void)
 {
     static Item item;
     return item;
@@ -1468,7 +1468,7 @@ Item xitnew(const Classification c, const int index)
     }
 }
 
-Item xitrand()
+Item xitrand(void)
 {
     const Classification c = (Classification) (rand() % (int) CLASSIFICATIONS);
     const int index = rand() % xcindices(c);

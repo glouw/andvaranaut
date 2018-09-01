@@ -6,7 +6,7 @@
 #include "Bundle.h"
 #include "util.h"
 
-Sdl xzsdl()
+Sdl xzsdl(void)
 {
     static Sdl sdl;
     return sdl;

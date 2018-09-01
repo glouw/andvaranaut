@@ -8,16 +8,12 @@
 #include <stdlib.h>
 #include <limits.h>
 
-// Portable string duplication
 char* dups(const char *s);
 
-// Fast math floor.
 int xfl(const float x);
 
-// Fast math ceil.
 int xcl(const float x);
 
-// Fast math decimal.
 float xdec(const float x);
 
 int xlns(FILE* const file);
@@ -48,5 +44,4 @@ float xsinc(const float x, const float p);
 
 #define FPI (3.1416f)
 
-// D&D dice.
-int xd2(), xd4(), xd8(), xd10();
+int xd2(void), xd4(void), xd8(void), xd10(void);

@@ -10,7 +10,9 @@ typedef struct
 }
 Scroll;
 
-Scroll xscnew();
+Scroll xscnew(void);
+
+Scroll xsczero(void);
 
 int xsindex(const Scroll);
 

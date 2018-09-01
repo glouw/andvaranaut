@@ -2,15 +2,15 @@
 
 #include "util.h"
 
-Speech xzsp()
+Speech xzspeech(void)
 {
     static Speech sp;
     return sp;
 }
 
-Speech xspnew()
+Speech xspnew(void)
 {
-    return xzsp();
+    return xzspeech();
 }
 
 Speech xspappend(Speech sp, const char* sentence)

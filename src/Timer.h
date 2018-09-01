@@ -7,6 +7,6 @@ typedef struct
 }
 Timer;
 
-Timer xztimer();
+Timer xztimer(void);
 
 Timer xtmnew(const int renders, const int ticks);

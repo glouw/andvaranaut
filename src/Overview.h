@@ -33,9 +33,9 @@ typedef struct
 }
 Overview;
 
-Overview xzov();
+Overview xzov(void);
 
-Overview xinit();
+Overview xinit(void);
 
 Overview xupdate(Overview, const Input, const int xres);
 

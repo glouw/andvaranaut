@@ -12,7 +12,7 @@ typedef struct
 }
 World;
 
-World xzworld();
+World xzworld(void);
 
 World xwadd(World, const Map, const Sprites);
 

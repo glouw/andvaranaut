@@ -6,11 +6,8 @@
 typedef struct
 {
     Point* wheres;
-
     Theme* themes;
-
     int* agents;
-
     int count;
 }
 Rooms;

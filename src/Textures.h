@@ -9,6 +9,6 @@ typedef struct
 }
 Textures;
 
-Textures xztex();
+Textures xztex(void);
 
 Textures xcache(const Surfaces, SDL_Renderer* const renderer);

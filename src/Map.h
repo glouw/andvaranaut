@@ -34,7 +34,7 @@ typedef struct
 }
 Map;
 
-Map xzmap();
+Map xzmap(void);
 
 Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid);
 

@@ -78,22 +78,24 @@ int xodd(const int a)
     return a % 2;
 }
 
-int xd2()
+// These are DND dice are hard coded to avoid runtime divisions by zero.
+
+int xd2(void)
 {
     return rand() % 2;
 }
 
-int xd4()
+int xd4(void)
 {
     return rand() % 4;
 }
 
-int xd8()
+int xd8(void)
 {
     return rand() % 8;
 }
 
-int xd10()
+int xd10(void)
 {
     return rand() % 10;
 }

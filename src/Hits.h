@@ -7,14 +7,15 @@
 
 typedef struct
 {
-    // Linked lists. Remember, programmer, to free these hits as they are used.
+    // Linked lists. Remember to free these hits as they are used.
     Hit* ceiling;
     Hit* floring;
+
     // No linked list needed for the renderer.
     Hit walling;
 }
 Hits;
 
-Hits xzhits();
+Hits xzhits(void);
 
 Hits xmarch(const Point where, const Point direction, const Map);

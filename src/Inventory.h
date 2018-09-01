@@ -14,9 +14,9 @@ typedef struct
 }
 Inventory;
 
-Inventory xzinv();
+Inventory xzinv(void);
 
-Inventory xinvnew();
+Inventory xinvnew(void);
 
 Inventory xinvselect(Inventory, const Input);
 

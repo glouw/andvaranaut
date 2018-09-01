@@ -10,13 +10,12 @@ typedef struct
 }
 Points;
 
-Points xzpoints();
+Points xzpoints(void);
 
 Points xpsnew(const int max);
 
 Points xpsadd(Points, const Point);
 
-// Add a unique point to <a> from <b>.
 Points xpsadduq(Points a, const Points b);
 
 Points xpscat(Points, const Points other);

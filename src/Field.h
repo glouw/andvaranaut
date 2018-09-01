@@ -8,18 +8,19 @@ typedef struct
     float** mesh;
     int rows;
     int cols;
+
     // If the field resolution is 1 then pathfinding matches the map 1:1.
     // Higher resolutions allow for more precise sprites movements at the
     // expense of sprites grouping up closer to each other.
     // Higher resolutions also eats more CPU cycles.
     int res;
+
     int aura;
 }
 Field;
 
-Field xzfield();
+Field xzfield(void);
 
-// Collaborative Diffusion path finding.
 void xdiffuse(const Field, const Point where);
 
 Field xprepare(const Map, const float aura);

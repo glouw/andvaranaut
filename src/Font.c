@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Font xfzero()
+Font xfzero(void)
 {
     static Font font;
     return font;

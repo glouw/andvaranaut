@@ -4,7 +4,7 @@
 
 #include <math.h>
 
-Projection xzproj()
+Projection xzproj(void)
 {
     static Projection proj;
     return proj;

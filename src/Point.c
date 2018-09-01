@@ -6,7 +6,7 @@
 #include <math.h>
 #include <float.h>
 
-Point xzpoint()
+Point xzpoint(void)
 {
     static Point point;
     return point;

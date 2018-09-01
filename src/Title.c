@@ -44,23 +44,24 @@ void xttset(const int start, const int end, const int linger, const char* const 
     va_end(args);
 }
 
-void xttclear()
+void xttclear(void)
 {
     xttset(0, 0, false, "");
 }
 
-void xttstuckclear()
+void xttstuckclear(void)
 {
-    if(tt->linger) xttclear();
+    if(tt->linger)
+        xttclear();
 }
 
-void xttinit()
+void xttinit(void)
 {
     tt = xwipe(Title, 1);
     xttclear();
 }
 
-static int done()
+static int done(void)
 {
     return !tt->linger && tt->now > tt->end;
 }

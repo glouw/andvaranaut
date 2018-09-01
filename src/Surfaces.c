@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Surfaces xzsurf()
+Surfaces xzsurf(void)
 {
     static Surfaces surf;
     return surf;
@@ -29,7 +29,7 @@ static SDL_Surface* load(const char* const path)
     return converted;
 }
 
-Surfaces xpull()
+Surfaces xpull(void)
 {
     static const char* const names[] = {
         // ASCII representable indices are used for sprites and tiles.

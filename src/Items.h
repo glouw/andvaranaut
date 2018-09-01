@@ -9,7 +9,7 @@ typedef struct
 }
 Items;
 
-Items xzitems();
+Items xzitems(void);
 
 Items xitsnew(const int max);
 

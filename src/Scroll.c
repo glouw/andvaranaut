@@ -4,7 +4,7 @@
 
 #include "util.h"
 
-Scroll xsczero()
+Scroll xsczero(void)
 {
     static Scroll sc;
     return sc;
@@ -45,7 +45,7 @@ int xsindex(const Scroll sc)
     return index;
 }
 
-Scroll xscnew()
+Scroll xscnew(void)
 {
     #define SCROLLS (24)
     #define WIDTH (9)

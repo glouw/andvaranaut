@@ -9,7 +9,7 @@ typedef struct
 }
 Line;
 
-Line xzline();
+Line xzline(void);
 
 Line xrotate(const Line, const float t);
 
