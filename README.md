@@ -2,7 +2,7 @@
 
 # Andvaranaut
 
-A dungeon crawler with procedural dungeon generation, many items, many monsters, puzzles, and more!
+A dungeon crawler with procedural dungeon generation, many items, many monsters, many puzzles, and so much more!
 
 ## Building
 
@@ -18,13 +18,17 @@ Color pallette by DawnBringer.
 
 ![](art/screenshots/bigfoot_v3.png)
 
-## Thankyous
+## Special Thanks
 
-Halic (Mac)
+Halic (Mac) - Prototype tile and sprite art work
 
 ## Source Tips
-Andvaranaut:
-* compiles cleanly with any ISO C99 / C++98 compliant compiler.
-* builds very quickly (6.23 seconds on an Intel(R) Core(TM) i5-3320M CPU @ 2.60GHz).
-* uses a software graphics engine built on SDL2 to aid cross system portability.
-* groups source and header files by typedef.
+* A function's first argument type specifies which file its from.
+* No global state (unless static local variables are counted).
+* Compiles cleanly with any ISO C99 / C++98 compliant compiler.
+* Builds very quickly with link time optimization (6.23 seconds on an Intel(R) Core(TM) i5-3320M CPU @ 2.60GHz).
+* Cross system portability is aided by only using SDL2 libraries.
+
+## Notice
+
+Andvaranaut will always be free. Enjoy, and please feel free to contribute, be it this repo or your own fork!

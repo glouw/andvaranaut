@@ -49,6 +49,7 @@ CMP = $(CC)
 # -----------------------------------------------------------------------------
 
 NAME = ../andvaranaut
+
 ifdef ComSpec
 BIN = $(NAME).exe
 else
@@ -60,6 +61,7 @@ endif
 # -----------------------------------------------------------------------------
 
 SRCS =
+
 SRCS += main.c
 SRCS += util.c
 SRCS += Args.c
@@ -108,8 +110,9 @@ SRCS += World.c
 # -----------------------------------------------------------------------------
 
 CMP_FLAGS =
+
 ifdef ComSpec
-CMP_FLAGS += -I../../SDL2-2.0.7/i686-w64-mingw32/include
+CMP_FLAGS += -I../../SDL2*/i686-w64-mingw32/include
 endif
 
 # Warnings.
@@ -129,11 +132,13 @@ CMP_FLAGS += -flto
 # -----------------------------------------------------------------------------
 
 LIB_FLAGS =
+
 ifdef ComSpec
-LIB_FLAGS += -L../../SDL2-2.0.7/i686-w64-mingw32/lib
+LIB_FLAGS += -L../../SDL2*/i686-w64-mingw32/lib
 LIB_FLAGS += -lmingw32
 LIB_FLAGS += -lSDL2main
 endif
+
 LIB_FLAGS += -lm
 LIB_FLAGS += -lSDL2
 LIB_FLAGS += -lSDL2_ttf
