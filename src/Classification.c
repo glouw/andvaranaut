@@ -14,7 +14,7 @@ int xcindices(const Classification c)
     case     AMMO: return 25;
     case   AMULET: return 17;
     case    ARMOR: return 59;
-    case     BOOK: return 65; // There will be lots of lore to write...
+    case     BOOK: return 65;
     case     BOOT: return 10;
     case    CHEST: return 16;
     case    FLESH: return 62;
@@ -79,11 +79,8 @@ int xismagic(const Classification c)
 
 int xisconsumable(const Classification c)
 {
-    // Books for knowledge? Increases skill of some sort?
     return c == BOOK
-        // Repelenish fatigue.
         || c == FOOD
-        || c == FLESH // Yuck. Eat if you have to.
-        // Repairs items? Repleneshis fatigue and Health?
+        || c == FLESH
         || c == TOOL;
 }

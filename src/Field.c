@@ -15,7 +15,7 @@ Field xzfield()
 Field xprepare(const Map map, const float aura)
 {
     Field field = xzfield();
-    field.res = 2; /* Whatever feels best. */
+    field.res = 2; // Whatever feels best.
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
     field.mesh = xtoss(float*, field.rows);
@@ -57,12 +57,6 @@ static int largest(float* gradients, const int size)
         if(gradients[i] > max)
             max = gradients[i], index = i;
     return index;
-}
-
-// TODO: Use this for sensing sprites in range.
-int xsensed(const Field field, const Point from, const Point to)
-{
-    return xmag(xsub(from, to)) > field.aura / field.res;
 }
 
 Point xforce(const Field field, const Point from, const Point to, const Map map)

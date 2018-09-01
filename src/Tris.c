@@ -1,7 +1,6 @@
 #include "Tris.h"
 
 #include "Points.h"
-#include "Direction.h"
 #include "Map.h"
 #include "Flags.h"
 #include "util.h"
@@ -196,9 +195,9 @@ static int descending(const void* a, const void* b)
     return len(ea) < len(eb) ? 1 : len(ea) > len(eb) ? -1 : 0;
 }
 
-static void sort(const Tris edges, const Direction direction)
+static void sort(const Tris edges)
 {
-    qsort(edges.tri, edges.count, sizeof(Tri), direction);
+    qsort(edges.tri, edges.count, sizeof(Tri), descending);
 }
 
 static int connected(const Point a, const Point b, const Tris edges, const Flags flags)
@@ -249,7 +248,7 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
 // Reverse Delete (C) Kruskal 1956.
 static void revdel(Tris edges, const int w, const int h, const Flags flags)
 {
-    sort(edges, descending);
+    sort(edges);
     for(int i = 0; i < edges.count; i++)
     {
         Tri* edge = &edges.tri[i];

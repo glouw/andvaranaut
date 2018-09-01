@@ -1,7 +1,6 @@
 #include "Sprites.h"
 
 #include "Field.h"
-#include "Direction.h"
 #include "Title.h"
 #include "Inventory.h"
 #include "util.h"
@@ -74,9 +73,9 @@ static int comparator(const void* a, const void* b)
     return xmag(pa) < xmag(pb) ? 1 : xmag(pa) > xmag(pb) ? -1 : 0;
 }
 
-static void sort(const Sprites sprites, const Direction direction)
+static void sort(const Sprites sprites)
 {
-    qsort(sprites.sprite, sprites.count, sizeof(Sprite), direction);
+    qsort(sprites.sprite, sprites.count, sizeof(Sprite), comparator);
 }
 
 static void turn(const Sprites sprites, const float theta)
@@ -103,7 +102,7 @@ void xplback(const Sprites sprites, const Hero hero)
 static void arrange(const Sprites sprites, const Hero hero)
 {
     pull(sprites, hero);
-    sort(sprites, comparator);
+    sort(sprites);
     push(sprites, hero);
 }
 
