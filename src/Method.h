@@ -6,5 +6,6 @@ typedef enum
     MELEE,
     MAGIC,
     RANGE,
+    METHODS
 }
 Method;

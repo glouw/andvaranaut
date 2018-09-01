@@ -27,7 +27,7 @@ typedef enum
     TOOL,
     WAND,
     NONE,
-    CLASSIFICATIONS,
+    CLASSIFICATIONS
 }
 Classification;
 

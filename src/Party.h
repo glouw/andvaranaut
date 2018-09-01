@@ -4,6 +4,6 @@ typedef enum
 {
     FLORING,
     WALLING,
-    CEILING,
+    CEILING
 }
 Party;
