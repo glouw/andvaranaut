@@ -15,7 +15,7 @@ Inventory xinvnew(void)
 {
     const Inventory inv = { xitsnew(12), 0, 32, -1 };
 
-    const Item noob[] = {
+    const Item noobits[] = {
         xitnew(SHORTWEP, 0),
         xitnew(WAND, 0),
         xitnew(AMMO, 8),
@@ -26,8 +26,8 @@ Inventory xinvnew(void)
         xitnew(SCROLL, 12),
     };
 
-    for(int i = 0; i < xlen(noob); i++)
-        xitsadd(inv.items, noob[i]);
+    for(int i = 0; i < xlen(noobits); i++)
+        xitsadd(inv.items, noobits[i]);
 
     return inv;
 }
@@ -37,14 +37,13 @@ static int inside(const Inventory inv, const Input in, const int xres)
     return in.x > xres - inv.width;
 }
 
-// There are only four fingers (minus the thumb) on your left hand,
-// which makes inventory selection at best the first four items.
 Inventory xinvselect(Inventory inv, const Input in)
 {
     if(in.key[SDL_SCANCODE_1]) inv.selected = 0;
     if(in.key[SDL_SCANCODE_2]) inv.selected = 1;
     if(in.key[SDL_SCANCODE_3]) inv.selected = 2;
     if(in.key[SDL_SCANCODE_4]) inv.selected = 3;
+
     return inv;
 }
 
@@ -75,33 +74,25 @@ void xwhatis(const Inventory inv, const Scroll sc, const Timer tm)
         const int b = tm.renders + 90;
         const Item it = inv.items.item[inv.hilited];
 
-        // Scroll info (draws casting shape to screen).
+        // Scroll info.
         if(it.c == SCROLL)
         {
             char* const squares = xsstr(sc, it.index);
             xttset(a, b, true,
-                "%s\n" // C-string
-                "%s\n" // Description.
-                "%s\n" // Name.
-                "%s\n" // Squares
-                ,
-                it.cstr,
-                it.desc,
-                it.name,
-                squares);
+                "%s\n"
+                "%s\n"
+                "%s\n"
+                "%s\n",
+                it.cstr, it.desc, it.name, squares);
             free(squares);
         }
         // General item info.
         else
             xttset(a, b, true,
-                "%s\n" // C-string
-                "%s\n" // Description
-                "%s\n" // Name.
-                "Damage: %0.1f\n"
-                ,
-                it.cstr,
-                it.desc,
-                it.name,
-                (double) it.damage);
+                "%s\n"
+                "%s\n"
+                "%s\n"
+                "Damage: %0.1f\n",
+                it.cstr, it.desc, it.name, (double) it.damage);
     }
 }

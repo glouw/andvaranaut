@@ -32,19 +32,15 @@ static char** mnew(const int rows, const int cols, const int blok)
 
 Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid)
 {
-    // Sheers indicate the height of either the eye level middle wall (md)
-    // or the upper level wall (up).
-    // Randomize sheers.
-    const Sheer md = {
+    const Sheer mid = {
         0.0f,
-        md.a + (float) (rand() % 2)
+        mid.a + (float) (rand() % 2)
     };
-    const Sheer up = {
-        md.b + 1.0f,
-        up.a + (float) (rand() % 2)
+    const Sheer top = {
+        mid.b + 1.0f,
+        top.a + (float) (rand() % 2)
     };
 
-    // Construct map.
     Map map = xzmap();
 
     map.rows = rows;
@@ -57,14 +53,13 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
     map.trapdoors = trapdoors;
     map.rooms = xrsinit(interests);
 
-    map.upper = up;
-    map.middle = md;
+    map.upper = top;
+    map.middle = mid;
     map.grid = grid;
 
     return map;
 }
 
-// Lookup (find) theme.
 Theme lutheme(const Map map, const Point where)
 {
     for(int i = 0; i < map.rooms.count; i++)
@@ -73,13 +68,11 @@ Theme lutheme(const Map map, const Point where)
     return NO_THEME;
 }
 
-// Returns string of theme if found.
 static char* themestr(const Map map, const Point where)
 {
     return xthname(lutheme(map, where));
 }
 
-// Returns true if change in theme with respect to position.
 static int themech(const Map map, const Point where)
 {
     int change = false;
@@ -99,7 +92,6 @@ static int themech(const Map map, const Point where)
     return change;
 }
 
-// Theme title.
 void xmthemett(const Map map, const Point where, const Timer tm)
 {
     if(themech(map, where))
@@ -124,13 +116,12 @@ void xmedit(const Map map, const Overview ov)
 
     const int ascii = ov.selected + ' ';
 
-    // If the ascii is an alpha character then it is a sprite
     if(xsissprite(ascii))
         return;
 
-    // Otherwise place the ascii character.
     const int x = ov.where.x;
     const int y = ov.where.y;
+
     if(ov.party == FLORING) map.floring[y][x] = ascii;
     if(ov.party == WALLING) map.walling[y][x] = ascii;
     if(ov.party == CEILING) map.ceiling[y][x] = ascii;
@@ -148,7 +139,6 @@ void xmroom(const Map map, const Point where, const int w, const int h, const Pa
         case WALLING: map.walling[yy][xx] = ' '; break;
         case CEILING: map.ceiling[yy][xx] = ' '; break;
         case FLORING:
-            // Will only dig out if nothing is above.
             if(map.walling[yy][xx] == ' ')
                 map.floring[yy][xx] = ' ';
             break;
@@ -167,7 +157,6 @@ void xmpole(const Map map, const Point where, const int ascii)
     map.ceiling[y][x] = map.walling[y][x] = map.floring[y][x] = ascii;
 }
 
-// Supports for trapdoors are only put down for ceiling parties.
 static void supports(const Map map, const int x, const int y, const Party p)
 {
     if(p == CEILING)
@@ -253,19 +242,16 @@ static void cross(const Map map, const int x, const int y, const char a, const c
     if(map.walling[y - end][x + 0] == a) map.walling[y - end][x + 0] = b;
 }
 
-// Adds doors to block corridoors.
 static void door(const Map map, const int x, const int y)
 {
     cross(map, x, y, ' ', '!');
 }
 
-// Adds a passge to a formerly blocked corridoor.
 static void pass(const Map map, const int x, const int y)
 {
     cross(map, x, y, '!', ' ');
 }
 
-// Barricades (first) a room from other rooms only if there are agents in the room.
 void xmbarricade(const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
@@ -282,19 +268,16 @@ void xmbarricade(const Map map)
     }
 }
 
-// Minimum room size.
 int xmrmin(const Map map)
 {
     return map.grid / 8;
 }
 
-// Maximum room size.
 int xmrmax(const Map map)
 {
     return map.grid / 2;
 }
 
-// Generates room tiles based on room theme.
 void xmthemeate(const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
@@ -303,11 +286,7 @@ void xmthemeate(const Map map)
         switch(map.rooms.themes[i])
         {
         case WATER_WELL:
-            // Pools of water are rooms carved out of the floor.
             xmroom(map, where, xmrmin(map), xmrmin(map), FLORING);
-
-            // In there is no platform from a trapdoor then this platform will
-            // catch the player from falling in water.
             xmplatform(map, where.x, where.y, FLORING);
             break;
 

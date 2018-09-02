@@ -4,9 +4,6 @@
 
 #include <stdlib.h>
 
-// All these names were created with Fantasy Name Generators:
-// http://www.fantasynamegenerators.com
-
 Item xzitem(void)
 {
     static Item item;

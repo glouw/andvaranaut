@@ -64,18 +64,15 @@ static void rceil(const Scanline sl, const Ray r, const Map map)
 
 static void rsky(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
 {
-    // Zeroth floor renders sky.
     if(floor == 0)
     {
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
             const Sheer sa = { 0.0f, clouds.height };
             const Point a = xlerp(r.trace, xccast(xsheer(r.proj, sa), x));
-            // Scale multiply enlargen clouds.
             xfer(sl, x, xdiv(xabs(xsub(a, clouds.where)), 8.0f), '&' - ' ', xilluminate(r.torch, xmag(xsub(a, r.trace.a))));
         }
     }
-    // Remaining floors render a second ceiling instead.
     else
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
@@ -124,7 +121,6 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
     }
 }
 
-// Returns wall z-buffer for sprite clipping.
 static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     const Ray ray = xcalc(hero, hits.walling, map.middle, sl.sdl.yres, sl.sdl.xres);

@@ -127,13 +127,12 @@ int main(int argc, char* argv[])
 
         in = xpump(in);
 
-        // Caps framerate. Only effective if VSYNC is off.
+        // Caps framerate in software - only effective if VSYNC is off.
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0f / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
     }
 
-    // No need to free dynamic pooled memory.
-    // The OS will do for us which gives us a quick exit.
+    // No need to free anything - the OS will do it with a quicker exit.
     return 0;
 }

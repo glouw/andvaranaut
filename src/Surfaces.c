@@ -26,10 +26,9 @@ static SDL_Surface* load(const char* const path)
 Surfaces xpull(void)
 {
     static const char* const names[] = {
-        // ASCII representable indices are used for sprites and tiles.
-        // Alpha ASCII is for sprites.
-        // Non-Alpha ASCII is for tiles.
-        // Items and GUI things start at '~' and go on from there.
+        // Sprites: Alpha ASCII
+        // Tiles: Non-Alpha ASCII
+        // Items and GUI: '~' and up.
         /*        */ "art/tiles/delete.bmp",
         /* !      */ "art/tiles/error.bmp",
         /* "      */ "art/tiles/floor.bmp",

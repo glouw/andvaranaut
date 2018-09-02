@@ -156,10 +156,8 @@ Point xrand(Point a, const int grid)
 {
     a.x += rand() % grid - grid / 2.0f;
     a.y += rand() % grid - grid / 2.0f;
-
     a.x += 0.75f * (xfrand() - 0.5f);
     a.y += 0.75f * (xfrand() - 0.5f);
-
     return a;
 }
 

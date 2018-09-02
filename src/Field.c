@@ -15,7 +15,7 @@ Field xzfield(void)
 Field xprepare(const Map map, const float aura)
 {
     Field field = xzfield();
-    field.res = 2; // Whatever feels best.
+    field.res = 2;
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
     field.mesh = xtoss(float*, field.rows);

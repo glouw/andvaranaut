@@ -12,7 +12,6 @@ Hero xzhero(void)
 
 static Line lens(const float focal)
 {
-    // A focal value of 1.0 will create a 90 degree field of view.
     const Line fov = {
         { focal, -1.0f },
         { focal, +1.0f },
@@ -23,6 +22,7 @@ static Line lens(const float focal)
 Hero xspawn(const float focal, const Point where, const int floor)
 {
     Hero hero = xzhero();
+
     hero.floor = floor;
     hero.fov = lens(focal);
     hero.where = where;
@@ -41,6 +41,7 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.ftg = 6.0f;
     hero.ftgmax = 6.0f;
     hero.warning = 0.25f;
+
     return hero;
 }
 
@@ -53,12 +54,15 @@ static Hero spin(Hero hero, const Input input)
 static Hero yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dy * input.sy;
+
     const float max = 1.80f;
     const float min = 0.20f;
+
     hero.yaw =
         hero.yaw > max ? max :
         hero.yaw < min ? min :
         hero.yaw;
+
     return hero;
 }
 
@@ -70,19 +74,16 @@ static Hero look(const Hero hero, const Input input)
     return yaw(spin(hero, input), input);
 }
 
-// Ducking height.
 static float hduck(const Hero hero)
 {
     return 0.7f * hero.tall;
 }
 
-// Swimming height.
 static float hswim(const Hero hero)
 {
     return 0.1f * hero.tall;
 }
 
-// Handles vertical physics like jumping and faling into pits.
 static Hero vert(Hero hero, const Map map, const Input input)
 {
     const int onland = xtile(hero.where, map.floring);
@@ -90,14 +91,11 @@ static Hero vert(Hero hero, const Map map, const Input input)
     const int jumped = input.key[SDL_SCANCODE_SPACE];
     const int crouch = input.key[SDL_SCANCODE_LCTRL];
 
-    // Jump.
     if(jumped && hero.height <= tall)
         hero.vvel = 0.05f;
 
-    // Apply.
     hero.height += hero.vvel;
 
-    // Fall.
     if(hero.height > tall)
         hero.vvel -= 0.005f;
     else
@@ -106,15 +104,14 @@ static Hero vert(Hero hero, const Map map, const Input input)
         hero.height = tall;
     }
 
-    // Clamp jumping and falling.
     const float max = 0.95f;
     const float min = 0.05f;
     if(hero.height > max) hero.height = max;
     if(hero.height < min) hero.height = min;
 
-    // Crouch override - only works on land.
     if(crouch && onland)
         hero.height = hduck(hero);
+
     return hero;
 }
 
@@ -139,7 +136,6 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     const int crouching = hero.height <= hduck(hero);
     const float speed = swimming ? 0.3f * hero.speed : crouching ? 0.5f * hero.speed : hero.speed;
 
-    // Acceleration.
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
     || input.key[SDL_SCANCODE_D]
@@ -151,19 +147,17 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
         if(input.key[SDL_SCANCODE_D]) hero.velocity = xadd(hero.velocity, xrag(acceleration));
         if(input.key[SDL_SCANCODE_A]) hero.velocity = xsub(hero.velocity, xrag(acceleration));
     }
-    // Mass spring damper if not accelerating.
-    else hero.velocity = xmul(hero.velocity, 1.0f - hero.acceleration / speed);
+    else
+        hero.velocity = xmul(hero.velocity, 1.0f - hero.acceleration / speed);
 
-    // Current velocity is added to hero velocity if hero is swimming.
-    if(swimming) hero.velocity = xadd(hero.velocity, current.velocity);
+    if(swimming)
+        hero.velocity = xadd(hero.velocity, current.velocity);
 
-    // Top speed check.
-    if(xmag(hero.velocity) > speed) hero.velocity = xmul(xunt(hero.velocity), speed);
+    if(xmag(hero.velocity) > speed)
+        hero.velocity = xmul(xunt(hero.velocity), speed);
 
-    // Moves and checks for a collision.
     hero.where = xadd(hero.where, hero.velocity);
 
-    // Reset hero if collision.
     if(xtile(hero.where, map.walling))
     {
         hero.velocity = xzpoint();
@@ -172,14 +166,12 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     return hero;
 }
 
-// Teleport up.
-static int tup(const Hero hero, const Map map)
+static int telup(const Hero hero, const Map map)
 {
     return hero.yaw < 1.0f && xmisportal(map.ceiling, hero.where);
 }
 
-// Teleport down.
-static int tdn(const Hero hero, const Map map)
+static int teldn(const Hero hero, const Map map)
 {
     return hero.yaw > 1.0f && xmisportal(map.floring, hero.where);
 }
@@ -196,55 +188,42 @@ int xteleporting(const Hero hero, const Map map, const Input input, const Timer 
         return false;
 
     last = tm.ticks;
-    return tup(hero, map)
-        || tdn(hero, map);
+    return telup(hero, map)
+        || teldn(hero, map);
 }
 
 Hero xteleport(Hero hero, const Map map)
 {
-    // Look up to teleport a floor up. Look down to teleport a floor down.
-    if(tup(hero, map))
+    if(telup(hero, map))
         hero.floor--;
 
-    if(tdn(hero, map))
+    if(teldn(hero, map))
     {
         hero.floor++;
-
-        // Gives a falling effect.
         hero.height = 0.80;
     }
 
-    // The teleport effect is done by reseting the hero yaw to the horizon. The torch is also put out.
     hero.yaw = 1.0f;
     hero.torch = xsnuff();
 
     return hero;
 }
 
-// Calculates a projection ray based on a wall hit. Shift determines the ceiling height if positive or the water height if negative.
 Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, const int xres)
 {
     const Point end = xsub(hit.where, hero.where);
-
-    // The corrected point is the normal distance from the hero to where the ray hit.
     const Point corrected = xtrn(end, -hero.theta);
-
-    // Wall projections are calculated calculated based hero view parameters, and the corrected distance.
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, xres, hero.fov.a.x, hero.yaw, corrected, hero.height);
-
-    // The engine supports lower, eye level, and upper walls.
     const Ray ray = { trace, corrected, xsheer(projection, sheer), hit.surface, hit.offset, hero.torch };
 
-    // A ray object will hold enough information to draw a wall projection on the screen with the right lighting value.
     return ray;
 }
 
-// Generate recoil if ranged.
 Hero xrecoil(Hero hero, const Method method)
 {
     if(method == RANGE)
-        // TODO: Different weapons have different recoil. Add this in.
+        // TODO: Different weapons have different recoil?
         hero.vyaw = 0.12f;
 
     hero.yaw -= (hero.vyaw *= 0.8f);
@@ -269,5 +248,6 @@ Hero xsustain(Hero hero, const Map map, const Input input, const Flow current, c
     hero = move(hero, map, input, current);
     hero = breath(hero, tm);
     hero.torch = xburn(hero.torch);
+
     return hero;
 }

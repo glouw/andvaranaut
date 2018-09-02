@@ -14,7 +14,6 @@ typedef struct
 }
 Title;
 
-// Makes little sense to pass a title object to every function.
 static Title* tt = NULL;
 
 void xttadvance(const int now)

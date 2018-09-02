@@ -22,17 +22,11 @@ Sprites xsnew(const int max)
 
 static Sprites append(Sprites sprites, const Sprite sprite)
 {
-    // Resize if no size.
     if(sprites.max == 0)
         xretoss(sprites.sprite, Sprite, sprites.max = 1);
-
-    // Resize if capped.
     if(sprites.count >= sprites.max)
         xretoss(sprites.sprite, Sprite, sprites.max *= 2);
-
-    // Append.
     sprites.sprite[sprites.count++] = sprite;
-
     return sprites;
 }
 
@@ -40,12 +34,9 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov)
 {
     if(xmout(map, ov.where))
         return sprites;
-
     const int ascii = ov.selected + ' ';
-
     if(xsissprite(ascii))
         sprites = append(sprites, xsregistrar(ascii, ov.where));
-
     return sprites;
 }
 
@@ -138,25 +129,21 @@ static void move(const Sprites sprites, const Field field, const Point to, const
             continue;
         const Point dir = xforce(field, sprite->where, to, map);
 
-        // No force of direction...
+        // No force applied - slow down.
         if(dir.x == 0.0f && dir.y == 0.0f)
         {
-            // Some sprites do not move.
             if(sprite->speed == 0.0f)
                 continue;
 
-            // Slow down.
             sprite->velocity = xmul(sprite->velocity, 1.0f - sprite->acceleration / sprite->speed);
         }
-        // Speed up.
+        // Force applied - speed up.
         else
         {
             const Point acc = xmul(dir, sprite->acceleration);
             sprite->velocity = xadd(sprite->velocity, acc);
 
-            // Check top speed.
             if(xmag(sprite->velocity) > sprite->speed)
-                // And cap speed if the top speed is surpassed.
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
         sprite->state = xmag(sprite->velocity) > 0.005f ? CHASING : IDLE;
@@ -179,10 +166,10 @@ static void scentwall(const Field field, const Point where, const Map map, const
 
         if(xon(field, j, i))
         {
-            // Walls.
+            // Scent walls.
             field.mesh[j][i] = map.walling[y][x] == ' ' ? 0.0f : -scent;
 
-            // Water.
+            // Scent water.
             if(map.floring[y][x] == ' ')
                 field.mesh[j][i] = -scent;
         }
@@ -331,18 +318,12 @@ static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv,
     return sprites;
 }
 
-// Hurts the closest sprite(s) based on weapon "hurt" value.
-// Eg. A weapon with a hurt value of 3 will hurt 3 sprites at most with a single attack.
 Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, const Timer tm)
 {
     if(in.lu)
     {
-        // The last attack method is saved within the sprites container for other objects to know
-        // how the sprites were last impacted.
-        // For example, the hero yaw may get a recoil bump when a bow is shot.
         sprites.last = attack.method;
 
-        // Do the attack.
         if(attack.method == MELEE)
             return hmelee(sprites, attack, inv, tm, hero);
 
@@ -352,8 +333,6 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
         if(attack.method == MAGIC)
             return hmagic(sprites, attack, inv, tm, hero);
     }
-
-    // Of course, if no attack happened, then the sprites were not harmed.
     sprites.last = NOATTACK;
 
     return sprites;
@@ -392,72 +371,64 @@ static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
 Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Timer tm)
 {
     arrange(sprites, hero);
-
     idle(sprites, tm);
-
     route(sprites, field, map, hero);
-
     move(sprites, field, hero.where, map);
-
     bound(sprites, map);
-
     return damage(hero, sprites, tm);
 }
 
-static Point freerand(const Point mid, const Map m)
+static Point freerand(const Point mid, const Map map)
 {
-    const Point where = xrand(mid, m.grid / 1.5);
+    const Point where = xrand(mid, map.grid / 1.5);
     const int x = where.x;
     const int y = where.y;
 
-    // No wall. Must have floor.
-    return m.walling[y][x] == ' '
-        && m.floring[y][x] != ' ' ? where : freerand(mid, m);
+    return map.walling[y][x] == ' '
+        && map.floring[y][x] != ' ' ? where : freerand(mid, map);
 }
 
-// Populates a room with a nice garden of sprites.
-static Sprites pngarden(Sprites sprites, const Map m, const Point mid)
+static Sprites pngarden(Sprites sprites, const Map map, const Point mid)
 {
     const int flowers = 128;
     for(int i = 0; i < flowers; i++)
     {
-        const Point where = freerand(mid, m);
+        const Point where = freerand(mid, map);
         sprites = append(sprites, xsregistrar('a', where));
     }
 
-    // Caretaker.
-    const Point where = freerand(mid, m);
+    const Point where = freerand(mid, map);
     sprites = append(sprites, xsregistrar('b', where));
 
     return sprites;
 }
 
-Sprites xspopulate(Sprites sprites, const Map m)
+Sprites xspopulate(Sprites sprites, const Map map)
 {
-    for(int i = 0; i < m.rooms.count; i++)
+    for(int i = 0; i < map.rooms.count; i++)
     {
-        const Point mid = m.rooms.wheres[i];
+        const Point mid = map.rooms.wheres[i];
 
-        switch(m.rooms.themes[i])
+        switch(map.rooms.themes[i])
         {
         case NICE_GARDEN:
-            sprites = pngarden(sprites, m, mid);
+            sprites = pngarden(sprites, map, mid);
             break;
 
         // TODO: TEMP. Just puts a guy in a room for now so that each room has some sort of placeholder.
         default:
-            sprites = append(sprites, xsregistrar('b', freerand(mid, m)));
+            sprites = append(sprites, xsregistrar('b', freerand(mid, map)));
             break;
         }
     }
     return sprites;
 }
 
-Map xscount(const Sprites sprites, Map m)
+Map xscount(const Sprites sprites, Map map)
 {
-    for(int i = 0; i < m.rooms.count; i++)
+    for(int i = 0; i < map.rooms.count; i++)
     {
-        m.rooms.agents[i] = 0;
+        map.rooms.agents[i] = 0;
         for(int s = 0; s < sprites.count; s++)
         {
             Sprite* const sprite = &sprites.sprite[s];
@@ -471,9 +442,9 @@ Map xscount(const Sprites sprites, Map m)
             if(xisdead(sprite->state))
                 continue;
 
-            if(xeql(sprite->where, m.rooms.wheres[i], m.grid))
-                m.rooms.agents[i]++;
+            if(xeql(sprite->where, map.rooms.wheres[i], map.grid))
+                map.rooms.agents[i]++;
         }
     }
-    return m;
+    return map;
 }

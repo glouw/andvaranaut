@@ -51,7 +51,6 @@ Scroll xscnew(void)
     #define WIDTH (9)
     #define SQUARES (WIDTH * WIDTH)
 
-    // Runes live in .bss.
     static int runes[SCROLLS][SQUARES] = {
         {
             0,0,0,0,0,0,0,0,0,
@@ -309,7 +308,6 @@ Scroll xscnew(void)
     // to ensure that the number of scrolls present in art/items/scroll.bmp
     // matches the hard coded number of scrolls. The game must exit if this
     // does not match.
-
     return sc;
 }
 

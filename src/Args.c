@@ -31,10 +31,12 @@ static void check(const Args args)
 {
     if(args.threads <= 0)
         xbomb("error: not a valid CPU thread count (-t).\n");
+
     if(args.xres % args.threads)
         xbomb(
         "error: x-resolution (-x) not divisible by CPU thread count (-t).\n"
         "change either the number of rendering theads or resolution.\n");
+
     if(args.xres == 512)
         printf(
         "warning: an X-Resolution of 512 is reserved for performance testing\n"
@@ -47,59 +49,64 @@ static Args parsed(Args args, int argc, char* argv[])
     {
         if(argv[i][0] == '-')
         {
-            if(argv[i][1] == 'h') print(args), xbomb("");
+            if(argv[i][1] == 'h')
+                print(args), xbomb("");
+
             if(i + 1 == argc)
                 break;
+
             const char* const next = argv[i + 1];
             const char option = argv[i][1];
+
             switch(option)
             {
-            // X-Resolution.
             case 'x':
                 args.xres =
                     strtod(next, NULL);
                 break;
-            // Y-Resolution.
+
             case 'y':
                 args.yres =
                     strtod(next, NULL);
                 break;
-            // Focal Length.
+
             case 'f':
                 args.focal =
                     strtof(next, NULL);
                 break;
-            // VSync.
+
             case 'v':
                 args.vsync =
                     xequals(next, "true")  ? 1 : xequals(next, "t") ? 1 :
                     xequals(next, "false") ? 0 : xequals(next, "f") ? 0 :
                     strtod(next, NULL) != 0;
                 break;
-            // Frames per Second.
+
             case 'p':
                 args.fps =
                     strtod(next, NULL);
                 break;
-            // Mouse Sensitivity.
+
             case 'm':
                 args.msen =
                     strtof(next, NULL);
                 break;
-            // CPU Threads for the Renderer.
+
             case 't':
                 args.threads =
                     strtod(next, NULL);
                 break;
-            // Option not recognized.
+
             default:
                 xbomb("error: option -%c not recognized\n", option);
                 break;
             }
         }
     }
+
     print(args);
     check(args);
+
     return args;
 }
 
@@ -113,6 +120,7 @@ static Args defaults(void)
     args.fps = 60;
     args.msen = 0.007f;
     args.threads = 8;
+
     return args;
 }
 

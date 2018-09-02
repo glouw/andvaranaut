@@ -24,7 +24,6 @@ Overview xinit(void)
     return ov;
 }
 
-// When x and y are both -1 then then the left mouse is not pressed.
 static Overview reset(Overview ov)
 {
     ov.where.x = -1.0f;

@@ -44,4 +44,10 @@ float xsinc(const float x, const float p);
 
 #define FPI (3.1416f)
 
-int xd2(void), xd4(void), xd8(void), xd10(void);
+#define xd2() (rand() % 2)
+
+#define xd4() (rand() % 4)
+
+#define xd8() (rand() % 8)
+
+#define xd10() (rand() % 10)
