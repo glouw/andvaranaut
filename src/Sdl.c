@@ -12,7 +12,6 @@ Sdl xzsdl(void)
     return sdl;
 }
 
-// Rotates renderer 90 degrees and copies to backbuffer.
 static void churn(const Sdl sdl)
 {
     const SDL_Rect dst = {
@@ -24,13 +23,12 @@ static void churn(const Sdl sdl)
     SDL_RenderCopyEx(sdl.renderer, sdl.canvas, NULL, &dst, -90, NULL, SDL_FLIP_NONE);
 }
 
-// Presents backbuffer to the screen.
 void xpresent(const Sdl sdl)
 {
     SDL_RenderPresent(sdl.renderer);
 }
 
-// Clips a sprite, left and right, based on zbuffer ray caster.
+// Clips a sprite, left and right, based on z-buffer from the ray cast.
 static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Point* const zbuff)
 {
     SDL_Rect seen = frame;
@@ -90,20 +88,16 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SD
     SDL_Texture* const fill = xtget(ttf.fill, sdl.renderer, 0xFF, sentence);
     SDL_Texture* const line = xtget(ttf.line, sdl.renderer, 0xFF, sentence);
 
-    // Get font dimensions.
     int w = 0;
     int h = 0;
     TTF_SizeText(ttf.fill.type, sentence, &w, &h);
 
-    // Calculate where sentence will be placed on screen.
     const SDL_Rect to = {
         target.x + target.w / 2 - w / 2,
         target.y + target.h / 3, // TODO: Maybe tune the offset per sprite?
-        w,
-        h,
+        w, h
     };
 
-    // Transfer and cleanup.
     SDL_RenderCopy(sdl.renderer, fill, NULL, &to);
     SDL_RenderCopy(sdl.renderer, line, NULL, &to);
     SDL_DestroyTexture(fill);
@@ -207,15 +201,9 @@ Sdl xsetup(const Args args)
     sdl.renderer = SDL_CreateRenderer(
         sdl.window,
         -1,
-        // Hardware acceleration.
         SDL_RENDERER_ACCELERATED |
-        // Screen Vertical Sync on / off.
         (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0x0));
 
-    // The canvas texture will be used for per pixel drawings for the walls, floors, and ceiling.
-    // Notice the flip between yres and xres for the sdl canvas texture.
-    // This was done for fast caching. Upon presenting, the canvas will be rotated upwards by 90 degrees.
-    // Notice how ARGB8888 is used for the hardware. This is the fastest option for the CPU / GPU translations via SDL2.
     sdl.canvas = SDL_CreateTexture(
         sdl.renderer,
         SDL_PIXELFORMAT_ARGB8888,
@@ -230,7 +218,6 @@ Sdl xsetup(const Args args)
     sdl.surfaces = xpull();
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
 
-    // GUI surfaces start at this index of the surfaces.
     sdl.gui = '~' - ' ' + 25;
     sdl.wht = 0xFFDFEFD7;
     sdl.blk = 0xFF000000;
@@ -242,22 +229,12 @@ Sdl xsetup(const Args args)
 
 void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
 {
-    // Z-buffer will be populated once the map renderering is finished.
     Point* const zbuff = xtoss(Point, sdl.xres);
-
-    // The display must be locked for per-pixel writes.
-    void* screen;
-    int pitch;
-    SDL_LockTexture(sdl.canvas, NULL, &screen, &pitch);
-    const int width = pitch / sizeof(uint32_t);
-    uint32_t* pixels = (uint32_t*) screen;
-
-    // The camera is orientated to the players gaze.
     const Line camera = xrotate(hero.fov, hero.theta);
+    const Vram vram = xvlock(sdl.canvas);
 
-    // Rendering bundles are used for rendering a
-    // portion of the map (ceiling, walls, and flooring) to the backbuffer.
-    // One thread per CPU is allocated.
+    // Rendering bundles are used for rendering a portion of the map
+    // (ceiling, walls, and flooring) to the backbuffer. One thread per CPU is allocated.
     Bundle* const b = xtoss(Bundle, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
     {
@@ -265,8 +242,7 @@ void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprite
         b[i].b = (i + 1) * sdl.xres / sdl.threads;
         b[i].zbuff = zbuff;
         b[i].camera = camera;
-        b[i].pixels = pixels;
-        b[i].width = width;
+        b[i].vram = vram;
         b[i].sdl = sdl;
         b[i].hero = hero;
         b[i].current = current;
@@ -288,7 +264,7 @@ void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprite
 
     // Per-pixel writes for the floor, wall, and ceiling are now
     // complete for the entire backbuffer; unlock the display.
-    SDL_UnlockTexture(sdl.canvas);
+    xvunlock(sdl.canvas);
 
     // The map was rendered on its side for cache efficiency. Rotate the map upwards.
     churn(sdl);
@@ -666,64 +642,18 @@ void xdinv(const Sdl sdl, const Inventory inv)
     dinvits(sdl, inv);
 }
 
-// Draws the map rooms.
-static void drooms(uint32_t* pixels, const int width, const Map map, const uint32_t in, const uint32_t out)
-{
-    for(int y = 1; y < map.rows - 1; y++)
-    for(int x = 1; x < map.cols - 1; x++)
-    {
-        // Paint the walls.
-        if(map.walling[y][x] != ' ' && map.walling[y][x + 1] == ' ') pixels[x + y * width] = out;
-        if(map.walling[y][x] != ' ' && map.walling[y][x - 1] == ' ') pixels[x + y * width] = out;
-        if(map.walling[y][x] != ' ' && map.walling[y + 1][x] == ' ') pixels[x + y * width] = out;
-        if(map.walling[y][x] != ' ' && map.walling[y - 1][x] == ' ') pixels[x + y * width] = out;
-
-        // Paint the free space.
-        if(map.walling[y][x] == ' ') pixels[x + y * width] = in;
-
-        // Doors must not be drawn.
-        if(map.walling[y][x] == '!') pixels[x + y * width] = in;
-    }
-}
-
-// Like dbox, but with per pixel access for streaming targets. Does not use SDL_Rect.
-static void ddot(uint32_t* pixels, const int width, const Point where, const int size, const uint32_t in, const uint32_t out)
-{
-    for(int y = -size; y <= size; y++)
-    for(int x = -size; x <= size; x++)
-    {
-        const int xx = x + where.x;
-        const int yy = y + where.y;
-
-        pixels[xx + yy * width] = in;
-
-        if(x == -size) pixels[xx + yy * width] = out;
-        if(x == +size) pixels[xx + yy * width] = out;
-        if(y == -size) pixels[xx + yy * width] = out;
-        if(y == +size) pixels[xx + yy * width] = out;
-    }
-}
-
 // Draws the map.
 void xdmap(const Sdl sdl, const Map map, const Point where)
 {
-    // This map texture is not apart of the Sdl struct since it must be refreshed each frame via creation and destruction.
-    SDL_Texture* const texture = SDL_CreateTexture(sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
+    SDL_Texture* const texture = SDL_CreateTexture(
+        sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
-    // Lock.
-    void* screen;
-    int pitch;
-    SDL_LockTexture(texture, NULL, &screen, &pitch);
-    const int width = pitch / sizeof(uint32_t);
-    uint32_t* pixels = (uint32_t*) screen;
+    const Vram vram = xvlock(texture);
+    xvrooms(vram, map, sdl.wht, sdl.blk);
+    xvdot(vram, where, 3, sdl.red, sdl.blk);
+    xvunlock(texture);
 
-    // Draw rooms and hero dot.
-    drooms(pixels, width, map, sdl.wht, sdl.blk);
-    ddot(pixels, width, where, 3, sdl.red, sdl.blk);
-
-    // Unlock and send.
-    SDL_UnlockTexture(texture);
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };
     SDL_RenderCopy(sdl.renderer, texture, NULL, &dst);
     SDL_DestroyTexture(texture);

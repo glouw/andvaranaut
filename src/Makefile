@@ -103,6 +103,7 @@ SRCS += Surfaces.c
 SRCS += Textures.c
 SRCS += Torch.c
 SRCS += Tris.c
+SRCS += Vram.c
 SRCS += World.c
 
 # -----------------------------------------------------------------------------

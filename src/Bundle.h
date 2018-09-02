@@ -5,6 +5,7 @@
 #include "Hero.h"
 #include "Flow.h"
 #include "Map.h"
+#include "Vram.h"
 
 typedef struct
 {
@@ -12,8 +13,7 @@ typedef struct
     int b;
     Point* zbuff;
     Line camera;
-    uint32_t* pixels;
-    int width;
+    Vram vram;
     Sdl sdl;
     Hero hero;
     Flow current;
