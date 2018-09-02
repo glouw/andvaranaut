@@ -278,6 +278,17 @@ int xmrmax(const Map map)
     return map.grid / 2;
 }
 
+static void grass(const Map map, const Point where)
+{
+    for(int i = -xmrmax(map); i <= xmrmax(map); i++)
+    for(int j = -xmrmax(map); j <= xmrmax(map); j++)
+    {
+        const int x = where.x + i;
+        const int y = where.y + j;
+        map.floring[y][x] = '(';
+    }
+}
+
 void xmthemeate(const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
@@ -285,6 +296,10 @@ void xmthemeate(const Map map)
         const Point where = map.rooms.wheres[i];
         switch(map.rooms.themes[i])
         {
+        case NICE_GARDEN:
+            grass(map, where);
+            break;
+
         case WATER_WELL:
             xmroom(map, where, xmrmin(map), xmrmin(map), FLORING);
             xmplatform(map, where.x, where.y, FLORING);
