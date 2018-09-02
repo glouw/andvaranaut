@@ -213,8 +213,14 @@ static Sprites dropit(Sprites sprites, const Attack attack, const Point where)
 static void brokelb(const int ascii, const Inventory inv, const Timer tm)
 {
     if(ascii == 'd')
-        if(!xitsadd(inv.items, xitrand()))
+    {
+        const Item item = xitrand();
+        const int fit = xitsadd(inv.items, item);
+        if(fit)
+            xttset(tm.renders, tm.renders + 120, false, "Picked up %s", item.cstr);
+        else
             xttset(tm.renders, tm.renders + 120, false, "Inventory Full");
+    }
 }
 
 static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
