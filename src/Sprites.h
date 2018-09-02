@@ -18,8 +18,6 @@ typedef struct
 }
 Sprites;
 
-Sprites xzsprites(void);
-
 Sprites xsnew(const int max);
 
 void xorient(const Sprites, const Hero);

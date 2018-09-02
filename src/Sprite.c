@@ -1,7 +1,8 @@
 #include "Sprite.h"
 
-#include <ctype.h>
 #include "util.h"
+
+#include <ctype.h>
 
 Sprite xzsprite(void)
 {

@@ -15,13 +15,14 @@
 
 typedef struct
 {
+    // Window via operating system. Renderer is shown through here.
     SDL_Window* window;
 
-    // Final renderered frame including walls, ceiling, floors, sprites, sprites
-    // and any gui related elements if playing, or the editing screen when editing the map.
+    // Final rendered frame including walls, ceiling, floors, sprites, sprites
+    // and any GUI related elements if playing, or the editing screen when editing the map.
     SDL_Renderer* renderer;
 
-    // For per-pixel access when drawing walls, ceiling, and floors.
+    // For per-pixel access when software rendering walls, ceiling, and floors.
     SDL_Texture* canvas;
     int xres;
     int yres;
@@ -36,10 +37,10 @@ typedef struct
     // CPU rendering threads.
     int threads;
 
-    // Index of the gui in Surfaces type.
+    // Index of the GUI in surfaces.
     int gui;
 
-    // Custom gui colors.
+    // Custom GUI colors.
     uint32_t wht;
     uint32_t blk;
     uint32_t red;

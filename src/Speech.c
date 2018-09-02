@@ -2,17 +2,6 @@
 
 #include "util.h"
 
-Speech xzspeech(void)
-{
-    static Speech sp;
-    return sp;
-}
-
-Speech xspnew(void)
-{
-    return xzspeech();
-}
-
 Speech xspappend(Speech sp, const char* sentence)
 {
     if(sp.max == 0)

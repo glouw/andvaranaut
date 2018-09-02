@@ -8,12 +8,6 @@
 #include <ctype.h>
 #include <math.h>
 
-Sprites xzsprites(void)
-{
-    static Sprites sprites;
-    return sprites;
-}
-
 Sprites xsnew(const int max)
 {
     const Sprites sprites = { xtoss(Sprite, max), 0, max, NOATTACK };
@@ -435,10 +429,8 @@ Map xscount(const Sprites sprites, Map map)
 
             if(xiscosmetic(sprite->ascii))
                 continue;
-
             if(xisinanimate(sprite->ascii))
                 continue;
-
             if(xisdead(sprite->state))
                 continue;
 

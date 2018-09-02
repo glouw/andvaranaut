@@ -153,10 +153,8 @@ Surfaces xpull(void)
 
     const int count = xlen(names);
     SDL_Surface** const surface = xtoss(SDL_Surface*, count);
-
     for(int i = 0; i < count; i++)
         surface[i] = load(names[i]);
-
     const Surfaces surfaces = { surface, count };
     return surfaces;
 }

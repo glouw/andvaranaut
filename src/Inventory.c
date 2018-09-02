@@ -5,12 +5,6 @@
 
 #include <SDL2/SDL.h>
 
-Inventory xzinv(void)
-{
-    static Inventory inv;
-    return inv;
-}
-
 Inventory xinvnew(void)
 {
     const Inventory inv = { xitsnew(12), 0, 32, -1 };

@@ -63,7 +63,6 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
     return seen;
 }
 
-// Draws a rectangle the slow way.
 static void dbox(const Sdl sdl, const int x, const int y, const int width, const uint32_t color, const int filled)
 {
     const int a = (color >> 0x18) & 0xFF;
@@ -79,7 +78,6 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
         SDL_RenderDrawRect(sdl.renderer, &square);
 }
 
-// Renders character speech.
 static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SDL_Rect target, const Timer tm)
 {
     const int index = (tm.ticks / 6) % sprite->speech.count;
@@ -104,7 +102,7 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SD
     SDL_DestroyTexture(line);
 }
 
-// Pastes all visible sprites on screen.
+// Pastes all visible sprites to screen.
 static void paste(const Sdl sdl, const Ttf ttf, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
     for(int which = 0; which < sprites.count; which++)
@@ -233,8 +231,8 @@ void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprite
     const Line camera = xrotate(hero.fov, hero.theta);
     const Vram vram = xvlock(sdl.canvas);
 
-    // Rendering bundles are used for rendering a portion of the map
-    // (ceiling, walls, and flooring) to the backbuffer. One thread per CPU is allocated.
+    // Threaded software rendering.
+    // Each thread handles vertical columns <a> to <b> of the screen.
     Bundle* const b = xtoss(Bundle, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
     {
@@ -249,33 +247,24 @@ void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprite
         b[i].clouds = clouds;
         b[i].map = map;
     };
-
-    // Launch all threads.
     SDL_Thread** const threads = xtoss(SDL_Thread*, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
         threads[i] = SDL_CreateThread(xbraster, "n/a", &b[i]);
-
-    // Wait for thread completion.
     for(int i = 0; i < sdl.threads; i++)
     {
-        int status; /* Ignored */
+        int status; // Ignored.
         SDL_WaitThread(threads[i], &status);
     }
-
-    // Per-pixel writes for the floor, wall, and ceiling are now
-    // complete for the entire backbuffer; unlock the display.
     xvunlock(sdl.canvas);
 
-    // The map was rendered on its side for cache efficiency. Rotate the map upwards.
+    // Render was done sideways for cache efficiency. Rotate upwards.
     churn(sdl);
 
-    // For sprites to be pasted to the screen they must first be orientated
-    // to the player's gaze. Afterwards they must be placed back.
+    // Orientate sprites to player's gaze and paste to screen. Place back to global coords afterwards.
     xorient(sprites, hero);
     paste(sdl, ttf, sprites, zbuff, hero, tm);
     xplback(sprites, hero);
 
-    // Cleanup.
     free(zbuff);
     free(b);
     free(threads);
@@ -284,11 +273,10 @@ void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprite
 // Draws melee gauge and calculates attack.
 static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
-    // Animate attack.
     for(int i = 0; i < g.count; i++)
     {
         const float growth = i / (float) g.count;
-        const int size = 16; // Whatever feels best.
+        const int size = 16;
         const int width = growth * size;
         const int green = 0xFF * growth;
         const uint32_t color = (0xFF << 0x10) | (green << 0x08);
@@ -306,7 +294,6 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
 
     const float mag = xgmag(g, it.damage);
 
-    // Hurts is a melee property. For instance, more than one enemy can be hurt when a warhammer is used.
     const int last = g.count - 1;
     const Point dir = xunt(xsub(g.points[last], g.points[last - tail]));
     const Attack melee = { mag, dir, it.hurts, MELEE, 0, xzpoint() };
@@ -318,20 +305,16 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 {
     if(g.count > 0)
     {
-        // Animate attack. Both amplitude and attack are bow properties.
         const int state = it.amplitude / 2.0f;
         const int width = it.amplitude * xsinc(g.count, it.period) + state;
 
-        // <Hurts> is also a bow property. Longbows, for instance, can hurt more than one sprite.
         const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
         dbox(sdl, x, y, width, sdl.wht, false);
 
-        // Calculate range attack based on sinc steady state.
-        // TODO: Fix this.
+        // TODO: Fix this so that range attack is based on sinc steady state.
         const float mag = 100.0f;
 
-        // A random point in the target reticule is chosen.
         const Point reticule = {
             (float) (x + rand() % (width < 1 ? 1 : width)), // Divide by zero check.
             (float) (y + rand() % (width < 1 ? 1 : width)),
@@ -339,9 +322,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 
         // Range attacks will just have south facing hurt animation drawn.
         const Point dir = { 0.0f, -1.0f };
-
         const Attack range = { mag, dir, it.hurts, RANGE, 0, reticule };
-
         return range;
     }
     else return xzattack();
@@ -350,13 +331,10 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 // Draws magic gauge.
 static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float sens, const Inventory inv, const Scroll sc)
 {
-    // Casting scroll is cleared as it will be fully drawn here.
     xsclear(sc);
     if(g.count > 0)
     {
         const int size = (sc.width - 1) / 2;
-
-        // Pixels for the grid size.
         const int grid = sdl.yres / (sc.width / 0.8f);
 
         // Middle of the screen.
@@ -374,7 +352,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
 
             dbox(sdl, center.x, center.y, grid, sdl.wht, true);
 
-            // Populate Scroll int array. Was cleared earlier.
+            // Populate Scroll int array that was cleared earlier.
             const int x = size + corner.x / grid;
             const int y = size + corner.y / grid;
 
@@ -404,11 +382,9 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
     }
 
     // Calculate attack.
-    // Runs through scroll int array and checks for error with all scroll int array shapes.
-    // The magic scroll closest to the drawn gauge shape is placed as a scroll index.
     const int scindex = xsindex(sc);
 
-    // Maybe accuracy to scroll gives better attack + item base attack?
+    // TODO: Maybe accuracy to scroll gives better attack + item base attack?
     (void) it;
     const float mag = 0.0f;
 
@@ -430,7 +406,6 @@ Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll s
     return
         xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         xisrange(it.c) ? dgrange(sdl, g, it, sens) :
-        // Magic wand needs inventory access for checking against scrolls.
         xismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) :
         xzattack();
 }
@@ -442,27 +417,24 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
         && (to.y > sdl.yres || to.y < -ov.h);
 }
 
-// Draw tiles for the grid layout.
+// Draws tiles for the grid layout.
 static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
 {
-    // Clear renderer and draw overview tiles.
     SDL_SetRenderDrawColor(sdl.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(sdl.renderer);
+
+    // Put down tiles. Snaps to grid.
     for(int j = 0; j < map.rows; j++)
     for(int i = 0; i < map.cols; i++)
     {
-        // Walling will default if anything other 1, 2, or 3 is selected.
         const int ascii =
             ov.party == FLORING ? map.floring[j][i] :
             ov.party == CEILING ? map.ceiling[j][i] : map.walling[j][i];
 
-        // If empty space then skip the tile.
         const int ch = ascii - ' ';
-
         if(ch == 0)
             continue;
 
-        // Otherwise render the tile.
         const SDL_Rect to = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
 
         if(clipping(sdl, ov, to))
@@ -471,7 +443,7 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &to);
     }
 
-    // Put down sprites. Sprites will not snap to the grid.
+    // Put down sprites.
     for(int s = 0; s < sprites.count; s++)
     {
         Sprite* const sprite = &sprites.sprite[s];
@@ -481,7 +453,6 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
 
         const SDL_Rect from = { w * (tm.ticks % FRAMES), h * sprite->state, w, h };
 
-        // Right above cursor.
         const SDL_Rect to = {
             (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
             (int) ((ov.h * sprite->where.y - ov.h / 1) + ov.py),
@@ -515,7 +486,7 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
 
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
         }
-        // Draw tile block on [anel.
+        // Draw tile block on panel.
         else SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], NULL, &to);
     }
 }
@@ -646,7 +617,12 @@ void xdinv(const Sdl sdl, const Inventory inv)
 void xdmap(const Sdl sdl, const Map map, const Point where)
 {
     SDL_Texture* const texture = SDL_CreateTexture(
-        sdl.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, map.cols, map.rows);
+        sdl.renderer,
+        SDL_PIXELFORMAT_ARGB8888,
+        SDL_TEXTUREACCESS_STREAMING,
+        map.cols,
+        map.rows);
+
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
     const Vram vram = xvlock(texture);

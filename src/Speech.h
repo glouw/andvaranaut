@@ -8,8 +8,4 @@ typedef struct
 }
 Speech;
 
-Speech xzspeech(void);
-
-Speech xspnew(void);
-
-Speech xspappend(Speech sp, const char* sentence);
+Speech xspappend(Speech, const char* sentence);
