@@ -117,8 +117,7 @@ CMP_FLAGS += -I../../SDL2*/i686-w64-mingw32/include
 endif
 
 # Warnings.
-CMP_FLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result 
-CMP_FLAGS += -Wstrict-prototypes
+CMP_FLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
 
 # Debugging.
 CMP_FLAGS += -g

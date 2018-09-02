@@ -200,7 +200,7 @@ Hero xteleport(Hero hero, const Map map)
     if(teldn(hero, map))
     {
         hero.floor++;
-        hero.height = 0.80;
+        hero.height = 0.90;
     }
 
     hero.yaw = 1.0f;

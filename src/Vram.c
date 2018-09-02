@@ -5,7 +5,7 @@ Vram xvlock(SDL_Texture* const texture)
     void* raw;
     int pitch;
     SDL_LockTexture(texture, NULL, &raw, &pitch);
-    const Vram vram = { (uint32_t*) raw, pitch / sizeof(uint32_t) };
+    const Vram vram = { (uint32_t*) raw, (int) (pitch / sizeof(uint32_t)) };
     return vram;
 }
 
