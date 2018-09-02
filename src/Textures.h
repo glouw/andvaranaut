@@ -9,4 +9,4 @@ typedef struct
 }
 Textures;
 
-Textures xcache(const Surfaces, SDL_Renderer* const renderer);
+Textures xcache(const Surfaces, SDL_Renderer* const);

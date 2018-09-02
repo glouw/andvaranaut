@@ -10,7 +10,7 @@ typedef struct
     int px;
     int py;
 
-    // x and y tile selected. Stays -1 if nothing was selected.
+    // Tile selection. Stays -1 if nothing was selected.
     Point where;
 
     // Tile width and height pixels.
@@ -39,4 +39,4 @@ Overview xinit(void);
 
 Overview xupdate(Overview, const Input, const int xres);
 
-Overview xbackpan(Overview ov, const Point where, const int xres, const int yres);
+Overview xbackpan(Overview, const Point where, const int xres, const int yres);

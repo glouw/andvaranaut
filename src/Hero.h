@@ -20,48 +20,54 @@ typedef struct
     Point where;
     Point velocity;
 
-    // Max speed and acceleration scalars.
+    // Scalars.
     float speed;
     float acceleration;
 
     // Rotation in radians.
     float theta;
 
+    // Lighting from player.
     Torch torch;
+
+    // Player arm length.
     float reach;
+
+    // Player floor level.
     int floor;
 
-    // A larger aura will attract sprites from further away.
+    // Sprite attraction strength.
     int aura;
 
-    // Head up and down.
+    // Panning head up and down.
     float yaw;
 
-    // Velocity yaw from recoil.
+    // Velocity yaw up and down from recoil.
     float vyaw;
 
-    // Height varies with jumping, crouching, and swimming.
+    // Player height relative to ground which varies with jumping, crouching, and swimming.
     float height;
 
-    // Tallness does not vary. Height references tallness for jumping and crouching.
+    // Player tallness which does not vary. Height references tallness for jumping and crouching.
     float tall;
 
     // Vertical velocity when jumping and falling.
     float vvel;
 
-    // Hitpoints.
+    // Hitpoints and max hitpoints
     float hps;
     float hpsmax;
 
-    // Mana.
+    // Mana and max mana.
     float mna;
     float mnamax;
 
-    // Fatigue.
+    // Fatigue and max fatigue.
     float ftg;
     float ftgmax;
 
-    // When fatigue is low, warning indicators go off (fatigue bar flashes and hero starts to breathe heavily).
+    // When fatigue is low, warning indicators go off; the fatigue bar will start
+    // to flash and the hero will start to breathe heavily, moving the screen up and down.
     float warning;
 }
 Hero;
@@ -78,6 +84,6 @@ Hero xteleport(Hero, const Map);
 
 Hero xsustain(Hero, const Map, const Input, const Flow current, const Timer);
 
-Ray xcalc(const Hero hero, const Hit, const Sheer, const int yres, const int xres);
+Ray xcalc(const Hero, const Hit, const Sheer, const int yres, const int xres);
 
 Hero xrecoil(Hero, const Method);

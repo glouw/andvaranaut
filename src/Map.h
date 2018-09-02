@@ -24,8 +24,8 @@ typedef struct
     Rooms rooms;
 
     // These sheers form an optical illusion with the middle and upper ceiling heights.
-    // For example, a larger upper sheer will extend the ceiling depth, and a larger
-    // middle sheer will extend the height of the walls.
+    // A larger upper sheer will extend the ceiling depth, and a larger middle sheer will
+    // extend the height of the walls.
     Sheer mid;
     Sheer top;
 

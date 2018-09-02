@@ -8,7 +8,7 @@ typedef struct
     uint32_t* pixels;
     int width;
 
-    // Scanlines are rotated 90 degrees. An x argument would be passed here.
+    // Scanlines are rotated 90 degrees.
     int y;
 }
 Scanline;
