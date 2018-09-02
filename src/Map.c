@@ -53,8 +53,8 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
     map.trapdoors = trapdoors;
     map.rooms = xrsinit(interests);
 
-    map.upper = top;
-    map.middle = mid;
+    map.top = top;
+    map.mid = mid;
     map.grid = grid;
 
     return map;

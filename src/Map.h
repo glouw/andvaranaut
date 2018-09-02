@@ -26,8 +26,8 @@ typedef struct
     // These sheers form an optical illusion with the middle and upper ceiling heights.
     // For example, a larger upper sheer will extend the ceiling depth, and a larger
     // middle sheer will extend the height of the walls.
-    Sheer middle;
-    Sheer upper;
+    Sheer mid;
+    Sheer top;
 
     // Each room occupies at most (grid * grid) area of the map.
     int grid;
