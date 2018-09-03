@@ -8,7 +8,9 @@ See the Makefile for instructions on how to bulid for Linux, MacOS, and Windows.
 
 ## System Requirements
 RAM: 256 MB (generous).
+
 CPU: 4 cores or more (for the software renderer).
+
 GPU: Just about anything will do.
 
 ## Credits
