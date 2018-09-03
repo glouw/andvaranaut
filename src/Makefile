@@ -126,7 +126,7 @@ CMP_FLAGS += -g -fsanitize=address
 CMP_FLAGS += -Ofast -march=native -pipe
 
 # Link time optimizations.
-CMP_FLAGS += #-flto
+CMP_FLAGS += -flto
 
 # -----------------------------------------------------------------------------
 # Library Flags.
