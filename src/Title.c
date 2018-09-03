@@ -65,7 +65,7 @@ static int done(void)
     return !tt->linger && tt->now > tt->end;
 }
 
-void xttshow(const Ttf ttf, const Sdl sdl)
+void xttshow(const Text text, const Sdl sdl)
 {
     if(done())
         return;
@@ -74,7 +74,7 @@ void xttshow(const Ttf ttf, const Sdl sdl)
     const float max = 0xFF;
     const float alpha = max * sinf(percent * FPI);
 
-    xfwrt(ttf.fill, ttf.line, sdl.renderer,
+    xfwrt(text.fill, text.line, sdl.renderer,
         sdl.xres / 2,
         sdl.yres / 2,
         tt->str,

@@ -78,17 +78,17 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
         SDL_RenderDrawRect(sdl.renderer, &square);
 }
 
-static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SDL_Rect target, const Timer tm)
+static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const SDL_Rect target, const Timer tm)
 {
     const int index = (tm.ticks / 6) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
 
-    SDL_Texture* const fill = xtget(ttf.fill, sdl.renderer, 0xFF, sentence);
-    SDL_Texture* const line = xtget(ttf.line, sdl.renderer, 0xFF, sentence);
+    SDL_Texture* const fill = xtget(text.fill, sdl.renderer, 0xFF, sentence);
+    SDL_Texture* const line = xtget(text.line, sdl.renderer, 0xFF, sentence);
 
     int w = 0;
     int h = 0;
-    TTF_SizeText(ttf.fill.type, sentence, &w, &h);
+    TTF_SizeText(text.fill.type, sentence, &w, &h);
 
     const SDL_Rect to = {
         target.x + target.w / 2 - w / 2,
@@ -103,7 +103,7 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Ttf ttf, const SD
 }
 
 // Pastes all visible sprites to screen.
-static void paste(const Sdl sdl, const Ttf ttf, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
+static void paste(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
     for(int which = 0; which < sprites.count; which++)
     {
@@ -175,7 +175,7 @@ static void paste(const Sdl sdl, const Ttf ttf, const Sprites sprites, Point* co
             // NOTE: Sprites where oriented to players gaze.
             // Their relative position to the player is recalculated.
             if(xeql(xadd(hero.where, sprite->where), hero.where, hero.aura))
-                rspeech(sprite, sdl, ttf, target, tm);
+                rspeech(sprite, sdl, text, target, tm);
         }
     }
 }
@@ -225,7 +225,7 @@ Sdl xsetup(const Args args)
     return sdl;
 }
 
-void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
+void xrender(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
 {
     Point* const zbuff = xtoss(Point, sdl.xres);
     const Line camera = xrotate(hero.fov, hero.theta);
@@ -262,7 +262,7 @@ void xrender(const Sdl sdl, const Ttf ttf, const Hero hero, const Sprites sprite
 
     // Orientate sprites to player's gaze and paste to screen. Place back to global coords afterwards.
     xorient(sprites, hero);
-    paste(sdl, ttf, sprites, zbuff, hero, tm);
+    paste(sdl, text, sprites, zbuff, hero, tm);
     xplback(sprites, hero);
 
     free(zbuff);

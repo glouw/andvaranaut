@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
     Sdl sdl = xsetup(args);
 
-    const Ttf ttf = xttfnew("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
+    const Text text = xtxnew("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
 
     xttinit();
 
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 
             inv = xinvhilite(inv, in, sdl.xres);
 
-            xrender(sdl, ttf, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
+            xrender(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
 
             xdinv(sdl, inv);
 
@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
                 me = xrecoil(me, wd.sprites[me.floor].last);
             }
         }
-        xttshow(ttf, sdl);
+        xttshow(text, sdl);
 
         xpresent(sdl);
 
