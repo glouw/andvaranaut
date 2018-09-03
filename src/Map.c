@@ -295,10 +295,11 @@ static void path(const Map map, const Point where)
 {
     const int x = where.x;
     const int y = where.y;
-    for(int i = 0; i <= xmrmax(map); i++) map.floring[y + 0][x + i] = '"';
-    for(int i = 0; i <= xmrmax(map); i++) map.floring[y + 0][x - i] = '"';
-    for(int i = 0; i <= xmrmax(map); i++) map.floring[y + i][x + 0] = '"';
-    for(int i = 0; i <= xmrmax(map); i++) map.floring[y - i][x + 0] = '"';
+    const int end = xmrmax(map);
+    if(map.walling[y + 0][x + end] == ' ') for(int i = 0; i <= end; i++) map.floring[y + 0][x + i] = '"';
+    if(map.walling[y + 0][x - end] == ' ') for(int i = 0; i <= end; i++) map.floring[y + 0][x - i] = '"';
+    if(map.walling[y + end][x + 0] == ' ') for(int i = 0; i <= end; i++) map.floring[y + i][x + 0] = '"';
+    if(map.walling[y - end][x + 0] == ' ') for(int i = 0; i <= end; i++) map.floring[y - i][x + 0] = '"';
 }
 
 void xmthemeate(const Map map)

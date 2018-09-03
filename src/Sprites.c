@@ -378,27 +378,27 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     return damage(hero, sprites, tm);
 }
 
-static Point avail(const Point mid, const Map map)
+static Point avail(const Point center, const Map map)
 {
-    const Point where = xrand(mid, map.grid / 1.5);
+    const Point where = xrand(center, map.grid);
     // Available tile space is no wall and not above water.
     return xblok(where, map.walling) == ' '
-        && xblok(where, map.floring) != ' ' ? where : avail(mid, map);
+        && xblok(where, map.floring) != ' ' ? where : avail(center, map);
 }
 
-static Point seek(const Point mid, const Map map, const int ascii)
+static Point seek(const Point center, const Map map, const int ascii)
 {
-    const Point where = avail(mid, map);
-    return xblok(where, map.floring) == ascii ? where : seek(mid, map, ascii);
+    const Point where = avail(center, map);
+    return xblok(where, map.floring) == ascii ? where : seek(center, map, ascii);
 }
 
-static Sprites pngarden(Sprites sprites, const Map map, const Point mid)
+static Sprites pngarden(Sprites sprites, const Map map, const Point center)
 {
     const int flowers = 128;
     for(int i = 0; i < flowers; i++)
-        sprites = append(sprites, xsregistrar('a', seek(mid, map, '(')));
+        sprites = append(sprites, xsregistrar('a', seek(center, map, '(')));
     // Gardener.
-    sprites = append(sprites, xsregistrar('b', avail(mid, map)));
+    sprites = append(sprites, xsregistrar('b', avail(center, map)));
 
     return sprites;
 }
@@ -407,17 +407,17 @@ Sprites xspopulate(Sprites sprites, const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {
-        const Point mid = map.rooms.wheres[i];
+        const Point center = map.rooms.wheres[i];
 
         switch(map.rooms.themes[i])
         {
         case NICE_GARDEN:
-            sprites = pngarden(sprites, map, mid);
+            sprites = pngarden(sprites, map, center);
             break;
 
         // TODO: TEMP. Just puts a guy in a room for now so that each room has some sort of placeholder.
         default:
-            sprites = append(sprites, xsregistrar('b', avail(mid, map)));
+            sprites = append(sprites, xsregistrar('b', avail(center, map)));
             break;
         }
     }
