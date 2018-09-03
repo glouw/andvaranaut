@@ -235,7 +235,7 @@ static Hero breath(Hero hero, const Timer tm)
 {
     if(hero.ftg / hero.ftgmax < hero.warning)
     {
-        const float bob = 0.001f * sinf(FPI * tm.renders / 30.0f);
+        const float bob = 0.0015f * sinf(FPI * tm.renders / 30.0f);
         hero.yaw += bob;
     }
     return hero;

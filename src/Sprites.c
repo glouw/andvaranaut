@@ -378,27 +378,27 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     return damage(hero, sprites, tm);
 }
 
-static Point freerand(const Point mid, const Map map)
+static Point avail(const Point mid, const Map map)
 {
     const Point where = xrand(mid, map.grid / 1.5);
-    const int x = where.x;
-    const int y = where.y;
+    // Available tile space is no wall and not above water.
+    return xblok(where, map.walling) == ' '
+        && xblok(where, map.floring) != ' ' ? where : avail(mid, map);
+}
 
-    return map.walling[y][x] == ' '
-        && map.floring[y][x] != ' ' ? where : freerand(mid, map);
+static Point seek(const Point mid, const Map map, const int ascii)
+{
+    const Point where = avail(mid, map);
+    return xblok(where, map.floring) == ascii ? where : seek(mid, map, ascii);
 }
 
 static Sprites pngarden(Sprites sprites, const Map map, const Point mid)
 {
     const int flowers = 128;
     for(int i = 0; i < flowers; i++)
-    {
-        const Point where = freerand(mid, map);
-        sprites = append(sprites, xsregistrar('a', where));
-    }
-
-    const Point where = freerand(mid, map);
-    sprites = append(sprites, xsregistrar('b', where));
+        sprites = append(sprites, xsregistrar('a', seek(mid, map, '(')));
+    // Gardener.
+    sprites = append(sprites, xsregistrar('b', avail(mid, map)));
 
     return sprites;
 }
@@ -417,7 +417,7 @@ Sprites xspopulate(Sprites sprites, const Map map)
 
         // TODO: TEMP. Just puts a guy in a room for now so that each room has some sort of placeholder.
         default:
-            sprites = append(sprites, xsregistrar('b', freerand(mid, map)));
+            sprites = append(sprites, xsregistrar('b', avail(mid, map)));
             break;
         }
     }

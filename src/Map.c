@@ -280,13 +280,25 @@ int xmrmax(const Map map)
 
 static void grass(const Map map, const Point where)
 {
+    const int x = where.x;
+    const int y = where.y;
     for(int i = -xmrmax(map); i <= xmrmax(map); i++)
     for(int j = -xmrmax(map); j <= xmrmax(map); j++)
     {
-        const int x = where.x + i;
-        const int y = where.y + j;
-        map.floring[y][x] = '(';
+        const int xx = x + i;
+        const int yy = y + j;
+        map.floring[yy][xx] = '(';
     }
+}
+
+static void path(const Map map, const Point where)
+{
+    const int x = where.x;
+    const int y = where.y;
+    for(int i = 0; i <= xmrmax(map); i++) map.floring[y + 0][x + i] = '"';
+    for(int i = 0; i <= xmrmax(map); i++) map.floring[y + 0][x - i] = '"';
+    for(int i = 0; i <= xmrmax(map); i++) map.floring[y + i][x + 0] = '"';
+    for(int i = 0; i <= xmrmax(map); i++) map.floring[y - i][x + 0] = '"';
 }
 
 void xmthemeate(const Map map)
@@ -298,6 +310,7 @@ void xmthemeate(const Map map)
         {
         case NICE_GARDEN:
             grass(map, where);
+            path(map, where);
             break;
 
         case WATER_WELL:
