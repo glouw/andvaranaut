@@ -113,8 +113,8 @@ static Args parsed(Args args, int argc, char* argv[])
 static Args defaults(void)
 {
     Args args = xzargs();
-    args.xres = 1320;
-    args.yres = 700;
+    args.xres = 1024;
+    args.yres = 576;
     args.focal = 0.8f;
     args.vsync = true;
     args.fps = 60;

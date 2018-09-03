@@ -354,11 +354,10 @@ static void idle(const Sprites sprites, const Timer tm)
 
 static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
 {
-    const float wave = 0.5f * (sinf(FPI * tm.ticks / 60.0f) + 1.0f);
+    const float wave = 0.5f * (cosf(FPI * tm.ticks / 60.0f) + 1.0f);
 
     hero.hps = hero.hpsmax * wave;
     hero.mna = hero.mnamax * wave;
-    hero.ftg = hero.ftgmax * wave;
 
     // TODO:
     // Water and food sprites replenish the hero's fatigue.
@@ -403,6 +402,11 @@ static Sprites pngarden(Sprites sprites, const Map map, const Point center)
     return sprites;
 }
 
+static Sprites dummy(const Sprites sprites, const Map map, const Point center)
+{
+    return append(sprites, xsregistrar('b', avail(center, map)));
+}
+
 Sprites xspopulate(Sprites sprites, const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
@@ -417,7 +421,7 @@ Sprites xspopulate(Sprites sprites, const Map map)
 
         // TODO: TEMP. Just puts a guy in a room for now so that each room has some sort of placeholder.
         default:
-            sprites = append(sprites, xsregistrar('b', avail(center, map)));
+            sprites = dummy(sprites, map, center);
             break;
         }
     }

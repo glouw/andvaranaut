@@ -232,11 +232,10 @@ Hero xrecoil(Hero hero, const Method method)
 
 static Hero breath(Hero hero, const Timer tm)
 {
+    const float bob = 0.0015f;
+    const float rate = tm.renders / 30.0f;
     if(hero.ftg / hero.ftgmax < hero.warning)
-    {
-        const float bob = 0.0015f * sinf(FPI * tm.renders / 30.0f);
-        hero.yaw += bob;
-    }
+        hero.yaw += bob * sinf(FPI * rate);
     return hero;
 }
 

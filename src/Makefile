@@ -119,8 +119,8 @@ endif
 # Warnings.
 CMP_FLAGS += -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
 
-# Debugging.
-CMP_FLAGS += -g
+# Debugging (Disable for release).
+CMP_FLAGS += -g -fsanitize=address
 
 # General optimizations.
 CMP_FLAGS += -Ofast -march=native -pipe

@@ -3,39 +3,59 @@
 #include "Tris.h"
 #include "util.h"
 
-World xwadd(World w, const Map map, const Sprites sprites)
+static World append(World w, const Map map, const Sprites sprites)
 {
-    if(w.count == w.max)
+    if(w.floor == w.floors)
         xbomb("World size limitation reached");
-    w.map[w.count] = map;
-    w.sprites[w.count] = sprites;
-    w.count++;
+    w.map[w.floor] = map;
+    w.sprites[w.floor] = sprites;
+    w.floor++;
     return w;
 }
 
-static World xwnew(const int max)
+static World wnew(const int floors)
 {
-    const World w = { xtoss(Map, max), xtoss(Sprites, max), 0, max };
+    const World w = { xtoss(Map, floors), xtoss(Sprites, floors), 0, floors };
     return w;
 }
 
+// Builds all floors and carves out rooms.
+static World build(World w)
+{
+    for(int i = 0; i < w.floors; i++)
+        w = append(w, xtgen(i == 0 ? xpsnew(0) : w.map[i - 1].trapdoors), xsnew(128));
+    return w;
+}
+
+// Applies themes to each room.
+static void theme(const World w)
+{
+    for(int i = 0; i < w.floors; i++)
+        xmthemeate(w.map[i]);
+}
+
+// Links all floors with trapdoors.
 static void attach(const World w)
 {
-    for(int i = 0; i < w.max; i++) xmtrapdoors(w.map[i], w.map[i - 0].trapdoors, FLORING);
-    for(int i = 1; i < w.max; i++) xmtrapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
+    for(int i = 0; i < w.floors; i++)
+        xmtrapdoors(w.map[i], w.map[i - 0].trapdoors, FLORING);
+
+    for(int i = 1; i < w.floors; i++)
+        xmtrapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
 }
 
-World xwinit(const int max)
+// Populates rooms with sprites based on room theme.
+static void populate(const World w)
 {
-    World w = xwnew(max);
-
-    for(int i = 0; i < w.max; i++)
-    {
-        w = xwadd(w, xtgen(i == 0 ? xpsnew(0) : w.map[i - 1].trapdoors), xsnew(32));
-        xmthemeate(w.map[i]);
+    for(int i = 0; i < w.floors; i++)
         w.sprites[i] = xspopulate(w.sprites[i], w.map[i]);
-    }
-    attach(w);
+}
 
+World xwinit(const int floors)
+{
+    World w = build(wnew(floors));
+    theme(w);
+    attach(w);
+    populate(w);
     return w;
 }

@@ -7,13 +7,10 @@ typedef struct
 {
     Map* map;
     Sprites* sprites;
-    int count;
-    int max;
+    int floor;
+    int floors;
 }
 World;
 
-World xwadd(World, const Map, const Sprites);
-
-World xwinit(const int max);
-
-void xwclose(const World);
+// Builds a world with the number of floors specified.
+World xwinit(const int floors);

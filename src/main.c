@@ -4,20 +4,23 @@
 
 int main(int argc, char* argv[])
 {
-    srand(time(NULL));
+    srand(true ? 0 : time(NULL));
 
     const Args args = xparse(argc, argv);
 
     World wd = xwinit(32);
 
+    // Hero starts on this floor.
     const int floor = 0;
 
     const Point start = wd.map[floor].trapdoors.point[0];
+
     Hero me = xspawn(args.focal, start, floor);
 
     Overview ov = xinit();
 
     Flow current = xstart(-1.0f / 6.0f);
+
     Flow clouds = xstart(9.0f);
 
     Gauge gg = xgnew();
@@ -41,6 +44,7 @@ int main(int argc, char* argv[])
     for(int renders = 0; args.xres == 512 ? renders < 20 : !in.done; renders++)
     {
         const int t0 = SDL_GetTicks();
+
         const int ticks = renders / (args.fps / 6);
 
         const Timer tm = xtmnew(renders, ticks);
@@ -70,16 +74,19 @@ int main(int argc, char* argv[])
                 me = xteleport(me, wd.map[me.floor]);
 
                 xruin(fd);
+
                 fd = xprepare(wd.map[me.floor], me.aura);
             }
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
 
             current = xstream(current);
+
             clouds = xstream(clouds);
 
             me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, tm);
 
             inv = xinvselect(inv, in);
+
             inv = xinvhilite(inv, in, sdl.xres);
 
             xrender(sdl, ttf, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
@@ -120,7 +127,6 @@ int main(int argc, char* argv[])
                 me = xrecoil(me, wd.sprites[me.floor].last);
             }
         }
-
         xttshow(ttf, sdl);
 
         xpresent(sdl);
