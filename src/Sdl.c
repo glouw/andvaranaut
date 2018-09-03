@@ -295,7 +295,8 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     const float mag = xgmag(g, it.damage);
 
     const int last = g.count - 1;
-    const Point dir = xunt(xsub(g.points[last], g.points[last - tail]));
+    const int first = g.count - tail;
+    const Point dir = xunt(xsub(g.points[last], g.points[first]));
     const Attack melee = { mag, dir, it.hurts, MELEE, 0, xzpoint() };
     return melee;
 }
