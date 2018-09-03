@@ -35,6 +35,15 @@ SDL_Texture* xtget(const Font f, SDL_Renderer* const rend, const int alpha, cons
     return texture;
 }
 
+SDL_Rect xfsize(const Font font, const char* const string)
+{
+    int w = 0;
+    int h = 0;
+    TTF_SizeText(font.type, string, &w, &h);
+    const SDL_Rect size = { 0, 0, w, h };
+    return size;
+}
+
 void xfwrt(const Font fill, const Font line, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
 {
     char* const copy = dups(text);
@@ -46,11 +55,12 @@ void xfwrt(const Font fill, const Font line, SDL_Renderer* const rend, const int
         SDL_Texture* tfill = xtget(fill, rend, alpha, tok);
         SDL_Texture* tline = xtget(line, rend, alpha, tok);
 
-        int w = 0;
-        int h = 0;
-        TTF_SizeText(fill.type, tok, &w, &h);
-
-        const SDL_Rect target = { x - w / 2, y - h / 2 + h * newline, w, h };
+        const SDL_Rect size = xfsize(fill, tok);
+        const SDL_Rect target = {
+            x - size.w / 2,
+            y - size.h / 2 + size.h * newline,
+            size.w, size.h
+        };
 
         SDL_RenderCopy(rend, tfill, NULL, &target);
         SDL_RenderCopy(rend, tline, NULL, &target);
@@ -60,6 +70,5 @@ void xfwrt(const Font fill, const Font line, SDL_Renderer* const rend, const int
 
         newline++;
     }
-
     free(copy);
 }

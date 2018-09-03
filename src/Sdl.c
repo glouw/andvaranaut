@@ -83,23 +83,22 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
     const int index = (tm.ticks / 6) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
 
-    SDL_Texture* const fill = xtget(text.fill, sdl.renderer, 0xFF, sentence);
-    SDL_Texture* const line = xtget(text.line, sdl.renderer, 0xFF, sentence);
+    SDL_Texture* const tfill = xtget(text.fill, sdl.renderer, 0xFF, sentence);
+    SDL_Texture* const tline = xtget(text.line, sdl.renderer, 0xFF, sentence);
 
-    int w = 0;
-    int h = 0;
-    TTF_SizeText(text.fill.type, sentence, &w, &h);
+    const SDL_Rect size = xfsize(text.fill, sentence);
 
     const SDL_Rect to = {
-        target.x + target.w / 2 - w / 2,
+        target.x + target.w / 2 - size.w / 2,
         target.y + target.h / 3, // TODO: Maybe tune the offset per sprite?
-        w, h
+        size.w,
+        size.h,
     };
 
-    SDL_RenderCopy(sdl.renderer, fill, NULL, &to);
-    SDL_RenderCopy(sdl.renderer, line, NULL, &to);
-    SDL_DestroyTexture(fill);
-    SDL_DestroyTexture(line);
+    SDL_RenderCopy(sdl.renderer, tfill, NULL, &to);
+    SDL_RenderCopy(sdl.renderer, tline, NULL, &to);
+    SDL_DestroyTexture(tfill);
+    SDL_DestroyTexture(tline);
 }
 
 // Pastes all visible sprites to screen.

@@ -314,15 +314,18 @@ Scroll xscnew(void)
 char* xsstr(const Scroll sc, const int scindex)
 {
     // Space for squares, newlines, and NULL byte;
-    const int chars = sc.squares + sc.width + 1;
-    char* const str = xwipe(char, chars);
+    const int len = sc.squares + sc.width + 1;
 
-    for(int i = 0, index = 0; i < chars; i++)
-        str[i] =
-            // Newline position?
-            i % (sc.width + 1) == 0 ? '\n'
-            // Otherwise, square position.
-            : sc.castables[scindex][index++] ? 'x' : '-';
+    // Char array of null byte terminators.
+    char* const str = xwipe(char, len);
+
+    // All newline besides the null byte terminator.
+    memset(str, '\n', len - 1);
+
+    for(int j = 0; j < sc.width; j++)
+    for(int i = 0; i < sc.width; i++)
+        // When assigning, skip the newline eg. (sc.width + 1).
+        str[i + j * (sc.width + 1)] = sc.castables[scindex][i + j * sc.width] ? 'x' : '-';
 
     return str;
 }
