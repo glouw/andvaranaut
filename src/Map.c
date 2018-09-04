@@ -68,7 +68,7 @@ Theme lutheme(const Map map, const Point where)
     return NO_THEME;
 }
 
-static char* themestr(const Map map, const Point where)
+static const char* themestr(const Map map, const Point where)
 {
     return xthname(lutheme(map, where));
 }

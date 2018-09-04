@@ -18,4 +18,4 @@ Points xpsadduq(Points a, const Points b);
 
 Points xpscat(Points, const Points other);
 
-int xpsfind(const Points, const Point p);
+int xpsfind(const Points, const Point);

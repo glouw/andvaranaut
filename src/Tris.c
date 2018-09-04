@@ -228,7 +228,6 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
                 todo = xpsadd(todo, reach.tri[i].b);
         }
     }
-
     free(todo.point);
     free(reach.tri);
     free(done.point);

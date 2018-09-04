@@ -4,7 +4,7 @@
 #include <math.h>
 #include <ctype.h>
 
-char* dups(const char *s)
+char* dups(const char* s)
 {
     char* const d = xtoss(char, strlen(s) + 1);
     strcpy(d, s);

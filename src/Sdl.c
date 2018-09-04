@@ -80,14 +80,15 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
 
 static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const SDL_Rect target, const Timer tm)
 {
-    const int index = (tm.ticks / 6) % sprite->speech.count;
+    const int ticks = tm.ticks - sprite->speech.ticks;
+    const int index = (ticks / 6) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
 
-    SDL_Texture* const tfill = xtget(text.fill, sdl.renderer, 0xFF, sentence);
-    SDL_Texture* const tline = xtget(text.line, sdl.renderer, 0xFF, sentence);
+    const int alpha = 0xFF;
+    SDL_Texture* const tfill = xtget(text.fill, sdl.renderer, alpha, sentence);
+    SDL_Texture* const tline = xtget(text.line, sdl.renderer, alpha, sentence);
 
     const SDL_Rect size = xfsize(text.fill, sentence);
-
     const SDL_Rect to = {
         target.x + target.w / 2 - size.w / 2,
         target.y + target.h / 3, // TODO: Maybe tune the offset per sprite?
@@ -175,6 +176,8 @@ static void paste(const Sdl sdl, const Text text, const Sprites sprites, Point* 
             // Their relative position to the player is recalculated.
             if(xeql(xadd(hero.where, sprite->where), hero.where, hero.aura))
                 rspeech(sprite, sdl, text, target, tm);
+            else
+                xstick(sprite, tm);
         }
     }
 }

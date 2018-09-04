@@ -14,4 +14,4 @@ Theme;
 
 Theme* xthrand(const int count);
 
-char* xthname(const Theme);
+const char* xthname(const Theme);

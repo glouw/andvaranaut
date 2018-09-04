@@ -4,4 +4,10 @@
 [ ] work on room themes
 [ ] implement magic effects
 [ ] tie items to attack
-[ ] maybe remove all comments and restart documentation
+[x] maybe remove all comments and restart documentation
+[ ] programmable computer sprite?
+[ ] movable blocks
+[ ] gloves grab things sprites
+[ ] old man who speaks constant gibberish
+[ ] inventory management (movement + delete + give items)
+[ ] shovel can dig

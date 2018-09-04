@@ -121,3 +121,8 @@ int xismute(Sprite* const sprite)
 {
     return sprite->speech.count == 0;
 }
+
+void xstick(Sprite* const sprite, const Timer tm)
+{
+    sprite->speech.ticks = tm.ticks;
+}

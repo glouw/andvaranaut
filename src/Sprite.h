@@ -2,6 +2,7 @@
 
 #include "Point.h"
 #include "State.h"
+#include "Timer.h"
 #include "Speech.h"
 
 #include <SDL2/SDL.h>
@@ -41,3 +42,5 @@ Sprite xsregistrar(const int ascii, const Point where);
 void xsplace(Sprite* const, const Point);
 
 int xismute(Sprite* const);
+
+void xstick(Sprite* const, const Timer);

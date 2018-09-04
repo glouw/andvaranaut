@@ -393,12 +393,11 @@ static Point seek(const Point center, const Map map, const int ascii)
 
 static Sprites pngarden(Sprites sprites, const Map map, const Point center)
 {
-    const int flowers = 128;
+    const int flowers = 256;
     for(int i = 0; i < flowers; i++)
         sprites = append(sprites, xsregistrar('a', seek(center, map, '(')));
     // Gardener.
     sprites = append(sprites, xsregistrar('b', avail(center, map)));
-
     return sprites;
 }
 

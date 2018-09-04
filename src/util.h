@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-char* dups(const char *s);
+char* dups(const char* s);
 
 int xfl(const float x);
 
