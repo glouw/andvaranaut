@@ -8,7 +8,6 @@
 Inventory xinvnew(void)
 {
     const Inventory inv = { xitsnew(12), 0, 32, -1 };
-
     const Item noobits[] = {
         xitnew(SHORTWEP, 0),
         xitnew(WAND, 0),
@@ -19,10 +18,8 @@ Inventory xinvnew(void)
         xitnew(SCROLL, 9),
         xitnew(SCROLL, 12),
     };
-
     for(int i = 0; i < xlen(noobits); i++)
         xitsadd(inv.items, noobits[i]);
-
     return inv;
 }
 
@@ -37,7 +34,6 @@ Inventory xinvselect(Inventory inv, const Input in)
     if(in.key[SDL_SCANCODE_2]) inv.selected = 1;
     if(in.key[SDL_SCANCODE_3]) inv.selected = 2;
     if(in.key[SDL_SCANCODE_4]) inv.selected = 3;
-
     return inv;
 }
 
@@ -50,13 +46,10 @@ Inventory xinvhilite(Inventory inv, const Input in, const int xres)
 static int tilechange(const Inventory inv)
 {
     static int last;
-
     int change = false;
     if(inv.hilited != -1 && inv.hilited != last)
         change = true;
-
     last = inv.hilited;
-
     return change;
 }
 
@@ -68,7 +61,6 @@ void xwhatis(const Inventory inv, const Scroll sc, const Timer tm)
         const int b = tm.renders + 90;
         const Item it = inv.items.item[inv.hilited];
 
-        // Scroll info.
         if(it.c == SCROLL)
         {
             char* const squares = xsstr(sc, it.index);
@@ -80,7 +72,6 @@ void xwhatis(const Inventory inv, const Scroll sc, const Timer tm)
                 it.cstr, it.desc, it.name, squares);
             free(squares);
         }
-        // General item info.
         else
             xttset(a, b, true,
                 "%s\n"
