@@ -131,7 +131,7 @@ static Item armor(const int index)
 
 static Item book(const int index)
 {
-    const Item books[] = {
+    static const Item books[] = {
         {  0, BOOK, "Book", "Duke Of The Nation"          , "", 25.0f, 1, 360.f, 0.5f },
         {  1, BOOK, "Book", "Criminal Of The Night"       , "", 25.0f, 1, 360.f, 0.5f },
         {  2, BOOK, "Book", "Humans Without Duty"         , "", 25.0f, 1, 360.f, 0.5f },
@@ -204,7 +204,7 @@ static Item book(const int index)
 
 static Item boot(const int index)
 {
-    const Item boots[] = {
+    static const Item boots[] = {
         { 0, BOOT, "Boots", "Footpads of Binding Lands"      , "", 25.0f, 1, 360.f, 0.5f },
         { 1, BOOT, "Boots", "Sabatons of Conquered Damnation", "", 25.0f, 1, 360.f, 0.5f },
         { 2, BOOT, "Boots", "Crazed Bronzed Greatboots"      , "", 25.0f, 1, 360.f, 0.5f },
@@ -220,275 +220,84 @@ static Item boot(const int index)
     return boots[index];
 }
 
-static Item chest(Item it)
+static Item chest(const int index)
 {
-    it.cstr = "Chest";
-
-    switch(it.index)
-    {
-    case 0:
-        it.name = "Small Locked Chest";
-        break;
-
-    case 1:
-        it.name = "Large Locked Chest";
-        break;
-
-    case 2:
-        it.name = "Broken Chest";
-        break;
-
-    case 3:
-        it.name = "Small Locked Safe";
-        break;
-
-    case 4:
-        it.name = "Large Locked Safe";
-        break;
-
-    case 5:
-        it.name = "Broken Safe";
-        break;
-
-    case 6:
-        it.name = "Broken Safe";
-        break;
-
-    case 7:
-        it.name = "Crystal Enclosure";
-        break;
-
-    case 8:
-        it.name = "Broken Crystal Enclosure";
-        break;
-
-    case 9:
-        it.name = "Gold Pouch";
-        break;
-
-    case 10:
-        it.name = "Mystic Gold Pouch";
-        break;
-
-    case 11:
-        it.name = "Expensive Gold Pouch";
-        break;
-
-    case 12:
-        it.name = "Hungry Gold Pouch";
-        break;
-
-    case 13:
-        it.name = "Barrel of Common Goods";
-        break;
-
-    case 14:
-        it.name = "Barrel of Rare Goods";
-        break;
-
-    case 15:
-        it.name = "Broken Barrel of Common Goods";
-        break;
-
-    case 16:
-        it.name = "Broken Barrel of Expensive Goods";
-        break;
-    }
-
-    return it;
+    static const Item chests[] = {
+        {  0, CHEST, "Chests", "Small Locked Chest"              , "", 25.0f, 1, 360.f, 0.5f },
+        {  1, CHEST, "Chests", "Large Locked Chest"              , "", 25.0f, 1, 360.f, 0.5f },
+        {  2, CHEST, "Chests", "Broken Chest"                    , "", 25.0f, 1, 360.f, 0.5f },
+        {  3, CHEST, "Chests", "Small Locked Safe"               , "", 25.0f, 1, 360.f, 0.5f },
+        {  4, CHEST, "Chests", "Large Locked Safe"               , "", 25.0f, 1, 360.f, 0.5f },
+        {  5, CHEST, "Chests", "Broken Safe"                     , "", 25.0f, 1, 360.f, 0.5f },
+        {  6, CHEST, "Chests", "Broken Safe"                     , "", 25.0f, 1, 360.f, 0.5f },
+        {  7, CHEST, "Chests", "Crystal Enclosure"               , "", 25.0f, 1, 360.f, 0.5f },
+        {  8, CHEST, "Chests", "Broken Crystal Enclosure"        , "", 25.0f, 1, 360.f, 0.5f },
+        {  9, CHEST, "Chests", "Gold Pouch"                      , "", 25.0f, 1, 360.f, 0.5f },
+        { 10, CHEST, "Chests", "Mystic Gold Pouch"               , "", 25.0f, 1, 360.f, 0.5f },
+        { 11, CHEST, "Chests", "Expensive Gold Pouch"            , "", 25.0f, 1, 360.f, 0.5f },
+        { 12, CHEST, "Chests", "Hungry Gold Pouch"               , "", 25.0f, 1, 360.f, 0.5f },
+        { 13, CHEST, "Chests", "Barrel of Common Goods"          , "", 25.0f, 1, 360.f, 0.5f },
+        { 14, CHEST, "Chests", "Barrel of Rare Goods"            , "", 25.0f, 1, 360.f, 0.5f },
+        { 15, CHEST, "Chests", "Broken Barrel of Common Goods"   , "", 25.0f, 1, 360.f, 0.5f },
+        { 16, CHEST, "Chests", "Broken Barrel of Expensive Goods", "", 25.0f, 1, 360.f, 0.5f },
+    };
+    assert(chests[index].index == index);
+    return chests[index];
 }
 
 static Item flesh(Item it)
 {
-    it.cstr = "Flesh";
-
-    switch(it.index)
-    {
-    }
-
-    return it;
 }
 
-static Item food(Item it)
+static Item food(const int index)
 {
-    it.cstr = "Food";
-
-    switch(it.index)
-    {
-    case 0:
-        it.name = "Cramp Lion";
-        break;
-
-    case 1:
-        it.name = "Stag Ear";
-        break;
-
-    case 2:
-        it.name = "Luminescent Lichen";
-        break;
-
-    case 3:
-        it.name = "Orange Jelly Drop";
-        break;
-
-    case 4:
-        it.name = "Mossy Hair Lichen";
-        break;
-
-    case 5:
-        it.name = "Scaly Swamp Russula";
-        break;
-
-    case 6:
-        it.name = "Hypoxylon Lichen";
-        break;
-
-    case 7:
-        it.name = "Questionable Felt Lichen";
-        break;
-
-    case 8:
-        it.name = "Marasmiellus Spindles";
-        break;
-
-    case 9:
-        it.name = "Powdered Pored Bolete";
-        break;
-
-    case 10:
-        it.name = "Fly Blewit";
-        break;
-
-    case 11:
-        it.name = "Snow-white Egg Bird's Nest Fungus";
-        break;
-
-    case 12:
-        it.name = "Viscid Destroyer Fungi";
-        break;
-
-    case 13:
-        it.name = "Tumbling Waxcap";
-        break;
-
-    case 14:
-        it.name = "Cloudy Widow";
-        break;
-
-    case 15:
-        it.name = "Green-belted Mans Fingers";
-        break;
-
-    case 16:
-        it.name = "Hygroscopic Waxycap";
-        break;
-
-    case 17:
-        it.name = "Onger";
-        break;
-
-    case 18:
-        it.name = "Nilery";
-        break;
-
-    case 19:
-        it.name = "Kime";
-        break;
-
-    case 20:
-        it.name = "Sun Guanabana";
-        break;
-
-    case 21:
-        it.name = "Iggeomquat";
-        break;
-
-    case 22:
-        it.name = "River Mango";
-        break;
-
-    case 23:
-        it.name = "Klorang";
-        break;
-
-    case 24:
-        it.name = "Sun Cawesh";
-        break;
-
-    case 25:
-        it.name = "Summer Babaco";
-        break;
-
-    case 26:
-        it.name = "Dragon Bean";
-        break;
-
-    case 27:
-        it.name = "Kastrialon";
-        break;
-
-    case 28:
-        it.name = "Teobaco";
-        break;
-
-    case 29:
-        it.name = "Wrurreorang";
-        break;
-
-    case 30:
-        it.name = "Eale";
-        break;
-
-    case 31:
-        it.name = "Ogliaguaro";
-        break;
-
-    case 32:
-        it.name = "Natine";
-        break;
-
-    case 33:
-        it.name = "Lembas";
-        break;
-
-    case 34:
-        it.name = "Lembas Delight";
-        break;
-
-    case 35:
-        it.name = "Klegriariac Bonbons";
-        break;
-
-    case 36:
-        it.name = "Crown Honey Snacks";
-        break;
-
-    case 37:
-        it.name = "Barrel of Mead";
-        break;
-
-    case 38:
-        it.name = "Lump of Honey Sugar";
-        break;
-
-    case 39:
-        it.name = "River Mango Pie";
-        break;
-
-    case 40:
-        it.name = "Natine Chocolate Bar";
-        break;
-
-    case 41:
-        it.name = "Bruggearind Fortune Cake";
-        break;
-
-    case 42:
-        it.name = "Slossimelo Sweet Bun";
-        break;
-    }
-
-    return it;
+    static const Item foods[] = {
+        {  0, FOOD, "Food", "Cramp Lion"                       , "", 25.0f, 1, 360.f, 0.5f },
+        {  1, FOOD, "Food", "Stag Ear"                         , "", 25.0f, 1, 360.f, 0.5f },
+        {  2, FOOD, "Food", "Luminescent Lichen"               , "", 25.0f, 1, 360.f, 0.5f },
+        {  3, FOOD, "Food", "Orange Jelly Drop"                , "", 25.0f, 1, 360.f, 0.5f },
+        {  4, FOOD, "Food", "Mossy Hair Lichen"                , "", 25.0f, 1, 360.f, 0.5f },
+        {  5, FOOD, "Food", "Scaly Swamp Russula"              , "", 25.0f, 1, 360.f, 0.5f },
+        {  6, FOOD, "Food", "Hypoxylon Lichen"                 , "", 25.0f, 1, 360.f, 0.5f },
+        {  7, FOOD, "Food", "Questionable Felt Lichen"         , "", 25.0f, 1, 360.f, 0.5f },
+        {  8, FOOD, "Food", "Marasmiellus Spindles"            , "", 25.0f, 1, 360.f, 0.5f },
+        {  9, FOOD, "Food", "Powdered Pored Bolete"            , "", 25.0f, 1, 360.f, 0.5f },
+        { 10, FOOD, "Food", "Fly Blewit"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 11, FOOD, "Food", "Snow-white Egg Bird's Nest Fungus", "", 25.0f, 1, 360.f, 0.5f },
+        { 12, FOOD, "Food", "Viscid Destroyer Fungi"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 13, FOOD, "Food", "Tumbling Waxcap"                  , "", 25.0f, 1, 360.f, 0.5f },
+        { 14, FOOD, "Food", "Cloudy Widow"                     , "", 25.0f, 1, 360.f, 0.5f },
+        { 15, FOOD, "Food", "Green-belted Mans Fingers"        , "", 25.0f, 1, 360.f, 0.5f },
+        { 16, FOOD, "Food", "Hygroscopic Waxycap"              , "", 25.0f, 1, 360.f, 0.5f },
+        { 17, FOOD, "Food", "Onger"                            , "", 25.0f, 1, 360.f, 0.5f },
+        { 18, FOOD, "Food", "Nilery"                           , "", 25.0f, 1, 360.f, 0.5f },
+        { 19, FOOD, "Food", "Kime"                             , "", 25.0f, 1, 360.f, 0.5f },
+        { 20, FOOD, "Food", "Sun Guanabana"                    , "", 25.0f, 1, 360.f, 0.5f },
+        { 21, FOOD, "Food", "Iggeomquat"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 22, FOOD, "Food", "River Mango"                      , "", 25.0f, 1, 360.f, 0.5f },
+        { 23, FOOD, "Food", "Klorang"                          , "", 25.0f, 1, 360.f, 0.5f },
+        { 24, FOOD, "Food", "Sun Cawesh"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 25, FOOD, "Food", "Summer Babaco"                    , "", 25.0f, 1, 360.f, 0.5f },
+        { 26, FOOD, "Food", "Dragon Bean"                      , "", 25.0f, 1, 360.f, 0.5f },
+        { 27, FOOD, "Food", "Kastrialon"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 28, FOOD, "Food", "Teobaco"                          , "", 25.0f, 1, 360.f, 0.5f },
+        { 29, FOOD, "Food", "Wrurreorang"                      , "", 25.0f, 1, 360.f, 0.5f },
+        { 30, FOOD, "Food", "Eale"                             , "", 25.0f, 1, 360.f, 0.5f },
+        { 31, FOOD, "Food", "Ogliaguaro"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 32, FOOD, "Food", "Natine"                           , "", 25.0f, 1, 360.f, 0.5f },
+        { 33, FOOD, "Food", "Lembas"                           , "", 25.0f, 1, 360.f, 0.5f },
+        { 34, FOOD, "Food", "Lembas Delight"                   , "", 25.0f, 1, 360.f, 0.5f },
+        { 35, FOOD, "Food", "Klegriariac Bonbons"              , "", 25.0f, 1, 360.f, 0.5f },
+        { 36, FOOD, "Food", "Crown Honey Snacks"               , "", 25.0f, 1, 360.f, 0.5f },
+        { 37, FOOD, "Food", "Barrel of Mead"                   , "", 25.0f, 1, 360.f, 0.5f },
+        { 38, FOOD, "Food", "Lump of Honey Sugar"              , "", 25.0f, 1, 360.f, 0.5f },
+        { 39, FOOD, "Food", "River Mango Pie"                  , "", 25.0f, 1, 360.f, 0.5f },
+        { 40, FOOD, "Food", "Natine Chocolate Bar"             , "", 25.0f, 1, 360.f, 0.5f },
+        { 41, FOOD, "Food", "Bruggearind Fortune Cake"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 42, FOOD, "Food", "Slossimelo Sweet Bun"             , "", 25.0f, 1, 360.f, 0.5f },
+    };
+    assert(foods[index].index == index);
+    return foods[index];
 }
 
 static Item glove(Item it)
