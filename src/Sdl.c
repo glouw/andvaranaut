@@ -629,8 +629,8 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
     const Vram vram = xvlock(texture);
-    xvrooms(vram, map, sdl.wht, sdl.blk);
-    xvdot(vram, where, 3, sdl.red, sdl.blk);
+    xvdrooms(vram, map, sdl.wht, sdl.blk);
+    xvddot(vram, where, 3, sdl.red, sdl.blk);
     xvunlock(texture);
 
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };

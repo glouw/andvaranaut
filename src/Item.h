@@ -6,9 +6,9 @@ typedef struct
 {
     int index;
     Classification c;
+    const char* cstr;
     const char* name;
     const char* desc;
-    const char* cstr;
     float damage;
     int hurts;
     float amplitude;

@@ -2,627 +2,222 @@
 
 #include "util.h"
 
+#include <assert.h>
 #include <stdlib.h>
 
 static Item ammo(const int index)
 {
     static const Item ammos[] = {
-        {  0, AMMO, "Silver Bullets"   , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        {  1, AMMO, "Regular Bullets"  , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        {  2, AMMO, "Poorman's Bullets", "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        {  3, AMMO, "Popcap Bullets"   , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        {  4, AMMO, "Pearls"           , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        {  5, AMMO, "River Pebbels"    , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        {  6, AMMO, "Stone Bits"       , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        {  7, AMMO, "Hunter's Bow"     , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        {  8, AMMO, "Orcish Bow"       , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        {  9, AMMO, "Peasant Bow"      , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 10, AMMO, "Elvish Bow"       , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 11, AMMO, "Sling"            , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 12, AMMO, "Crossbow"         , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 13, AMMO, "Mithril Arrows"   , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 14, AMMO, "Iron Arrows"      , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 15, AMMO, "Gold Tip Arrows"  , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 16, AMMO, "Bone Arrows"      , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 17, AMMO, "Adament Arrows"   , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 18, AMMO, "Barbed Arrows"    , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 19, AMMO, "Dart"             , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 20, AMMO, "Shurikens"        , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 21, AMMO, "Boomerang"        , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 22, AMMO, "One-Handed Cannon", "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
-        { 23, AMMO, "Two-Handed Cannon", "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  0, AMMO, "Ammo", "Silver Bullets"   , "", 25.0f, 1, 360.0f, 0.05f },
+        {  1, AMMO, "Ammo", "Regular Bullets"  , "", 25.0f, 1, 360.0f, 0.05f },
+        {  2, AMMO, "Ammo", "Poorman's Bullets", "", 25.0f, 1, 360.0f, 0.05f },
+        {  3, AMMO, "Ammo", "Popcap Bullets"   , "", 25.0f, 1, 360.0f, 0.05f },
+        {  4, AMMO, "Ammo", "Pearls"           , "", 25.0f, 1, 360.0f, 0.05f },
+        {  5, AMMO, "Ammo", "River Pebbels"    , "", 25.0f, 1, 360.0f, 0.05f },
+        {  6, AMMO, "Ammo", "Stone Bits"       , "", 25.0f, 1, 360.0f, 0.05f },
+        {  7, AMMO, "Ammo", "Hunter's Bow"     , "", 25.0f, 1, 360.0f, 0.05f },
+        {  8, AMMO, "Ammo", "Orcish Bow"       , "", 25.0f, 1, 360.0f, 0.05f },
+        {  9, AMMO, "Ammo", "Peasant Bow"      , "", 25.0f, 1, 360.0f, 0.05f },
+        { 10, AMMO, "Ammo", "Elvish Bow"       , "", 25.0f, 1, 360.0f, 0.05f },
+        { 11, AMMO, "Ammo", "Sling"            , "", 25.0f, 1, 360.0f, 0.05f },
+        { 12, AMMO, "Ammo", "Crossbow"         , "", 25.0f, 1, 360.0f, 0.05f },
+        { 13, AMMO, "Ammo", "Mithril Arrows"   , "", 25.0f, 1, 360.0f, 0.05f },
+        { 14, AMMO, "Ammo", "Iron Arrows"      , "", 25.0f, 1, 360.0f, 0.05f },
+        { 15, AMMO, "Ammo", "Gold Tip Arrows"  , "", 25.0f, 1, 360.0f, 0.05f },
+        { 16, AMMO, "Ammo", "Bone Arrows"      , "", 25.0f, 1, 360.0f, 0.05f },
+        { 17, AMMO, "Ammo", "Adament Arrows"   , "", 25.0f, 1, 360.0f, 0.05f },
+        { 18, AMMO, "Ammo", "Barbed Arrows"    , "", 25.0f, 1, 360.0f, 0.05f },
+        { 19, AMMO, "Ammo", "Dart"             , "", 25.0f, 1, 360.0f, 0.05f },
+        { 20, AMMO, "Ammo", "Shurikens"        , "", 25.0f, 1, 360.0f, 0.05f },
+        { 21, AMMO, "Ammo", "Boomerang"        , "", 25.0f, 1, 360.0f, 0.05f },
+        { 22, AMMO, "Ammo", "One-Handed Cannon", "", 25.0f, 1, 360.0f, 0.05f },
+        { 23, AMMO, "Ammo", "Two-Handed Cannon", "", 25.0f, 1, 360.0f, 0.05f },
     };
+    assert(ammos[index].index == index);
     return ammos[index];
 }
 
 static Item amulet(const int index)
 {
     static const Item amulets[] = {
-        {  0, AMULET, "Emblem of Reincarnation"          , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        {  1, AMULET, "Aura of Endurance"                , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        {  2, AMULET, "Whisper of Panic"                 , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        {  3, AMULET, "Fortified Secrets of Power"       , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        {  4, AMULET, "Enhanced Aspect of Auras"         , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        {  5, AMULET, "Mighty Mark of Hunger"            , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        {  6, AMULET, "Vampiric Hymn of Magical Defenses", "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        {  7, AMULET, "Gift of Prime Loss"               , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        {  8, AMULET, "Emblem of Strengthened Storms"    , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        {  9, AMULET, "Hymn of Eternal Potency"          , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        { 10, AMULET, "Spark of Sight"                   , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        { 11, AMULET, "Enchantment of Success"           , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        { 12, AMULET, "Grace of Haste"                   , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        { 13, AMULET, "Fortified Charge of Cover"        , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        { 14, AMULET, "Lesser Bond of Cover"             , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        { 15, AMULET, "Brilliant Infusion of Danger"     , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
-        { 16, AMULET, "Light Seal of Disbelief"          , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  0, AMULET, "Amulet", "Emblem of Reincarnation"          , "", 25.0f, 1, 360.f, 0.5f },
+        {  1, AMULET, "Amulet", "Aura of Endurance"                , "", 25.0f, 1, 360.f, 0.5f },
+        {  2, AMULET, "Amulet", "Whisper of Panic"                 , "", 25.0f, 1, 360.f, 0.5f },
+        {  3, AMULET, "Amulet", "Fortified Secrets of Power"       , "", 25.0f, 1, 360.f, 0.5f },
+        {  4, AMULET, "Amulet", "Enhanced Aspect of Auras"         , "", 25.0f, 1, 360.f, 0.5f },
+        {  5, AMULET, "Amulet", "Mighty Mark of Hunger"            , "", 25.0f, 1, 360.f, 0.5f },
+        {  6, AMULET, "Amulet", "Vampiric Hymn of Magical Defenses", "", 25.0f, 1, 360.f, 0.5f },
+        {  7, AMULET, "Amulet", "Gift of Prime Loss"               , "", 25.0f, 1, 360.f, 0.5f },
+        {  8, AMULET, "Amulet", "Emblem of Strengthened Storms"    , "", 25.0f, 1, 360.f, 0.5f },
+        {  9, AMULET, "Amulet", "Hymn of Eternal Potency"          , "", 25.0f, 1, 360.f, 0.5f },
+        { 10, AMULET, "Amulet", "Spark of Sight"                   , "", 25.0f, 1, 360.f, 0.5f },
+        { 11, AMULET, "Amulet", "Enchantment of Success"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 12, AMULET, "Amulet", "Grace of Haste"                   , "", 25.0f, 1, 360.f, 0.5f },
+        { 13, AMULET, "Amulet", "Fortified Charge of Cover"        , "", 25.0f, 1, 360.f, 0.5f },
+        { 14, AMULET, "Amulet", "Lesser Bond of Cover"             , "", 25.0f, 1, 360.f, 0.5f },
+        { 15, AMULET, "Amulet", "Brilliant Infusion of Danger"     , "", 25.0f, 1, 360.f, 0.5f },
+        { 16, AMULET, "Amulet", "Light Seal of Disbelief"          , "", 25.0f, 1, 360.f, 0.5f },
     };
+    assert(amulets[index].index == index);
     return amulets[index];
 }
 
-static Item armor(Item it)
+static Item armor(const int index)
 {
-    it.cstr = "Armor";
-
-    switch(it.index)
-    {
-    case 0:
-        it.name = "Bronze Chainmail of Immortal Souls";
-        break;
-
-    case 1:
-        it.name = "Bronze Chainmail of Divine Bloodlust";
-        break;
-
-    case 2:
-        it.name = "Mithril Chainmail of Chestguard";
-        break;
-
-    case 3:
-        it.name = "Adamant Chainmail of Pride's Fall";
-        break;
-
-    case 4:
-        it.name = "Bronze Chainmail of the Lone Wolf";
-        break;
-
-    case 5:
-        it.name = "Mithril Chainmail of Delusions";
-        break;
-
-    case 6:
-        it.name = "Gold Chainmail of Relentless Voices";
-        break;
-
-    case 7:
-        it.name = "Mithril Chainmail of Recoil";
-        break;
-
-    case 8:
-        it.name = "Charcoal Chainmail of Broken Bones";
-        break;
-
-    case 9:
-        it.name = "Steel Chainmail of Riddles";
-        break;
-
-    case 10:
-        it.name = "Adamant Chainmail of Unholy Blight";
-        break;
-
-    case 11:
-        it.name = "Poly Chainmail of Dark Magic";
-        break;
-
-    case 12:
-        it.name = "Copper Chain Rings";
-        break;
-
-    case 13:
-        it.name = "Bronze Chain Rings";
-        break;
-
-    case 14:
-        it.name = "Mithril Chain Rings";
-        break;
-
-    case 15:
-        it.name = "Adamant Chain Rings";
-        break;
-
-    case 16:
-        it.name = "Copper Chain Rings";
-        break;
-
-    case 17:
-        it.name = "Mithril Chain Rings";
-        break;
-
-    case 18:
-        it.name = "Gold Chain Rings";
-        break;
-
-    case 19:
-        it.name = "Mithril Chain Rings";
-        break;
-
-    case 20:
-        it.name = "Charcoal Chain Rings";
-        break;
-
-    case 21:
-        it.name = "Steel Chain Rings";
-        break;
-
-    case 22:
-        it.name = "Adamant Chain Rings";
-        break;
-
-    case 23:
-        it.name = "Poly Chain Rings";
-        break;
-
-    case 24:
-        it.name = "Greatcloak of Blind Whispers";
-        break;
-
-    case 25:
-        it.name = "Drape of Blessed Glory";
-        break;
-
-    case 26:
-        it.name = "Wool Mantle of Distant Powers";
-        break;
-
-    case 27:
-        it.name = "Possessed Scaled Shroud";
-        break;
-
-    case 28:
-        it.name = "Cloth Greatcloak of Haunted Justice";
-        break;
-
-    case 29:
-        it.name = "Exile Embroided Wrap";
-        break;
-
-    case 30:
-        it.name = "Warlord's Padded Greatcloak";
-        break;
-
-    case 31:
-        it.name = "Lightning Mantle of Secrets";
-        break;
-
-    case 32:
-        it.name = "Dragon Shroud of the Talon";
-        break;
-
-    case 33:
-        it.name = "Doom's Wool Drape";
-        break;
-
-    case 34:
-        it.name = "Piece of Cloth";
-        break;
-
-    case 35:
-        it.name = "Dirty Rags";
-        break;
-
-    case 36:
-        it.name = "Copper Chestguard of Fleeting Kings";
-        break;
-
-    case 37:
-        it.name = "Bronze Chestguard of Hallowed Wars";
-        break;
-
-    case 38:
-        it.name = "Steel Breastplate";
-        break;
-
-    case 39:
-        it.name = "Studded Steel Breastplate";
-        break;
-
-    case 40:
-        it.name = "Mithril Chestgaurd of Conquered Worlds";
-        break;
-
-    case 41:
-        it.name = "Steel Plated Cuirass";
-        break;
-
-    case 42:
-        it.name = "Heavy Steel Plated Cuirass";
-        break;
-
-    case 43:
-        it.name = "Storm-Forged Steel Cuirass of the Gods";
-        break;
-
-    case 44:
-        it.name = "Common Clothes";
-        break;
-
-    case 45:
-        it.name = "Kimono of the Apprentice";
-        break;
-
-    case 46:
-        it.name = "Kimono of Festivities";
-        break;
-
-    case 47:
-        it.name = "Kimono of the Western Sea";
-        break;
-
-    case 48:
-        it.name = "Kimono of the Fisherman";
-        break;
-
-    case 49:
-        it.name = "Common Headscarf";
-        break;
-
-    case 50:
-        it.name = "Desert Headscarf";
-        break;
-
-    case 51:
-        it.name = "Red Cape of Riding";
-        break;
-
-    case 52:
-        it.name = "Iron Chainmail";
-        break;
-
-    case 53:
-        it.name = "Gold Chainmail";
-        break;
-
-    case 54:
-        it.name = "Steel Chaimail";
-        break;
-
-    case 55:
-        it.name = "Bronze Chainmail";
-        break;
-
-    case 56:
-        it.name = "Charcoal Chainmail";
-        break;
-
-    case 57:
-        it.name = "Wooden Chest Armor";
-        break;
-
-    case 58:
-        it.name = "Hide Skin";
-        break;
-    }
-
-    return it;
+    static const Item armors[] = {
+        {  0, ARMOR, "Armor", "Bronze Chainmail of Immortal Souls"     , "", 25.0f, 1, 360.f, 0.5f },
+        {  1, ARMOR, "Armor", "Bronze Chainmail of Divine Bloodlust"   , "", 25.0f, 1, 360.f, 0.5f },
+        {  2, ARMOR, "Armor", "Mithril Chainmail of Chestguard"        , "", 25.0f, 1, 360.f, 0.5f },
+        {  3, ARMOR, "Armor", "Adamant Chainmail of Pride's Fall"      , "", 25.0f, 1, 360.f, 0.5f },
+        {  4, ARMOR, "Armor", "Bronze Chainmail of the Lone Wolf"      , "", 25.0f, 1, 360.f, 0.5f },
+        {  5, ARMOR, "Armor", "Mithril Chainmail of Delusions"         , "", 25.0f, 1, 360.f, 0.5f },
+        {  6, ARMOR, "Armor", "Gold Chainmail of Relentless Voices"    , "", 25.0f, 1, 360.f, 0.5f },
+        {  7, ARMOR, "Armor", "Mithril Chainmail of Recoil"            , "", 25.0f, 1, 360.f, 0.5f },
+        {  8, ARMOR, "Armor", "Charcoal Chainmail of Broken Bones"     , "", 25.0f, 1, 360.f, 0.5f },
+        {  9, ARMOR, "Armor", "Steel Chainmail of Riddles"             , "", 25.0f, 1, 360.f, 0.5f },
+        { 10, ARMOR, "Armor", "Adamant Chainmail of Unholy Blight"     , "", 25.0f, 1, 360.f, 0.5f },
+        { 11, ARMOR, "Armor", "Poly Chainmail of Dark Magic"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 12, ARMOR, "Armor", "Copper Chain Rings"                     , "", 25.0f, 1, 360.f, 0.5f },
+        { 13, ARMOR, "Armor", "Bronze Chain Rings"                     , "", 25.0f, 1, 360.f, 0.5f },
+        { 14, ARMOR, "Armor", "Mithril Chain Rings"                    , "", 25.0f, 1, 360.f, 0.5f },
+        { 15, ARMOR, "Armor", "Adamant Chain Rings"                    , "", 25.0f, 1, 360.f, 0.5f },
+        { 16, ARMOR, "Armor", "Copper Chain Rings"                     , "", 25.0f, 1, 360.f, 0.5f },
+        { 17, ARMOR, "Armor", "Mithril Chain Rings"                    , "", 25.0f, 1, 360.f, 0.5f },
+        { 18, ARMOR, "Armor", "Gold Chain Rings"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 19, ARMOR, "Armor", "Mithril Chain Rings"                    , "", 25.0f, 1, 360.f, 0.5f },
+        { 20, ARMOR, "Armor", "Charcoal Chain Rings"                   , "", 25.0f, 1, 360.f, 0.5f },
+        { 21, ARMOR, "Armor", "Steel Chain Rings"                      , "", 25.0f, 1, 360.f, 0.5f },
+        { 22, ARMOR, "Armor", "Adamant Chain Rings"                    , "", 25.0f, 1, 360.f, 0.5f },
+        { 23, ARMOR, "Armor", "Poly Chain Rings"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 24, ARMOR, "Armor", "Greatcloak of Blind Whispers"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 25, ARMOR, "Armor", "Drape of Blessed Glory"                 , "", 25.0f, 1, 360.f, 0.5f },
+        { 26, ARMOR, "Armor", "Wool Mantle of Distant Powers"          , "", 25.0f, 1, 360.f, 0.5f },
+        { 27, ARMOR, "Armor", "Possessed Scaled Shroud"                , "", 25.0f, 1, 360.f, 0.5f },
+        { 28, ARMOR, "Armor", "Cloth Greatcloak of Haunted Justice"    , "", 25.0f, 1, 360.f, 0.5f },
+        { 29, ARMOR, "Armor", "Exile Embroided Wrap"                   , "", 25.0f, 1, 360.f, 0.5f },
+        { 30, ARMOR, "Armor", "Warlord's Padded Greatcloak"            , "", 25.0f, 1, 360.f, 0.5f },
+        { 31, ARMOR, "Armor", "Lightning Mantle of Secrets"            , "", 25.0f, 1, 360.f, 0.5f },
+        { 32, ARMOR, "Armor", "Dragon Shroud of the Talon"             , "", 25.0f, 1, 360.f, 0.5f },
+        { 33, ARMOR, "Armor", "Doom's Wool Drape"                      , "", 25.0f, 1, 360.f, 0.5f },
+        { 34, ARMOR, "Armor", "Piece of Cloth"                         , "", 25.0f, 1, 360.f, 0.5f },
+        { 35, ARMOR, "Armor", "Dirty Rags"                             , "", 25.0f, 1, 360.f, 0.5f },
+        { 36, ARMOR, "Armor", "Copper Chestguard of Fleeting Kings"    , "", 25.0f, 1, 360.f, 0.5f },
+        { 37, ARMOR, "Armor", "Bronze Chestguard of Hallowed Wars"     , "", 25.0f, 1, 360.f, 0.5f },
+        { 38, ARMOR, "Armor", "Steel Breastplate"                      , "", 25.0f, 1, 360.f, 0.5f },
+        { 39, ARMOR, "Armor", "Studded Steel Breastplate"              , "", 25.0f, 1, 360.f, 0.5f },
+        { 40, ARMOR, "Armor", "Mithril Chestgaurd of Conquered Worlds" , "", 25.0f, 1, 360.f, 0.5f },
+        { 41, ARMOR, "Armor", "Steel Plated Cuirass"                   , "", 25.0f, 1, 360.f, 0.5f },
+        { 42, ARMOR, "Armor", "Heavy Steel Plated Cuirass"             , "", 25.0f, 1, 360.f, 0.5f },
+        { 43, ARMOR, "Armor", "Storm-Forged Steel Cuirass of the Gods" , "", 25.0f, 1, 360.f, 0.5f },
+        { 44, ARMOR, "Armor", "Common Clothes"                         , "", 25.0f, 1, 360.f, 0.5f },
+        { 45, ARMOR, "Armor", "Kimono of the Apprentice"               , "", 25.0f, 1, 360.f, 0.5f },
+        { 46, ARMOR, "Armor", "Kimono of Festivities"                  , "", 25.0f, 1, 360.f, 0.5f },
+        { 47, ARMOR, "Armor", "Kimono of the Western Sea"              , "", 25.0f, 1, 360.f, 0.5f },
+        { 48, ARMOR, "Armor", "Kimono of the Fisherman"                , "", 25.0f, 1, 360.f, 0.5f },
+        { 49, ARMOR, "Armor", "Common Headscarf"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 50, ARMOR, "Armor", "Desert Headscarf"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 51, ARMOR, "Armor", "Red Cape of Riding"                     , "", 25.0f, 1, 360.f, 0.5f },
+        { 52, ARMOR, "Armor", "Iron Chainmail"                         , "", 25.0f, 1, 360.f, 0.5f },
+        { 53, ARMOR, "Armor", "Gold Chainmail"                         , "", 25.0f, 1, 360.f, 0.5f },
+        { 54, ARMOR, "Armor", "Steel Chaimail"                         , "", 25.0f, 1, 360.f, 0.5f },
+        { 55, ARMOR, "Armor", "Bronze Chainmail"                       , "", 25.0f, 1, 360.f, 0.5f },
+        { 56, ARMOR, "Armor", "Charcoal Chainmail"                     , "", 25.0f, 1, 360.f, 0.5f },
+        { 57, ARMOR, "Armor", "Wooden Chest Armor"                     , "", 25.0f, 1, 360.f, 0.5f },
+        { 58, ARMOR, "Armor", "Hide Skin"                              , "", 25.0f, 1, 360.f, 0.5f },
+    };
+    assert(armors[index].index == index);
+    return armors[index];
 }
 
-static Item book(Item it)
+static Item book(const int index)
 {
-    it.cstr = "Book";
-
-    switch(it.index)
-    {
-    case 0:
-        it.name = "Duke Of The Nation";
-        break;
-
-    case 1:
-        it.name = "Criminal Of The Night";
-        break;
-
-    case 2:
-        it.name = "Humans Without Duty";
-        break;
-
-    case 3:
-        it.name = "Descendants Of The Day";
-        break;
-
-    case 4:
-        it.name = "Slaves And Friends";
-        break;
-
-    case 5:
-        it.name = "Defenders And Swindlers";
-        break;
-
-    case 6:
-        it.name = "Ruins With Money";
-        break;
-
-    case 7:
-        it.name = "Sword Of History";
-        break;
-
-    case 8:
-        it.name = "Dead At The Beginning";
-        break;
-
-    case 9:
-        it.name = "Cleaning Up My Destiny";
-        break;
-
-    case 10:
-        it.name = "Defender With Pride";
-        break;
-
-    case 11:
-        it.name = "Human Without Courage";
-        break;
-
-    case 12:
-        it.name = "Blacksmiths Of Hell";
-        break;
-
-    case 13:
-        it.name = "Invaders Of The Great";
-        break;
-
-    case 14:
-        it.name = "Slaves And Phantoms";
-        break;
-
-    case 15:
-        it.name = "Heroes And Heirs";
-        break;
-
-    case 16:
-        it.name = "Vengeance Of Heaven";
-        break;
-
-    case 17:
-        it.name = "Culmination Of Fire";
-        break;
-
-    case 18:
-        it.name = "Commanding The Depths";
-        break;
-
-    case 19:
-        it.name = "Searching In Nightmares";
-        break;
-
-    case 20:
-        it.name = "Butcher Of The Ancestors";
-        break;
-
-    case 21:
-        it.name = "Priestess Of The Great";
-        break;
-
-    case 22:
-        it.name = "Hunters Without A Goal";
-        break;
-
-    case 23:
-        it.name = "Wolves Without Courage";
-        break;
-
-    case 24:
-        it.name = "Bandits And Foreigners";
-        break;
-
-    case 25:
-        it.name = "Strangers And Foes";
-        break;
-
-    case 26:
-        it.name = "Crossbow Of The Ancestors";
-        break;
-
-    case 27:
-        it.name = "Luck Of Dread";
-        break;
-
-    case 28:
-        it.name = "Challenging The Immortals";
-        break;
-
-    case 29:
-        it.name = "Dwelling In The Emperor";
-        break;
-
-    case 30:
-        it.name = "Criminal Of Utopia";
-        break;
-
-    case 31:
-        it.name = "Friend Without Time";
-        break;
-
-    case 32:
-        it.name = "Enemies With Silver";
-        break;
-
-    case 33:
-        it.name = "Priests Of The Plague";
-        break;
-
-    case 34:
-        it.name = "Giants And Heirs";
-        break;
-
-    case 35:
-        it.name = "Hunters And Mice";
-        break;
-
-    case 36:
-        it.name = "Nation Without Flaws";
-        break;
-
-    case 37:
-        it.name = "Revenge Of The Frontline";
-        break;
-
-    case 38:
-        it.name = "Running In The Hunter";
-        break;
-
-    case 39:
-        it.name = "Rescue At The Mist";
-        break;
-
-    case 40:
-        it.name = "Gangster With Immortality";
-        break;
-
-    case 41:
-        it.name = "Blacksmith Of Freedom";
-        break;
-
-    case 42:
-        it.name = "Wives Without Direction";
-        break;
-
-    case 43:
-        it.name = "Women With Silver";
-        break;
-
-    case 44:
-        it.name = "Spies And Strangers";
-        break;
-
-    case 45:
-        it.name = "Thieves And Kings";
-        break;
-
-    case 46:
-        it.name = "World Of The Ancients";
-        break;
-
-    case 47:
-        it.name = "Effect Of Hope";
-        break;
-
-    case 48:
-        it.name = "Deceiving The Forest";
-        break;
-
-    case 49:
-        it.name = "Remember The Forest";
-        break;
-
-    case 50:
-        it.name = "Woman Of Glory";
-        break;
-
-    case 51:
-        it.name = "Agent With Silver";
-        break;
-
-    case 52:
-        it.name = "Foes Of The River";
-        break;
-
-    case 53:
-        it.name = "Robots With Money";
-        break;
-
-    case 54:
-        it.name = "Women And Criminals";
-        break;
-
-    case 55:
-        it.name = "Officers And Rats";
-        break;
-
-    case 56:
-        it.name = "Country Of Glory";
-        break;
-
-    case 57:
-        it.name = "Will Of My Imagination";
-        break;
-
-    case 58:
-        it.name = "Traces In The Jungle";
-        break;
-
-    case 59:
-        it.name = "Dancing In The Animals";
-        break;
-
-    case 60:
-        it.name = "Assassin Of Stone";
-        break;
-
-    case 61:
-        it.name = "Criminal Of Earth";
-        break;
-
-    case 62:
-        it.name = "Blacksmiths Of The Stockades";
-        break;
-
-    case 63:
-        it.name = "Humans With Pride";
-        break;
-
-    case 64:
-        it.name = "Owls And Dogs";
-        break;
-    }
-
-    return it;
+    const Item books[] = {
+        {  0, BOOK, "Book", "Duke Of The Nation"          , "", 25.0f, 1, 360.f, 0.5f },
+        {  1, BOOK, "Book", "Criminal Of The Night"       , "", 25.0f, 1, 360.f, 0.5f },
+        {  2, BOOK, "Book", "Humans Without Duty"         , "", 25.0f, 1, 360.f, 0.5f },
+        {  3, BOOK, "Book", "Descendants Of The Day"      , "", 25.0f, 1, 360.f, 0.5f },
+        {  4, BOOK, "Book", "Slaves And Friends"          , "", 25.0f, 1, 360.f, 0.5f },
+        {  5, BOOK, "Book", "Defenders And Swindlers"     , "", 25.0f, 1, 360.f, 0.5f },
+        {  6, BOOK, "Book", "Ruins With Money"            , "", 25.0f, 1, 360.f, 0.5f },
+        {  7, BOOK, "Book", "Sword Of History"            , "", 25.0f, 1, 360.f, 0.5f },
+        {  8, BOOK, "Book", "Dead At The Beginning"       , "", 25.0f, 1, 360.f, 0.5f },
+        {  9, BOOK, "Book", "Cleaning Up My Destiny"      , "", 25.0f, 1, 360.f, 0.5f },
+        { 10, BOOK, "Book", "Defender With Pride"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 11, BOOK, "Book", "Human Without Courage"       , "", 25.0f, 1, 360.f, 0.5f },
+        { 12, BOOK, "Book", "Blacksmiths Of Hell"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 13, BOOK, "Book", "Invaders Of The Great"       , "", 25.0f, 1, 360.f, 0.5f },
+        { 14, BOOK, "Book", "Slaves And Phantoms"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 15, BOOK, "Book", "Heroes And Heirs"            , "", 25.0f, 1, 360.f, 0.5f },
+        { 16, BOOK, "Book", "Vengeance Of Heaven"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 17, BOOK, "Book", "Culmination Of Fire"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 18, BOOK, "Book", "Commanding The Depths"       , "", 25.0f, 1, 360.f, 0.5f },
+        { 19, BOOK, "Book", "Searching In Nightmares"     , "", 25.0f, 1, 360.f, 0.5f },
+        { 20, BOOK, "Book", "Butcher Of The Ancestors"    , "", 25.0f, 1, 360.f, 0.5f },
+        { 21, BOOK, "Book", "Priestess Of The Great"      , "", 25.0f, 1, 360.f, 0.5f },
+        { 22, BOOK, "Book", "Hunters Without A Goal"      , "", 25.0f, 1, 360.f, 0.5f },
+        { 23, BOOK, "Book", "Wolves Without Courage"      , "", 25.0f, 1, 360.f, 0.5f },
+        { 24, BOOK, "Book", "Bandits And Foreigners"      , "", 25.0f, 1, 360.f, 0.5f },
+        { 25, BOOK, "Book", "Strangers And Foes"          , "", 25.0f, 1, 360.f, 0.5f },
+        { 26, BOOK, "Book", "Crossbow Of The Ancestors"   , "", 25.0f, 1, 360.f, 0.5f },
+        { 27, BOOK, "Book", "Luck Of Dread"               , "", 25.0f, 1, 360.f, 0.5f },
+        { 28, BOOK, "Book", "Challenging The Immortals"   , "", 25.0f, 1, 360.f, 0.5f },
+        { 29, BOOK, "Book", "Dwelling In The Emperor"     , "", 25.0f, 1, 360.f, 0.5f },
+        { 30, BOOK, "Book", "Criminal Of Utopia"          , "", 25.0f, 1, 360.f, 0.5f },
+        { 31, BOOK, "Book", "Friend Without Time"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 32, BOOK, "Book", "Enemies With Silver"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 33, BOOK, "Book", "Priests Of The Plague"       , "", 25.0f, 1, 360.f, 0.5f },
+        { 34, BOOK, "Book", "Giants And Heirs"            , "", 25.0f, 1, 360.f, 0.5f },
+        { 35, BOOK, "Book", "Hunters And Mice"            , "", 25.0f, 1, 360.f, 0.5f },
+        { 36, BOOK, "Book", "Nation Without Flaws"        , "", 25.0f, 1, 360.f, 0.5f },
+        { 37, BOOK, "Book", "Revenge Of The Frontline"    , "", 25.0f, 1, 360.f, 0.5f },
+        { 38, BOOK, "Book", "Running In The Hunter"       , "", 25.0f, 1, 360.f, 0.5f },
+        { 39, BOOK, "Book", "Rescue At The Mist"          , "", 25.0f, 1, 360.f, 0.5f },
+        { 40, BOOK, "Book", "Gangster With Immortality"   , "", 25.0f, 1, 360.f, 0.5f },
+        { 41, BOOK, "Book", "Blacksmith Of Freedom"       , "", 25.0f, 1, 360.f, 0.5f },
+        { 42, BOOK, "Book", "Wives Without Direction"     , "", 25.0f, 1, 360.f, 0.5f },
+        { 43, BOOK, "Book", "Women With Silver"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 44, BOOK, "Book", "Spies And Strangers"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 45, BOOK, "Book", "Thieves And Kings"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 46, BOOK, "Book", "World Of The Ancients"       , "", 25.0f, 1, 360.f, 0.5f },
+        { 47, BOOK, "Book", "Effect Of Hope"              , "", 25.0f, 1, 360.f, 0.5f },
+        { 48, BOOK, "Book", "Deceiving The Forest"        , "", 25.0f, 1, 360.f, 0.5f },
+        { 49, BOOK, "Book", "Remember The Forest"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 50, BOOK, "Book", "Woman Of Glory"              , "", 25.0f, 1, 360.f, 0.5f },
+        { 51, BOOK, "Book", "Agent With Silver"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 52, BOOK, "Book", "Foes Of The River"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 53, BOOK, "Book", "Robots With Money"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 54, BOOK, "Book", "Women And Criminals"         , "", 25.0f, 1, 360.f, 0.5f },
+        { 55, BOOK, "Book", "Officers And Rats"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 56, BOOK, "Book", "Country Of Glory"            , "", 25.0f, 1, 360.f, 0.5f },
+        { 57, BOOK, "Book", "Will Of My Imagination"      , "", 25.0f, 1, 360.f, 0.5f },
+        { 58, BOOK, "Book", "Traces In The Jungle"        , "", 25.0f, 1, 360.f, 0.5f },
+        { 59, BOOK, "Book", "Dancing In The Animals"      , "", 25.0f, 1, 360.f, 0.5f },
+        { 60, BOOK, "Book", "Assassin Of Stone"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 61, BOOK, "Book", "Criminal Of Earth"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 62, BOOK, "Book", "Blacksmiths Of The Stockades", "", 25.0f, 1, 360.f, 0.5f },
+        { 63, BOOK, "Book", "Humans With Pride"           , "", 25.0f, 1, 360.f, 0.5f },
+        { 64, BOOK, "Book", "Owls And Dogs"               , "", 25.0f, 1, 360.f, 0.5f },
+    };
+    assert(books[index].index == index);
+    return books[index];
 }
 
-static Item boot(Item it)
+static Item boot(const int index)
 {
-    it.cstr = "Boot";
-
-    switch(it.index)
-    {
-    case 0:
-        it.name = "Footpads of Binding Lands";
-        break;
-
-    case 1:
-        it.name = "Sabatons of Conquered Damnation";
-        break;
-
-    case 2:
-        it.name = "Crazed Bronzed Greatboots";
-        break;
-
-    case 3:
-        it.name = "Grieving Adamantite Sabatons";
-        break;
-
-    case 4:
-        it.name = "Ebon Skeletal Greaves";
-        break;
-
-    case 5:
-        it.name = "Iron Walkers of Hallowed Souls";
-        break;
-
-    case 6:
-        it.name = "Thunderfury Skeletal Greaves";
-        break;
-
-    case 7:
-        it.name = "Hollow Feet of Nature";
-        break;
-
-    case 8:
-        it.name = "Challenger's Quilted Boots";
-        break;
-
-    case 9:
-        it.name = "Sprinters of the Champion";
-        break;
-    }
-
-    return it;
+    const Item boots[] = {
+        { 0, BOOT, "Boots", "Footpads of Binding Lands"      , "", 25.0f, 1, 360.f, 0.5f },
+        { 1, BOOT, "Boots", "Sabatons of Conquered Damnation", "", 25.0f, 1, 360.f, 0.5f },
+        { 2, BOOT, "Boots", "Crazed Bronzed Greatboots"      , "", 25.0f, 1, 360.f, 0.5f },
+        { 3, BOOT, "Boots", "Grieving Adamantite Sabatons"   , "", 25.0f, 1, 360.f, 0.5f },
+        { 4, BOOT, "Boots", "Ebon Skeletal Greaves"          , "", 25.0f, 1, 360.f, 0.5f },
+        { 5, BOOT, "Boots", "Iron Walkers of Hallowed Souls" , "", 25.0f, 1, 360.f, 0.5f },
+        { 6, BOOT, "Boots", "Thunderfury Skeletal Greaves"   , "", 25.0f, 1, 360.f, 0.5f },
+        { 7, BOOT, "Boots", "Hollow Feet of Nature"          , "", 25.0f, 1, 360.f, 0.5f },
+        { 8, BOOT, "Boots", "Challenger's Quilted Boots"     , "", 25.0f, 1, 360.f, 0.5f },
+        { 9, BOOT, "Boots", "Sprinters of the Champion"      , "", 25.0f, 1, 360.f, 0.5f },
+    };
+    assert(boots[index].index == index);
+    return boots[index];
 }
 
 static Item chest(Item it)
@@ -1289,44 +884,33 @@ static Item none(Item it)
 
 Item xitnew(const Classification c, const int index)
 {
-    Item it;
-    it.index = index;
-    it.c = c;
-    it.period = 0.05f;
-    it.amplitude = 360.0f;
-    it.damage = 25.0f;
-    it.hurts = 1;
-
     switch(c)
     {
     case     AMMO: return     ammo(index);
     case   AMULET: return   amulet(index);
-    case    ARMOR: return    armor(it);
-    case     BOOK: return     book(it);
-    case     BOOT: return     boot(it);
-    case    CHEST: return    chest(it);
-    case    FLESH: return    flesh(it);
-    case     FOOD: return     food(it);
-    case    GLOVE: return    glove(it);
-    case      HAT: return      hat(it);
-    case      KEY: return      key(it);
-    case    LIGHT: return    light(it);
-    case  LONGWEP: return  longwep(it);
-    case   MEDWEP: return   medwep(it);
-    case    MONEY: return    money(it);
-    case    MUSIC: return    music(it);
-    case   POTION: return   potion(it);
-    case     RING: return     ring(it);
-    case     ROCK: return     rock(it);
-    case   SCROLL: return   scroll(it);
-    case   SHIELD: return   shield(it);
-    case SHORTWEP: return shortwep(it);
-    case     TOOL: return     tool(it);
-    case     WAND: return     wand(it);
-    case     NONE: return     none(it);
-
-    default:
-        return it;
+    case    ARMOR: return    armor(index);
+    case     BOOK: return     book(index);
+    //case     BOOT: return     boot(it);
+    //case    CHEST: return    chest(it);
+    //case    FLESH: return    flesh(it);
+    //case     FOOD: return     food(it);
+    //case    GLOVE: return    glove(it);
+    //case      HAT: return      hat(it);
+    //case      KEY: return      key(it);
+    //case    LIGHT: return    light(it);
+    //case  LONGWEP: return  longwep(it);
+    //case   MEDWEP: return   medwep(it);
+    //case    MONEY: return    money(it);
+    //case    MUSIC: return    music(it);
+    //case   POTION: return   potion(it);
+    //case     RING: return     ring(it);
+    //case     ROCK: return     rock(it);
+    //case   SCROLL: return   scroll(it);
+    //case   SHIELD: return   shield(it);
+    //case SHORTWEP: return shortwep(it);
+    //case     TOOL: return     tool(it);
+    //case     WAND: return     wand(it);
+    //case     NONE: return     none(it);
     }
 }
 
