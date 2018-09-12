@@ -34,7 +34,7 @@ static Sprite _b_(Sprite s)
     s.speed = 0.033f;
     s.acceleration = 0.0025f;
     s.width = 0.66f;
-    static const char* const sentences[] = {
+    const char* const sentences[] = {
         "Hey there!",
         "How are you doing today?",
         "MY",

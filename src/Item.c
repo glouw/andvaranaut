@@ -4,194 +4,59 @@
 
 #include <stdlib.h>
 
-Item xzitem(void)
+static Item ammo(const int index)
 {
-    static Item item;
-    return item;
+    static const Item ammos[] = {
+        {  0, AMMO, "Silver Bullets"   , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  1, AMMO, "Regular Bullets"  , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  2, AMMO, "Poorman's Bullets", "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  3, AMMO, "Popcap Bullets"   , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  4, AMMO, "Pearls"           , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  5, AMMO, "River Pebbels"    , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  6, AMMO, "Stone Bits"       , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  7, AMMO, "Hunter's Bow"     , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  8, AMMO, "Orcish Bow"       , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        {  9, AMMO, "Peasant Bow"      , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 10, AMMO, "Elvish Bow"       , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 11, AMMO, "Sling"            , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 12, AMMO, "Crossbow"         , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 13, AMMO, "Mithril Arrows"   , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 14, AMMO, "Iron Arrows"      , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 15, AMMO, "Gold Tip Arrows"  , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 16, AMMO, "Bone Arrows"      , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 17, AMMO, "Adament Arrows"   , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 18, AMMO, "Barbed Arrows"    , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 19, AMMO, "Dart"             , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 20, AMMO, "Shurikens"        , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 21, AMMO, "Boomerang"        , "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 22, AMMO, "One-Handed Cannon", "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+        { 23, AMMO, "Two-Handed Cannon", "", "Ammo", 25.0f, 1, 360.0f, 0.05f },
+    };
+    return ammos[index];
 }
 
-static Item ammo(Item it)
+static Item amulet(const int index)
 {
-    it.cstr = "Ammo";
-
-    switch(it.index)
-    {
-    case 0:
-        it.name = "Silver Bullets";
-        break;
-
-    case 1:
-        it.name = "Regular Bullets";
-        break;
-
-    case 2:
-        it.name = "Poorman's Bullets";
-        break;
-
-    case 3:
-        it.name = "Popcap Bullets";
-        break;
-
-    case 4:
-        it.name = "Pearls";
-        break;
-
-    case 5:
-        it.name = "River Pebbels";
-        break;
-
-    case 6:
-        it.name = "Stone Bits";
-        break;
-
-    case 7:
-        it.name = "Hunter's Bow";
-        break;
-
-    case 8:
-        it.name = "Orcish Bow";
-        break;
-
-    case 9:
-        it.name = "Peasant Bow";
-        break;
-
-    case 10:
-        it.name = "Elvish Bow";
-        break;
-
-    case 11:
-        it.name = "Sling";
-        break;
-
-    case 12:
-        it.name = "Crossbow";
-        break;
-
-    case 13:
-        it.name = "Mithril Arrows";
-        break;
-
-    case 14:
-        it.name = "Iron Arrows";
-        break;
-
-    case 15:
-        it.name = "Gold Tip Arrows";
-        break;
-
-    case 16:
-        it.name = "Bone Arrows";
-        break;
-
-    case 17:
-        it.name = "Adament Arrows";
-        break;
-
-    case 18:
-        it.name = "Barbed Arrows";
-        break;
-
-    case 19:
-        it.name = "Dart";
-        break;
-
-    case 20:
-        it.name = "Shurikens";
-        break;
-
-    case 21:
-        it.name = "Boomerang";
-        break;
-
-    case 22:
-        it.name = "Dwarven One-Handed Cannon";
-        break;
-
-    case 23:
-        it.name = "Dwarven Two-Handed Cannon";
-        break;
-    }
-
-    return it;
-}
-
-static Item amulet(Item it)
-{
-    it.cstr = "Amulet";
-
-    switch(it.index)
-    {
-    case 0:
-        it.name = "Emblem of Reincarnation";
-        break;
-
-    case 1:
-        it.name = "Aura of Endurance";
-        break;
-
-    case 2:
-        it.name = "Whisper of Panic";
-        break;
-
-    case 3:
-        it.name = "Fortified Secrets of Power";
-        break;
-
-    case 4:
-        it.name = "Enhanced Aspect of Auras";
-        break;
-
-    case 5:
-        it.name = "Mighty Mark of Hunger";
-        break;
-
-    case 6:
-        it.name = "Vampiric Hymn of Magical Defenses";
-        break;
-
-    case 7:
-        it.name = "Gift of Prime Loss";
-        break;
-
-    case 8:
-        it.name = "Emblem of Strengthened Storms";
-        break;
-
-    case 9:
-        it.name = "Hymn of Eternal Potency";
-        break;
-
-    case 10:
-        it.name = "Spark of Sight";
-        break;
-
-    case 11:
-        it.name = "Enchantment of Success";
-        break;
-
-    case 12:
-        it.name = "Grace of Haste";
-        break;
-
-    case 13:
-        it.name = "Fortified Charge of Cover";
-        break;
-
-    case 14:
-        it.name = "Lesser Bond of Cover";
-        break;
-
-    case 15:
-        it.name = "Brilliant Infusion of Danger";
-        break;
-
-    case 16:
-        it.name = "Light Seal of Disbelief";
-        break;
-    }
-
-    return it;
+    static const Item amulets[] = {
+        {  0, AMULET, "Emblem of Reincarnation"          , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  1, AMULET, "Aura of Endurance"                , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  2, AMULET, "Whisper of Panic"                 , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  3, AMULET, "Fortified Secrets of Power"       , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  4, AMULET, "Enhanced Aspect of Auras"         , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  5, AMULET, "Mighty Mark of Hunger"            , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  6, AMULET, "Vampiric Hymn of Magical Defenses", "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  7, AMULET, "Gift of Prime Loss"               , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  8, AMULET, "Emblem of Strengthened Storms"    , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        {  9, AMULET, "Hymn of Eternal Potency"          , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        { 10, AMULET, "Spark of Sight"                   , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        { 11, AMULET, "Enchantment of Success"           , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        { 12, AMULET, "Grace of Haste"                   , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        { 13, AMULET, "Fortified Charge of Cover"        , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        { 14, AMULET, "Lesser Bond of Cover"             , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        { 15, AMULET, "Brilliant Infusion of Danger"     , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+        { 16, AMULET, "Light Seal of Disbelief"          , "", "Amulet", 25.0f, 1, 360.f, 0.5f },
+    };
+    return amulets[index];
 }
 
 static Item armor(Item it)
@@ -1424,7 +1289,7 @@ static Item none(Item it)
 
 Item xitnew(const Classification c, const int index)
 {
-    Item it = xzitem();
+    Item it;
     it.index = index;
     it.c = c;
     it.period = 0.05f;
@@ -1434,8 +1299,8 @@ Item xitnew(const Classification c, const int index)
 
     switch(c)
     {
-    case     AMMO: return     ammo(it);
-    case   AMULET: return   amulet(it);
+    case     AMMO: return     ammo(index);
+    case   AMULET: return   amulet(index);
     case    ARMOR: return    armor(it);
     case     BOOK: return     book(it);
     case     BOOT: return     boot(it);
