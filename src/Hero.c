@@ -49,15 +49,12 @@ static Hero spin(Hero hero, const Input input)
 static Hero yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dy * input.sy;
-
     const float max = 1.80f;
     const float min = 0.20f;
-
     hero.yaw =
         hero.yaw > max ? max :
         hero.yaw < min ? min :
         hero.yaw;
-
     return hero;
 }
 
@@ -65,7 +62,6 @@ static Hero look(const Hero hero, const Input input)
 {
     if(input.l)
         return hero;
-
     return yaw(spin(hero, input), input);
 }
 
@@ -174,14 +170,11 @@ static int teldn(const Hero hero, const Map map)
 int xteleporting(const Hero hero, const Map map, const Input input, const Timer tm)
 {
     static int last;
-
     const int delay = 2;
     if(tm.ticks < last + delay)
         return false;
-
     if(!input.key[SDL_SCANCODE_E])
         return false;
-
     last = tm.ticks;
     return telup(hero, map)
         || teldn(hero, map);
@@ -191,16 +184,13 @@ Hero xteleport(Hero hero, const Map map)
 {
     if(telup(hero, map))
         hero.floor--;
-
     if(teldn(hero, map))
     {
         hero.floor++;
         hero.height = 0.90;
     }
-
     hero.yaw = 1.0f;
     hero.torch = xsnuff();
-
     return hero;
 }
 
@@ -211,18 +201,14 @@ Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, con
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, xres, hero.fov.a.x, hero.yaw, corrected, hero.height);
     const Ray ray = { trace, corrected, xsheer(projection, sheer), hit.surface, hit.offset, hero.torch };
-
     return ray;
 }
 
 Hero xrecoil(Hero hero, const Method method)
 {
     if(method == RANGE)
-        // TODO: Different weapons have different recoil?
-        hero.vyaw = 0.12f;
-
+        hero.vyaw = 0.12f; // TODO: Different weapons have different recoil?
     hero.yaw -= (hero.vyaw *= 0.8f);
-
     return hero;
 }
 
@@ -242,6 +228,5 @@ Hero xsustain(Hero hero, const Map map, const Input input, const Flow current, c
     hero = move(hero, map, input, current);
     hero = breath(hero, tm);
     hero.torch = xburn(hero.torch);
-
     return hero;
 }

@@ -39,7 +39,6 @@ static Item ammo(const int index)
         { 22, AMMO, "Ammo", "One-Handed Cannon" , "", 25.0f, 1, 360.0f, 0.05f },
         { 23, AMMO, "Ammo", "Two-Handed Cannon" , "", 25.0f, 1, 360.0f, 0.05f },
     };
-    printf("ammo %d\n", index);
     assert(ammos[index].index == index);
     return ammos[index];
 }
@@ -461,7 +460,9 @@ static Item wand(const int index)
 
 static Item none(void)
 {
-    return xzitem();
+    Item item = xzitem();
+    item.c = NONE;
+    return item;
 }
 
 Item xitnew(const Classification c, const int index)
@@ -494,7 +495,7 @@ Item xitnew(const Classification c, const int index)
     case     TOOL: return     tool(index);
     case     WAND: return     wand(index);
 
-    case NONE: return none();
+    default: case NONE: return none();
     }
 }
 
