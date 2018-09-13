@@ -19,3 +19,5 @@ Item;
 Item xitnew(const Classification, const int index);
 
 Item xitrand(void);
+
+void xittest(void);

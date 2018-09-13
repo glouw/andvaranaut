@@ -4,13 +4,17 @@
 
 int main(int argc, char* argv[])
 {
+    // Unit tests go here.
+#if 1
+    xittest();
+#endif
+
     srand(true ? time(NULL) : 0);
 
     const Args args = xparse(argc, argv);
 
     World wd = xwinit(32);
 
-    // Hero starts on this floor.
     const int floor = 0;
 
     const Point start = wd.map[floor].trapdoors.point[0];
