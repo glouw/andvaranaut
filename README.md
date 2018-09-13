@@ -4,7 +4,9 @@
 A dungeon crawler with procedural dungeon generation, many items, many monsters, many puzzles, and so much more!
 
 ## Building
-See the Makefile for instructions on how to bulid for Linux, MacOS, and Windows.
+Install tlhe development packages for SDL2-ttf and SDL2 and then execute:
+
+    make -C src; ./andvaranaut
 
 ## System Requirements
     RAM: 256 MB (generous).
