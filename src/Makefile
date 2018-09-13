@@ -5,7 +5,7 @@
 #                             THE DUNGEON CRAWLER
 #
 # -----------------------------------------------------------------------------
-# Requires SDL2-devel and SDL2-ttf
+# Requires development packages for SDL2 and SDL2-ttf.
 
 CC  = gcc -std=c99
 CXX = g++ -std=c++98
