@@ -12,8 +12,6 @@ Scroll;
 
 Scroll xscnew(void);
 
-Scroll xsczero(void);
-
 int xsindex(const Scroll);
 
 void xsclear(const Scroll);

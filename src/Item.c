@@ -5,6 +5,13 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#define CHECK(items, CLASS)                  \
+{                                            \
+    assert(xlen(items) == xcindices(CLASS)); \
+    for(int i = 0; i < xlen(items); i++)     \
+        assert(items[i].index == i);         \
+}
+
 static Item xzitem(void)
 {
     static Item item;
@@ -21,25 +28,26 @@ static Item ammo(const int index)
         {  4, AMMO, "Ammo", "Pearls"            , "", 25.0f, 1, 360.0f, 0.05f },
         {  5, AMMO, "Ammo", "River Pebbels"     , "", 25.0f, 1, 360.0f, 0.05f },
         {  6, AMMO, "Ammo", "Stone Bits"        , "", 25.0f, 1, 360.0f, 0.05f },
-        {  7, AMMO, "Ammo", "Hunter's Bow"      , "", 25.0f, 1, 360.0f, 0.05f },
-        {  8, AMMO, "Ammo", "Orcish Bow"        , "", 25.0f, 1, 360.0f, 0.05f },
-        {  9, AMMO, "Ammo", "Peasant Bow"       , "", 25.0f, 1, 360.0f, 0.05f },
-        { 10, AMMO, "Ammo", "Elvish Bow"        , "", 25.0f, 1, 360.0f, 0.05f },
-        { 11, AMMO, "Ammo", "Sling"             , "", 25.0f, 1, 360.0f, 0.05f },
-        { 12, AMMO, "Ammo", "Crossbow"          , "", 25.0f, 1, 360.0f, 0.05f },
-        { 13, AMMO, "Ammo", "Mithril Arrows"    , "", 25.0f, 1, 360.0f, 0.05f },
-        { 14, AMMO, "Ammo", "Iron Arrows"       , "", 25.0f, 1, 360.0f, 0.05f },
-        { 15, AMMO, "Ammo", "Gold Tip Arrows"   , "", 25.0f, 1, 360.0f, 0.05f },
-        { 16, AMMO, "Ammo", "Bone Arrows"       , "", 25.0f, 1, 360.0f, 0.05f },
-        { 17, AMMO, "Ammo", "Adament Arrows"    , "", 25.0f, 1, 360.0f, 0.05f },
-        { 18, AMMO, "Ammo", "Barbed Arrows"     , "", 25.0f, 1, 360.0f, 0.05f },
-        { 19, AMMO, "Ammo", "Dart"              , "", 25.0f, 1, 360.0f, 0.05f },
-        { 20, AMMO, "Ammo", "Shurikens"         , "", 25.0f, 1, 360.0f, 0.05f },
-        { 21, AMMO, "Ammo", "Boomerang"         , "", 25.0f, 1, 360.0f, 0.05f },
-        { 22, AMMO, "Ammo", "One-Handed Cannon" , "", 25.0f, 1, 360.0f, 0.05f },
-        { 23, AMMO, "Ammo", "Two-Handed Cannon" , "", 25.0f, 1, 360.0f, 0.05f },
+        {  7, AMMO, "Ammo", "Bits of Sand"      , "", 25.0f, 1, 360.0f, 0.05f },
+        {  8, AMMO, "Ammo", "Hunter's Bow"      , "", 25.0f, 1, 360.0f, 0.05f },
+        {  9, AMMO, "Ammo", "Orcish Bow"        , "", 25.0f, 1, 360.0f, 0.05f },
+        { 10, AMMO, "Ammo", "Peasant Bow"       , "", 25.0f, 1, 360.0f, 0.05f },
+        { 11, AMMO, "Ammo", "Elvish Bow"        , "", 25.0f, 1, 360.0f, 0.05f },
+        { 12, AMMO, "Ammo", "Sling"             , "", 25.0f, 1, 360.0f, 0.05f },
+        { 13, AMMO, "Ammo", "Crossbow"          , "", 25.0f, 1, 360.0f, 0.05f },
+        { 14, AMMO, "Ammo", "Mithril Arrows"    , "", 25.0f, 1, 360.0f, 0.05f },
+        { 15, AMMO, "Ammo", "Iron Arrows"       , "", 25.0f, 1, 360.0f, 0.05f },
+        { 16, AMMO, "Ammo", "Gold Tip Arrows"   , "", 25.0f, 1, 360.0f, 0.05f },
+        { 17, AMMO, "Ammo", "Bone Arrows"       , "", 25.0f, 1, 360.0f, 0.05f },
+        { 18, AMMO, "Ammo", "Adament Arrows"    , "", 25.0f, 1, 360.0f, 0.05f },
+        { 19, AMMO, "Ammo", "Barbed Arrows"     , "", 25.0f, 1, 360.0f, 0.05f },
+        { 20, AMMO, "Ammo", "Dart"              , "", 25.0f, 1, 360.0f, 0.05f },
+        { 21, AMMO, "Ammo", "Shurikens"         , "", 25.0f, 1, 360.0f, 0.05f },
+        { 22, AMMO, "Ammo", "Boomerang"         , "", 25.0f, 1, 360.0f, 0.05f },
+        { 23, AMMO, "Ammo", "One-Handed Cannon" , "", 25.0f, 1, 360.0f, 0.05f },
+        { 24, AMMO, "Ammo", "Two-Handed Cannon" , "", 25.0f, 1, 360.0f, 0.05f },
     };
-    assert(ammos[index].index == index);
+    CHECK(ammos, AMMO)
     return ammos[index];
 }
 
@@ -64,7 +72,7 @@ static Item amulet(const int index)
         { 15, AMULET, "Amulet", "Brilliant Infusion of Danger"      , "", 25.0f, 1, 360.0f, 0.5f },
         { 16, AMULET, "Amulet", "Light Seal of Disbelief"           , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(amulets[index].index == index);
+    CHECK(amulets, AMULET)
     return amulets[index];
 }
 
@@ -131,7 +139,7 @@ static Item armor(const int index)
         { 57, ARMOR, "Armor", "Wooden Chest Armor"                     , "", 25.0f, 1, 360.0f, 0.5f },
         { 58, ARMOR, "Armor", "Hide Skin"                              , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(armors[index].index == index);
+    CHECK(armors, ARMOR)
     return armors[index];
 }
 
@@ -204,7 +212,7 @@ static Item book(const int index)
         { 63, BOOK, "Book", "Humans With Pride"            , "", 25.0f, 1, 360.0f, 0.5f },
         { 64, BOOK, "Book", "Owls And Dogs"                , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(books[index].index == index);
+    CHECK(books, BOOK)
     return books[index];
 }
 
@@ -222,7 +230,7 @@ static Item boot(const int index)
         { 8, BOOT, "Boots", "Challenger's Quilted Boots"      , "", 25.0f, 1, 360.0f, 0.5f },
         { 9, BOOT, "Boots", "Sprinters of the Champion"       , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(boots[index].index == index);
+    CHECK(boots, BOOT)
     return boots[index];
 }
 
@@ -247,7 +255,7 @@ static Item chest(const int index)
         { 15, CHEST, "Chests", "Broken Barrel of Common Goods"    , "", 25.0f, 1, 360.0f, 0.5f },
         { 16, CHEST, "Chests", "Broken Barrel of Expensive Goods" , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(chests[index].index == index);
+    CHECK(chests, CHEST)
     return chests[index];
 }
 
@@ -304,7 +312,7 @@ static Item food(const int index)
         { 41, FOOD, "Food", "Bruggearind Fortune Cake"          , "", 25.0f, 1, 360.0f, 0.5f },
         { 42, FOOD, "Food", "Slossimelo Sweet Bun"              , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(foods[index].index == index);
+    CHECK(foods, FOOD)
     return foods[index];
 }
 
@@ -316,7 +324,7 @@ static Item glove(const int index)
         { 2, GLOVE, "Gloves", "Vengeance Quilted Hands"        , "", 25.0f, 1, 360.0f, 0.5f },
         { 3, GLOVE, "Gloves", "Gladiator's Gloves of Immortal" , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(gloves[index].index == index);
+    CHECK(gloves, GLOVE)
     return gloves[index];
 }
 
@@ -339,7 +347,7 @@ static Item hat(const int index)
         { 13, HAT, "Hat", "Crown of the Blackthorn"              , "", 25.0f, 1, 360.0f, 0.5f },
         { 14, HAT, "Hat", "Crown of the Shattered Plain's King"  , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(hats[index].index == index);
+    CHECK(hats, HAT)
     return hats[index];
 }
 
@@ -350,7 +358,7 @@ static Item key(const int index)
         { 1, KEY, "Key", "Iron Key"  , "", 25.0f, 1, 360.0f, 0.5f },
         { 2, KEY, "Key", "ID Card"   , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(keys[index].index == index);
+    CHECK(keys, KEY)
     return keys[index];
 }
 
@@ -430,7 +438,7 @@ static Item scroll(const int index)
         { 22, SCROLL, "Scroll", "Ur"    , "Ox"     , 25.0f, 1, 360.0f, 0.5f },
         { 23, SCROLL, "Scroll", "Feoh"  , "Cattle" , 25.0f, 1, 360.0f, 0.5f },
     };
-    assert(scrolls[index].index == index);
+    CHECK(scrolls, SCROLL)
     return scrolls[index];
 }
 
@@ -467,7 +475,6 @@ static Item none(void)
 
 Item xitnew(const Classification c, const int index)
 {
-    printf("classification %d: index %d\n", c, index);
     switch(c)
     {
     case     AMMO: return     ammo(index);

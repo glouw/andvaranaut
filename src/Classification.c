@@ -30,7 +30,7 @@ int xcindices(const Classification c)
     case   POTION: return 40;
     case     RING: return 44;
     case     ROCK: return  8;
-    case   SCROLL: return 26;
+    case   SCROLL: return 24;
     case   SHIELD: return  7;
     case SHORTWEP: return 20;
     case     TOOL: return 20;

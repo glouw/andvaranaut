@@ -1,10 +1,12 @@
 #include "Scroll.h"
 
-#include <float.h>
-
+#include "Classification.h"
 #include "util.h"
 
-Scroll xsczero(void)
+#include <assert.h>
+#include <float.h>
+
+static Scroll xsczero(void)
 {
     static Scroll sc;
     return sc;
@@ -47,9 +49,12 @@ int xsindex(const Scroll sc)
 
 Scroll xscnew(void)
 {
-    #define SCROLLS (24)
-    #define WIDTH (9)
+    #define SCROLLS 24
+    #define WIDTH    9
     #define SQUARES (WIDTH * WIDTH)
+
+    // Not doing VLAs for C++ compatability so this check is necessary.
+    assert(SCROLLS == xcindices(SCROLL));
 
     static int runes[SCROLLS][SQUARES] = {
         {
@@ -303,29 +308,17 @@ Scroll xscnew(void)
     sc.scrolls = SCROLLS;
     for(int i = 0; i < sc.scrolls; i++)
         sc.castables[i] = runes[i];
-
-    // TODO: Since the number of scrolls is hard coded a check must be added here
-    // to ensure that the number of scrolls present in art/items/scroll.bmp
-    // matches the hard coded number of scrolls. The game must exit if this
-    // does not match.
     return sc;
 }
 
+// Converts a scroll to _one_ string with many newlines.
 char* xsstr(const Scroll sc, const int scindex)
 {
-    // Space for squares, newlines, and NULL byte;
     const int len = sc.squares + sc.width + 1;
-
-    // Char array of null byte terminators.
     char* const str = xwipe(char, len);
-
-    // All newline besides the null byte terminator.
     memset(str, '\n', len - 1);
-
     for(int j = 0; j < sc.width; j++)
     for(int i = 0; i < sc.width; i++)
-        // When assigning, skip the newline eg. (sc.width + 1).
         str[i + j * (sc.width + 1)] = sc.castables[scindex][i + j * sc.width] ? 'x' : '-';
-
     return str;
 }
