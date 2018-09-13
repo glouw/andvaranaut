@@ -103,10 +103,8 @@ static Args parsed(Args args, int argc, char* argv[])
             }
         }
     }
-
     print(args);
     check(args);
-
     return args;
 }
 
@@ -114,13 +112,12 @@ static Args defaults(void)
 {
     Args args = xzargs();
     args.xres = 1024;
-    args.yres = 576;
+    args.yres = 600;
     args.focal = 0.8f;
     args.vsync = true;
     args.fps = 60;
     args.msen = 0.007f;
     args.threads = 8;
-
     return args;
 }
 

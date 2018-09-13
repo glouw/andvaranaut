@@ -755,7 +755,7 @@ static Item shield(const int index)
 static Item shortwep(const int index)
 {
     const Item shortweps[] = {
-        {  0, SHORTWEP, "Shortweps", "Some small thing", "", 25.0f, 1, 360.0f, 0.5f },
+        {  0, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  1, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  2, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  3, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },

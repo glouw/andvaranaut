@@ -9,4 +9,8 @@ typedef struct
 }
 Speech;
 
+Speech xspzero(void);
+
+Speech xspgeneric(void);
+
 Speech xspappend(Speech, const char* sentence);

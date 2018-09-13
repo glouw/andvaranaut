@@ -1,89 +1,29 @@
 #include "Sprite.h"
 
+#include "Speech.h"
+#include "Rect.h"
 #include "util.h"
 
 #include <ctype.h>
 
-Sprite xzsprite(void)
-{
-    static Sprite sprite;
-    return sprite;
-}
-
-static Sprite born(const int ascii, const Point where)
-{
-    Sprite s = xzsprite();
-    s.ascii = ascii;
-    s.where = where;
-    s.last = where;
-    s.state = IDLE;
-    s.health = 1000.0f;
-    return s;
-}
-
-// Flower.
-static Sprite _a_(Sprite s)
-{
-    s.width = 0.60f;
-    return s;
-}
-
-// Outlaw.
-static Sprite _b_(Sprite s)
-{
-    s.speed = 0.033f;
-    s.acceleration = 0.0025f;
-    s.width = 0.66f;
-    const char* const sentences[] = {
-        "Hey there!",
-        "How are you doing today?",
-        "MY",
-        "SENTENCES",
-        "WILL",
-        "LOOP",
-        "This is my last message.",
-    };
-    for(int i = 0; i < xlen(sentences); i++)
-        s.speech = xspappend(s.speech, sentences[i]);
-    return s;
-}
-
-// Lootbag.
-static Sprite _d_(Sprite s)
-{
-    s.width = 1.00f;
-    s.health = 1.0f;
-    return s;
-}
-
-// Tree trunk.
-static Sprite _e_(Sprite s)
-{
-    s.width = 1.00f;
-    s.health = 1.0f;
-    return s;
-}
-
-// Tree leaves.
-static Sprite _f_(Sprite s)
-{
-    s.width = 1.00f;
-    s.health = 1.0f;
-    return s;
-}
-
 Sprite xsregistrar(const int ascii, const Point where)
 {
-    Sprite s = born(ascii, where);
-    switch(s.ascii)
-    {
-    case 'a': return _a_(s);
-    case 'b': return _b_(s);
-    case 'd': return _d_(s);
-    case 'e': return _e_(s);
-    case 'f': return _f_(s);
-    }
-    return s;
+    // Lower case sprites: [a - z]
+    const Sprite lower[] = {
+        { where, 'a', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
+        { where, 'b', IDLE, 0.0, where, xzpoint(), 0.04f, 0.0025f, false, 0, 200.0f, xzrect(), xspgeneric() }, // Outlaw
+        { where, 'c', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
+        { where, 'd', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
+        { where, 'e', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
+        { where, 'f', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
+    };
+
+    // Upper case sprites: [A - Z]
+    const Sprite upper[] = {
+        { where, 'A', IDLE, 0.0, where, xzpoint(), 0.0f, 0.0f, false, 0, 200.0f, xzrect(), xspzero() }, // Placeholder.
+    };
+
+    return islower(ascii) ? lower[ascii - 'a'] : upper[ascii - 'A'];
 }
 
 int xsissprite(const int ascii)
