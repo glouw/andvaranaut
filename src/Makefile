@@ -1,11 +1,12 @@
-# -----------------------------------------------------------------------------
-#
-#                            A N D V A R A N A U T
-#                          ------------------------
-#                             THE DUNGEON CRAWLER
-#
-# -----------------------------------------------------------------------------
-# Requires development packages for SDL2 and SDL2-ttf.
+# ----------------------------------------------------------------------------- #
+#																				#
+#                            A N D V A R A N A U T								#
+#                          ------------------------								#
+#                             THE DUNGEON CRAWLER								#
+#																				#
+# -----------------------------------------------------------------------------	#
+# SDL2-devel
+# SDL2-devel-ttf
 
 CC  = gcc -std=c99
 CXX = g++ -std=c++98
@@ -73,7 +74,7 @@ $(BIN): $(SRCS:.c=.o)
 	@echo LINK $(BIN)
 	@$(CMP) $(CMP_FLAGS) $(SRCS:.c=.o) $(LIB_FLAGS) -o $(BIN)
 
-%.o : %.c Makefile
+%.o : %.c Makefile# Changing the Makefile will recompile everything.
 	@echo COMPILE $*.c
 	@$(CMP) $(CMP_FLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@rm -f $*.d

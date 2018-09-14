@@ -8,6 +8,14 @@ Speech xspzero(void)
     return sp;
 }
 
+static Speech xspappend(Speech sp, const char* const sentence)
+{
+    if(sp.count == xlen(sp.sentences))
+        xbomb("error: cannot append '%s': sprite sentence buffer overflow", sentence);
+    sp.sentences[sp.count++] = sentence;
+    return sp;
+}
+
 static Speech build(const char* const sentences[], const int len)
 {
     Speech sp = xspzero();
@@ -19,19 +27,8 @@ static Speech build(const char* const sentences[], const int len)
 Speech xspgeneric(void)
 {
     const char* const sentences[] = {
-        "Hey there!",
-        "How are you doing today?",
-        "This is my last message.",
+        "Swing your sword",
+        "I can go no further"
     };
     return build(sentences, xlen(sentences));
-}
-
-Speech xspappend(Speech sp, const char* const sentence)
-{
-    if(sp.max == 0)
-        xretoss(sp.sentences, char*, sp.max = 1);
-    if(sp.count >= sp.max)
-        xretoss(sp.sentences, char*, sp.max *= 2);
-    sp.sentences[sp.count++] = (char*) sentence;
-    return sp;
 }

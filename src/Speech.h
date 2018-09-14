@@ -2,9 +2,8 @@
 
 typedef struct
 {
-    char** sentences;
+    const char* sentences[64];
     int count;
-    int max;
     int ticks;
 }
 Speech;
@@ -12,5 +11,3 @@ Speech;
 Speech xspzero(void);
 
 Speech xspgeneric(void);
-
-Speech xspappend(Speech, const char* sentence);

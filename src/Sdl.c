@@ -81,7 +81,7 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
 static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const SDL_Rect target, const Timer tm)
 {
     const int ticks = tm.ticks - sprite->speech.ticks;
-    const int index = (ticks / 6) % sprite->speech.count;
+    const int index = (ticks / 8) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
 
     const int alpha = 0xFF;

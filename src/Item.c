@@ -20,7 +20,7 @@ static Item xzitem(void)
 
 static Item ammo(const int index)
 {
-    const Item ammos[] = {
+    static const Item ammos[] = {
         {  0, AMMO, "Ammo", "Silver Bullets"    , "", 25.0f, 1, 360.0f, 0.05f },
         {  1, AMMO, "Ammo", "Regular Bullets"   , "", 25.0f, 1, 360.0f, 0.05f },
         {  2, AMMO, "Ammo", "Poorman's Bullets" , "", 25.0f, 1, 360.0f, 0.05f },
@@ -53,7 +53,7 @@ static Item ammo(const int index)
 
 static Item amulet(const int index)
 {
-    const Item amulets[] = {
+    static const Item amulets[] = {
         {  0, AMULET, "Amulet", "Emblem of Reincarnation"           , "", 25.0f, 1, 360.0f, 0.5f },
         {  1, AMULET, "Amulet", "Aura of Endurance"                 , "", 25.0f, 1, 360.0f, 0.5f },
         {  2, AMULET, "Amulet", "Whisper of Panic"                  , "", 25.0f, 1, 360.0f, 0.5f },
@@ -78,7 +78,7 @@ static Item amulet(const int index)
 
 static Item armor(const int index)
 {
-    const Item armors[] = {
+    static const Item armors[] = {
         {  0, ARMOR, "Armor", "Bronze Chainmail of Immortal Souls"     , "", 25.0f, 1, 360.0f, 0.5f },
         {  1, ARMOR, "Armor", "Bronze Chainmail of Divine Bloodlust"   , "", 25.0f, 1, 360.0f, 0.5f },
         {  2, ARMOR, "Armor", "Mithril Chainmail of Chestguard"        , "", 25.0f, 1, 360.0f, 0.5f },
@@ -145,7 +145,7 @@ static Item armor(const int index)
 
 static Item book(const int index)
 {
-    const Item books[] = {
+    static const Item books[] = {
         {  0, BOOK, "Book", "Duke Of The Nation"           , "", 25.0f, 1, 360.0f, 0.5f },
         {  1, BOOK, "Book", "Criminal Of The Night"        , "", 25.0f, 1, 360.0f, 0.5f },
         {  2, BOOK, "Book", "Humans Without Duty"          , "", 25.0f, 1, 360.0f, 0.5f },
@@ -218,7 +218,7 @@ static Item book(const int index)
 
 static Item boot(const int index)
 {
-    const Item boots[] = {
+    static const Item boots[] = {
         { 0, BOOT, "Boots", "Footpads of Binding Lands"       , "", 25.0f, 1, 360.0f, 0.5f },
         { 1, BOOT, "Boots", "Sabatons of Conquered Damnation" , "", 25.0f, 1, 360.0f, 0.5f },
         { 2, BOOT, "Boots", "Crazed Bronzed Greatboots"       , "", 25.0f, 1, 360.0f, 0.5f },
@@ -236,23 +236,23 @@ static Item boot(const int index)
 
 static Item chest(const int index)
 {
-    const Item chests[] = {
-        {  0, CHEST, "Chests", "Small Locked Chest"               , "", 25.0f, 1, 360.0f, 0.5f },
-        {  1, CHEST, "Chests", "Large Locked Chest"               , "", 25.0f, 1, 360.0f, 0.5f },
-        {  2, CHEST, "Chests", "Broken Chest"                     , "", 25.0f, 1, 360.0f, 0.5f },
-        {  3, CHEST, "Chests", "Small Locked Safe"                , "", 25.0f, 1, 360.0f, 0.5f },
-        {  4, CHEST, "Chests", "Large Locked Safe"                , "", 25.0f, 1, 360.0f, 0.5f },
-        {  5, CHEST, "Chests", "Broken Safe"                      , "", 25.0f, 1, 360.0f, 0.5f },
-        {  6, CHEST, "Chests", "Crystal Enclosure"                , "", 25.0f, 1, 360.0f, 0.5f },
-        {  7, CHEST, "Chests", "Broken Crystal Enclosure"         , "", 25.0f, 1, 360.0f, 0.5f },
-        {  8, CHEST, "Chests", "Gold Pouch"                       , "", 25.0f, 1, 360.0f, 0.5f },
-        {  9, CHEST, "Chests", "Mystic Gold Pouch"                , "", 25.0f, 1, 360.0f, 0.5f },
-        { 10, CHEST, "Chests", "Expensive Gold Pouch"             , "", 25.0f, 1, 360.0f, 0.5f },
-        { 11, CHEST, "Chests", "Hungry Gold Pouch"                , "", 25.0f, 1, 360.0f, 0.5f },
-        { 12, CHEST, "Chests", "Barrel of Common Goods"           , "", 25.0f, 1, 360.0f, 0.5f },
-        { 13, CHEST, "Chests", "Barrel of Rare Goods"             , "", 25.0f, 1, 360.0f, 0.5f },
-        { 14, CHEST, "Chests", "Broken Barrel of Common Goods"    , "", 25.0f, 1, 360.0f, 0.5f },
-        { 15, CHEST, "Chests", "Broken Barrel of Expensive Goods" , "", 25.0f, 1, 360.0f, 0.5f },
+    static const Item chests[] = {
+        {  0, CHEST, "Chest", "Small Locked Chest"               , "", 25.0f, 1, 360.0f, 0.5f },
+        {  1, CHEST, "Chest", "Large Locked Chest"               , "", 25.0f, 1, 360.0f, 0.5f },
+        {  2, CHEST, "Chest", "Broken Chest"                     , "", 25.0f, 1, 360.0f, 0.5f },
+        {  3, CHEST, "Chest", "Small Locked Safe"                , "", 25.0f, 1, 360.0f, 0.5f },
+        {  4, CHEST, "Chest", "Large Locked Safe"                , "", 25.0f, 1, 360.0f, 0.5f },
+        {  5, CHEST, "Chest", "Broken Safe"                      , "", 25.0f, 1, 360.0f, 0.5f },
+        {  6, CHEST, "Chest", "Crystal Enclosure"                , "", 25.0f, 1, 360.0f, 0.5f },
+        {  7, CHEST, "Chest", "Broken Crystal Enclosure"         , "", 25.0f, 1, 360.0f, 0.5f },
+        {  8, CHEST, "Chest", "Gold Pouch"                       , "", 25.0f, 1, 360.0f, 0.5f },
+        {  9, CHEST, "Chest", "Mystic Gold Pouch"                , "", 25.0f, 1, 360.0f, 0.5f },
+        { 10, CHEST, "Chest", "Expensive Gold Pouch"             , "", 25.0f, 1, 360.0f, 0.5f },
+        { 11, CHEST, "Chest", "Hungry Gold Pouch"                , "", 25.0f, 1, 360.0f, 0.5f },
+        { 12, CHEST, "Chest", "Barrel of Common Goods"           , "", 25.0f, 1, 360.0f, 0.5f },
+        { 13, CHEST, "Chest", "Barrel of Rare Goods"             , "", 25.0f, 1, 360.0f, 0.5f },
+        { 14, CHEST, "Chest", "Broken Barrel of Common Goods"    , "", 25.0f, 1, 360.0f, 0.5f },
+        { 15, CHEST, "Chest", "Broken Barrel of Expensive Goods" , "", 25.0f, 1, 360.0f, 0.5f },
     };
     CHECK(chests, CHEST)
     return chests[index];
@@ -260,7 +260,7 @@ static Item chest(const int index)
 
 static Item flesh(const int index)
 {
-    const Item fleshes[] = {
+    static const Item fleshes[] = {
         {  0, FLESH, "Flesh", "Rotting Flesh", "", 25.0f, 1, 360.0f, 0.5f },
         {  1, FLESH, "Flesh", "Rotting Flesh", "", 25.0f, 1, 360.0f, 0.5f },
         {  2, FLESH, "Flesh", "Rotting Flesh", "", 25.0f, 1, 360.0f, 0.5f },
@@ -330,7 +330,7 @@ static Item flesh(const int index)
 
 static Item food(const int index)
 {
-    const Item foods[] = {
+    static const Item foods[] = {
         {  0, FOOD, "Food", "Cramp Lion"                        , "", 25.0f, 1, 360.0f, 0.5f },
         {  1, FOOD, "Food", "Stag Ear"                          , "", 25.0f, 1, 360.0f, 0.5f },
         {  2, FOOD, "Food", "Luminescent Lichen"                , "", 25.0f, 1, 360.0f, 0.5f },
@@ -381,7 +381,7 @@ static Item food(const int index)
 
 static Item glove(const int index)
 {
-    const Item gloves[] = {
+    static const Item gloves[] = {
         { 0, GLOVE, "Gloves", "Honor's Embroided Handguards"   , "", 25.0f, 1, 360.0f, 0.5f },
         { 1, GLOVE, "Gloves", "Quilted Gloves"                 , "", 25.0f, 1, 360.0f, 0.5f },
         { 2, GLOVE, "Gloves", "Vengeance Quilted Hands"        , "", 25.0f, 1, 360.0f, 0.5f },
@@ -393,7 +393,7 @@ static Item glove(const int index)
 
 static Item hat(const int index)
 {
-    const Item hats[] = {
+    static const Item hats[] = {
         {  0, HAT, "Hat", "Pot of Cooking"                       , "", 25.0f, 1, 360.0f, 0.5f },
         {  1, HAT, "Hat", "Soldier's Titanium Headcover"         , "", 25.0f, 1, 360.0f, 0.5f },
         {  2, HAT, "Hat", "Plate Faceguard of Condemned Worlds"  , "", 25.0f, 1, 360.0f, 0.5f },
@@ -416,7 +416,7 @@ static Item hat(const int index)
 
 static Item key(const int index)
 {
-    const Item keys[] = {
+    static const Item keys[] = {
         { 0, KEY, "Key", "Silver Key", "", 25.0f, 1, 360.0f, 0.5f },
         { 1, KEY, "Key", "Iron Key"  , "", 25.0f, 1, 360.0f, 0.5f },
         { 2, KEY, "Key", "ID Card"   , "", 25.0f, 1, 360.0f, 0.5f },
@@ -427,7 +427,7 @@ static Item key(const int index)
 
 static Item light(const int index)
 {
-    const Item lights[] = {
+    static const Item lights[] = {
         { 0, LIGHT, "Light", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 1, LIGHT, "Light", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 2, LIGHT, "Light", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -442,7 +442,7 @@ static Item light(const int index)
 
 static Item longwep(const int index)
 {
-    const Item longweps[] = {
+    static const Item longweps[] = {
         {  0, LONGWEP, "Longwep", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  1, LONGWEP, "Longwep", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  2, LONGWEP, "Longwep", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -483,7 +483,7 @@ static Item longwep(const int index)
 
 static Item medwep(const int index)
 {
-    const Item medweps[] = {
+    static const Item medweps[] = {
         { 0, MEDWEP, "Medwep", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 1, MEDWEP, "Medwep", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 2, MEDWEP, "Medwep", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -500,7 +500,7 @@ static Item medwep(const int index)
 
 static Item money(const int index)
 {
-    const Item monies[] = {
+    static const Item monies[] = {
         {  0, MONEY, "Money", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  1, MONEY, "Money", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  2, MONEY, "Money", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -568,7 +568,7 @@ static Item money(const int index)
 
 static Item music(const int index)
 {
-    const Item musics[] = {
+    static const Item musics[] = {
         {  0, MUSIC, "Music", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  1, MUSIC, "Music", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  2, MUSIC, "Music", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -591,7 +591,7 @@ static Item music(const int index)
 
 static Item potion(const int index)
 {
-    const Item potions[] = {
+    static const Item potions[] = {
         {  0, POTION, "Potion", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  1, POTION, "Potion", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  2, POTION, "Potion", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -639,51 +639,51 @@ static Item potion(const int index)
 
 static Item ring(const int index)
 {
-    const Item rings[] = {
-        {  0, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  1, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  2, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  3, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  4, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  5, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  6, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  7, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  8, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  9, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 10, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 11, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 12, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 13, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 14, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 15, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 16, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 17, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 18, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 19, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 20, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 21, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 22, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 23, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 24, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 25, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 26, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 27, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 28, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 29, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 30, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 31, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 32, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 33, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 34, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 35, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 36, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 37, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 38, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 39, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 40, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 41, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 42, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 43, RING, "Rings", "", "", 25.0f, 1, 360.0f, 0.5f },
+    static const Item rings[] = {
+        {  0, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  1, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  2, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  3, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  4, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  5, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  6, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  7, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  8, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  9, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 10, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 11, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 12, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 13, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 14, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 15, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 16, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 17, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 18, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 19, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 20, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 21, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 22, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 23, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 24, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 25, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 26, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 27, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 28, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 29, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 30, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 31, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 32, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 33, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 34, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 35, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 36, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 37, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 38, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 39, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 40, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 41, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 42, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 43, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
     CHECK(rings, RING)
     return rings[index];
@@ -691,15 +691,15 @@ static Item ring(const int index)
 
 static Item rock(const int index)
 {
-    const Item rocks[] = {
-        { 0, ROCK, "Rocks", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 1, ROCK, "Rocks", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 2, ROCK, "Rocks", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 3, ROCK, "Rocks", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 4, ROCK, "Rocks", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 5, ROCK, "Rocks", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 6, ROCK, "Rocks", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 7, ROCK, "Rocks", "", "", 25.0f, 1, 360.0f, 0.5f },
+    static const Item rocks[] = {
+        { 0, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 1, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 2, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 3, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 4, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 5, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 6, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 7, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
     CHECK(rocks, ROCK)
     return rocks[index];
@@ -707,7 +707,7 @@ static Item rock(const int index)
 
 static Item scroll(const int index)
 {
-    const Item scrolls[] = {
+    static const Item scrolls[] = {
         {  0, SCROLL, "Scroll", "Odal"  , "Home"   , 25.0f, 1, 360.0f, 0.5f },
         {  1, SCROLL, "Scroll", "Daeg"  , "Day"    , 25.0f, 1, 360.0f, 0.5f },
         {  2, SCROLL, "Scroll", "Jera"  , "Harvest", 25.0f, 1, 360.0f, 0.5f },
@@ -739,7 +739,7 @@ static Item scroll(const int index)
 
 static Item shield(const int index)
 {
-    const Item shields[] = {
+    static const Item shields[] = {
         { 0, SHIELD, "Shield", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 1, SHIELD, "Shield", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 2, SHIELD, "Shield", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -754,27 +754,27 @@ static Item shield(const int index)
 
 static Item shortwep(const int index)
 {
-    const Item shortweps[] = {
-        {  0, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  1, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  2, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  3, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  4, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  5, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  6, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  7, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  8, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  9, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 10, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 11, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 12, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 13, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 14, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 15, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 16, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 17, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 18, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 19, SHORTWEP, "Shortweps", "", "", 25.0f, 1, 360.0f, 0.5f },
+    static const Item shortweps[] = {
+        {  0, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  1, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  2, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  3, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  4, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  5, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  6, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  7, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  8, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  9, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 10, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 11, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 12, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 13, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 14, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 15, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 16, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 17, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 18, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 19, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
     CHECK(shortweps, SHORTWEP)
     return shortweps[index];
@@ -782,27 +782,27 @@ static Item shortwep(const int index)
 
 static Item tool(const int index)
 {
-    const Item tools[] = {
-        {  0, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  1, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  2, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  3, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  4, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  5, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  6, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  7, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  8, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  9, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 10, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 11, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 12, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 13, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 14, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 15, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 16, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 17, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 18, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 19, TOOL, "Tools", "", "", 25.0f, 1, 360.0f, 0.5f },
+    static const Item tools[] = {
+        {  0, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  1, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  2, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  3, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  4, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  5, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  6, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  7, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  8, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  9, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 10, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 11, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 12, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 13, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 14, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 15, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 16, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 17, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 18, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 19, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
     CHECK(tools, TOOL)
     return tools[index];
@@ -810,56 +810,56 @@ static Item tool(const int index)
 
 static Item wand(const int index)
 {
-    const Item wands[] = {
-        {  0, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  1, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  2, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  3, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  4, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  5, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  6, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  7, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  8, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        {  9, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 10, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 11, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 12, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 13, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 14, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 15, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 16, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 17, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 18, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 19, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 20, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 21, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 22, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 23, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 24, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 25, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 26, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 27, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 28, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 29, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 30, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 31, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 32, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 33, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 34, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 35, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 36, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 37, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 38, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 39, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 40, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 41, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 42, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 43, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 44, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 45, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 46, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 47, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
-        { 48, WAND, "Wands", "", "", 25.0f, 1, 360.0f, 0.5f },
+    static const Item wands[] = {
+        {  0, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  1, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  2, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  3, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  4, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  5, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  6, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  7, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  8, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        {  9, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 10, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 11, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 12, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 13, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 14, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 15, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 16, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 17, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 18, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 19, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 20, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 21, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 22, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 23, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 24, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 25, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 26, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 27, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 28, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 29, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 30, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 31, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 32, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 33, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 34, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 35, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 36, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 37, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 38, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 39, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 40, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 41, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 42, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 43, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 44, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 45, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 46, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 47, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
+        { 48, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
     CHECK(wands, WAND)
     return wands[index];
