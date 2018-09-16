@@ -24,7 +24,7 @@ static Speech build(const char* const sentences[], const int len)
     return sp;
 }
 
-Speech xspgeneric(void)
+Speech xspdefeated(void)
 {
     const char* const sentences[] = {
         "Swing your sword",

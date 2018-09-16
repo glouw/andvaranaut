@@ -43,7 +43,6 @@ SRCS += Points.c
 SRCS += Projection.c
 SRCS += Rooms.c
 SRCS += Sdl.c
-SRCS += Rect.c
 SRCS += Speech.c
 SRCS += State.c
 SRCS += Title.c

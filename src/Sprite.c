@@ -1,73 +1,98 @@
 #include "Sprite.h"
 
 #include "Speech.h"
-#include "Rect.h"
 #include "util.h"
 
+#include <assert.h>
 #include <ctype.h>
+
+static void check(const Sprite table[], const int len, const char first, const char last)
+{
+    for(int i = 0; i < len; i++)
+        assert(table[i].ascii == first + i);
+    assert(len == last - first + 1);
+}
+
+static Sprite initspeech(Sprite sprite)
+{
+    switch(sprite.ascii)
+    {
+    case 'b':
+        sprite.speech = xspdefeated();
+        break;
+    default:
+        sprite.speech = xspzero();
+        break;
+    }
+    return sprite;
+}
 
 Sprite xsregistrar(const int ascii, const Point where)
 {
-    // Unfortunately, these tables are built everytime a new sprite is created, but the benefit is that all sprite
-    // stats are centralized in one place for quick comparison and edits.
-    const Sprite
+    static const Sprite
     lower[] = {
-        { where, 'a', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'b', IDLE, 0.0, where, xzpoint(), 0.04f, 0.0025f, false, 0, 200.0f, xzrect(), xspgeneric() }, // Outlaw.
-        { where, 'c', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'd', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'e', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'f', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'g', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'h', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'i', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'j', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'k', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'l', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'm', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'n', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'o', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'p', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'q', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'r', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 's', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 't', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'u', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'v', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'w', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'x', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'y', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'z', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
+        { { 0,0 }, 'a', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'b', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.04f, 0.0025f, false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } }, // Outlaw.
+        { { 0,0 }, 'c', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'd', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'e', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'f', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'g', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'h', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'i', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'j', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'k', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'l', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'm', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'n', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'o', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'p', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'q', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'r', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 's', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 't', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'u', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'v', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'w', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'x', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'y', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'z', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
     },
     upper[] = {
-        { where, 'A', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'B', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'C', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'D', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'E', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'F', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'G', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'H', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'I', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'J', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'K', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'L', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'M', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'N', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'O', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'P', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'Q', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'R', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'S', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'T', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'U', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'V', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'W', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'X', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'Y', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
-        { where, 'Z', IDLE, 0.0, where, xzpoint(), 0.0f , 0.0f   , false, 0, 200.0f, xzrect(), xspzero()    },
+        { { 0,0 }, 'A', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'B', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'C', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'D', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'E', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'F', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'G', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'H', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'I', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'J', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'K', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'L', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'M', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'N', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'O', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'P', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'Q', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'R', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'S', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'T', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'U', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'V', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'W', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'X', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'Y', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
+        { { 0,0 }, 'Z', IDLE, 0.0, { 0,0 }, { 0,0 }, 0.0f , 0.0f   , false, 0, 200.0f, { 0,0,0,0 }, { {0},0,0 } },
     };
-    return islower(ascii) ? lower[ascii - 'a'] : upper[ascii - 'A'];
+    check(lower, xlen(lower), 'a', 'z');
+    check(upper, xlen(upper), 'A', 'Z');
+
+    // Sprite table is static so these dynamic fields must be set here.
+    Sprite sprite = islower(ascii) ? lower[ascii - 'a'] : upper[ascii - 'A'];
+    sprite.where = sprite.last = where;
+    return initspeech(sprite);
 }
 
 int xsissprite(const int ascii)
