@@ -5,11 +5,11 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#define CHECK(items, CLASS)                  \
-{                                            \
-    assert(xlen(items) == xcindices(CLASS)); \
-    for(int i = 0; i < xlen(items); i++)     \
-        assert(items[i].index == i);         \
+static void check(const Classification c, const Item items[], const int len)
+{
+    assert(len == xcindices(c));
+    for(int i = 0; i < len; i++)
+        assert(items[i].index == i);
 }
 
 static Item xzitem(void)
@@ -47,7 +47,7 @@ static Item ammo(const int index)
         { 23, AMMO, "Ammo", "One-Handed Cannon" , "", 25.0f, 1, 360.0f, 0.05f },
         { 24, AMMO, "Ammo", "Two-Handed Cannon" , "", 25.0f, 1, 360.0f, 0.05f },
     };
-    CHECK(ammos, AMMO)
+    check(AMMO, ammos, xlen(ammos));
     return ammos[index];
 }
 
@@ -72,7 +72,7 @@ static Item amulet(const int index)
         { 15, AMULET, "Amulet", "Brilliant Infusion of Danger"      , "", 25.0f, 1, 360.0f, 0.5f },
         { 16, AMULET, "Amulet", "Light Seal of Disbelief"           , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(amulets, AMULET)
+    check(AMULET, amulets, xlen(amulets));
     return amulets[index];
 }
 
@@ -139,7 +139,7 @@ static Item armor(const int index)
         { 57, ARMOR, "Armor", "Wooden Chest Armor"                     , "", 25.0f, 1, 360.0f, 0.5f },
         { 58, ARMOR, "Armor", "Hide Skin"                              , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(armors, ARMOR)
+    check(ARMOR, armors, xlen(armors));
     return armors[index];
 }
 
@@ -212,7 +212,7 @@ static Item book(const int index)
         { 63, BOOK, "Book", "Humans With Pride"            , "", 25.0f, 1, 360.0f, 0.5f },
         { 64, BOOK, "Book", "Owls And Dogs"                , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(books, BOOK)
+    check(BOOK, books, xlen(books));
     return books[index];
 }
 
@@ -230,7 +230,7 @@ static Item boot(const int index)
         { 8, BOOT, "Boots", "Challenger's Quilted Boots"      , "", 25.0f, 1, 360.0f, 0.5f },
         { 9, BOOT, "Boots", "Sprinters of the Champion"       , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(boots, BOOT)
+    check(BOOT, boots, xlen(boots));
     return boots[index];
 }
 
@@ -254,7 +254,7 @@ static Item chest(const int index)
         { 14, CHEST, "Chest", "Broken Barrel of Common Goods"    , "", 25.0f, 1, 360.0f, 0.5f },
         { 15, CHEST, "Chest", "Broken Barrel of Expensive Goods" , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(chests, CHEST)
+    check(CHEST, chests, xlen(chests));
     return chests[index];
 }
 
@@ -324,7 +324,7 @@ static Item flesh(const int index)
         { 60, FLESH, "Flesh", "Rotting Flesh", "", 25.0f, 1, 360.0f, 0.5f },
         { 61, FLESH, "Flesh", "Rotting Flesh", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(fleshes, FLESH)
+    check(FLESH, fleshes, xlen(fleshes));
     return fleshes[index];
 }
 
@@ -375,7 +375,7 @@ static Item food(const int index)
         { 41, FOOD, "Food", "Bruggearind Fortune Cake"          , "", 25.0f, 1, 360.0f, 0.5f },
         { 42, FOOD, "Food", "Slossimelo Sweet Bun"              , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(foods, FOOD)
+    check(FOOD, foods, xlen(foods));
     return foods[index];
 }
 
@@ -387,7 +387,7 @@ static Item glove(const int index)
         { 2, GLOVE, "Gloves", "Vengeance Quilted Hands"        , "", 25.0f, 1, 360.0f, 0.5f },
         { 3, GLOVE, "Gloves", "Gladiator's Gloves of Immortal" , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(gloves, GLOVE)
+    check(GLOVE, gloves, xlen(gloves));
     return gloves[index];
 }
 
@@ -410,7 +410,7 @@ static Item hat(const int index)
         { 13, HAT, "Hat", "Crown of the Blackthorn"              , "", 25.0f, 1, 360.0f, 0.5f },
         { 14, HAT, "Hat", "Crown of the Shattered Plain's King"  , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(hats, HAT)
+    check(HAT, hats, xlen(hats));
     return hats[index];
 }
 
@@ -421,7 +421,7 @@ static Item key(const int index)
         { 1, KEY, "Key", "Iron Key"  , "", 25.0f, 1, 360.0f, 0.5f },
         { 2, KEY, "Key", "ID Card"   , "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(keys, KEY)
+    check(KEY, keys, xlen(keys));
     return keys[index];
 }
 
@@ -436,7 +436,7 @@ static Item light(const int index)
         { 5, LIGHT, "Light", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 6, LIGHT, "Light", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(lights, LIGHT)
+    check(LIGHT, lights, xlen(lights));
     return lights[index];
 }
 
@@ -477,7 +477,7 @@ static Item longwep(const int index)
         { 31, LONGWEP, "Longwep", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 32, LONGWEP, "Longwep", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(longweps, LONGWEP)
+    check(LONGWEP, longweps, xlen(longweps));
     return longweps[index];
 }
 
@@ -494,7 +494,7 @@ static Item medwep(const int index)
         { 7, MEDWEP, "Medwep", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 8, MEDWEP, "Medwep", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(medweps, MEDWEP)
+    check(MEDWEP, medweps, xlen(medweps));
     return medweps[index];
 }
 
@@ -562,7 +562,7 @@ static Item money(const int index)
         { 58, MONEY, "Money", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 59, MONEY, "Money", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(monies, MONEY)
+    check(MONEY, monies, xlen(monies));
     return monies[index];
 }
 
@@ -585,7 +585,7 @@ static Item music(const int index)
         { 13, MUSIC, "Music", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 14, MUSIC, "Music", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(musics, MUSIC)
+    check(MUSIC, musics, xlen(musics));
     return musics[index];
 }
 
@@ -633,7 +633,7 @@ static Item potion(const int index)
         { 38, POTION, "Potion", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 39, POTION, "Potion", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(potions, POTION)
+    check(POTION, potions, xlen(potions));
     return potions[index];
 }
 
@@ -685,7 +685,7 @@ static Item ring(const int index)
         { 42, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 43, RING, "Ring", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(rings, RING)
+    check(RING, rings, xlen(rings));
     return rings[index];
 }
 
@@ -701,7 +701,7 @@ static Item rock(const int index)
         { 6, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 7, ROCK, "Rock", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(rocks, ROCK)
+    check(ROCK, rocks, xlen(rocks));
     return rocks[index];
 }
 
@@ -733,7 +733,7 @@ static Item scroll(const int index)
         { 22, SCROLL, "Scroll", "Ur"    , "Ox"     , 25.0f, 1, 360.0f, 0.5f },
         { 23, SCROLL, "Scroll", "Feoh"  , "Cattle" , 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(scrolls, SCROLL)
+    check(SCROLL, scrolls, xlen(scrolls));
     return scrolls[index];
 }
 
@@ -748,7 +748,7 @@ static Item shield(const int index)
         { 5, SHIELD, "Shield", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 6, SHIELD, "Shield", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(shields, SHIELD)
+    check(SHIELD, shields, xlen(shields));
     return shields[index];
 }
 
@@ -776,12 +776,13 @@ static Item shortwep(const int index)
         { 18, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 19, SHORTWEP, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(shortweps, SHORTWEP)
+    check(SHORTWEP, shortweps, xlen(shortweps));
     return shortweps[index];
 }
 
 static Item tool(const int index)
 {
+    // PRYING OPEN MY THIRD EYE.
     static const Item tools[] = {
         {  0, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  1, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -804,7 +805,7 @@ static Item tool(const int index)
         { 18, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 19, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(tools, TOOL)
+    check(TOOL, tools, xlen(tools));
     return tools[index];
 }
 
@@ -861,7 +862,7 @@ static Item wand(const int index)
         { 47, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
         { 48, WAND, "Wand", "", "", 25.0f, 1, 360.0f, 0.5f },
     };
-    CHECK(wands, WAND)
+    check(WAND, wands, xlen(wands));
     return wands[index];
 }
 
