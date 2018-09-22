@@ -782,8 +782,7 @@ static Item shortwep(const int index)
 
 static Item tool(const int index)
 {
-    // PRYING OPEN MY THIRD EYE.
-    static const Item tools[] = {
+    static const Item tools[] = { // PRYING OPEN MY THIRD EYE.
         {  0, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  1, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
         {  2, TOOL, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -908,12 +907,9 @@ Item xitnew(const Classification c, const int index)
 
 Item xitrand(void)
 {
-    const Classification c = (Classification) (rand() % (int) CLASSIFICATIONS);
+    const Classification c = xclrand();
     const int index = rand() % xcindices(c);
-    const Item it = xitnew(c, index);
-    if(it.name == NULL || it.cstr == NULL)
-        printf("NULL ITEM FOUND: classification %d: index %d: indices %d\n", c, index, xcindices(c));
-    return it;
+    return xitnew(c, index);
 }
 
 void xittest(void)

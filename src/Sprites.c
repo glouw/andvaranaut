@@ -142,8 +142,10 @@ static void move(const Sprites sprites, const Field field, const Point to, const
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
 
+        // Sprite will stop running if close to player.
         sprite->state = xmag(sprite->velocity) > 0.005f ? CHASING : IDLE;
 
+        // Evil sprites attack player.
         if(sprite->evil)
             if(xeql(hero.where, sprite->where, 2.0f))
                 sprite->state = ATTACK;

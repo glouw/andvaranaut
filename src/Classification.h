@@ -42,3 +42,5 @@ int xisrange(const Classification);
 int xismagic(const Classification);
 
 int xisconsumable(const Classification);
+
+Classification xclrand(void);

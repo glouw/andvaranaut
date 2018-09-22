@@ -84,3 +84,10 @@ int xisconsumable(const Classification c)
         || c == FLESH
         || c == TOOL;
 }
+
+Classification xclrand(void)
+{
+    const Classification c = (Classification) (rand() % (int) CLASSIFICATIONS);
+    return (c == NONE || c == CLASSIFICATIONS) ? xclrand() : c;
+
+}
