@@ -2,6 +2,7 @@
 
 #include "Field.h"
 #include "Title.h"
+#include "Speech.h"
 #include "Inventory.h"
 #include "util.h"
 
@@ -114,7 +115,7 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
-static void move(const Sprites sprites, const Field field, const Point to, const Map map)
+static void move(const Sprites sprites, const Field field, const Point to, const Map map, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -140,7 +141,13 @@ static void move(const Sprites sprites, const Field field, const Point to, const
             if(xmag(sprite->velocity) > sprite->speed)
                 sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
         }
+
         sprite->state = xmag(sprite->velocity) > 0.005f ? CHASING : IDLE;
+
+        if(sprite->evil)
+            if(xeql(hero.where, sprite->where, 2.0f))
+                sprite->state = ATTACK;
+
         xsplace(sprite, xadd(sprite->where, sprite->velocity));
     }
 }
@@ -229,6 +236,7 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
 
     sprite->health -= attack.power;
 
+    // Dead.
     if(sprite->health <= 0.0f)
     {
         sprite->state = side ?
@@ -241,13 +249,17 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
         if(xd10() == 0)
             return dropit(sprites, attack, sprite->where);
     }
-    else
+    else // Just hurt, not killed.
     {
         sprite->state = side ?
             (attack.dir.x > 0.0f ? HURTW : HURTE):
             (attack.dir.y > 0.0f ? HURTN : HURTS);
 
         sprite->ticks = tm.ticks + 5;
+
+        sprite->evil = true;
+
+        sprite->speech = xspanger();
     }
     return sprites;
 }
@@ -372,7 +384,7 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     arrange(sprites, hero);
     idle(sprites, tm);
     route(sprites, field, map, hero);
-    move(sprites, field, hero.where, map);
+    move(sprites, field, hero.where, map, hero);
     bound(sprites, map);
     return damage(hero, sprites, tm);
 }

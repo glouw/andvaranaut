@@ -6,3 +6,5 @@
 
 [x] Out of bounds heap access: gauge
     -> off by one for last
+
+[ ] Picked up NULL item?

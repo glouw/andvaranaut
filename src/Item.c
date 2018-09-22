@@ -910,7 +910,10 @@ Item xitrand(void)
 {
     const Classification c = (Classification) (rand() % (int) CLASSIFICATIONS);
     const int index = rand() % xcindices(c);
-    return xitnew(c, index);
+    const Item it = xitnew(c, index);
+    if(it.name == NULL || it.cstr == NULL)
+        printf("NULL ITEM FOUND: classification %d: index %d: indices %d\n", c, index, xcindices(c));
+    return it;
 }
 
 void xittest(void)

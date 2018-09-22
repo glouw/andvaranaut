@@ -2,7 +2,7 @@
 
 typedef enum
 {
-    // Pursuing player.
+    // Sprite is persuing hero.
     CHASING,
 
     // Sprite is lifted into the air
@@ -23,7 +23,10 @@ typedef enum
     DEADS, // South.
     DEADW, // West.
 
-    // Number of states.
+    // Sprite is attacking hero.
+    ATTACK,
+
+    // Number of sprite states.
     STATES
 }
 State;

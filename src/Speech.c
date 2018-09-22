@@ -24,11 +24,24 @@ static Speech build(const char* const sentences[], const int len)
     return sp;
 }
 
+Speech xspanger(void)
+{
+    const char* const sentences[] = {
+        "My sword!",
+        "Julia!",
+        "",
+        "JULIA!",
+        "",
+    };
+    return build(sentences, xlen(sentences));
+}
+
 Speech xspdefeated(void)
 {
     const char* const sentences[] = {
         "Swing your sword",
-        "I can go no further"
+        "I can go no further",
+        "",
     };
     return build(sentences, xlen(sentences));
 }

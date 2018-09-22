@@ -138,7 +138,7 @@ static void paste(const Sdl sdl, const Text text, const Sprites sprites, Point* 
         const int h = surface->h / STATES;
 
         // Determine sprite animation based on ticks.
-        const SDL_Rect image = { w * (tm.ticks % FRAMES), h * sprite->state, w, h };
+        const SDL_Rect image = { w * xtmhi(tm), h * sprite->state, w, h };
 
         // Calculate how much of the sprite is seen.
         // The sprite's latest seen rect is then saved to the sprite.
@@ -524,7 +524,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
     const SDL_Rect grite = { 0, 64, w, w };
 
     // Will animate bar to flicker if below threshold.
-    const int frame = tm.ticks % 2 == 0;
+    const int frame = xtmhi(tm);
     const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : 0), w, w };
     const SDL_Rect empty[] = {
         { 0, fluid.y + 2 * w, w, w }, // 75%.

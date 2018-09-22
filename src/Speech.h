@@ -10,4 +10,6 @@ Speech;
 
 Speech xspzero(void);
 
+Speech xspanger(void);
+
 Speech xspdefeated(void);
