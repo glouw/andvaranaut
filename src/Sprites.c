@@ -259,9 +259,12 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
 
         sprite->ticks = tm.ticks + 5;
 
-        sprite->evil = true;
-
-        sprite->speech = xspanger();
+        // Hurt a good sprite, make 'em angry.
+        if(!sprite->evil)
+        {
+            sprite->evil = true;
+            sprite->speech = xspanger();
+        }
     }
     return sprites;
 }
@@ -450,11 +453,7 @@ Map xscount(const Sprites sprites, Map map)
         {
             Sprite* const sprite = &sprites.sprite[s];
 
-            if(xiscosmetic(sprite->ascii))
-                continue;
-            if(xisinanimate(sprite->ascii))
-                continue;
-            if(xisdead(sprite->state))
+            if(xnocount(sprite))
                 continue;
 
             if(xeql(sprite->where, map.rooms.wheres[i], map.grid))

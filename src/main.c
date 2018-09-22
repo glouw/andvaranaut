@@ -4,7 +4,7 @@
 
 int main(int argc, char* argv[])
 {
-    // Unit tests go here.
+    // Unit tests.
 #if 1
     xittest();
 #endif

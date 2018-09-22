@@ -17,9 +17,6 @@ static Sprite initspeech(Sprite sprite)
 {
     switch(sprite.ascii)
     {
-    case 'b':
-        sprite.speech = xspdefeated();
-        break;
     default:
         sprite.speech = xspzero();
         break;
@@ -113,6 +110,11 @@ int xisinanimate(const int ascii)
 int xisuseless(const Sprite* const sprite)
 {
     return xisdead(sprite->state) || xiscosmetic(sprite->ascii);
+}
+
+int xnocount(const Sprite* const sprite)
+{
+    return xisuseless(sprite) || xisinanimate(sprite->ascii);
 }
 
 int xisstuck(const Sprite* const sprite)

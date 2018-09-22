@@ -36,6 +36,8 @@ int xisinanimate(const int ascii);
 
 int xisuseless(const Sprite* const);
 
+int xnocount(const Sprite* const);
+
 int xisstuck(const Sprite* const);
 
 Sprite xsregistrar(const int ascii, const Point where);
