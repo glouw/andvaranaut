@@ -37,10 +37,8 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
     for(; seen.w > 0; seen.w--, seen.x++)
     {
         const int x = seen.x;
-
         if(x < 0 || x >= sdl.xres)
             continue;
-
         if(where.x < zbuff[x].x)
             break;
     }
@@ -49,17 +47,14 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
-
         if(x < 0 || x >= sdl.xres)
             continue;
-
         if(where.x < zbuff[x].x)
         {
             seen.w = seen.w + 1;
             break;
         }
     }
-
     return seen;
 }
 
@@ -208,6 +203,7 @@ Sdl xsetup(const Args args)
         sdl.renderer,
         SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_STREAMING,
+        // XRES and YRES swapped since rendering is done 90 degrees on side.
         args.yres,
         args.xres);
 
@@ -454,7 +450,7 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         const int w = sdl.surfaces.surface[index]->w / FRAMES;
         const int h = sdl.surfaces.surface[index]->h / STATES;
 
-        const SDL_Rect from = { w * (tm.ticks % FRAMES), h * sprite->state, w, h };
+        const SDL_Rect from = { w * xtmhi(tm), h * sprite->state, w, h };
 
         const SDL_Rect to = {
             (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
@@ -481,12 +477,9 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
         {
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
             const int h = sdl.surfaces.surface[i]->h / STATES;
-
-            const SDL_Rect from = { w * (tm.ticks % FRAMES), h * IDLE, w, h };
-
+            const SDL_Rect from = { w * xtmhi(tm), h * IDLE, w, h };
             if(clipping(sdl, ov, to))
                 continue;
-
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
         }
         // Draw tile block on panel.

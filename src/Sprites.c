@@ -263,7 +263,7 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
         if(!sprite->evil)
         {
             sprite->evil = true;
-            sprite->speech = xspanger();
+            sprite->speech = sprite->angers;
         }
     }
     return sprites;

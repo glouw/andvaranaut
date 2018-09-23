@@ -22,6 +22,7 @@ typedef struct
     float health;
     SDL_Rect seen;
     Speech speech;
+    Speech angers;
     int evil;
 }
 Sprite;

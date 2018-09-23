@@ -24,19 +24,30 @@ static Speech build(const char* const sentences[], const int len)
     return sp;
 }
 
-Speech xspanger(void)
+Speech xspsherrif(void)
+{
+    const char* const sentences[] = {
+        "I'm the sherrif",
+        "Behave now",
+        "Don't want no trouble",
+        ""
+    };
+    return build(sentences, xlen(sentences));
+}
+
+Speech xspyulia(void)
 {
     const char* const sentences[] = {
         "My sword!",
-        "Julia!",
+        "Yulia!",
         "",
-        "JULIA!",
+        "YULIA!",
         "",
     };
     return build(sentences, xlen(sentences));
 }
 
-Speech xspdefeated(void)
+Speech xspmercy(void)
 {
     const char* const sentences[] = {
         "Swing your sword",

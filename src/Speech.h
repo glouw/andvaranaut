@@ -10,6 +10,8 @@ Speech;
 
 Speech xspzero(void);
 
-Speech xspanger(void);
+Speech xspsherrif(void);
 
-Speech xspdefeated(void);
+Speech xspyulia(void);
+
+Speech xspmercy(void);
