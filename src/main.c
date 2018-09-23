@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     {
         const int t0 = SDL_GetTicks();
 
-        const int ticks = renders / (args.fps / 6);
+        const int ticks = renders / 10;
 
         const Timer tm = xtmnew(renders, ticks);
 
