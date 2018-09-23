@@ -73,29 +73,12 @@ static const char* themestr(const Map map, const Point where)
     return xthname(lutheme(map, where));
 }
 
-static int themech(const Map map, const Point where)
+Theme xmthemett(const Theme last, const Map map, const Point where, const Timer tm)
 {
-    int change = false;
-
-    static Theme last = NO_THEME;
-
     const Theme now = lutheme(map, where);
-
-    if(now != last)
-        change = true;
-
-    if(now == NO_THEME && last != NO_THEME)
-        change = false;
-
-    last = lutheme(map, where);
-
-    return change;
-}
-
-void xmthemett(const Map map, const Point where, const Timer tm)
-{
-    if(themech(map, where))
+    if(now != last && now != NO_THEME)
         xttset(tm.renders, tm.renders + 120, false, themestr(map, where));
+    return now;
 }
 
 int xmisportal(char** block, const Point where)

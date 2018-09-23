@@ -4,11 +4,9 @@
 
 int main(int argc, char* argv[])
 {
-    // Unit tests.
-#if 1
+#if 1 // Unit tests.
     xittest();
 #endif
-
     srand(true ? time(NULL) : 0);
 
     const Args args = xparse(argc, argv);
@@ -37,6 +35,8 @@ int main(int argc, char* argv[])
 
     Input in = xready(args.msen);
 
+    Theme theme = NO_THEME;
+
     Sdl sdl = xsetup(args);
 
     const Text text = xtxnew("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
         xttadvance(renders);
 
-        xmthemett(wd.map[me.floor], me.where, tm);
+        theme = xmthemett(theme, wd.map[me.floor], me.where, tm);
 
         // World edit mode.
         if(in.key[SDL_SCANCODE_TAB])
