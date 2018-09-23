@@ -31,6 +31,11 @@ typedef struct
 
     // User closed window.
     int done;
+
+    // Last states (Left, middle, right).
+    int ll;
+    int lm;
+    int lr;
 }
 Input;
 

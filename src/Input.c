@@ -12,10 +12,6 @@ Input xzinput(void)
 
 Input xpump(Input input)
 {
-    static int ll;
-    static int lm;
-    static int lr;
-
     SDL_Event event;
     SDL_PollEvent(&event);
     if(event.type == SDL_QUIT || input.key[SDL_SCANCODE_END] || input.key[SDL_SCANCODE_ESCAPE])
@@ -27,13 +23,13 @@ Input xpump(Input input)
     input.m = (buttons >> 1) & 0x1; // Middle.
     input.r = (buttons >> 2) & 0x1; // Right.
 
-    input.lu = (input.l == 0 && ll == 1);
-    input.mu = (input.m == 0 && lm == 1);
-    input.ru = (input.r == 0 && lr == 1);
+    input.lu = (input.l == 0 && input.ll == 1);
+    input.mu = (input.m == 0 && input.lm == 1);
+    input.ru = (input.r == 0 && input.lr == 1);
 
-    ll = input.l;
-    lm = input.m;
-    lr = input.r;
+    input.ll = input.l;
+    input.lm = input.m;
+    input.lr = input.r;
 
     SDL_GetMouseState(&input.x, &input.y);
 
