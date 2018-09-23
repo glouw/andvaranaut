@@ -1,11 +1,11 @@
 [x] Bow sometimes segfaults when hit enemy
-    -> Resolved: lootbags were dropping out of map range.
+    -> Resolved: lootbags were dropping out of map range
 
 [x] Some rooms have two themes.
     -> Resolved: rooms spawning from trapdoors were sometimes randomly chosen twice
 
 [x] Out of bounds heap access: gauge
-    -> off by one for last
+    -> Resolved: off by one for last
 
 [x] Picked up NULL item?
-    -> CLASSIFICATIONS and NONE were valid items for xitrand()
+    -> Resolved: CLASSIFICATIONS and NONE were valid items for xitrand()
