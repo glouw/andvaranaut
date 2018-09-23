@@ -9,3 +9,5 @@
 
 [x] Picked up NULL item?
     -> Resolved: CLASSIFICATIONS and NONE were valid items for xitrand()
+
+[ ] Thought: How is 144hz refresh rate handled?

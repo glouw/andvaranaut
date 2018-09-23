@@ -45,6 +45,6 @@ Sprite xsregistrar(const int ascii, const Point where);
 
 void xsplace(Sprite* const, const Point);
 
-int xismute(Sprite* const);
+int xismute(const Sprite* const);
 
 void xstick(Sprite* const, const Timer);

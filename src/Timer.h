@@ -4,10 +4,9 @@ typedef struct
 {
     int renders;
     int ticks;
+    int rise;
 }
 Timer;
-
-Timer xztimer(void);
 
 Timer xtmnew(const int renders, const int ticks);
 

@@ -127,6 +127,7 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     const int crouching = hero.height <= hduck(hero);
     const float speed = swimming ? 0.3f * hero.speed : crouching ? 0.5f * hero.speed : hero.speed;
 
+    // Accelerate?
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
     || input.key[SDL_SCANCODE_D]
@@ -138,17 +139,20 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
         if(input.key[SDL_SCANCODE_D]) hero.velocity = xadd(hero.velocity, xrag(acceleration));
         if(input.key[SDL_SCANCODE_A]) hero.velocity = xsub(hero.velocity, xrag(acceleration));
     }
-    else
+    else // Slow down.
         hero.velocity = xmul(hero.velocity, 1.0f - hero.acceleration / speed);
 
     if(swimming)
         hero.velocity = xadd(hero.velocity, current.velocity);
 
+    // Top speed check.
     if(xmag(hero.velocity) > speed)
         hero.velocity = xmul(xunt(hero.velocity), speed);
 
+    // Speed apply.
     hero.where = xadd(hero.where, hero.velocity);
 
+    // Collision detection.
     if(xtile(hero.where, map.walling))
     {
         hero.velocity = xzpoint();
