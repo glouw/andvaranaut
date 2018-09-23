@@ -7,7 +7,7 @@
 
 Inventory xinvnew(void)
 {
-    const Inventory inv = { xitsnew(18), 0, 32, -1 };
+    const Inventory inv = { xitsnew(18), 0, 32, -1, false, false };
     const Item noobits[] = {
         xitnew(SHORTWEP, 0),
         xitnew(WAND, 0),
@@ -43,19 +43,19 @@ Inventory xinvhilite(Inventory inv, const Input in, const int xres)
     return inv;
 }
 
-static int tilechange(const Inventory inv)
+static Inventory tilechange(Inventory inv)
 {
-    static int last;
-    int change = false;
-    if(inv.hilited != -1 && inv.hilited != last)
-        change = true;
-    last = inv.hilited;
-    return change;
+    inv.change = false;
+    if(inv.hilited != -1 && inv.hilited != inv.last)
+        inv.change = true;
+    inv.last = inv.hilited;
+    return inv;
 }
 
-void xwhatis(const Inventory inv, const Scroll sc, const Timer tm)
+Inventory xwhatis(Inventory inv, const Scroll sc, const Timer tm)
 {
-    if(tilechange(inv) && inv.hilited < inv.items.max)
+    inv = tilechange(inv);
+    if(inv.change && inv.hilited < inv.items.max)
     {
         const int a = tm.renders;
         const int b = tm.renders + 90;
@@ -80,4 +80,5 @@ void xwhatis(const Inventory inv, const Scroll sc, const Timer tm)
                 "Damage: %0.1f\n",
                 it.cstr, it.desc, it.name, (double) it.damage);
     }
+    return inv;
 }

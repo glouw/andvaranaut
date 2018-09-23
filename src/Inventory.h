@@ -11,6 +11,8 @@ typedef struct
     int selected;
     int width;
     int hilited;
+    int change;
+    int last;
 }
 Inventory;
 
@@ -20,4 +22,4 @@ Inventory xinvselect(Inventory, const Input);
 
 Inventory xinvhilite(Inventory, const Input, const int xres);
 
-void xwhatis(const Inventory, const Scroll, const Timer);
+Inventory xwhatis(Inventory, const Scroll, const Timer);

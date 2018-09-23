@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
 
-                xwhatis(inv, sc, tm);
+                inv = xwhatis(inv, sc, tm);
             }
             // World Interaction.
             else
