@@ -1,10 +1,10 @@
-# ----------------------------------------------------------------------------- #
-#																				#
-#                            A N D V A R A N A U T								#
-#                          ------------------------								#
-#                             THE DUNGEON CRAWLER								#
-#																				#
-# -----------------------------------------------------------------------------	#
+# -----------------------------------------------------------------------------
+#
+#                            A N D V A R A N A U T
+#                          ------------------------
+#                             THE DUNGEON CRAWLER
+#
+# -----------------------------------------------------------------------------
 # SDL2-devel
 # SDL2-devel-ttf
 
@@ -61,7 +61,7 @@ SRCS += Vram.c
 SRCS += World.c
 
 CMP_FLAGS  = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
-#CMP_FLAGS += -g -fsanitize=address
+CMP_FLAGS += -g -fsanitize=address
 CMP_FLAGS += -Ofast -march=native -pipe
 CMP_FLAGS += -flto
 
