@@ -37,6 +37,8 @@ int main(int argc, char* argv[])
 
     Theme theme = NO_THEME;
 
+    Timer tm = xtmnew();
+
     Sdl sdl = xsetup(args);
 
     const Text text = xtxnew("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
@@ -51,7 +53,7 @@ int main(int argc, char* argv[])
 
         const int ticks = renders / 10;
 
-        const Timer tm = xtmnew(renders, ticks);
+        tm = xtmtick(tm, renders, ticks);
 
         xttadvance(renders);
 

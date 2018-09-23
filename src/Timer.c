@@ -10,16 +10,18 @@ static Timer ztimer(void)
 
 static Timer rise(Timer tm)
 {
-    static int last;
-    const int now = xtmhi(tm);
-    tm.rise = last && now;
-    last = xtmlo(tm);
+    tm.rise = tm.last && xtmhi(tm);
+    tm.last = xtmlo(tm);
     return tm;
 }
 
-Timer xtmnew(const int renders, const int ticks)
+Timer xtmnew(void)
 {
-    Timer tm = ztimer();
+    return ztimer();
+}
+
+Timer xtmtick(Timer tm, const int renders, const int ticks)
+{
     tm.renders = renders;
     tm.ticks = ticks;
     return rise(tm);
