@@ -12,4 +12,10 @@
 [ ] inventory management (movement + delete + give items)
 [ ] shovel can dig
 [ ] last enemy in room surrenders and asks for mercy kill
-[ ] attacking an enemy changes speech into anger
+
+[x] attacking a friendly sprite changes speech into anger
+[x] also makes him evil and prone to attacking
+
+[x] sprites can attack (melee)
+[ ] sprites can attack (ranged / magic)
+[ ] some sprites have helmets or shields for directional defense.

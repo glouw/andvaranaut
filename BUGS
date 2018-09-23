@@ -7,4 +7,5 @@
 [x] Out of bounds heap access: gauge
     -> off by one for last
 
-[ ] Picked up NULL item?
+[x] Picked up NULL item?
+    -> CLASSIFICATIONS and NONE were valid items for xitrand()
