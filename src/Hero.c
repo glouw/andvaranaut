@@ -171,17 +171,14 @@ static int teldn(const Hero hero, const Map map)
     return hero.yaw > 1.0f && xmisportal(map.floring, hero.where);
 }
 
-int xteleporting(const Hero hero, const Map map, const Input input, const Timer tm)
+Hero xteleporting(Hero hero, const Map map, const Input input, const Timer tm)
 {
-    static int last;
-    const int delay = 2;
-    if(tm.ticks < last + delay)
-        return false;
-    if(!input.key[SDL_SCANCODE_E])
-        return false;
-    last = tm.ticks;
-    return telup(hero, map)
-        || teldn(hero, map);
+    hero.teleporting = false;
+    if(tm.ticks < hero.teleported + 2 || !input.key[SDL_SCANCODE_E])
+        return hero;
+    hero.teleported = tm.ticks;
+    hero.teleporting = telup(hero, map) || teldn(hero, map);
+    return hero;
 }
 
 Hero xteleport(Hero hero, const Map map)

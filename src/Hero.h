@@ -35,6 +35,8 @@ typedef struct
     float ftg;
     float ftgmax;
     float warning;
+    int teleported;
+    int teleporting;
 }
 Hero;
 
@@ -44,7 +46,7 @@ Hero xspawn(const float focal, const Point where, const int floor);
 
 Point xtouch(const Hero);
 
-int xteleporting(const Hero, const Map, const Input, const Timer);
+Hero xteleporting(Hero, const Map, const Input, const Timer);
 
 Hero xteleport(Hero, const Map);
 

@@ -73,12 +73,12 @@ int main(int argc, char* argv[])
         // Play Mode.
         else
         {
-            if(xteleporting(me, wd.map[me.floor], in, tm))
+            me = xteleporting(me, wd.map[me.floor], in, tm);
+            if(me.teleporting)
             {
                 me = xteleport(me, wd.map[me.floor]);
 
                 xruin(fd);
-
                 fd = xprepare(wd.map[me.floor], me.aura);
             }
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
