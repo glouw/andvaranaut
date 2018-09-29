@@ -13,7 +13,6 @@ typedef struct
     int evil;
     int transparent;
     float size;
-    float width;
     float speed;
     float acceleration;
     float health;
