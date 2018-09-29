@@ -28,26 +28,27 @@ void xpresent(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
-// Clips a sprite, left and right, based on z-buffer from the ray cast.
-static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Point* const zbuff)
+// Left clip a sprite based on zbuffer.
+static SDL_Rect lclip(SDL_Rect seen, const int xres, const Point where, Point* const zbuff)
 {
-    SDL_Rect seen = frame;
-
-    // Left clip.
     for(; seen.w > 0; seen.w--, seen.x++)
     {
         const int x = seen.x;
-        if(x < 0 || x >= sdl.xres)
+        if(x < 0 || x >= xres)
             continue;
         if(where.x < zbuff[x].x)
             break;
     }
+    return seen;
+}
 
-    // Right clip.
+// Right clip a sprite based on zbuffer.
+static SDL_Rect rclip(SDL_Rect seen, const int xres, const Point where, Point* const zbuff)
+{
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
-        if(x < 0 || x >= sdl.xres)
+        if(x < 0 || x >= xres)
             continue;
         if(where.x < zbuff[x].x)
         {
@@ -58,31 +59,35 @@ static SDL_Rect clip(const Sdl sdl, const SDL_Rect frame, const Point where, Poi
     return seen;
 }
 
+// Clips a sprite left and right based on wall zbuffer.
+static SDL_Rect clip(SDL_Rect seen, const int xres, const Point where, Point* const zbuff)
+{
+    seen = lclip(seen, xres, where, zbuff);
+    return rclip(seen, xres, where, zbuff);
+}
+
 static void dbox(const Sdl sdl, const int x, const int y, const int width, const uint32_t color, const int filled)
 {
     const int a = (color >> 0x18) & 0xFF;
     const int r = (color >> 0x10) & 0xFF;
     const int g = (color >> 0x08) & 0xFF;
     const int b = (color >> 0x00) & 0xFF;
-
     const SDL_Rect square = { x, y, width, width };
     SDL_SetRenderDrawColor(sdl.renderer, r, g, b, a);
-
     filled ?
         SDL_RenderFillRect(sdl.renderer, &square):
         SDL_RenderDrawRect(sdl.renderer, &square);
 }
 
+// Renders sprite speech text box.
 static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const SDL_Rect target, const Timer tm)
 {
     const int ticks = tm.ticks - sprite->speech.ticks;
     const int index = (ticks / 8) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
-
     const int alpha = 0xFF;
     SDL_Texture* const tfill = xtget(text.fill, sdl.renderer, alpha, sentence);
     SDL_Texture* const tline = xtget(text.line, sdl.renderer, alpha, sentence);
-
     const SDL_Rect size = xfsize(text.fill, sentence);
     const SDL_Rect to = {
         target.x + target.w / 2 - size.w / 2,
@@ -90,91 +95,88 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
         size.w,
         size.h,
     };
-
     SDL_RenderCopy(sdl.renderer, tfill, NULL, &to);
     SDL_RenderCopy(sdl.renderer, tline, NULL, &to);
     SDL_DestroyTexture(tfill);
     SDL_DestroyTexture(tline);
 }
 
-// Pastes all visible sprites to screen.
-static void paste(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
+// Calculates sprite size releative to player.
+static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
 {
-    for(int which = 0; which < sprites.count; which++)
+    const float focal = hero.fov.a.x;
+    const int size = (focal * sdl.xres / 2.0f) / sprite->where.x;
+    const int osize = xodd(size) ? size + 1 : size;
+    const int my = sdl.yres / 2 * (sprite->state == LIFTED ? 1.0f : (2.0f - hero.yaw));
+    const int mx = sdl.xres / 2;
+    const int l = mx - osize / 2;
+    const int t = my - osize * (sprite->state == LIFTED ? 0.5f : (1.0f - hero.height));
+    const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
+    const SDL_Rect target = { l + s, t, osize, osize };
+    return target;
+}
+
+// Calculates which sprite frame and state to use based on sprite state and timer clock.
+static SDL_Rect rimage(SDL_Surface* const surface, const State state, const Timer tm)
+{
+    const int w = surface->w / FRAMES;
+    const int h = surface->h / STATES;
+    const SDL_Rect image = { w * xtmhi(tm), h * state, w, h };
+    return image;
+}
+
+// Renders one sprite to screen.
+static void rsprite(const Sdl sdl, const Text text, Sprite* const sprite, const Hero hero, SDL_Texture* const texture, const SDL_Rect image, const SDL_Rect target, const Timer tm)
+{
+    // Apply lighting to the sprite.
+    const int modding = xilluminate(hero.torch, sprite->where.x);
+    SDL_SetTextureColorMod(texture, modding, modding, modding);
+
+    // Apply transparency to the sprite, if required.
+    if(sprite->transparent)
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
+
+    // Render the sprite.
+    SDL_RenderSetClipRect(sdl.renderer, &sprite->seen);
+    SDL_RenderCopy(sdl.renderer, texture, &image, &target);
+    SDL_RenderSetClipRect(sdl.renderer, NULL);
+
+    // Remove transperancy from the sprite.
+    if(sprite->transparent)
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
+    // Remove lighting from the sprite.
+    SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
+
+    // If the sprite is within earshot of hero then render speech sentences.
+    if(!xisdead(sprite->state) && !xismute(sprite))
+        xeql(xadd(hero.where, sprite->where), hero.where, hero.aura) ? rspeech(sprite, sdl, text, target, tm) : xstick(sprite, tm);
+}
+
+// Prepares one sprite render to screen.
+static void rsetup(const Sdl sdl, const Text text, Sprite* const sprite, Point* zbuff, const Hero hero, const Timer tm)
+{
+    if(sprite->where.x > 0)
     {
-        Sprite* const sprite = &sprites.sprite[which];
-
-        // Move onto the next sprite if this sprite is behind the player.
-        if(sprite->where.x < 0)
-            continue;
-
-        // Calculate sprite size - the sprite must be an even integer else the sprite will jitter.
-        const float focal = hero.fov.a.x;
-        const int size = (focal * sdl.xres / 2.0f) / sprite->where.x;
-        const int osize = xodd(size) ? size + 1 : size;
-
-        // Calculate sprite location on screen. Account for hero yaw and height.
-        const int my = sdl.yres / 2 * (sprite->state == LIFTED ? 1.0f : (2.0f - hero.yaw));
-        const int mx = sdl.xres / 2;
-        const int l = mx - osize / 2;
-        const int t = my - osize * (sprite->state == LIFTED ? 0.5f : (1.0f - hero.height));
-        const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
-        const SDL_Rect target = { l + s, t, osize, osize };
-
-        // Move onto the next sprite if this sprite is off screen.
-        if(target.x + target.w < 0 || target.x >= sdl.xres)
-            continue;
-
-        // Get sprite surface and texture.
-        const int selected = sprite->ascii - ' ';
-        SDL_Surface* const surface = sdl.surfaces.surface[selected];
-        SDL_Texture* const texture = sdl.textures.texture[selected];
-        const int w = surface->w / FRAMES;
-        const int h = surface->h / STATES;
-
-        // Determine sprite animation based on ticks.
-        const SDL_Rect image = { w * xtmhi(tm), h * sprite->state, w, h };
-
-        // Calculate how much of the sprite is seen.
-        // The sprite's latest seen rect is then saved to the sprite.
-        // This will come in handy for ranged attacks or just general mouse targeting.
-        sprite->seen = clip(sdl, target, sprite->where, zbuff);
-
-        // Move onto the next sprite if this totally behind a wall and cannot be seen.
-        if(sprite->seen.w <= 0)
-            continue;
-
-        // Apply lighting to the sprite.
-        const int modding = xilluminate(hero.torch, sprite->where.x);
-        SDL_SetTextureColorMod(texture, modding, modding, modding);
-
-        // Apply transparency to the sprite, if required.
-        if(sprite->transparent)
-            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
-
-        // Render the sprite.
-        SDL_RenderSetClipRect(sdl.renderer, &sprite->seen);
-        SDL_RenderCopy(sdl.renderer, texture, &image, &target);
-        SDL_RenderSetClipRect(sdl.renderer, NULL);
-
-        // Remove transperancy from the sprite.
-        if(sprite->transparent)
-            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-
-        // Revert lighting to the sprite for the map editor panel.
-        SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
-
-        // If the sprite is within earshot of hero then render speech sentences.
-        if(!xisdead(sprite->state) && !xismute(sprite))
+        const SDL_Rect target = rtarget(sdl, sprite, hero);
+        if(target.x + target.w >= 0 && target.x < sdl.xres)
         {
-            // NOTE: Sprites where oriented to players gaze.
-            // Their relative position to the player is recalculated.
-            if(xeql(xadd(hero.where, sprite->where), hero.where, hero.aura))
-                rspeech(sprite, sdl, text, target, tm);
-            else
-                xstick(sprite, tm);
+            const int selected = sprite->ascii - ' ';
+            SDL_Surface* const surface = sdl.surfaces.surface[selected];
+            SDL_Texture* const texture = sdl.textures.texture[selected];
+            const SDL_Rect image = rimage(surface, sprite->state, tm);
+            sprite->seen = clip(target, sdl.xres, sprite->where, zbuff);
+            if(sprite->seen.w > 0)
+                rsprite(sdl, text, sprite, hero, texture, image, target, tm);
         }
     }
+}
+
+// Renders all sprites to screen.
+static void rsprites(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
+{
+    for(int which = 0; which < sprites.count; which++)
+        rsetup(sdl, text, &sprites.sprite[which], zbuff, hero, tm);
 }
 
 Sdl xsetup(const Args args)
@@ -204,8 +206,7 @@ Sdl xsetup(const Args args)
         SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_STREAMING,
         // XRES and YRES swapped since rendering is done 90 degrees on side.
-        args.yres,
-        args.xres);
+        args.yres, args.xres);
 
     sdl.xres = args.xres;
     sdl.yres = args.yres;
@@ -213,7 +214,6 @@ Sdl xsetup(const Args args)
     sdl.threads = args.threads;
     sdl.surfaces = xpull();
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
-
     sdl.gui = '~' - ' ' + 25;
     sdl.wht = 0xFFDFEFD7;
     sdl.blk = 0xFF000000;
@@ -260,7 +260,7 @@ void xrender(const Sdl sdl, const Text text, const Hero hero, const Sprites spri
 
     // Orientate sprites to player's gaze and paste to screen. Place back to global coords afterwards.
     xorient(sprites, hero);
-    paste(sdl, text, sprites, zbuff, hero, tm);
+    rsprites(sdl, text, sprites, zbuff, hero, tm);
     xplback(sprites, hero);
 
     free(zbuff);
@@ -409,7 +409,6 @@ Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll s
         xzattack();
 }
 
-// Returns true if a tile is clipped off the screen.
 static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
 {
     return (to.x > sdl.xres || to.x < -ov.w)
