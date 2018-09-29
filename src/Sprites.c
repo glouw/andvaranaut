@@ -117,7 +117,7 @@ static void bound(const Sprites sprites, const Map map)
     }
 }
 
-static void move(const Sprites sprites, const Field field, const Point to, const Map map, const Hero hero)
+static void move(const Sprites sprites, const Field field, const Point to, const Map map)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -146,11 +146,6 @@ static void move(const Sprites sprites, const Field field, const Point to, const
 
         // Sprite will stop running if close to player.
         sprite->state = xmag(sprite->velocity) > 0.005f ? CHASING : IDLE;
-
-        // Evil sprites attack player.
-        if(sprite->evil)
-            if(xeql(hero.where, sprite->where, 2.0f))
-                sprite->state = ATTACK;
 
         xsplace(sprite, xadd(sprite->where, sprite->velocity));
     }
@@ -371,18 +366,51 @@ static void idle(const Sprites sprites, const Timer tm)
     }
 }
 
+// Damage hero health points.
+static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+
+        if(xisuseless(sprite))
+            continue;
+
+        if(sprite->evil)
+            if(xeql(hero.where, sprite->where, 2.0f)) // TODO: Maybe sprites have different attack ranges.
+            {
+                sprite->state = ATTACK;
+                if(tm.rise)
+                {
+                    const float damage = sprite->damage; // TODO: Hero defense lessens sprite damage?
+                    hero.hps -= damage;
+                }
+            }
+    }
+    return hero;
+}
+
+// Damage hero mana (enemy sprites can sap mana, etc...)
+static Hero dmna(Hero hero, const Sprites sprites, const Timer tm)
+{
+    (void) sprites;
+    (void) tm;
+    return hero;
+}
+
+// Damage hero fatigue (enemy sprites can sap fatigue, etc...).
+static Hero dftg(Hero hero, const Sprites sprites, const Timer tm)
+{
+    (void) sprites;
+    (void) tm;
+    return hero;
+}
+
 static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
 {
-    const float wave = 0.5f * (cosf(FPI * tm.ticks / 60.0f) + 1.0f);
-
-    hero.hps = hero.hpsmax * wave;
-    hero.mna = hero.mnamax * wave;
-
-    // TODO:
-    // Water and food sprites replenish the hero's fatigue.
-    // Healing wizard sprites heal the hero instead of damaging the hero.
-    (void) sprites;
-
+    hero = dhps(hero, sprites, tm);
+    hero = dmna(hero, sprites, tm);
+    hero = dftg(hero, sprites, tm);
     return hero;
 }
 
@@ -391,7 +419,7 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     arrange(sprites, hero);
     idle(sprites, tm);
     route(sprites, field, map, hero);
-    move(sprites, field, hero.where, map, hero);
+    move(sprites, field, hero.where, map);
     bound(sprites, map);
     return damage(hero, sprites, tm);
 }

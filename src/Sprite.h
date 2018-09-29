@@ -17,6 +17,8 @@ typedef struct
     float speed;
     float acceleration;
     float health;
+    float damage;
+    float defense;
     Point where;
     Point last;
     Point velocity;
