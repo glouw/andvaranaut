@@ -105,7 +105,7 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
 static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
 {
     const float focal = hero.fov.a.x;
-    const int size = (focal * sdl.xres / 2.0f) / sprite->where.x;
+    const int size = 0.5f * focal * sdl.xres / sprite->where.x;
     const int osize = xodd(size) ? size + 1 : size;
     const int my = sdl.yres / 2 * (sprite->state == LIFTED ? 1.0f : (2.0f - hero.yaw));
     const int mx = sdl.xres / 2;
@@ -258,7 +258,7 @@ void xrender(const Sdl sdl, const Text text, const Hero hero, const Sprites spri
     // Render was done sideways for cache efficiency. Rotate upwards.
     churn(sdl);
 
-    // Orientate sprites to player's gaze and paste to screen. Place back to global coords afterwards.
+    // Orientate sprites to player's gaze and render to screen. Place back to global coords afterwards.
     xorient(sprites, hero);
     rsprites(sdl, text, sprites, zbuff, hero, tm);
     xplback(sprites, hero);
