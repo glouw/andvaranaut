@@ -111,7 +111,7 @@ static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
     const int mx = sdl.xres / 2;
     const int l = mx - osize / 2;
     const int t = my - osize * (sprite->state == LIFTED ? 0.5f : (1.0f - hero.height));
-    const int s = hero.fov.a.x * (sdl.xres / 2) * xslp(sprite->where);
+    const int s = hero.fov.a.x * mx * xslp(sprite->where);
     const SDL_Rect target = { l + s, t, osize, osize };
     return target;
 }
