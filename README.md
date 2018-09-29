@@ -1,7 +1,7 @@
 # Andvaranaut
 ![](art/screenshots/2018-02-17-143059_600x300_scrot.png)
 
-A dungeon crawler with procedural dungeon generation, many items, many monsters, many puzzles, and so much more!
+The free dungeon crawler!
 
 ## Building
 Install tlhe development packages for SDL2-ttf and SDL2 and then execute:
