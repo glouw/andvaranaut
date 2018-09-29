@@ -24,6 +24,7 @@ typedef struct
     Speech speech;
     Speech angers;
     int evil;
+    float size;
 }
 Sprite;
 

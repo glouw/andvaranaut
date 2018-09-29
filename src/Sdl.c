@@ -104,13 +104,12 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
 // Calculates sprite size releative to player.
 static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
 {
-    const float focal = hero.fov.a.x;
-    const int size = 0.5f * focal * sdl.xres / sprite->where.x;
+    const int size = sprite->size * hero.fov.a.x * 0.5f * sdl.xres / sprite->where.x;
     const int osize = xodd(size) ? size + 1 : size;
-    const int my = sdl.yres / 2 * (sprite->state == LIFTED ? 1.0f : (2.0f - hero.yaw));
-    const int mx = sdl.xres / 2;
-    const int l = mx - osize / 2;
-    const int t = my - osize * (sprite->state == LIFTED ? 0.5f : (1.0f - hero.height));
+    const int my = 0.5f * sdl.yres * (2.0f - hero.yaw);
+    const int mx = 0.5f * sdl.xres;
+    const int l = mx - osize * 0.5f;
+    const int t = my - osize * (1.0f - hero.height / sprite->size);
     const int s = hero.fov.a.x * mx * xslp(sprite->where);
     const SDL_Rect target = { l + s, t, osize, osize };
     return target;

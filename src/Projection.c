@@ -16,7 +16,7 @@ Projection xproject(const int yres, const int xres, const float focal, const flo
     const float normal = corrected.x < min ? min : corrected.x;
 
     Projection p = xzproj();
-    p.size = 0.5f * focal * xres / normal;
+    p.size = focal * 0.5f * xres / normal;
     p.mid = yaw * yres / 2.0f;
     p.bot = p.mid + (0.0f - height) * p.size;
     p.top = p.mid + (1.0f - height) * p.size;
