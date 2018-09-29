@@ -9,22 +9,22 @@
 
 typedef struct
 {
-    Point where;
     int ascii;
-    State state;
+    int evil;
+    int transparent;
+    float size;
     float width;
-    Point last;
-    Point velocity;
     float speed;
     float acceleration;
-    int transparent;
-    int ticks;
     float health;
+    Point where;
+    Point last;
+    Point velocity;
+    State state;
     SDL_Rect seen;
     Speech speech;
     Speech angers;
-    int evil;
-    float size;
+    int ticks;
 }
 Sprite;
 
@@ -41,6 +41,8 @@ int xisuseless(const Sprite* const);
 int xnocount(const Sprite* const);
 
 int xisstuck(const Sprite* const);
+
+void xstest(void);
 
 Sprite xsregistrar(const int ascii, const Point where);
 
