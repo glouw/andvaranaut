@@ -53,11 +53,13 @@ static void push(const Sprites sprites, const Hero hero)
     }
 }
 
-static int comparator(const void* a, const void* b)
+static int comparator(const void* const a, const void* const b)
 {
-    const Point pa = *(const Point*) a;
-    const Point pb = *(const Point*) b;
-    return xmag(pa) < xmag(pb) ? 1 : xmag(pa) > xmag(pb) ? -1 : 0;
+    const Sprite* const sa = (const Sprite* const) a;
+    const Sprite* const sb = (const Sprite* const) b;
+    return
+        xmag(sa->where) < xmag(sb->where) ? +1 :
+        xmag(sa->where) > xmag(sb->where) ? -1 : 0;
 }
 
 static void sort(const Sprites sprites)
