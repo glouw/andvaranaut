@@ -3,9 +3,11 @@
 
 The free dungeon crawler!
 
-## Building
-Install tlhe development packages for SDL2-ttf and SDL2 and then execute:
+## Dependencies
+    SDL2-ttf-devel
+    SDL2-devel
 
+## Building
     make -C src; ./andvaranaut
 
 ## System Requirements
