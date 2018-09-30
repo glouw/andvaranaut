@@ -86,7 +86,7 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
     const int index = (ticks / 8) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
     const int x = target.x + target.w / 2;
-    const int y = target.y + target.h / 2; // TODO: Maybe tune the offset per sprite?
+    const int y = target.y + target.h / 3; // TODO: Maybe tune the offset per sprite?
     xfputxy(text.fill, text.line, sentence, 0xFF, sdl.renderer, x, y);
 }
 
@@ -252,6 +252,7 @@ void xrender(const Sdl sdl, const Text text, const Hero hero, const Sprites spri
     rsprites(sdl, text, sprites, zbuff, hero, tm);
     xplback(sprites, hero);
 
+    // Cleanup.
     free(zbuff);
     free(b);
     free(threads);
@@ -274,13 +275,10 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
         const Point where = xsub(xmul(g.points[i], sens), mid);
         dbox(sdl, where.x, where.y, width, color, true);
     }
-
     const int tail = 10;
     if(g.count < tail)
         return xzattack();
-
     const float mag = xgmag(g, it.damage);
-
     const int last = g.count - 1;
     const int first = g.count - tail;
     const Point dir = xunt(xsub(g.points[last], g.points[first]));
@@ -417,16 +415,12 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         const int ascii =
             ov.party == FLORING ? map.floring[j][i] :
             ov.party == CEILING ? map.ceiling[j][i] : map.walling[j][i];
-
         const int ch = ascii - ' ';
         if(ch == 0)
             continue;
-
         const SDL_Rect to = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
-
         if(clipping(sdl, ov, to))
             continue;
-
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &to);
     }
 
@@ -437,9 +431,7 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         const int index = sprite->ascii - ' ';
         const int w = sdl.surfaces.surface[index]->w / FRAMES;
         const int h = sdl.surfaces.surface[index]->h / STATES;
-
         const SDL_Rect from = { w * xtmhi(tm), h * sprite->state, w, h };
-
         const SDL_Rect to = {
             (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
             (int) ((ov.h * sprite->where.y - ov.h / 1) + ov.py),
@@ -448,7 +440,6 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
 
         if(clipping(sdl, ov, to))
             continue;
-
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[index], &from, &to);
     }
 }
@@ -553,16 +544,13 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
     {
         SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
         SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
-
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
-
         const SDL_Rect from = {
             (int) (i == inv.hilited ? grn.x : i == inv.selected ? red.x : wht.x),
             (int) (i == inv.hilited ? grn.y : i == inv.selected ? red.y : wht.y),
             w, w
         };
-
         const SDL_Rect to = { xx, inv.width * i, inv.width, inv.width };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
@@ -574,18 +562,14 @@ static void dinvits(const Sdl sdl, const Inventory inv)
     for(int i = 0; i < inv.items.max; i++)
     {
         const Item item = inv.items.item[i];
-
         if(item.c == NONE)
             continue;
-
         const int index = xcindex(item.c);
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
-
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
         const SDL_Rect from = { 0, w * item.index, w, w }, to = { xx, inv.width * i, inv.width, inv.width };
-
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }

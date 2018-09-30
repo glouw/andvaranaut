@@ -6,8 +6,10 @@ int main(int argc, char* argv[])
 {
 #if 1 // Unit tests.
     xittest();
+
     xstest();
 #endif
+
     srand(true ? time(NULL) : 0);
 
     const Args args = xparse(argc, argv);
