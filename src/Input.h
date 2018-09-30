@@ -7,6 +7,9 @@ typedef struct
     // Keyboard state.
     const uint8_t* key;
 
+    // User closed window.
+    int done;
+
     // Mouse sensitivity.
     float sx;
     float sy;
@@ -28,9 +31,6 @@ typedef struct
     int lu;
     int mu;
     int ru;
-
-    // User closed window.
-    int done;
 
     // Last states (Left, middle, right).
     int ll;

@@ -14,7 +14,9 @@ Input xpump(Input input)
 {
     SDL_Event event;
     SDL_PollEvent(&event);
-    if(event.type == SDL_QUIT || input.key[SDL_SCANCODE_END] || input.key[SDL_SCANCODE_ESCAPE])
+
+    if(input.key[SDL_SCANCODE_END]
+    || input.key[SDL_SCANCODE_ESCAPE])
         input.done = true;
 
     const uint32_t buttons = SDL_GetRelativeMouseState(&input.dx, &input.dy);
