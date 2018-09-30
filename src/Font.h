@@ -16,6 +16,8 @@ Font xfbuild(const char* const path, const int size, const uint32_t color, const
 
 SDL_Rect xfsize(const Font, const char* const string);
 
-void xfwrt(const Font fill, const Font line, SDL_Renderer* const, const int x, const int y, const char* const text, const int alpha);
-
 SDL_Texture* xtget(const Font, SDL_Renderer* const rend, const int alpha, const char* text);
+
+void xfrender(const Font fill, const Font line, SDL_Renderer* const, const SDL_Rect target, const char* const text, const int alpha);
+
+void xfputmid(const Font fill, const Font line, SDL_Renderer* const, const int x, const int y, const char* const text, const int alpha);

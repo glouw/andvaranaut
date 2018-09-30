@@ -74,7 +74,7 @@ void xttshow(const Text text, const Sdl sdl)
     const float max = 0xFF;
     const float alpha = max * sinf(percent * FPI);
 
-    xfwrt(text.fill, text.line, sdl.renderer,
+    xfputmid(text.fill, text.line, sdl.renderer,
         sdl.xres / 2,
         sdl.yres / 2,
         tt->str,

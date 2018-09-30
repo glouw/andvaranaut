@@ -44,30 +44,30 @@ SDL_Rect xfsize(const Font font, const char* const string)
     return size;
 }
 
-void xfwrt(const Font fill, const Font line, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
+void xfrender(const Font fill, const Font line, SDL_Renderer* const rend, const SDL_Rect target, const char* const text, const int alpha)
+{
+    SDL_Texture* tfill = xtget(fill, rend, alpha, text);
+    SDL_Texture* tline = xtget(line, rend, alpha, text);
+    SDL_RenderCopy(rend, tfill, NULL, &target);
+    SDL_RenderCopy(rend, tline, NULL, &target);
+    SDL_DestroyTexture(tfill);
+    SDL_DestroyTexture(tline);
+}
+
+void xfputmid(const Font fill, const Font line, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
 {
     char* const copy = dups(text);
-
     const char* const delim = "\n";
     int newline = 0;
     for(char* tok = strtok(copy, delim); tok; tok = strtok(NULL, delim))
     {
-        SDL_Texture* tfill = xtget(fill, rend, alpha, tok);
-        SDL_Texture* tline = xtget(line, rend, alpha, tok);
-
         const SDL_Rect size = xfsize(fill, tok);
         const SDL_Rect target = {
             x - size.w / 2,
             y - size.h / 2 + size.h * newline,
             size.w, size.h
         };
-
-        SDL_RenderCopy(rend, tfill, NULL, &target);
-        SDL_RenderCopy(rend, tline, NULL, &target);
-
-        SDL_DestroyTexture(tfill);
-        SDL_DestroyTexture(tline);
-
+        xfrender(fill, line, rend, target, tok, alpha);
         newline++;
     }
     free(copy);

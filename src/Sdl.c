@@ -86,8 +86,6 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
     const int index = (ticks / 8) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
     const int alpha = 0xFF;
-    SDL_Texture* const tfill = xtget(text.fill, sdl.renderer, alpha, sentence);
-    SDL_Texture* const tline = xtget(text.line, sdl.renderer, alpha, sentence);
     const SDL_Rect size = xfsize(text.fill, sentence);
     const SDL_Rect to = {
         target.x + target.w / 2 - size.w / 2,
@@ -95,10 +93,7 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
         size.w,
         size.h,
     };
-    SDL_RenderCopy(sdl.renderer, tfill, NULL, &to);
-    SDL_RenderCopy(sdl.renderer, tline, NULL, &to);
-    SDL_DestroyTexture(tfill);
-    SDL_DestroyTexture(tline);
+    xfrender(text.fill, text.line, sdl.renderer, to, sentence, alpha);
 }
 
 // Calculates sprite size releative to player.
