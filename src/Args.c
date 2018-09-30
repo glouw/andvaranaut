@@ -15,16 +15,14 @@ static void print(const Args args)
     /* 1 */ "-y: Y-Resolution           : %d\n"
     /* 2 */ "-f: Focal Length           : %f\n"
     /* 3 */ "-v: VSync                  : %s\n"
-    /* 4 */ "-p: FPS                    : %d\n"
-    /* 5 */ "-m: Mouse Sensitivity      : %f\n"
-    /* 6 */ "-t: CPU Renderer Thread(s) : %d\n",
+    /* 4 */ "-m: Mouse Sensitivity      : %f\n"
+    /* 5 */ "-t: CPU Renderer Thread(s) : %d\n",
     /* 0 */ args.xres,
     /* 1 */ args.yres,
     /* 2 */ (double) args.focal,
     /* 3 */ args.vsync ? "t" : "f",
-    /* 4 */ args.fps,
-    /* 5 */ (double) args.msen,
-    /* 6 */ args.threads);
+    /* 4 */ (double) args.msen,
+    /* 5 */ args.threads);
 }
 
 static void check(const Args args)
@@ -82,11 +80,6 @@ static Args parsed(Args args, int argc, char* argv[])
                     strtod(next, NULL) != 0;
                 break;
 
-            case 'p':
-                args.fps =
-                    strtod(next, NULL);
-                break;
-
             case 'm':
                 args.msen =
                     strtof(next, NULL);
@@ -115,7 +108,12 @@ static Args defaults(void)
     args.yres = 600;
     args.focal = 0.8f;
     args.vsync = true;
+
+    // Do not change.
+    // Many timings are linked to tihs cycle rate.
+    // Higher refresh rate monitors with VSYNC will still run at this speed.
     args.fps = 60;
+
     args.msen = 0.007f;
     args.threads = 8;
     return args;

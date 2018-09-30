@@ -11,3 +11,5 @@
     -> Resolved: CLASSIFICATIONS and NONE were valid items for xitrand()
 
 [ ] Thought: How is 144hz refresh rate handled?
+    -> Needs testing: lock at 60fps since timings require this update speed.
+    -> VSYNC should handle this.
