@@ -26,6 +26,8 @@ int xodd(const int a);
 
 float xsinc(const float x, const float p);
 
+char* fmts(const char* const fmt, ...);
+
 #define xfrand() (rand() / (float) INT_MAX)
 
 #define xlen(a) ((int) (sizeof(a) / sizeof(*a)))

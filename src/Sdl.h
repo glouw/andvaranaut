@@ -65,3 +65,5 @@ void xdmap(const Sdl, const Map, const Point);
 void xdinv(const Sdl, const Inventory);
 
 void xdbars(const Sdl, const Hero, const Timer);
+
+void xdfps(const Sdl, const Text, const int fps);

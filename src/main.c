@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
     // Game loop. X-Resolution 512 reserved for performance testing.
     // Exits with certain keypress or 'X' window button.
-    for(int renders = 0; args.xres == 512 ? renders < 20 : !in.done; renders++)
+    for(int renders = 0, fps = 0; args.xres == 512 ? renders < 20 : !in.done; renders++)
     {
         const int t0 = SDL_GetTicks();
 
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
         }
         xttshow(text, sdl);
 
-        xfputbr(text.fill, text.line, sdl.renderer, sdl.xres, sdl.yres, "60", 0xFF);
+        xdfps(sdl, text, fps);
 
         xpresent(sdl);
 
@@ -146,6 +146,10 @@ int main(int argc, char* argv[])
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0f / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
+
+        const int t2 = SDL_GetTicks();
+        if(tm.rise)
+            fps = 1000.0f / (t2 - t0);
     }
 
     // No need to free anything - the OS will do it with a quicker exit.

@@ -78,3 +78,18 @@ int xodd(const int a)
     return a % 2;
 }
 
+char* fmts(const char* const fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    const int len = vsnprintf(NULL, 0, fmt, args);
+    va_end(args);
+
+    // Must rewind from first call of vsnprintf.
+    va_start(args, fmt);
+    char* str = xtoss(char, len + 1);
+    vsprintf(str, fmt, args);
+    va_end(args);
+
+    return str;
+}

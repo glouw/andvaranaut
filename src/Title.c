@@ -26,19 +26,13 @@ void xttset(const int start, const int end, const int linger, const char* const 
     va_list args;
     va_start(args, text);
 
+    free(tt->str);
+    tt->str = fmts(text, args);
+
     // If lingering the max alpha for the alpha will be used after 50% sine in/out fade.
     tt->linger = linger;
-
     tt->start = start;
     tt->end = end;
-
-    const int len = vsnprintf(NULL, 0, text, args);
-
-    va_start(args, text);
-
-    free(tt->str);
-    tt->str = xtoss(char, len + 1);
-    vsprintf(tt->str, text, args);
 
     va_end(args);
 }

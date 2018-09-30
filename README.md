@@ -1,5 +1,5 @@
 # Andvaranaut
-![](art/screenshots/2018-02-17-143059_600x300_scrot.png)
+![](art/screenshots/2018-09-30-082507_1024x600_scrot.png)
 
 The open source dungeon crawler
 
