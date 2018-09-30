@@ -47,7 +47,6 @@ int main(int argc, char* argv[])
     xttinit();
 
     // Game loop. X-Resolution 512 reserved for performance testing.
-    // Exits with certain keypress or 'X' window button.
     for(int renders = 0, fps = 0; args.xres == 512 ? renders < 20 : !in.done; renders++)
     {
         const int t0 = SDL_GetTicks();
