@@ -150,8 +150,6 @@ int main(int argc, char* argv[])
         const int t2 = SDL_GetTicks();
         if(tm.rise)
             fps = 1000.0f / (t2 - t0);
-
-        printf("%d\n", renders);
     }
 
     // No need to free anything - the OS will do it with a quicker exit.
