@@ -54,7 +54,7 @@ void xfrender(const Font fill, const Font line, SDL_Renderer* const rend, const 
     SDL_DestroyTexture(tline);
 }
 
-void xfputmid(const Font fill, const Font line, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
+void xfputmd(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y)
 {
     char* const copy = dups(text);
     const char* const delim = "\n";
@@ -73,7 +73,7 @@ void xfputmid(const Font fill, const Font line, SDL_Renderer* const rend, const 
     free(copy);
 }
 
-void xfputbr(const Font fill, const Font line, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
+void xfputbr(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y)
 {
     const SDL_Rect size = xfsize(fill, text);
     const SDL_Rect target = {
@@ -84,7 +84,7 @@ void xfputbr(const Font fill, const Font line, SDL_Renderer* const rend, const i
     xfrender(fill, line, rend, target, text, alpha);
 }
 
-void xfputrect(const Font fill, const Font line, SDL_Renderer* const rend, const SDL_Rect target, const char* const text, const int alpha)
+void xfputsq(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const SDL_Rect target)
 {
     const SDL_Rect size = xfsize(fill, text);
     const SDL_Rect to = {

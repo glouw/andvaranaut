@@ -85,7 +85,7 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
     const int ticks = tm.ticks - sprite->speech.ticks;
     const int index = (ticks / 8) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
-    xfputrect(text.fill, text.line, sdl.renderer, target, sentence, 0xFF);
+    xfputsq(text.fill, text.line, sentence, 0xFF, sdl.renderer, target);
 }
 
 // Calculates sprite size releative to player.
@@ -621,6 +621,6 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
 void xdfps(const Sdl sdl, const Text text, const int fps)
 {
     char* const str = fmts("%d", fps);
-    xfputbr(text.fill, text.line, sdl.renderer, sdl.xres, sdl.yres, str, 0xFF);
+    xfputbr(text.fill, text.line, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);
     free(str);
 }

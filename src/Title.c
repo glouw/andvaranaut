@@ -63,15 +63,15 @@ void xttshow(const Text text, const Sdl sdl)
 {
     if(done())
         return;
-
     const float percent = (tt->now - tt->start) / (float) (tt->end - tt->start);
     const float max = 0xFF;
     const float alpha = max * sinf(percent * FPI);
-
-    xfputmid(text.fill, text.line, sdl.renderer,
-        sdl.xres / 2,
-        sdl.yres / 2,
+    xfputmd(
+        text.fill,
+        text.line,
         tt->str,
-        // If lingering, do not fade out.
-        (percent > 0.5f && tt->linger) ? max : alpha);
+        (percent > 0.5f && tt->linger) ? max : alpha, // If lingering, do not fade out.
+        sdl.renderer,
+        sdl.xres / 2,
+        sdl.yres / 2);
 }
