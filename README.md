@@ -1,7 +1,8 @@
 # Andvaranaut
-![](art/screenshots/2018-09-30-082507_1024x600_scrot.png)
 
 The open source dungeon crawler
+
+![](art/screenshots/2018-09-30-083300_920x550_scrot.png)
 
 ## Dependencies
     SDL2-ttf-devel
