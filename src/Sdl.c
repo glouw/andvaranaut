@@ -85,23 +85,13 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
     const int ticks = tm.ticks - sprite->speech.ticks;
     const int index = (ticks / 8) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
-    const int alpha = 0xFF;
-
-    /* MOVE TO FONT */
-    const SDL_Rect size = xfsize(text.fill, sentence);
-    const SDL_Rect to = {
-        target.x + target.w / 2 - size.w / 2,
-        target.y + target.h / 3, // TODO: Maybe tune the offset per sprite?
-        size.w,
-        size.h,
-    };
-    xfrender(text.fill, text.line, sdl.renderer, to, sentence, alpha);
-    /* ------------ */
+    xfputrect(text.fill, text.line, sdl.renderer, target, sentence, 0xFF);
 }
 
 // Calculates sprite size releative to player.
 static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
 {
+    // Projection.[ch] does the same thing, but this one accounts for sprite jitter.
     const int size = sprite->size * hero.fov.a.x * 0.5f * sdl.xres / sprite->where.x;
     const int osize = xodd(size) ? size + 1 : size;
     const int my = 0.5f * sdl.yres * (2.0f - hero.yaw);

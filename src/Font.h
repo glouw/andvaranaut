@@ -20,7 +20,8 @@ SDL_Texture* xtget(const Font, SDL_Renderer* const rend, const int alpha, const 
 
 void xfrender(const Font fill, const Font line, SDL_Renderer* const, const SDL_Rect target, const char* const text, const int alpha);
 
-void xfputmid
-    (const Font fill, const Font line, SDL_Renderer* const, const int x, const int y, const char* const text, const int alpha);
-void xfputbr
-    (const Font fill, const Font line, SDL_Renderer* const, const int x, const int y, const char* const text, const int alpha);
+void xfputmid(const Font fill, const Font line, SDL_Renderer* const, const int x, const int y, const char* const text, const int alpha);
+
+void xfputbr(const Font fill, const Font line, SDL_Renderer* const, const int x, const int y, const char* const text, const int alpha);
+
+void xfputrect(const Font fill, const Font line, SDL_Renderer* const, const SDL_Rect target, const char* const text, const int alpha);

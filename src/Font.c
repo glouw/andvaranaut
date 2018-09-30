@@ -83,3 +83,15 @@ void xfputbr(const Font fill, const Font line, SDL_Renderer* const rend, const i
     };
     xfrender(fill, line, rend, target, text, alpha);
 }
+
+void xfputrect(const Font fill, const Font line, SDL_Renderer* const rend, const SDL_Rect target, const char* const text, const int alpha)
+{
+    const SDL_Rect size = xfsize(fill, text);
+    const SDL_Rect to = {
+        target.x + target.w / 2 - size.w / 2,
+        target.y + target.h / 3, // TODO: Maybe tune the offset per sprite?
+        size.w,
+        size.h,
+    };
+    xfrender(fill, line, rend, to, text, alpha);
+}
