@@ -12,17 +12,14 @@ Font xfbuild(const char* const path, const int size, const uint32_t color, const
 {
     if(!TTF_WasInit())
         TTF_Init();
-
     Font f = xfzero();
     f.type = TTF_OpenFont(path, size);
     if(f.type == NULL)
         xbomb("Could not open %s\n", path);
-
     f.color.r = (color >> 0x10) & 0xFF;
     f.color.g = (color >> 0x08) & 0xFF;
     f.color.b = (color >> 0x00) & 0xFF;
     TTF_SetFontOutline(f.type, outline);
-
     return f;
 }
 
@@ -72,7 +69,8 @@ void xfputbr(const Font fill, const Font line, const char* const text, const int
     const SDL_Rect target = {
         x - size.w,
         y - size.h,
-        size.w, size.h
+        size.w,
+        size.h,
     };
     xfrender(fill, line, rend, target, text, alpha);
 }
@@ -88,7 +86,8 @@ void xfprint(const Font fill, const Font line, const char* const text, const int
         const SDL_Rect target = {
             x - size.w / 2,
             y - size.h / 2 + size.h * newline,
-            size.w, size.h
+            size.w,
+            size.h,
         };
         xfrender(fill, line, rend, target, tok, alpha);
         newline++;
