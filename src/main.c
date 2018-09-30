@@ -136,6 +136,8 @@ int main(int argc, char* argv[])
         }
         xttshow(text, sdl);
 
+        xfputbr(text.fill, text.line, sdl.renderer, sdl.xres, sdl.yres, "60", 0xFF);
+
         xpresent(sdl);
 
         in = xpump(in);

@@ -72,3 +72,14 @@ void xfputmid(const Font fill, const Font line, SDL_Renderer* const rend, const 
     }
     free(copy);
 }
+
+void xfputbr(const Font fill, const Font line, SDL_Renderer* const rend, const int x, const int y, const char* const text, const int alpha)
+{
+    const SDL_Rect size = xfsize(fill, text);
+    const SDL_Rect target = {
+        x - size.w,
+        y - size.h,
+        size.w, size.h
+    };
+    xfrender(fill, line, rend, target, text, alpha);
+}

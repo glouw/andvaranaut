@@ -7,7 +7,7 @@
 
 Inventory xinvnew(void)
 {
-    const Inventory inv = { xitsnew(18), 0, 32, -1, false, false };
+    const Inventory inv = { xitsnew(16), 0, 32, -1, false, false };
     const Item noobits[] = {
         xitnew(SHORTWEP, 0),
         xitnew(WAND, 0),
