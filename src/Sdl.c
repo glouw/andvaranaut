@@ -85,7 +85,9 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
     const int ticks = tm.ticks - sprite->speech.ticks;
     const int index = (ticks / 8) % sprite->speech.count;
     const char* const sentence = sprite->speech.sentences[index];
-    xfputsq(text.fill, text.line, sentence, 0xFF, sdl.renderer, target);
+    const int x = target.x + target.w / 2;
+    const int y = target.y + target.h / 2; // TODO: Maybe tune the offset per sprite?
+    xfputxy(text.fill, text.line, sentence, 0xFF, sdl.renderer, x, y);
 }
 
 // Calculates sprite size releative to player.
@@ -618,9 +620,22 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
 }
 
 
-void xdfps(const Sdl sdl, const Text text, const int fps)
+void xdfps(const Sdl sdl, const Text text, const char* const fmt, ...)
 {
-    char* const str = fmts("%d", fps);
+    va_list args;
+
+    // Get string length for formatter.
+    va_start(args, fmt);
+        const int len = vsnprintf(NULL, 0, fmt, args);
+    va_end(args);
+
+    // Rewind and format.
+    va_start(args, fmt);
+        char* const str = xtoss(char, len + 1);
+        vsprintf(str, fmt, args);
+    va_end(args);
+
     xfputbr(text.fill, text.line, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);
+
     free(str);
 }

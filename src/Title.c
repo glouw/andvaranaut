@@ -21,20 +21,26 @@ void xttadvance(const int now)
     tt->now = now;
 }
 
-void xttset(const int start, const int end, const int linger, const char* const text, ...)
+void xttset(const int start, const int end, const int linger, const char* const fmt, ...)
 {
     va_list args;
-    va_start(args, text);
 
-    free(tt->str);
-    tt->str = fmts(text, args);
+    // Get string length for formatter.
+    va_start(args, fmt);
+        const int len = vsnprintf(NULL, 0, fmt, args);
+    va_end(args);
+
+    // Rewind and format.
+    va_start(args, fmt);
+        free(tt->str);
+        tt->str = xtoss(char, len + 1);
+        vsprintf(tt->str, fmt, args);
+    va_end(args);
 
     // If lingering the max alpha for the alpha will be used after 50% sine in/out fade.
     tt->linger = linger;
     tt->start = start;
     tt->end = end;
-
-    va_end(args);
 }
 
 void xttclear(void)
@@ -66,7 +72,7 @@ void xttshow(const Text text, const Sdl sdl)
     const float percent = (tt->now - tt->start) / (float) (tt->end - tt->start);
     const float max = 0xFF;
     const float alpha = max * sinf(percent * FPI);
-    xfputmd(
+    xfprint(
         text.fill,
         text.line,
         tt->str,

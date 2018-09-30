@@ -50,4 +50,4 @@ void xdinv(const Sdl, const Inventory);
 
 void xdbars(const Sdl, const Hero, const Timer);
 
-void xdfps(const Sdl, const Text, const int fps);
+void xdfps(const Sdl, const Text, const char* const fmt, ...);

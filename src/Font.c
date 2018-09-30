@@ -54,7 +54,30 @@ void xfrender(const Font fill, const Font line, SDL_Renderer* const rend, const 
     SDL_DestroyTexture(tline);
 }
 
-void xfputmd(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y)
+void xfputxy(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y)
+{
+    const SDL_Rect size = xfsize(fill, text);
+    const SDL_Rect to = {
+        x - size.w / 2,
+        y - size.h / 2,
+        size.w,
+        size.h,
+    };
+    xfrender(fill, line, rend, to, text, alpha);
+}
+
+void xfputbr(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y)
+{
+    const SDL_Rect size = xfsize(fill, text);
+    const SDL_Rect target = {
+        x - size.w,
+        y - size.h,
+        size.w, size.h
+    };
+    xfrender(fill, line, rend, target, text, alpha);
+}
+
+void xfprint(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y)
 {
     char* const copy = dups(text);
     const char* const delim = "\n";
@@ -71,27 +94,4 @@ void xfputmd(const Font fill, const Font line, const char* const text, const int
         newline++;
     }
     free(copy);
-}
-
-void xfputbr(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y)
-{
-    const SDL_Rect size = xfsize(fill, text);
-    const SDL_Rect target = {
-        x - size.w,
-        y - size.h,
-        size.w, size.h
-    };
-    xfrender(fill, line, rend, target, text, alpha);
-}
-
-void xfputsq(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const SDL_Rect target)
-{
-    const SDL_Rect size = xfsize(fill, text);
-    const SDL_Rect to = {
-        target.x + target.w / 2 - size.w / 2,
-        target.y + target.h / 3, // TODO: Maybe tune the offset per sprite?
-        size.w,
-        size.h,
-    };
-    xfrender(fill, line, rend, to, text, alpha);
 }

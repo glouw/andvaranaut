@@ -62,9 +62,11 @@ char* xreadln(FILE* const file)
 void xbomb(const char* const message, ...)
 {
     va_list args;
+
     va_start(args, message);
-    vprintf(message, args);
+        vprintf(message, args);
     va_end(args);
+
     exit(1);
 }
 
@@ -76,20 +78,4 @@ float xsinc(const float x, const float p)
 int xodd(const int a)
 {
     return a % 2;
-}
-
-char* fmts(const char* const fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    const int len = vsnprintf(NULL, 0, fmt, args);
-    va_end(args);
-
-    // Must rewind from first call of vsnprintf.
-    va_start(args, fmt);
-    char* str = xtoss(char, len + 1);
-    vsprintf(str, fmt, args);
-    va_end(args);
-
-    return str;
 }
