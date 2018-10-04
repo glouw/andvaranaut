@@ -24,7 +24,7 @@ typedef struct
     int floor;
     int aura;
     float yaw;
-    float vyaw;
+    float dvyaw;
     float height;
     float tall;
     float vvel;
@@ -50,8 +50,6 @@ Hero xteleporting(Hero, const Map, const Input, const Timer);
 
 Hero xteleport(Hero, const Map);
 
-Hero xsustain(Hero, const Map, const Input, const Flow current, const Timer);
+Hero xsustain(Hero, const Map, const Input, const Flow, const Method);
 
 Ray xcalc(const Hero, const Hit, const Sheer, const int yres, const int xres);
-
-Hero xrecoil(Hero, const Method);

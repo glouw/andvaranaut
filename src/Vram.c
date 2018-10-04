@@ -23,12 +23,8 @@ void xvdrooms(const Vram vram, const Map map, const uint32_t in, const uint32_t 
         if(map.walling[y][x] != ' ' && map.walling[y][x - 1] == ' ') vram.pixels[x + y * vram.width] = out;
         if(map.walling[y][x] != ' ' && map.walling[y + 1][x] == ' ') vram.pixels[x + y * vram.width] = out;
         if(map.walling[y][x] != ' ' && map.walling[y - 1][x] == ' ') vram.pixels[x + y * vram.width] = out;
-
-        if(map.walling[y][x] == ' ')
-            vram.pixels[x + y * vram.width] = in;
-
-        if(map.walling[y][x] == '!')
-            vram.pixels[x + y * vram.width] = in;
+        if(map.walling[y][x] == ' ') vram.pixels[x + y * vram.width] = in;
+        if(map.walling[y][x] == '!') vram.pixels[x + y * vram.width] = in;
     }
 }
 
@@ -39,9 +35,7 @@ void xvddot(const Vram vram, const Point where, const int size, const uint32_t i
     {
         const int xx = x + where.x;
         const int yy = y + where.y;
-
         vram.pixels[xx + yy * vram.width] = in;
-
         if(x == -size) vram.pixels[xx + yy * vram.width] = out;
         if(x == +size) vram.pixels[xx + yy * vram.width] = out;
         if(y == -size) vram.pixels[xx + yy * vram.width] = out;

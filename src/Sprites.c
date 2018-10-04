@@ -380,10 +380,12 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
             if(xeql(hero.where, sprite->where, 2.0f)) // TODO: Maybe sprites have different attack ranges.
             {
                 sprite->state = ATTACK;
-                if(tm.rise)
+                if(tm.rise) // TODO: Maybe use cooldown for sprites.
                 {
                     const float damage = sprite->damage; // TODO: Hero defense lessens sprite damage?
                     hero.hps -= damage;
+                    const int dir = -1; // TODO: Attack direction different for each sprite.
+                    hero.dvyaw = dir * 0.025f; // TODO: More recoil for larger damage taken.
                 }
             }
     }

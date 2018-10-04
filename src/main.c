@@ -128,11 +128,9 @@ int main(int argc, char* argv[])
                 // TODO: Maybe pass in item wind rate.
                 gg = xgwind(gg, in);
 
-                me = xsustain(me, wd.map[me.floor], in, current, tm);
+                me = xsustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);
 
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, tm);
-
-                me = xrecoil(me, wd.sprites[me.floor].last);
             }
         }
         xttshow(text, sdl);

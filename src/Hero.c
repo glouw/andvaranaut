@@ -48,6 +48,7 @@ static Hero spin(Hero hero, const Input input)
 
 static Hero yaw(Hero hero, const Input input)
 {
+    // Mouse yaw control.
     hero.yaw += input.dy * input.sy;
     const float max = 1.80f;
     const float min = 0.20f;
@@ -55,6 +56,10 @@ static Hero yaw(Hero hero, const Input input)
         hero.yaw > max ? max :
         hero.yaw < min ? min :
         hero.yaw;
+
+    // Change in vertical yaw.
+    hero.yaw -= (hero.dvyaw *= 0.8f);
+
     return hero;
 }
 
@@ -205,29 +210,19 @@ Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, con
     return ray;
 }
 
-Hero xrecoil(Hero hero, const Method method)
+static Hero recoil(Hero hero, const Method last)
 {
-    if(method == RANGE)
-        hero.vyaw = 0.12f; // TODO: Different weapons have different recoil?
-    hero.yaw -= (hero.vyaw *= 0.8f);
+    if(last == RANGE)
+        hero.dvyaw = 0.12f; // TODO: Different weapons have different recoil?
     return hero;
 }
 
-static Hero breath(Hero hero, const Timer tm)
-{
-    const float bob = 0.0015f;
-    const float rate = tm.renders / 30.0f;
-    if(hero.ftg / hero.ftgmax < hero.warning)
-        hero.yaw += bob * sinf(FPI * rate);
-    return hero;
-}
-
-Hero xsustain(Hero hero, const Map map, const Input input, const Flow current, const Timer tm)
+Hero xsustain(Hero hero, const Map map, const Input input, const Flow current, const Method last)
 {
     hero = look(hero, input);
     hero = vert(hero, map, input);
     hero = move(hero, map, input, current);
-    hero = breath(hero, tm);
+    hero = recoil(hero, last);
     hero.torch = xburn(hero.torch);
     return hero;
 }
