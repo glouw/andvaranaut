@@ -106,11 +106,11 @@ static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
 }
 
 // Calculates which sprite frame and state to use based on sprite state and timer clock.
-static SDL_Rect rimage(SDL_Surface* const surface, const State state, const Timer tm)
+static SDL_Rect rimage(SDL_Surface* const surface, const State state, const Frame frame)
 {
     const int w = surface->w / FRAMES;
     const int h = surface->h / STATES;
-    const SDL_Rect image = { w * xtmhi(tm), h * state, w, h };
+    const SDL_Rect image = { w * frame, h * state, w, h };
     return image;
 }
 
@@ -142,30 +142,29 @@ static void rsprite(const Sdl sdl, const Text text, Sprite* const sprite, const 
         xeql(xadd(hero.where, sprite->where), hero.where, hero.aura) ? rspeech(sprite, sdl, text, target, tm) : xstick(sprite, tm);
 }
 
-// Prepares one sprite render to screen.
-static void rsetup(const Sdl sdl, const Text text, Sprite* const sprite, Point* zbuff, const Hero hero, const Timer tm)
-{
-    if(sprite->where.x > 0)
-    {
-        const SDL_Rect target = rtarget(sdl, sprite, hero);
-        if(target.x + target.w >= 0 && target.x < sdl.xres)
-        {
-            const int selected = sprite->ascii - ' ';
-            SDL_Surface* const surface = sdl.surfaces.surface[selected];
-            SDL_Texture* const texture = sdl.textures.texture[selected];
-            const SDL_Rect image = rimage(surface, sprite->state, tm);
-            sprite->seen = clip(target, sdl.xres, sprite->where, zbuff);
-            if(sprite->seen.w > 0)
-                rsprite(sdl, text, sprite, hero, texture, image, target, tm);
-        }
-    }
-}
-
 // Renders all sprites to screen.
 static void rsprites(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
     for(int which = 0; which < sprites.count; which++)
-        rsetup(sdl, text, &sprites.sprite[which], zbuff, hero, tm);
+    {
+        Sprite* const sprite = &sprites.sprite[which];
+        if(sprite->where.x > 0)
+        {
+            const SDL_Rect target = rtarget(sdl, sprite, hero);
+            if(target.x + target.w >= 0 && target.x < sdl.xres)
+            {
+                const int selected = sprite->ascii - ' ';
+                SDL_Surface* const surface = sdl.surfaces.surface[selected];
+                SDL_Texture* const texture = sdl.textures.texture[selected];
+                const State state = sprite->state;
+                const Frame frame = state == ATTACK ? xisattack(sprite) : xtmlo(tm);
+                const SDL_Rect image = rimage(surface, state, frame);
+                sprite->seen = clip(target, sdl.xres, sprite->where, zbuff);
+                if(sprite->seen.w > 0)
+                    rsprite(sdl, text, sprite, hero, texture, image, target, tm);
+            }
+        }
+    }
 }
 
 Sdl xsetup(const Args args)
@@ -431,7 +430,7 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         const int index = sprite->ascii - ' ';
         const int w = sdl.surfaces.surface[index]->w / FRAMES;
         const int h = sdl.surfaces.surface[index]->h / STATES;
-        const SDL_Rect from = { w * xtmhi(tm), h * sprite->state, w, h };
+        const SDL_Rect from = { w * xtmlo(tm), h * sprite->state, w, h };
         const SDL_Rect to = {
             (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
             (int) ((ov.h * sprite->where.y - ov.h / 1) + ov.py),
@@ -456,7 +455,7 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
         {
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
             const int h = sdl.surfaces.surface[i]->h / STATES;
-            const SDL_Rect from = { w * xtmhi(tm), h * IDLE, w, h };
+            const SDL_Rect from = { w * xtmlo(tm), h * IDLE, w, h };
             if(clipping(sdl, ov, to))
                 continue;
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
@@ -496,7 +495,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
     const SDL_Rect grite = { 0, 64, w, w };
 
     // Will animate bar to flicker if below threshold.
-    const int frame = xtmhi(tm);
+    const int frame = xtmlo(tm);
     const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : 0), w, w };
     const SDL_Rect empty[] = {
         { 0, fluid.y + 2 * w, w, w }, // 75%.

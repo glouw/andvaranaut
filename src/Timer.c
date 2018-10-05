@@ -2,37 +2,45 @@
 
 #include "Frame.h"
 
-static Timer ztimer(void)
+static int lo(const int ticks)
+{
+    return ticks % FRAMES == 0;
+}
+
+static int hi(const int ticks)
+{
+    return ticks % FRAMES == 1;
+}
+
+static int fall(const Timer tm)
+{
+    return hi(tm.last) && lo(tm.ticks);
+}
+
+static int rise(const Timer tm)
+{
+    return lo(tm.last) && hi(tm.ticks);
+}
+
+Timer xtmnew(void)
 {
     static Timer timer;
     return timer;
 }
 
-static Timer rise(Timer tm)
-{
-    tm.rise = tm.last && xtmhi(tm);
-    tm.last = xtmlo(tm);
-    return tm;
-}
-
-Timer xtmnew(void)
-{
-    return ztimer();
-}
-
 Timer xtmtick(Timer tm, const int renders, const int ticks)
 {
-    tm.renders = renders;
+    tm.last = tm.ticks;
     tm.ticks = ticks;
-    return rise(tm);
-}
-
-int xtmhi(const Timer tm)
-{
-    return tm.ticks % FRAMES == 0;
+    tm.renders = renders;
+    tm.rise = rise(tm);
+    tm.fall = fall(tm);
+    if(tm.rise) puts("rise");
+    if(tm.fall) puts("fall");
+    return tm;
 }
 
 int xtmlo(const Timer tm)
 {
-    return tm.ticks % FRAMES == 1;
+    return lo(tm.ticks);
 }

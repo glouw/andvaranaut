@@ -5,6 +5,7 @@ typedef struct
     int renders;
     int ticks;
     int rise;
+    int fall;
     int last;
 }
 Timer;
@@ -12,7 +13,5 @@ Timer;
 Timer xtmnew(void);
 
 Timer xtmtick(Timer, const int renders, const int ticks);
-
-int xtmhi(const Timer);
 
 int xtmlo(const Timer);

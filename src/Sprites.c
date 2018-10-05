@@ -380,7 +380,7 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
             if(xeql(hero.where, sprite->where, 2.0f)) // TODO: Maybe sprites have different attack ranges.
             {
                 sprite->state = ATTACK;
-                if(tm.rise) // TODO: Maybe use cooldown for sprites.
+                if(xiscontact(sprite, tm)) // TODO: Maybe use cooldown for sprites.
                 {
                     const float damage = sprite->damage; // TODO: Hero defense lessens sprite damage?
                     hero.hps -= damage;
@@ -416,8 +416,20 @@ static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
     return hero;
 }
 
+static void cooltick(const Sprites sprites, const Timer tm)
+{
+    if(tm.rise || tm.fall)
+        for(int i = 0; i < sprites.count; i++)
+        {
+            Sprite* const sprite = &sprites.sprite[i];
+            sprite->cooltick++;
+            sprite->cooltick %= sprite->cooldown;
+        }
+}
+
 Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Timer tm)
 {
+    cooltick(sprites, tm);
     arrange(sprites, hero);
     idle(sprites, tm);
     route(sprites, field, map, hero);
@@ -429,6 +441,7 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
 static Point avail(const Point center, const Map map)
 {
     const Point where = xrand(center, map.grid);
+
     // Available tile space is no wall and not above water.
     return xblok(where, map.walling) == ' '
         && xblok(where, map.floring) != ' ' ? where : avail(center, map);
@@ -445,6 +458,7 @@ static Sprites pngarden(Sprites sprites, const Map map, const Point center)
     const int flowers = 256;
     for(int i = 0; i < flowers; i++)
         sprites = append(sprites, xsregistrar('a', seek(center, map, '(')));
+
     // Gardener.
     sprites = append(sprites, xsregistrar('b', avail(center, map)));
     return sprites;

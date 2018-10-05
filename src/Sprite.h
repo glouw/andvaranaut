@@ -12,6 +12,8 @@ typedef struct
     int ascii;
     int evil;
     int transparent;
+    int cooltick;
+    int cooldown;
     float size;
     float speed;
     float acceleration;
@@ -52,3 +54,7 @@ void xsplace(Sprite* const, const Point);
 int xismute(const Sprite* const);
 
 void xstick(Sprite* const, const Timer);
+
+int xisattack(const Sprite* const);
+
+int xiscontact(const Sprite* const, const Timer);
