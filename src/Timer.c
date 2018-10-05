@@ -35,8 +35,6 @@ Timer xtmtick(Timer tm, const int renders, const int ticks)
     tm.renders = renders;
     tm.rise = rise(tm);
     tm.fall = fall(tm);
-    if(tm.rise) puts("rise");
-    if(tm.fall) puts("fall");
     return tm;
 }
 
