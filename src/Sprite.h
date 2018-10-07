@@ -14,6 +14,7 @@ typedef struct
     int transparent;
     int cooltick;
     int cooldown;
+    int durticks;
     float size;
     float speed;
     float acceleration;
