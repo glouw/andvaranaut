@@ -384,8 +384,7 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
                 {
                     const float damage = sprite->damage; // TODO: Hero defense lessens sprite damage?
                     hero.hps -= damage;
-                    const int dir = -1; // TODO: Attack direction different for each sprite.
-                    hero.dvyaw = dir * 0.025f; // TODO: More recoil for larger damage taken.
+                    hero.dvyaw = -0.025f; // TODO: More recoil for larger damage taken. Use compass for directino.
                 }
             }
     }

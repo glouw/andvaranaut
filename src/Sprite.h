@@ -15,6 +15,7 @@ typedef struct
     int cooltick;
     int cooldown;
     int durticks;
+    int hold;
     float size;
     float speed;
     float acceleration;
