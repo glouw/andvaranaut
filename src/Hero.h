@@ -18,13 +18,13 @@ typedef struct
     Point velocity;
     float speed;
     float acceleration;
-    float theta;
+    float yaw;
     Torch torch;
     float reach;
     int floor;
     int aura;
-    float yaw;
-    float dvyaw;
+    float pitch;
+    float dpitch; // Change in pitch.
     float height;
     float tall;
     float vvel;

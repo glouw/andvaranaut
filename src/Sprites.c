@@ -67,24 +67,24 @@ static void sort(const Sprites sprites)
     qsort(sprites.sprite, sprites.count, sizeof(Sprite), comparator);
 }
 
-static void turn(const Sprites sprites, const float theta)
+static void turn(const Sprites sprites, const float yaw)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        sprite->where = xtrn(sprite->where, theta);
+        sprite->where = xtrn(sprite->where, yaw);
     }
 }
 
 void xorient(const Sprites sprites, const Hero hero)
 {
     pull(sprites, hero);
-    turn(sprites, -hero.theta);
+    turn(sprites, -hero.yaw);
 }
 
 void xplback(const Sprites sprites, const Hero hero)
 {
-    turn(sprites, +hero.theta);
+    turn(sprites, +hero.yaw);
     push(sprites, hero);
 }
 
@@ -384,7 +384,7 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
                 {
                     const float damage = sprite->damage; // TODO: Hero defense lessens sprite damage?
                     hero.hps -= damage;
-                    hero.dvyaw = -0.025f; // TODO: More recoil for larger damage taken. Use compass for direction.
+                    hero.dpitch = -0.025f; // TODO: More recoil for larger damage taken. Use compass for direction.
                 }
             }
     }

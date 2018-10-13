@@ -10,14 +10,14 @@ Projection xzproj(void)
     return proj;
 }
 
-Projection xproject(const int yres, const int xres, const float focal, const float yaw, const Point corrected, const float height)
+Projection xproject(const int yres, const int xres, const float focal, const float pitch, const Point corrected, const float height)
 {
     const float min = 1e-5;
     const float normal = corrected.x < min ? min : corrected.x;
 
     Projection p = xzproj();
     p.size = focal * 0.5f * xres / normal;
-    p.mid = yaw * yres / 2.0f;
+    p.mid = pitch * yres / 2.0f;
     p.bot = p.mid + (0.0f - height) * p.size;
     p.top = p.mid + (1.0f - height) * p.size;
     p.clamped = xclamp(yres, p.bot, p.top);

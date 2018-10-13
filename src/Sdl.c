@@ -96,7 +96,7 @@ static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
     // Projection.[ch] does the same thing, but this one accounts for sprite jitter.
     const int size = sprite->size * hero.fov.a.x * 0.5f * sdl.xres / sprite->where.x;
     const int osize = xodd(size) ? size + 1 : size;
-    const int my = 0.5f * sdl.yres * (2.0f - hero.yaw);
+    const int my = 0.5f * sdl.yres * (2.0f - hero.pitch);
     const int mx = 0.5f * sdl.xres;
     const int l = mx - osize * 0.5f;
     const int t = my - osize * (1.0f - hero.height / sprite->size);
@@ -214,7 +214,7 @@ Sdl xsetup(const Args args)
 void xrender(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
 {
     Point* const zbuff = xtoss(Point, sdl.xres);
-    const Line camera = xrotate(hero.fov, hero.theta);
+    const Line camera = xrotate(hero.fov, hero.yaw);
     const Vram vram = xvlock(sdl.canvas);
 
     // Threaded software rendering.
