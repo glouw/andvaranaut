@@ -40,7 +40,7 @@ Hero xspawn(const float focal, const Point where, const int floor)
     return hero;
 }
 
-static Hero spin(Hero hero, const Input input)
+static Hero yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dx * input.sx;
     return hero;
@@ -65,7 +65,7 @@ static Hero look(const Hero hero, const Input input)
 {
     if(input.l)
         return hero;
-    return pitch(spin(hero, input), input);
+    return pitch(yaw(hero, input), input);
 }
 
 static float hduck(const Hero hero)
