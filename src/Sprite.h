@@ -4,6 +4,7 @@
 #include "State.h"
 #include "Timer.h"
 #include "Speech.h"
+#include "Compass.h"
 
 #include <SDL2/SDL.h>
 
@@ -12,20 +13,32 @@ typedef struct
     int ascii;
     int evil;
     int transparent;
+
+    // Attack frequency and duration.
     int cooltick;
     int cooldown;
-    int durticks;
+    int hitticks;
     int hold;
+
+    // Stats.
     float size;
     float speed;
     float acceleration;
     float health;
     float damage;
     float defense;
+
+    // Physics.
     Point where;
     Point last;
     Point velocity;
+
+    // Attack and block direction.
+    Compass block;
+    Compass attack;
+
     State state;
+
     SDL_Rect seen;
     Speech speech;
     Speech angers;
