@@ -55,8 +55,8 @@ static void push(const Sprites sprites, const Hero hero)
 
 static int comparator(const void* const a, const void* const b)
 {
-    const Sprite* const sa = (const Sprite* const) a;
-    const Sprite* const sb = (const Sprite* const) b;
+    const Sprite* const sa = (const Sprite*) a;
+    const Sprite* const sb = (const Sprite*) b;
     return
         xmag(sa->where) < xmag(sb->where) ? +1 :
         xmag(sa->where) > xmag(sb->where) ? -1 : 0;

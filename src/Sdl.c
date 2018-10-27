@@ -157,7 +157,7 @@ static void rsprites(const Sdl sdl, const Text text, const Sprites sprites, Poin
                 SDL_Surface* const surface = sdl.surfaces.surface[selected];
                 SDL_Texture* const texture = sdl.textures.texture[selected];
                 const State state = sprite->state;
-                const Frame frame = xisattack(sprite) ? xisimpulse(sprite) : xtmlo(tm);
+                const Frame frame = xisattack(sprite) ? (Frame) xisimpulse(sprite) : (Frame) xtmlo(tm);
                 const SDL_Rect image = rimage(surface, state, frame);
                 sprite->seen = clip(target, sdl.xres, sprite->where, zbuff);
                 if(sprite->seen.w > 0)

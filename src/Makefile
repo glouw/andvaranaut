@@ -10,7 +10,7 @@
 
 CC  = gcc -std=c99
 CXX = g++ -std=c++98
-CMP = $(CC)# Use the C++ compiler for extra type checking.
+CMP = $(CXX)# Use the C++ compiler for extra type checking.
 
 NAME = ../andvaranaut
 
