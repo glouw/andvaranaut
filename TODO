@@ -26,3 +26,7 @@
 [ ] attack directions and block directions for sprites (like mount and blade?)
 
 [ ] inotify for reloading sprites on the fly?
+
+[ ] If the hero is attacking in a direction, sprite will block in that
+    direction (with delay). Otherwise will attack in random direciton.
+    Block to stun? (Maybe overpowered), works for weaker enemies.
