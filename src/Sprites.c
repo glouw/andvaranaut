@@ -411,6 +411,10 @@ static Hero dftg(Hero hero, const Sprites sprites, const Timer tm)
     return hero;
 }
 
+static void block(const Sprites sprites, const Hero hero, const Timer tm)
+{
+}
+
 static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
 {
     hero = dhps(hero, sprites, tm);
@@ -452,6 +456,7 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     move(sprites, field, hero.where, map);
     bound(sprites, map);
     speak(sprites, hero, tm);
+    block(sprites, hero, tm);
     return damage(hero, sprites, tm);
 }
 
