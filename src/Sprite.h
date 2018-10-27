@@ -33,10 +33,6 @@ typedef struct
     Point last;
     Point velocity;
 
-    // Attack and block direction.
-    Compass block;
-    Compass attack;
-
     State state;
 
     SDL_Rect seen;
