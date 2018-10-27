@@ -146,7 +146,6 @@ static void move(const Sprites sprites, const Field field, const Point to, const
 
         // Sprite will stop running if close to player.
         sprite->state = xmag(sprite->velocity) > 0.005f ? CHASING : IDLE;
-
         xsplace(sprite, xadd(sprite->where, sprite->velocity));
     }
 }
@@ -379,8 +378,8 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
         if(sprite->evil)
             if(xeql(hero.where, sprite->where, 2.0f)) // TODO: Maybe sprites have different attack ranges.
             {
-                sprite->state = ATTACK;
-                if(xiscontact(sprite, tm)) // TODO: Maybe use cooldown for sprites.
+                sprite->state = ATTACKN;
+                if(xisslash(sprite, tm)) // TODO: Maybe use cooldown for sprites.
                 {
                     const float damage = sprite->damage; // TODO: Hero defense lessens sprite damage?
                     hero.hps -= damage;
@@ -426,6 +425,28 @@ static void cooltick(const Sprites sprites, const Timer tm)
         }
 }
 
+static void speak(const Sprites sprites, const Hero hero, const Timer tm)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+        if(xisdead(sprite->state) || xismute(sprite)) // Mute check very important else segfault.
+            continue;
+
+        if(xeql(hero.where, sprite->where, 2.5f))
+        {
+            const int speed = 8; // How fast sprite talks (arbitrary pick).
+            const int ticks = tm.ticks - sprite->speech.ticks;
+            sprite->speech.index = (ticks / speed) % sprite->speech.count;
+
+            const char* const sentence = sprite->speech.sentences[sprite->speech.index];
+            if(strlen(sentence) > 0)
+                sprite->state = SPEAKING;
+        }
+        else sprite->speech.ticks = tm.ticks;
+    }
+}
+
 Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Timer tm)
 {
     cooltick(sprites, tm);
@@ -434,6 +455,7 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
     bound(sprites, map);
+    speak(sprites, hero, tm);
     return damage(hero, sprites, tm);
 }
 

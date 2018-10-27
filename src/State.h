@@ -23,8 +23,20 @@ typedef enum
     DEADS, // South.
     DEADW, // West.
 
-    // Sprite is attacking hero.
-    ATTACK,
+    // Sprite is attacking with direction.
+    ATTACKN,
+    ATTACKE,
+    ATTACKS,
+    ATTACKW,
+
+    // Sprite is blocking with direction.
+    BLOCKN,
+    BLOCKE,
+    BLOCKS,
+    BLOCKW,
+
+    // Sprite is talking to player.
+    SPEAKING,
 
     // Number of sprite states.
     STATES

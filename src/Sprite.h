@@ -64,8 +64,8 @@ void xsplace(Sprite* const, const Point);
 
 int xismute(const Sprite* const);
 
-void xstick(Sprite* const, const Timer);
+int xisimpulse(const Sprite* const);
+
+int xisslash(const Sprite* const, const Timer);
 
 int xisattack(const Sprite* const);
-
-int xiscontact(const Sprite* const, const Timer);

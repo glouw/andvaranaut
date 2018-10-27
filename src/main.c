@@ -4,6 +4,7 @@
 
 int main(int argc, char* argv[])
 {
+    printf("%d\n", STATES);
 #if 1 // Unit tests.
     xittest();
 

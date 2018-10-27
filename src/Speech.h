@@ -3,6 +3,7 @@
 typedef struct
 {
     const char* sentences[64];
+    int index;
     int count;
     int ticks;
 }

@@ -22,3 +22,5 @@
 [ ] some sprites have helmets or shields for directional defense.
 
 [ ] each room is a node which forms some connection to a quest
+
+[ ] attack directions and block directions for sprites (like mount and blade?)

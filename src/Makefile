@@ -61,9 +61,9 @@ SRCS += Vram.c
 SRCS += World.c
 
 CMP_FLAGS  = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
-#CMP_FLAGS += -g -fsanitize=address#Runtime address and bounds checker(Disable for faster builds and performance)
 CMP_FLAGS += -Ofast -march=native -pipe
 CMP_FLAGS += -flto
+#CMP_FLAGS += -g -fsanitize=address#Runtime address and bounds checker(Disable for faster builds and performance)
 
 LIB_FLAGS  = -lm
 LIB_FLAGS += -lSDL2

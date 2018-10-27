@@ -80,14 +80,15 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
 }
 
 // Renders sprite speech text box.
-static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const SDL_Rect target, const Timer tm)
+static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const SDL_Rect target)
 {
-    const int ticks = tm.ticks - sprite->speech.ticks;
-    const int index = (ticks / 8) % sprite->speech.count;
-    const char* const sentence = sprite->speech.sentences[index];
-    const int x = target.x + target.w / 2;
-    const int y = target.y + target.h / 3; // TODO: Maybe tune the offset per sprite?
-    xfputxy(text.fill, text.line, sentence, 0xFF, sdl.renderer, x, y);
+    if(sprite->state == SPEAKING)
+    {
+        const char* const sentence = sprite->speech.sentences[sprite->speech.index];
+        const int x = target.x + target.w / 2;
+        const int y = target.y + target.h / 3; // TODO: Maybe tune the offset per sprite?
+        xfputxy(text.fill, text.line, sentence, 0xFF, sdl.renderer, x, y);
+    }
 }
 
 // Calculates sprite size releative to player.
@@ -115,7 +116,7 @@ static SDL_Rect rimage(SDL_Surface* const surface, const State state, const Fram
 }
 
 // Renders one sprite to screen.
-static void rsprite(const Sdl sdl, const Text text, Sprite* const sprite, const Hero hero, SDL_Texture* const texture, const SDL_Rect image, const SDL_Rect target, const Timer tm)
+static void rsprite(const Sdl sdl, const Text text, Sprite* const sprite, const Hero hero, SDL_Texture* const texture, const SDL_Rect image, const SDL_Rect target)
 {
     // Apply lighting to the sprite.
     const int modding = xilluminate(hero.torch, sprite->where.x);
@@ -138,8 +139,7 @@ static void rsprite(const Sdl sdl, const Text text, Sprite* const sprite, const 
     SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
 
     // If the sprite is within earshot of hero then render speech sentences.
-    if(!xisdead(sprite->state) && !xismute(sprite))
-        xeql(xadd(hero.where, sprite->where), hero.where, hero.aura) ? rspeech(sprite, sdl, text, target, tm) : xstick(sprite, tm);
+    rspeech(sprite, sdl, text, target);
 }
 
 // Renders all sprites to screen.
@@ -157,11 +157,11 @@ static void rsprites(const Sdl sdl, const Text text, const Sprites sprites, Poin
                 SDL_Surface* const surface = sdl.surfaces.surface[selected];
                 SDL_Texture* const texture = sdl.textures.texture[selected];
                 const State state = sprite->state;
-                const Frame frame = state == ATTACK ? xisattack(sprite) : xtmlo(tm);
+                const Frame frame = xisattack(sprite) ? xisimpulse(sprite) : xtmlo(tm);
                 const SDL_Rect image = rimage(surface, state, frame);
                 sprite->seen = clip(target, sdl.xres, sprite->where, zbuff);
                 if(sprite->seen.w > 0)
-                    rsprite(sdl, text, sprite, hero, texture, image, target, tm);
+                    rsprite(sdl, text, sprite, hero, texture, image, target);
             }
         }
     }
