@@ -14,12 +14,6 @@ typedef struct
     int evil;
     int transparent;
 
-    // Attack frequency and duration.
-    int cooltick;
-    int cooldown;
-    int hitticks;
-    int hold;
-
     // Stats.
     float size;
     float speed;
@@ -37,7 +31,6 @@ typedef struct
 
     SDL_Rect seen;
     Speech speech;
-    Speech angers;
     int ticks;
 }
 Sprite;
@@ -64,8 +57,10 @@ void xsplace(Sprite* const, const Point);
 
 int xismute(const Sprite* const);
 
-int xisimpulse(const Sprite* const);
-
-int xisslash(const Sprite* const, const Timer);
-
 int xisattack(const Sprite* const);
+
+int xisstun(const Sprite* const, const Timer);
+
+void xstun(Sprite* const, const Timer);
+
+int xisimpulse(Sprite* const, const Timer);

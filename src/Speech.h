@@ -11,8 +11,6 @@ Speech;
 
 Speech xspzero(void);
 
-Speech xspsherrif(void);
-
-Speech xspyulia(void);
+Speech xspgreeting(void);
 
 Speech xspmercy(void);

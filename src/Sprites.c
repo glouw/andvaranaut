@@ -11,7 +11,7 @@
 
 Sprites xsnew(const int max)
 {
-    const Sprites sprites = { xtoss(Sprite, max), 0, max, NOATTACK };
+    const Sprites sprites = { xtoss(Sprite, max), 0, max, NO_ATTACK };
     return sprites;
 }
 
@@ -255,13 +255,13 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
             (attack.dir.x > 0.0f ? HURT_W : HURT_E):
             (attack.dir.y > 0.0f ? HURT_N : HURT_S);
 
-        sprite->ticks = tm.ticks + 5;
+        xstun(sprite, tm);
 
         // Hurt a good sprite, make 'em angry.
         if(!sprite->evil)
         {
             sprite->evil = true;
-            sprite->speech = sprite->angers;
+            sprite->speech = xspzero();
         }
     }
     return sprites;
@@ -348,7 +348,7 @@ Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input
         if(attack.method == MAGIC)
             return hmagic(sprites, attack, inv, tm, hero);
     }
-    sprites.last = NOATTACK;
+    sprites.last = NO_ATTACK;
 
     return sprites;
 }
@@ -362,7 +362,7 @@ static void idle(const Sprites sprites, const Timer tm)
         if(xisdead(sprite->state))
             continue;
 
-        if(tm.ticks > sprite->ticks)
+        if(!xisstun(sprite, tm))
             sprite->state = IDLE;
     }
 }
@@ -377,17 +377,20 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
         if(xisuseless(sprite))
             continue;
 
-        if(sprite->evil)
-            if(xeql(hero.where, sprite->where, 2.0f)) // TODO: Maybe sprites have different attack ranges.
+        // TODO: Maybe sprites have different attack ranges.
+        if(sprite->evil && sprite->state == IDLE && xeql(hero.where, sprite->where, 2.2f))
+        {
+            sprite->state = ATTACK_N;
+
+            if(xisimpulse(sprite, tm))
             {
-                sprite->state = ATTACK_N;
-                if(xisslash(sprite, tm)) // TODO: Maybe use cooldown for sprites.
-                {
-                    const float damage = sprite->damage; // TODO: Hero defense lessens sprite damage?
-                    hero.hps -= damage;
-                    hero.dpitch = -0.025f; // TODO: More recoil for larger damage taken. Use compass for direction.
-                }
+                // TODO: Hero defense lessens sprite damage?
+                hero.hps -= sprite->damage;
+
+                // TODO: More recoil for larger damage taken. Use compass for direction.
+                hero.dpitch = -0.025f;
             }
+        }
     }
     return hero;
 }
@@ -416,23 +419,14 @@ static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
     return hero;
 }
 
-static void cooltick(const Sprites sprites, const Timer tm)
-{
-    if(tm.rise || tm.fall)
-        for(int i = 0; i < sprites.count; i++)
-        {
-            Sprite* const sprite = &sprites.sprite[i];
-            sprite->cooltick++;
-            sprite->cooltick %= sprite->cooldown;
-        }
-}
-
 static void speak(const Sprites sprites, const Hero hero, const Timer tm)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(xisdead(sprite->state) || xismute(sprite)) // Mute check very important else segfault.
+
+        // Mute check very important else segfault.
+        if(xisdead(sprite->state) || xismute(sprite))
             continue;
 
         if(xeql(hero.where, sprite->where, 2.5f))
@@ -441,7 +435,8 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
             const int ticks = tm.ticks - sprite->speech.ticks;
             sprite->speech.index = (ticks / speed) % sprite->speech.count;
 
-            const char* const sentence = sprite->speech.sentences[sprite->speech.index];
+            const int index = sprite->speech.index;
+            const char* const sentence = sprite->speech.sentences[index];
             if(strlen(sentence) > 0)
                 sprite->state = SPEAKING;
         }
@@ -451,7 +446,6 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
 
 Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Timer tm)
 {
-    cooltick(sprites, tm);
     arrange(sprites, hero);
     idle(sprites, tm);
     route(sprites, field, map, hero);
