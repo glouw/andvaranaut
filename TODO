@@ -31,3 +31,5 @@
     direction. If hero is blocking for too long sprite will attack in random direction.
     If hero is not blocking sprite will attack in random direction.
     Hero can block with shield. Maybe STUNS weaker enemies.
+
+[ ] Certain items can be quest items and these cannot be picked up from lootbags.

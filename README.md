@@ -13,7 +13,7 @@ The open source dungeon crawler
 
 ## Recommended System Requirements
     RAM: 256 MB
-    CPU: 4 cores or more
+    CPU: 2 cores or more
     GPU: Just about anything will do
 
 ## Credits
@@ -26,4 +26,7 @@ Color pallette by DawnBringer
 ![](art/screenshots/bigfoot_v3.png)
 
 ## Special Thanks
-Halic (Mac) - Prototype tile and sprite art work
+
+Cam - Prototype tile and sprite art work
+
+Paolo - Prototype quest storylines
