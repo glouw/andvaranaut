@@ -5,12 +5,18 @@
 #                             THE DUNGEON CRAWLER
 #
 # -----------------------------------------------------------------------------
-# SDL2-devel
-# SDL2-devel-ttf
+# Required dependencies:
+#   SDL2-devel
+#   SDL2-devel-ttf
 
+# 0: Fastest performance.
+# 1: Best crash messages.
+DEBUG = 0
+
+# Use the C++ compiler for extra type checking.
 CC  = gcc -std=c99
 CXX = g++ -std=c++98
-CMP = $(CXX)# Use the C++ compiler for extra type checking.
+CMP = $(CC)
 
 NAME = ../andvaranaut
 
@@ -62,23 +68,30 @@ SRCS += World.c
 
 CMP_FLAGS  = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
 CMP_FLAGS += -Ofast -march=native -pipe
+ifeq ($(DEBUG), 1)
+CMP_FLAGS += -g -fsanitize=address
+else
 CMP_FLAGS += -flto
-#CMP_FLAGS += -g -fsanitize=address#Runtime address and bounds checker(Disable for faster builds and performance)
+endif
 
 LIB_FLAGS  = -lm
 LIB_FLAGS += -lSDL2
 LIB_FLAGS += -lSDL2_ttf
 
+# Linker.
 $(BIN): $(SRCS:.c=.o)
 	@echo LINK $(BIN)
 	@$(CMP) $(CMP_FLAGS) $(SRCS:.c=.o) $(LIB_FLAGS) -o $(BIN)
 
-%.o : %.c Makefile# Changing the Makefile will recompile everything.
+# Compiler.
+# Saving the Makefile will recompile everything.
+%.o : %.c Makefile
 	@echo COMPILE $*.c
 	@$(CMP) $(CMP_FLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@rm -f $*.d
 	@mv -f $*.td $*.d
 
+# Dependency generator.
 %.d: ;
 -include *.d
 
@@ -89,3 +102,6 @@ clean:
 	rm -f $(BIN)
 	rm -f $(SRCS:.c=.o)
 	rm -f $(SRCS:.c=.d)
+
+love:
+	@echo "Not war?"

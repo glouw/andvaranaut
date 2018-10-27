@@ -44,6 +44,8 @@ float xsinc(const float x, const float p);
 
 #define FPI (3.1416f)
 
+// DnD dice where 0 is a valid roll.
+
 #define xd2() (rand() % 2)
 
 #define xd4() (rand() % 4)

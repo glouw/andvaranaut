@@ -95,7 +95,7 @@ Surfaces xpull(void)
         /* _      */ "art/tiles/error.bmp",
         /* `      */ "art/tiles/error.bmp",
         /* a      */ "art/sprites/flower.bmp",
-        /* b      */ "art/sprites/dwarf.bmp", // Dwarf.
+        /* b      */ "art/sprites/dwarf.bmp",
         /* c      */ "art/sprites/missing.bmp",
         /* d      */ "art/sprites/lootbag.bmp",
         /* e      */ "art/sprites/missing.bmp",
@@ -150,11 +150,12 @@ Surfaces xpull(void)
         /* ~ + 24 */ "art/items/wand.bmp",
         /* ~ + 25 */ "art/gui/gui.bmp",
     };
-
     const int count = xlen(names);
     SDL_Surface** const surface = xtoss(SDL_Surface*, count);
+
     for(int i = 0; i < count; i++)
         surface[i] = load(names[i]);
+
     const Surfaces surfaces = { surface, count };
     return surfaces;
 }
