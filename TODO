@@ -24,3 +24,5 @@
 [ ] each room is a node which forms some connection to a quest
 
 [ ] attack directions and block directions for sprites (like mount and blade?)
+
+[ ] inotify for reloading sprites on the fly?
