@@ -11,6 +11,7 @@ int xcindices(const Classification c)
 {
     switch(c)
     {
+    // Do not use default.
     case     AMMO: return 25;
     case   AMULET: return 17;
     case    ARMOR: return 59;
@@ -22,6 +23,7 @@ int xcindices(const Classification c)
     case    GLOVE: return  4;
     case      HAT: return 15;
     case      KEY: return  3;
+    case   LETTER: return  2;
     case    LIGHT: return  7;
     case  LONGWEP: return 33;
     case   MEDWEP: return  9;
@@ -36,9 +38,11 @@ int xcindices(const Classification c)
     case     TOOL: return 20;
     case     WAND: return 49;
 
-    default:
+    case NONE:
+    case CLASSIFICATIONS:
         return 1;
     }
+    return 1;
 }
 
 int xismelee(const Classification c)

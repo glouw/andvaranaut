@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 
     Sdl sdl = xsetup(args);
 
-    const Text text = xtxnew("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
+    const Text text = xtxnew("art/gui/SDS_8x8.ttf", 24, sdl.yel, sdl.blk);
 
     xttinit();
 

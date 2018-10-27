@@ -152,8 +152,8 @@ int xisslash(const Sprite* const sprite, const Timer tm)
 
 int xisattack(const Sprite* const sprite)
 {
-    return sprite->state == ATTACKN
-        || sprite->state == ATTACKE
-        || sprite->state == ATTACKS
-        || sprite->state == ATTACKW;
+    return sprite->state == ATTACK_N
+        || sprite->state == ATTACK_E
+        || sprite->state == ATTACK_S
+        || sprite->state == ATTACK_W;
 }

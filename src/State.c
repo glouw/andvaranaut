@@ -2,18 +2,18 @@
 
 int xishurt(const State state)
 {
-    return state == HURTN
-        || state == HURTE
-        || state == HURTS
-        || state == HURTW;
+    return state == HURT_N
+        || state == HURT_E
+        || state == HURT_S
+        || state == HURT_W;
 }
 
 int xisdead(const State state)
 {
-    return state == DEADN
-        || state == DEADE
-        || state == DEADS
-        || state == DEADW;
+    return state == DEAD_N
+        || state == DEAD_E
+        || state == DEAD_S
+        || state == DEAD_W;
 }
 
 int xisalive(const State state)

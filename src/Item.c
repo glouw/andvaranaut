@@ -367,6 +367,11 @@ static const Item lights[] = {
     { 6, LIGHT, "Light", "", "", 25.0f, 1, 360.0f, 0.5f },
 };
 
+static const Item letter[] = {
+    { 0, LETTER, "Letter", "Letter to ...", "This is some\nSample letter\nText", 25.0f, 1, 360.0f, 0.5f },
+    { 1, LETTER, "Letter", "Letter to ...", "Hi\nthere\nhow\nare\nyou", 25.0f, 1, 360.0f, 0.5f },
+};
+
 static const Item longweps[] = {
     {  0, LONGWEP, "Longwep", "", "", 25.0f, 1, 360.0f, 0.5f },
     {  1, LONGWEP, "Longwep", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -756,7 +761,9 @@ Item xitnew(const Classification c, const int index)
 {
     switch(c)
     {
-    default:
+    // Do not use default.
+    // Will remind of any new items that are missing.
+    case CLASSIFICATIONS:
     case     NONE: return none();
     case     AMMO: return ammos     [index];
     case   AMULET: return amulets   [index];
@@ -769,6 +776,7 @@ Item xitnew(const Classification c, const int index)
     case    GLOVE: return gloves    [index];
     case      HAT: return hats      [index];
     case      KEY: return keys      [index];
+    case   LETTER: return letter    [index];
     case    LIGHT: return lights    [index];
     case  LONGWEP: return longweps  [index];
     case   MEDWEP: return medweps   [index];
@@ -783,6 +791,7 @@ Item xitnew(const Classification c, const int index)
     case     TOOL: return tools     [index];
     case     WAND: return wands     [index];
     }
+    return none();
 }
 
 Item xitrand(void)
@@ -805,6 +814,7 @@ void xittest(void)
     check(GLOVE   , gloves   , xlen(gloves)   );
     check(HAT     , hats     , xlen(hats)     );
     check(KEY     , keys     , xlen(keys)     );
+    check(LETTER  , letter   , xlen(letter)   );
     check(LIGHT   , lights   , xlen(lights)   );
     check(LONGWEP , longweps , xlen(longweps) );
     check(MEDWEP  , medweps  , xlen(medweps)  );

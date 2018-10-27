@@ -202,7 +202,7 @@ Sdl xsetup(const Args args)
     sdl.threads = args.threads;
     sdl.surfaces = xpull();
     sdl.textures = xcache(sdl.surfaces, sdl.renderer);
-    sdl.gui = '~' - ' ' + 25;
+    sdl.gui = '~' - ' ' + 26;
     sdl.wht = 0xFFDFEFD7;
     sdl.blk = 0xFF000000;
     sdl.red = 0xFFD34549;

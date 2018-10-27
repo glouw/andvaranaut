@@ -17,6 +17,7 @@ Inventory xinvnew(void)
         xitnew(SCROLL, 1),
         xitnew(SCROLL, 9),
         xitnew(SCROLL, 12),
+        xitnew(LETTER, 0),
     };
     for(int i = 0; i < xlen(noobits); i++)
         xitsadd(inv.items, noobits[i]);
@@ -72,6 +73,12 @@ Inventory xwhatis(Inventory inv, const Scroll sc, const Timer tm)
                 it.cstr, it.desc, it.name, squares);
             free(squares);
         }
+        else
+        if(it.c == LETTER)
+            xttset(a, b, true,
+                "%s\n"
+                "%s\n",
+                it.name, it.desc);
         else
             xttset(a, b, true,
                 "%s\n"

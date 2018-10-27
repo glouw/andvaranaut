@@ -19,8 +19,10 @@ static Sprites append(Sprites sprites, const Sprite sprite)
 {
     if(sprites.max == 0)
         xretoss(sprites.sprite, Sprite, sprites.max = 1);
+
     if(sprites.count >= sprites.max)
         xretoss(sprites.sprite, Sprite, sprites.max *= 2);
+
     sprites.sprite[sprites.count++] = sprite;
     return sprites;
 }
@@ -238,8 +240,8 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
     if(sprite->health <= 0.0f)
     {
         sprite->state = side ?
-            (attack.dir.x > 0.0f ? DEADW : DEADE):
-            (attack.dir.y > 0.0f ? DEADN : DEADS);
+            (attack.dir.x > 0.0f ? DEAD_W : DEAD_E):
+            (attack.dir.y > 0.0f ? DEAD_N : DEAD_S);
 
         brokelb(sprite->ascii, inv, tm);
 
@@ -250,8 +252,8 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
     else // Just hurt, not killed.
     {
         sprite->state = side ?
-            (attack.dir.x > 0.0f ? HURTW : HURTE):
-            (attack.dir.y > 0.0f ? HURTN : HURTS);
+            (attack.dir.x > 0.0f ? HURT_W : HURT_E):
+            (attack.dir.y > 0.0f ? HURT_N : HURT_S);
 
         sprite->ticks = tm.ticks + 5;
 
@@ -378,7 +380,7 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
         if(sprite->evil)
             if(xeql(hero.where, sprite->where, 2.0f)) // TODO: Maybe sprites have different attack ranges.
             {
-                sprite->state = ATTACKN;
+                sprite->state = ATTACK_N;
                 if(xisslash(sprite, tm)) // TODO: Maybe use cooldown for sprites.
                 {
                     const float damage = sprite->damage; // TODO: Hero defense lessens sprite damage?

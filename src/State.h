@@ -1,44 +1,34 @@
 #pragma once
 
+// Always append states as art work relies on offsets.
 typedef enum
 {
-    // Sprite is persuing hero.
     CHASING,
-
-    // Sprite is lifted into the air
     LIFTED,
-
-    // Sprite is doing nothing.
     IDLE,
 
-    // Sprite is hurt with direction.
-    HURTN, // North.
-    HURTE, // East.
-    HURTS, // South.
-    HURTW, // West.
+    HURT_N,
+    HURT_E,
+    HURT_S,
+    HURT_W,
 
-    // Sprite is dead with direction.
-    DEADN, // North.
-    DEADE, // East.
-    DEADS, // South.
-    DEADW, // West.
+    DEAD_N,
+    DEAD_E,
+    DEAD_S,
+    DEAD_W,
 
-    // Sprite is attacking with direction.
-    ATTACKN,
-    ATTACKE,
-    ATTACKS,
-    ATTACKW,
+    ATTACK_N,
+    ATTACK_E,
+    ATTACK_S,
+    ATTACK_W,
 
-    // Sprite is blocking with direction.
-    BLOCKN,
-    BLOCKE,
-    BLOCKS,
-    BLOCKW,
+    BLOCK_N,
+    BLOCK_E,
+    BLOCK_S,
+    BLOCK_W,
 
-    // Sprite is talking to player.
     SPEAKING,
 
-    // Number of sprite states.
     STATES
 }
 State;

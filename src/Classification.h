@@ -13,6 +13,7 @@ typedef enum
     GLOVE,
     HAT,
     KEY,
+    LETTER,
     LIGHT,
     LONGWEP,
     MEDWEP,
