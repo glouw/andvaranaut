@@ -2,6 +2,7 @@
 
 #include "Point.h"
 #include "Input.h"
+#include "Timer.h"
 
 typedef struct
 {
@@ -10,6 +11,7 @@ typedef struct
     Point* points;
     int mx;
     int my;
+    int ticks;
 }
 Gauge;
 
@@ -19,7 +21,7 @@ Gauge xgnew(void);
 
 void xgfree(const Gauge);
 
-Gauge xgwind(Gauge, const Input);
+Gauge xgwind(Gauge, const Input, const Timer);
 
 float xgmag(const Gauge, const float damage);
 

@@ -378,7 +378,9 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
             continue;
 
         // TODO: Maybe sprites have different attack ranges.
-        if(sprite->evil && sprite->state == IDLE && xeql(hero.where, sprite->where, 2.2f))
+        if(sprite->evil
+        && sprite->state == IDLE
+        && xeql(hero.where, sprite->where, 2.2f))
         {
             sprite->state = ATTACK_N;
 
@@ -411,7 +413,7 @@ static Hero dftg(Hero hero, const Sprites sprites, const Timer tm)
     return hero;
 }
 
-static void block(const Sprites sprites, const Hero hero, const Gauge gauge, const Timer tm)
+static void block(const Sprites sprites, const Hero hero, const Gauge gauge)
 {
     if(gauge.count > 0)
     {
@@ -421,10 +423,17 @@ static void block(const Sprites sprites, const Hero hero, const Gauge gauge, con
         for(int i = 0; i < sprites.count; i++)
         {
             Sprite* const sprite = &sprites.sprite[i];
-                 if(unit.y < 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_N;
-            else if(unit.y > 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_S;
-            else if(unit.x > 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_E;
-            else if(unit.x < 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_W;
+
+            if(xisuseless(sprite))
+                continue;
+
+            if(xeql(hero.where, sprite->where, 2.5f))
+            {
+                if(unit.y < 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_N;
+                if(unit.y > 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_S;
+                if(unit.x > 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_E;
+                if(unit.x < 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_W;
+            }
         }
     }
 }
@@ -470,9 +479,8 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     move(sprites, field, hero.where, map);
     bound(sprites, map);
     speak(sprites, hero, tm);
-    block(sprites, hero, gauge, tm);
-    //return damage(hero, sprites, tm);
-    return hero;
+    block(sprites, hero, gauge);
+    return damage(hero, sprites, tm);
 }
 
 static Point avail(const Point center, const Map map)

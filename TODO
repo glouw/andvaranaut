@@ -27,11 +27,13 @@
 
 [ ] inotify for reloading sprites on the fly?
 
-[ ] If the hero is attacking in a direction, sprite will block in that
+[ ] if the hero is attacking in a direction, sprite will block in that
     direction. If hero is blocking for too long sprite will attack in random direction.
     If hero is not blocking sprite will attack in random direction.
     Hero can block with shield. Maybe STUNS weaker enemies.
 
-[ ] Certain items can be quest items and these cannot be picked up from lootbags.
+[ ] certain items can be quest items and these cannot be picked up from lootbags.
 
-[ ] Dwarf army training ground arranged in formation and all practising certain blocking movements.
+[ ] dwarf army training ground arranged in formation and all practising certain blocking movements.
+
+[ ] scroll to bring someone back to life

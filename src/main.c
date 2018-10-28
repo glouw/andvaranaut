@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
                 const Attack atk = xdgauge(sdl, gg, inv, sc);
 
                 // TODO: Maybe pass in item wind rate.
-                gg = xgwind(gg, in);
+                gg = xgwind(gg, in, tm);
 
                 me = xsustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);
 

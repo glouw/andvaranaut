@@ -11,7 +11,7 @@ Gauge xzgauge(void)
 Gauge xgnew(void)
 {
     Gauge g = xzgauge();
-    g.max = 600;
+    g.max = 100;
     g.points = xtoss(Point, g.max);
 
     return g;
@@ -24,25 +24,35 @@ void xgfree(const Gauge g)
 
 static Gauge reset(Gauge g)
 {
-    g.mx = g.my = g.count = 0;
-
+    g.mx = 0;
+    g.my = 0;
+    g.count = 0;
     return g;
 }
 
-Gauge xgwind(Gauge g, const Input input)
+static Gauge fizzle(Gauge g, const Timer tm)
 {
-    if(input.l)
-    {
-        if(g.count == g.max)
-            g = reset(g);
-
-        g.points[g.count].x = (g.mx += input.dx);
-        g.points[g.count].y = (g.my += input.dy);
-        g.count++;
-    }
-    else g = reset(g);
-
+    const int timeout = 30;
+    g = reset(g);
+    g.ticks = tm.ticks + timeout;
     return g;
+}
+
+Gauge xgwind(Gauge g, const Input input, const Timer tm)
+{
+    if(tm.ticks > g.ticks)
+    {
+        if(input.l)
+        {
+            g.points[g.count].x = (g.mx += input.dx);
+            g.points[g.count].y = (g.my += input.dy);
+            g.count++;
+
+            return g.count == g.max ? fizzle(g, tm) : g;
+        }
+        else return reset(g);
+    }
+    else return g;
 }
 
 float xgmag(const Gauge g, const float damage)
