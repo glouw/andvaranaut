@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 
             clouds = xstream(clouds);
 
-            me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, tm);
+            me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, gg, tm);
 
             inv = xinvselect(inv, in);
 

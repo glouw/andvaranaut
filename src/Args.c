@@ -105,7 +105,7 @@ static Args defaults(void)
 {
     Args args = xzargs();
     args.xres = 1000;
-    args.yres = 700;
+    args.yres = 600;
     args.focal = 0.8f;
     args.vsync = true;
 

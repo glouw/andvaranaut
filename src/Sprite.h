@@ -31,7 +31,8 @@ typedef struct
 
     SDL_Rect seen;
     Speech speech;
-    int ticks;
+
+    int stunticks;
 }
 Sprite;
 

@@ -4,6 +4,7 @@
 #include "Attack.h"
 #include "Sprite.h"
 #include "Field.h"
+#include "Gauge.h"
 #include "Inventory.h"
 #include "Method.h"
 
@@ -28,7 +29,7 @@ Sprites xlay(Sprites, const Map, const Overview);
 
 Sprites xhurt(Sprites, const Attack, const Hero, const Input, const Inventory, const Timer);
 
-Hero xcaretake(const Sprites, const Hero, const Map, const Field, const Timer);
+Hero xcaretake(const Sprites, const Hero, const Map, const Field, const Gauge, const Timer);
 
 Sprites xsgen(const int max, const Map);
 

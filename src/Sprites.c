@@ -411,8 +411,22 @@ static Hero dftg(Hero hero, const Sprites sprites, const Timer tm)
     return hero;
 }
 
-static void block(const Sprites sprites, const Hero hero, const Timer tm)
+static void block(const Sprites sprites, const Hero hero, const Gauge gauge, const Timer tm)
 {
+    if(gauge.count > 0)
+    {
+        const Point where = gauge.points[gauge.count - 1];
+        const Point unit = xunt(where);
+
+        for(int i = 0; i < sprites.count; i++)
+        {
+            Sprite* const sprite = &sprites.sprite[i];
+                 if(unit.y < 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_N;
+            else if(unit.y > 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_S;
+            else if(unit.x > 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_E;
+            else if(unit.x < 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_W;
+        }
+    }
 }
 
 static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
@@ -448,15 +462,15 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
     }
 }
 
-Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Timer tm)
+Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Gauge gauge, const Timer tm)
 {
     arrange(sprites, hero);
     idle(sprites, tm);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
     bound(sprites, map);
-    //speak(sprites, hero, tm);
-    block(sprites, hero, tm);
+    speak(sprites, hero, tm);
+    block(sprites, hero, gauge, tm);
     //return damage(hero, sprites, tm);
     return hero;
 }

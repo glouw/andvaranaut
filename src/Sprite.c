@@ -148,12 +148,12 @@ int xisattack(const Sprite* const sprite)
 
 int xisstun(const Sprite* const sprite, const Timer tm)
 {
-    return tm.ticks < sprite->ticks;
+    return tm.ticks < sprite->stunticks;
 }
 
 void xstun(Sprite* const sprite, const Timer tm)
 {
-    sprite->ticks = tm.ticks + 5;
+    sprite->stunticks = tm.ticks + 5;
 }
 
 int xisimpulse(Sprite* const sprite, const Timer tm)
