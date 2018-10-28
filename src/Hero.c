@@ -19,7 +19,7 @@ static Line lens(const float focal)
     return fov;
 }
 
-Hero xspawn(const float focal, const Point where, const int floor)
+Hero xspawn(const float focal, const Point where, const int floor, const Gauge gg)
 {
     Hero hero = xzhero();
     hero.floor = floor;
@@ -35,7 +35,7 @@ Hero xspawn(const float focal, const Point where, const int floor)
     hero.height = hero.tall;
     hero.hps = hero.hpsmax = 9.0f;
     hero.mna = hero.mnamax = 10.0f;
-    hero.ftg = hero.ftgmax = 30.0f;
+    hero.ftg = hero.ftgmax = gg.max / gg.divisor;
     hero.warning = 0.25f;
     return hero;
 }

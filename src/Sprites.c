@@ -31,9 +31,11 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov)
 {
     if(xmout(map, ov.where))
         return sprites;
+
     const int ascii = ov.selected + ' ';
     if(xsissprite(ascii))
         sprites = append(sprites, xsregistrar(ascii, ov.where));
+
     return sprites;
 }
 
@@ -406,10 +408,15 @@ static Hero dmna(Hero hero, const Sprites sprites, const Timer tm)
 }
 
 // Damage hero fatigue (enemy sprites can sap fatigue, etc...).
-static Hero dftg(Hero hero, const Sprites sprites, const Timer tm)
+static Hero dftg(Hero hero, const Timer tm, const Gauge gauge)
 {
-    (void) sprites;
     (void) tm;
+
+    hero.ftg = (gauge.max - gauge.count) / gauge.divisor;
+
+    if(xgfizzled(gauge, tm))
+        hero.ftg = 0;
+
     return hero;
 }
 
@@ -438,11 +445,11 @@ static void block(const Sprites sprites, const Hero hero, const Gauge gauge)
     }
 }
 
-static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
+static Hero damage(Hero hero, const Sprites sprites, const Gauge gauge, const Timer tm)
 {
     hero = dhps(hero, sprites, tm);
     hero = dmna(hero, sprites, tm);
-    hero = dftg(hero, sprites, tm);
+    hero = dftg(hero, tm, gauge);
     return hero;
 }
 
@@ -480,7 +487,7 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     bound(sprites, map);
     speak(sprites, hero, tm);
     block(sprites, hero, gauge);
-    return damage(hero, sprites, tm);
+    return damage(hero, sprites, gauge, tm);
 }
 
 static Point avail(const Point center, const Map map)

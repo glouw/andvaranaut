@@ -10,6 +10,7 @@
 #include "Input.h"
 #include "Flow.h"
 #include "Hits.h"
+#include "Gauge.h"
 
 typedef struct
 {
@@ -19,7 +20,7 @@ typedef struct
     float speed;
     float acceleration;
     float yaw;
-    float dyaw; // Rate of change of yaw.
+    float dyaw; // Rate of change of yaw (TODO: IMPLEMENT)
     float pitch;
     float dpitch; // Rate of change of pitch.
     Torch torch;
@@ -43,7 +44,7 @@ Hero;
 
 Hero xzhero(void);
 
-Hero xspawn(const float focal, const Point where, const int floor);
+Hero xspawn(const float focal, const Point where, const int floor, const Gauge);
 
 Point xtouch(const Hero);
 

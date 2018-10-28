@@ -1,5 +1,7 @@
 #include "Gauge.h"
 
+#include "Title.h"
+
 #include "util.h"
 
 Gauge xzgauge(void)
@@ -13,7 +15,7 @@ Gauge xgnew(void)
     Gauge g = xzgauge();
     g.max = 100;
     g.points = xtoss(Point, g.max);
-
+    g.divisor = 2;
     return g;
 }
 
@@ -32,37 +34,46 @@ static Gauge reset(Gauge g)
 
 static Gauge fizzle(Gauge g, const Timer tm)
 {
-    const int timeout = 30;
     g = reset(g);
+
+    const int timeout = 30;
     g.ticks = tm.ticks + timeout;
+
+    const char* const tireds[] = {
+        "Exausted...",
+        "So tired...",
+        "Muscles aching...",
+    };
+    const int which = rand() % xlen(tireds);
+    const char* const tired = tireds[which];
+    xttset(tm.renders, tm.renders + 120, false, tired);
+
     return g;
+}
+
+int xgfizzled(const Gauge g, const Timer tm)
+{
+    return tm.ticks < g.ticks;
 }
 
 Gauge xgwind(Gauge g, const Input input, const Timer tm)
 {
-    if(tm.ticks > g.ticks)
+    if(xgfizzled(g, tm))
+        return g;
+    else
     {
+        if(input.r)
+            return reset(g);
+        else
         if(input.l)
         {
             g.points[g.count].x = (g.mx += input.dx);
             g.points[g.count].y = (g.my += input.dy);
             g.count++;
-
             return g.count == g.max ? fizzle(g, tm) : g;
         }
         else return reset(g);
     }
-    else return g;
-}
-
-float xgmag(const Gauge g, const float damage)
-{
-    float mag = 0.0f;
-    for(int i = 0; i < g.count - 1; i++)
-        mag += xmag(xsub(g.points[i + 1], g.points[i + 0]));
-    mag += damage;
-
-    return mag;
 }
 
 Point xgsum(const Gauge g, const int count)
@@ -70,6 +81,5 @@ Point xgsum(const Gauge g, const int count)
     Point sum = xzpoint();
     for(int i = 0; i < count; i++)
         sum = xadd(sum, g.points[i]);
-
     return sum;
 }

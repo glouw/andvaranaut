@@ -21,15 +21,15 @@ int main(int argc, char* argv[])
 
     const Point start = wd.map[floor].trapdoors.point[0];
 
-    Hero me = xspawn(args.focal, start, floor);
+    Gauge gg = xgnew();
+
+    Hero me = xspawn(args.focal, start, floor, gg);
 
     Overview ov = xinit();
 
     Flow current = xstart(-1.0f / 6.0f);
 
     Flow clouds = xstart(9.0f);
-
-    Gauge gg = xgnew();
 
     Field fd = xprepare(wd.map[me.floor], me.aura);
 

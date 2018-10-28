@@ -12,6 +12,7 @@ typedef struct
     int mx;
     int my;
     int ticks;
+    int divisor;
 }
 Gauge;
 
@@ -21,8 +22,8 @@ Gauge xgnew(void);
 
 void xgfree(const Gauge);
 
-Gauge xgwind(Gauge, const Input, const Timer);
+int xgfizzled(const Gauge, const Timer);
 
-float xgmag(const Gauge, const float damage);
+Gauge xgwind(Gauge, const Input, const Timer);
 
 Point xgsum(const Gauge, const int count);

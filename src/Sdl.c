@@ -277,11 +277,10 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     const int tail = 10;
     if(g.count < tail)
         return xzattack();
-    const float mag = xgmag(g, it.damage);
     const int last = g.count - 1;
     const int first = g.count - tail;
     const Point dir = xunt(xsub(g.points[last], g.points[first]));
-    const Attack melee = { mag, dir, it.hurts, MELEE, 0, xzpoint() };
+    const Attack melee = { it.damage, dir, it.hurts, MELEE, 0, xzpoint() };
     return melee;
 }
 
