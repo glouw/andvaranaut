@@ -20,6 +20,7 @@ static Sprite initspeech(Sprite sprite)
     return sprite;
 }
 
+// Be sure to map these sprites to their surface paths in Surfaces.c.
 static const Sprite lower[] = {
     { 'a', 0, 0, 1.0f, 0.000f, 0.0000f, 200.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, {{0},0,0,0}, 0 }, // Flower.
     { 'b', 0, 0, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, {{0},0,0,0}, 0 }, // Dwarf.
