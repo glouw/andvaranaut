@@ -455,9 +455,10 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
     bound(sprites, map);
-    speak(sprites, hero, tm);
+    //speak(sprites, hero, tm);
     block(sprites, hero, tm);
-    return damage(hero, sprites, tm);
+    //return damage(hero, sprites, tm);
+    return hero;
 }
 
 static Point avail(const Point center, const Map map)
