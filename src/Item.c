@@ -739,7 +739,7 @@ static const Item wands[] = {
 
 static void check(const Classification c, const Item items[], const int len)
 {
-    assert(len == xcindices(c));
+    assert(len == c_indices(c));
     for(int i = 0; i < len; i++)
         assert(items[i].index == i);
 }
@@ -796,8 +796,8 @@ Item xitnew(const Classification c, const int index)
 
 Item xitrand(void)
 {
-    const Classification c = xclrand();
-    const int index = rand() % xcindices(c);
+    const Classification c = c_rand();
+    const int index = rand() % c_indices(c);
     return xitnew(c, index);
 }
 

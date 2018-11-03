@@ -54,7 +54,7 @@ Scroll xscnew(void)
     #define SQUARES (WIDTH * WIDTH)
 
     // Not doing VLAs for C++ compatability so this check is necessary.
-    assert(SCROLLS == xcindices(SCROLL));
+    assert(SCROLLS == c_indices(SCROLL));
 
     static int runes[SCROLLS][SQUARES] = {
         {

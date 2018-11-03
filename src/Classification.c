@@ -2,12 +2,12 @@
 
 #include "util.h"
 
-int xcindex(const Classification c)
+int c_index(const Classification c)
 {
     return '~' + 1 - ' ' + (int) c;
 }
 
-int xcindices(const Classification c)
+int c_indices(const Classification c)
 {
     switch(c)
     {
@@ -45,7 +45,7 @@ int xcindices(const Classification c)
     return 1;
 }
 
-int xismelee(const Classification c)
+int c_ismelee(const Classification c)
 {
     return c == ARMOR
         || c == AMULET
@@ -68,20 +68,20 @@ int xismelee(const Classification c)
         || c == TOOL;
 }
 
-int xisrange(const Classification c)
+int c_isrange(const Classification c)
 {
     return c == AMMO
         || c == MONEY
         || c == POTION;
 }
 
-int xismagic(const Classification c)
+int c_ismagic(const Classification c)
 {
     return c == SCROLL
         || c == WAND;
 }
 
-int xisconsumable(const Classification c)
+int c_isconsume(const Classification c)
 {
     return c == BOOK
         || c == FOOD
@@ -89,9 +89,9 @@ int xisconsumable(const Classification c)
         || c == TOOL;
 }
 
-Classification xclrand(void)
+Classification c_rand(void)
 {
     const Classification c = (Classification) (rand() % (int) CLASSIFICATIONS);
-    return (c == NONE || c == CLASSIFICATIONS) ? xclrand() : c;
+    return (c == NONE || c == CLASSIFICATIONS) ? c_rand() : c;
 
 }

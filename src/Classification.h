@@ -32,16 +32,16 @@ typedef enum
 }
 Classification;
 
-int xcindex(const Classification);
+int c_index(const Classification);
 
-int xcindices(const Classification);
+int c_indices(const Classification);
 
-int xismelee(const Classification);
+int c_ismelee(const Classification);
 
-int xisrange(const Classification);
+int c_isrange(const Classification);
 
-int xismagic(const Classification);
+int c_ismagic(const Classification);
 
-int xisconsumable(const Classification);
+int c_isconsume(const Classification);
 
-Classification xclrand(void);
+Classification c_rand(void);

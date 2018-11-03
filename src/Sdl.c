@@ -388,9 +388,9 @@ Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll s
     const Item it = inv.items.item[inv.selected];
     const float sens = 2.0f;
     return
-        xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
-        xisrange(it.c) ? dgrange(sdl, g, it, sens) :
-        xismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) :
+        c_ismelee(it.c) ? dgmelee(sdl, g, it, sens) :
+        c_isrange(it.c) ? dgrange(sdl, g, it, sens) :
+        c_ismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) :
         a_zero();
 }
 
@@ -562,7 +562,7 @@ static void dinvits(const Sdl sdl, const Inventory inv)
         const Item item = inv.items.item[i];
         if(item.c == NONE)
             continue;
-        const int index = xcindex(item.c);
+        const int index = c_index(item.c);
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
         const int w = surface->w;

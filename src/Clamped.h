@@ -7,4 +7,4 @@ typedef struct
 }
 Clamped;
 
-Clamped xclamp(const int yres, const float bot, const float top);
+Clamped c_clamp(const int yres, const float bot, const float top);

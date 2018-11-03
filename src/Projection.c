@@ -20,7 +20,7 @@ Projection xproject(const int yres, const int xres, const float focal, const flo
     p.mid = pitch * yres / 2.0f;
     p.bot = p.mid + (0.0f - height) * p.size;
     p.top = p.mid + (1.0f - height) * p.size;
-    p.clamped = xclamp(yres, p.bot, p.top);
+    p.clamped = c_clamp(yres, p.bot, p.top);
     p.height = height;
     p.yres = yres;
     p.sheer.a = 0.0f;
@@ -33,7 +33,7 @@ Projection xsheer(Projection p, const Sheer s)
     // Not sure where the math went wrong. Adding these pixel offsets is required.
     p.bot += p.size * s.a - (s.b >= s.a  ? 1.0f : 0.0f);
     p.top += p.size * s.b + (s.b >= s.a  ? 0.0f : 2.0f);
-    p.clamped = xclamp(p.yres, p.bot, p.top);
+    p.clamped = c_clamp(p.yres, p.bot, p.top);
     p.sheer.a = fabsf(s.a);
     p.sheer.b = fabsf(s.b);
     return p;
