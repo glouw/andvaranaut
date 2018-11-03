@@ -2,12 +2,6 @@
 
 #include "util.h"
 
-static Args zero(void)
-{
-    static Args args;
-    return args;
-}
-
 static void print(const Args args)
 {
     printf(
@@ -103,7 +97,8 @@ static Args parsed(Args args, int argc, char* argv[])
 
 static Args defaults(void)
 {
-    Args args = zero();
+    static Args zero;
+    Args args = zero;
     args.xres = 1000;
     args.yres = 600;
     args.focal = 0.8f;
