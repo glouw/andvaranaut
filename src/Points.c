@@ -32,7 +32,7 @@ Points xpscat(Points ps, const Points other)
 int xpsfind(const Points ps, const Point p)
 {
     for(int i = 0; i < ps.count; i++)
-        if(xeql(ps.point[i], p, 1.0))
+        if(p_eql(ps.point[i], p, 1.0))
             return true;
     return false;
 }

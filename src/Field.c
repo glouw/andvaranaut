@@ -62,7 +62,7 @@ static int largest(float* gradients, const int size)
 Point xforce(const Field field, const Point from, const Point to, const Map map)
 {
     const Point dead = { 0.0f, 0.0f };
-    const float dist = xmag(xsub(from, to));
+    const float dist = p_mag(p_sub(from, to));
     if(dist < 1.33f || dist > field.aura / field.res)
         return dead;
     const Point v[] = {
@@ -81,13 +81,13 @@ Point xforce(const Field field, const Point from, const Point to, const Map map)
         grads[i] = 0.0f;
     for(int i = 0; i < len; i++)
     {
-        const Point dir = xadd(v[i], from);
+        const Point dir = p_add(v[i], from);
         const int y = field.res * from.y, yy = field.res * dir.y;
         const int x = field.res * from.x, xx = field.res * dir.x;
         if(xon(field, yy, xx)) grads[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
     const Point grad = v[largest(grads, len)];
-    const Point where = xadd(grad, from);
+    const Point where = p_add(grad, from);
     const int xx = where.x;
     const int yy = where.y;
     return map.walling[yy][xx] != ' ' ? dead : grad;

@@ -22,12 +22,12 @@ static Tris tsadd(Tris tris, const Tri tri)
 
 static int reveql(const Tri a, const Tri b)
 {
-    return xpsame(a.a, b.b) && xpsame(a.b, b.a);
+    return p_same(a.a, b.b) && p_same(a.b, b.a);
 }
 
 static int foreql(const Tri a, const Tri b)
 {
-    return xpsame(a.a, b.a) && xpsame(a.b, b.b);
+    return p_same(a.a, b.a) && p_same(a.b, b.b);
 }
 
 static int alligned(const Tri a, const Tri b)
@@ -57,7 +57,7 @@ static Tris ejoin(Tris tris, const Tris edges, const Point p, const Flags flags)
     for(int j = 0; j < edges.count; j++)
     {
         const Tri edge = edges.tri[j];
-        if(xpsame(edge.c, flags.zer))
+        if(p_same(edge.c, flags.zer))
         {
             const Tri tri = { edge.a, edge.b, p };
             tris = tsadd(tris, tri);
@@ -163,7 +163,7 @@ static Points prand(const int w, const int h, const int max, const int grid, con
             (float) (rand() % (w - border) + border / 2),
             (float) (rand() % (h - border) + border / 2),
         };
-        const Point snapped = xmid(xsnap(p, grid));
+        const Point snapped = p_mid(p_snap(p, grid));
         if(!xpsfind(ps, snapped))
             ps = xpsadd(ps, snapped);
     }
@@ -172,7 +172,7 @@ static Points prand(const int w, const int h, const int max, const int grid, con
 
 static float len(const Tri edge)
 {
-    return xmag(xsub(edge.b, edge.a));
+    return p_mag(p_sub(edge.b, edge.a));
 }
 
 static int descending(const void* a, const void* b)
@@ -207,10 +207,10 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
         {
             const Tri edge = edges.tri[i];
 
-            if(xpsame(edge.c, flags.one))
+            if(p_same(edge.c, flags.one))
                 continue;
 
-            if(xpsame(edge.a, removed))
+            if(p_same(edge.a, removed))
                 reach = tsadd(reach, edge);
         }
 
@@ -218,7 +218,7 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
         for(int i = 0; i < reach.count; i++)
         {
             // Was the destination reached?
-            if(xpsame(reach.tri[i].b, b))
+            if(p_same(reach.tri[i].b, b))
             {
                 connection = true;
                 break;
@@ -267,8 +267,8 @@ static void mdups(const Tris edges, const Flags flags)
     for(int i = 0; i < edges.count; i++)
     for(int j = 0; j < edges.count; j++)
     {
-        if(xpsame(edges.tri[j].c, flags.one)) continue;
-        if(xpsame(edges.tri[i].c, flags.one)) continue;
+        if(p_same(edges.tri[j].c, flags.one)) continue;
+        if(p_same(edges.tri[i].c, flags.one)) continue;
 
         if(reveql(edges.tri[i], edges.tri[j]))
             edges.tri[j].c = flags.one;
@@ -299,7 +299,7 @@ static void carve(const Map map, const Tris edges, const Flags flags)
     {
         const Tri e = edges.tri[i];
 
-        if(xpsame(e.c, flags.one))
+        if(p_same(e.c, flags.one))
             continue;
 
         const int size = xmrmax(map) - xmrmin(map);

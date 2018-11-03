@@ -78,8 +78,8 @@ Gauge xgwind(Gauge g, const Input input, const Timer tm)
 
 Point xgsum(const Gauge g, const int count)
 {
-    Point sum = xzpoint();
+    Point sum = p_zero();
     for(int i = 0; i < count; i++)
-        sum = xadd(sum, g.points[i]);
+        sum = p_add(sum, g.points[i]);
     return sum;
 }

@@ -80,7 +80,7 @@ static float hswim(const Hero hero)
 
 static Hero vert(Hero hero, const Map map, const Input input)
 {
-    const int onland = xtile(hero.where, map.floring);
+    const int onland = p_tile(hero.where, map.floring);
     const float tall = onland ? hero.tall : hswim(hero);
     const int jumped = input.key[SDL_SCANCODE_SPACE];
     const int crouch = input.key[SDL_SCANCODE_LCTRL];
@@ -112,15 +112,15 @@ static Hero vert(Hero hero, const Map map, const Input input)
 Point xtouch(const Hero hero)
 {
     const Point reference = { hero.reach, 0.0f };
-    const Point direction = xtrn(reference, hero.yaw);
-    return xadd(hero.where, direction);
+    const Point direction = p_turn(reference, hero.yaw);
+    return p_add(hero.where, direction);
 }
 
 static Point accelerate(const Hero hero)
 {
     const Point reference = { 1.0f, 0.0f };
-    const Point direction = xtrn(xunt(reference), hero.yaw);
-    return xmul(direction, hero.acceleration);
+    const Point direction = p_turn(p_unit(reference), hero.yaw);
+    return p_mul(direction, hero.acceleration);
 }
 
 static Hero move(Hero hero, const Map map, const Input input, const Flow current)
@@ -137,28 +137,28 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     || input.key[SDL_SCANCODE_A])
     {
         const Point acceleration = accelerate(hero);
-        if(input.key[SDL_SCANCODE_W]) hero.velocity = xadd(hero.velocity, acceleration);
-        if(input.key[SDL_SCANCODE_S]) hero.velocity = xsub(hero.velocity, acceleration);
-        if(input.key[SDL_SCANCODE_D]) hero.velocity = xadd(hero.velocity, xrag(acceleration));
-        if(input.key[SDL_SCANCODE_A]) hero.velocity = xsub(hero.velocity, xrag(acceleration));
+        if(input.key[SDL_SCANCODE_W]) hero.velocity = p_add(hero.velocity, acceleration);
+        if(input.key[SDL_SCANCODE_S]) hero.velocity = p_sub(hero.velocity, acceleration);
+        if(input.key[SDL_SCANCODE_D]) hero.velocity = p_add(hero.velocity, p_rot90(acceleration));
+        if(input.key[SDL_SCANCODE_A]) hero.velocity = p_sub(hero.velocity, p_rot90(acceleration));
     }
     else // Slow down.
-        hero.velocity = xmul(hero.velocity, 1.0f - hero.acceleration / speed);
+        hero.velocity = p_mul(hero.velocity, 1.0f - hero.acceleration / speed);
 
     if(swimming)
-        hero.velocity = xadd(hero.velocity, current.velocity);
+        hero.velocity = p_add(hero.velocity, current.velocity);
 
     // Top speed check.
-    if(xmag(hero.velocity) > speed)
-        hero.velocity = xmul(xunt(hero.velocity), speed);
+    if(p_mag(hero.velocity) > speed)
+        hero.velocity = p_mul(p_unit(hero.velocity), speed);
 
     // Speed apply.
-    hero.where = xadd(hero.where, hero.velocity);
+    hero.where = p_add(hero.where, hero.velocity);
 
     // Collision detection.
-    if(xtile(hero.where, map.walling))
+    if(p_tile(hero.where, map.walling))
     {
-        hero.velocity = xzpoint();
+        hero.velocity = p_zero();
         hero.where = last;
     }
     return hero;
@@ -200,8 +200,8 @@ Hero xteleport(Hero hero, const Map map)
 
 Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, const int xres)
 {
-    const Point end = xsub(hit.where, hero.where);
-    const Point corrected = xtrn(end, -hero.yaw);
+    const Point end = p_sub(hit.where, hero.where);
+    const Point corrected = p_turn(end, -hero.yaw);
     const Line trace = { hero.where, hit.where };
     const Projection projection = xproject(yres, xres, hero.fov.a.x, hero.pitch, corrected, hero.height);
     const Ray ray = { trace, corrected, xsheer(projection, sheer), hit.surface, hit.offset, hero.torch };

@@ -102,10 +102,10 @@ Overview xupdate(Overview ov, const Input input, const int xres)
         if(input.key[SDL_SCANCODE_D]) ov.velocity.x -= ov.acceleration;
         if(input.key[SDL_SCANCODE_A]) ov.velocity.x += ov.acceleration;
     }
-    else ov.velocity = xmul(ov.velocity, 1.0f - ov.acceleration / ov.speed);
+    else ov.velocity = p_mul(ov.velocity, 1.0f - ov.acceleration / ov.speed);
 
     // Arrow key top speed check.
-    if(xmag(ov.velocity) > ov.speed) ov.velocity = xmul(xunt(ov.velocity), ov.speed);
+    if(p_mag(ov.velocity) > ov.speed) ov.velocity = p_mul(p_unit(ov.velocity), ov.speed);
     // Due to integer rounding, velocities less than one must be ignored.
     if(fabsf(ov.velocity.x) < 1.0f) ov.velocity.x = 0.0f;
     if(fabsf(ov.velocity.y) < 1.0f) ov.velocity.y = 0.0f;

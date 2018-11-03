@@ -101,7 +101,7 @@ static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
     const int mx = 0.5f * sdl.xres;
     const int l = mx - osize * 0.5f;
     const int t = my - osize * (1.0f - hero.height / sprite->size);
-    const int s = hero.fov.a.x * mx * xslp(sprite->where);
+    const int s = hero.fov.a.x * mx * p_slope(sprite->where);
     const SDL_Rect target = { l + s, t, osize, osize };
     return target;
 }
@@ -271,7 +271,7 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
             (width - sdl.xres) / 2.0f,
             (width - sdl.yres) / 2.0f,
         };
-        const Point where = xsub(xmul(g.points[i], sens), mid);
+        const Point where = p_sub(p_mul(g.points[i], sens), mid);
         dbox(sdl, where.x, where.y, width, color, true);
     }
     const int tail = 10;
@@ -279,8 +279,8 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
         return xzattack();
     const int last = g.count - 1;
     const int first = g.count - tail;
-    const Point dir = xunt(xsub(g.points[last], g.points[first]));
-    const Attack melee = { it.damage, dir, it.hurts, MELEE, 0, xzpoint() };
+    const Point dir = p_unit(p_sub(g.points[last], g.points[first]));
+    const Attack melee = { it.damage, dir, it.hurts, MELEE, 0, p_zero() };
     return melee;
 }
 
@@ -330,9 +330,9 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
         // Animate attack (inside square for mouse cursor).
         for(int i = 0; i < g.count; i++)
         {
-            const Point point = xadd(xmul(g.points[i], sens), shift);
-            const Point corner = xsnap(point, grid);
-            const Point center = xsub(xadd(corner, middle), shift);
+            const Point point = p_add(p_mul(g.points[i], sens), shift);
+            const Point corner = p_snap(point, grid);
+            const Point center = p_sub(p_add(corner, middle), shift);
 
             dbox(sdl, center.x, center.y, grid, sdl.wht, true);
 
@@ -354,14 +354,14 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
                 (float) x,
                 (float) y,
             };
-            const Point corner = xmul(which, grid);
-            const Point center = xsub(xadd(corner, middle), shift);
+            const Point corner = p_mul(which, grid);
+            const Point center = p_sub(p_add(corner, middle), shift);
             dbox(sdl, center.x, center.y, grid, sdl.red, false);
         }
 
         // Draw the cursor.
-        const Point point = xadd(xmul(g.points[g.count - 1], sens), shift);
-        const Point center = xsub(xadd(point, middle), shift);
+        const Point point = p_add(p_mul(g.points[g.count - 1], sens), shift);
+        const Point center = p_sub(p_add(point, middle), shift);
         dbox(sdl, center.x, center.y, 6, sdl.red, true);
     }
 
@@ -378,7 +378,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
     // Direction won't be needed for magic attacks as magic will spawn new sprites, be it food sprites,
     // attack sprites (fire / ice), etc.
     const Point dir = { 0.0f, 0.0f };
-    const Attack magic = { mag, dir, 0, MAGIC, scindex, xzpoint() };
+    const Attack magic = { mag, dir, 0, MAGIC, scindex, p_zero() };
     return magic;
 }
 

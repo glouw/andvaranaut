@@ -63,7 +63,7 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
 Theme lutheme(const Map map, const Point where)
 {
     for(int i = 0; i < map.rooms.count; i++)
-        if(xeql(where, map.rooms.wheres[i], map.grid))
+        if(p_eql(where, map.rooms.wheres[i], map.grid))
             return map.rooms.themes[i];
     return NO_THEME;
 }
@@ -83,7 +83,7 @@ Theme xmthemett(const Theme last, const Map map, const Point where, const Timer 
 
 int xmisportal(char** block, const Point where)
 {
-    return xblok(where, block) == '~';
+    return p_block(where, block) == '~';
 }
 
 int xmout(const Map map, const Point where)
@@ -198,7 +198,7 @@ void xmtrapdoors(const Map map, const Points trapdoors, const Party p)
 
 void xmcorridor(const Map map, const Point a, const Point b)
 {
-    const Point step = xsub(b, a);
+    const Point step = p_sub(b, a);
     const Point delta = {
         step.x > 0.0f ? 1.0f : step.x < 0.0f ? -1.0f : 0.0f,
         step.y > 0.0f ? 1.0f : step.y < 0.0f ? -1.0f : 0.0f,

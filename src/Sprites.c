@@ -44,7 +44,7 @@ static void pull(const Sprites sprites, const Hero hero)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        sprite->where = xsub(sprite->where, hero.where);
+        sprite->where = p_sub(sprite->where, hero.where);
     }
 }
 
@@ -53,7 +53,7 @@ static void push(const Sprites sprites, const Hero hero)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        sprite->where = xadd(sprite->where, hero.where);
+        sprite->where = p_add(sprite->where, hero.where);
     }
 }
 
@@ -62,8 +62,8 @@ static int comparator(const void* const a, const void* const b)
     const Sprite* const sa = (const Sprite*) a;
     const Sprite* const sb = (const Sprite*) b;
     return
-        xmag(sa->where) < xmag(sb->where) ? +1 :
-        xmag(sa->where) > xmag(sb->where) ? -1 : 0;
+        p_mag(sa->where) < p_mag(sb->where) ? +1 :
+        p_mag(sa->where) > p_mag(sb->where) ? -1 : 0;
 }
 
 static void sort(const Sprites sprites)
@@ -76,7 +76,7 @@ static void turn(const Sprites sprites, const float yaw)
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        sprite->where = xtrn(sprite->where, yaw);
+        sprite->where = p_turn(sprite->where, yaw);
     }
 }
 
@@ -106,17 +106,17 @@ static void bound(const Sprites sprites, const Map map)
         Sprite* const sprite = &sprites.sprite[i];
 
         // Stuck in a wall.
-        if(xtile(sprite->where, map.walling))
+        if(p_tile(sprite->where, map.walling))
         {
-            xsplace(sprite, xmid(sprite->last));
-            sprite->velocity = xzpoint();
+            xsplace(sprite, p_mid(sprite->last));
+            sprite->velocity = p_zero();
         }
 
         // Stuck in water.
-        if(xblok(sprite->where, map.floring) == ' ')
+        if(p_block(sprite->where, map.floring) == ' ')
         {
-            xsplace(sprite, xmid(sprite->last));
-            sprite->velocity = xzpoint();
+            xsplace(sprite, p_mid(sprite->last));
+            sprite->velocity = p_zero();
         }
     }
 }
@@ -136,21 +136,21 @@ static void move(const Sprites sprites, const Field field, const Point to, const
             if(sprite->speed == 0.0f)
                 continue;
 
-            sprite->velocity = xmul(sprite->velocity, 1.0f - sprite->acceleration / sprite->speed);
+            sprite->velocity = p_mul(sprite->velocity, 1.0f - sprite->acceleration / sprite->speed);
         }
         // Force applied - speed up.
         else
         {
-            const Point acc = xmul(dir, sprite->acceleration);
-            sprite->velocity = xadd(sprite->velocity, acc);
+            const Point acc = p_mul(dir, sprite->acceleration);
+            sprite->velocity = p_add(sprite->velocity, acc);
 
-            if(xmag(sprite->velocity) > sprite->speed)
-                sprite->velocity = xmul(xunt(sprite->velocity), sprite->speed);
+            if(p_mag(sprite->velocity) > sprite->speed)
+                sprite->velocity = p_mul(p_unit(sprite->velocity), sprite->speed);
         }
 
         // Sprite will stop running if close to player.
-        sprite->state = xmag(sprite->velocity) > 0.005f ? CHASING : IDLE;
-        xsplace(sprite, xadd(sprite->where, sprite->velocity));
+        sprite->state = p_mag(sprite->velocity) > 0.005f ? CHASING : IDLE;
+        xsplace(sprite, p_add(sprite->where, sprite->velocity));
     }
 }
 
@@ -215,8 +215,8 @@ static void route(const Sprites sprites, const Field field, const Map map, const
 
 static Sprites dropit(Sprites sprites, const Attack attack, const Point where)
 {
-    const Point delta = xmul(xrag(attack.dir), 0.5f);
-    return append(sprites, xsregistrar('d', xadd(where, delta)));
+    const Point delta = p_mul(p_rot90(attack.dir), 0.5f);
+    return append(sprites, xsregistrar('d', p_add(where, delta)));
 }
 
 static void brokelb(const int ascii, const Inventory inv, const Timer tm)
@@ -281,7 +281,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
         if(xisuseless(sprite))
             continue;
 
-        if(xeql(hand, sprite->where, 2.0f))
+        if(p_eql(hand, sprite->where, 2.0f))
         {
             sprites = hurt(sprites, sprite, attack, inv, tm);
             if(++hurts == it.hurts)
@@ -382,7 +382,7 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
         // TODO: Maybe sprites have different attack ranges.
         if(sprite->evil
         && sprite->state == IDLE
-        && xeql(hero.where, sprite->where, 2.2f))
+        && p_eql(hero.where, sprite->where, 2.2f))
         {
             sprite->state = ATTACK_N;
 
@@ -425,7 +425,7 @@ static void block(const Sprites sprites, const Hero hero, const Gauge gauge)
     if(gauge.count > 0)
     {
         const Point where = gauge.points[gauge.count - 1];
-        const Point unit = xunt(where);
+        const Point unit = p_unit(where);
 
         for(int i = 0; i < sprites.count; i++)
         {
@@ -434,7 +434,7 @@ static void block(const Sprites sprites, const Hero hero, const Gauge gauge)
             if(xisuseless(sprite))
                 continue;
 
-            if(xeql(hero.where, sprite->where, 2.5f))
+            if(p_eql(hero.where, sprite->where, 2.5f))
             {
                 if(unit.y < 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_N;
                 if(unit.y > 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_S;
@@ -463,7 +463,7 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
         if(xisdead(sprite->state) || xismute(sprite))
             continue;
 
-        if(xeql(hero.where, sprite->where, 2.5f))
+        if(p_eql(hero.where, sprite->where, 2.5f))
         {
             const int speed = 8; // How fast sprite talks (arbitrary pick).
             const int ticks = tm.ticks - sprite->speech.ticks;
@@ -492,17 +492,17 @@ Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Fiel
 
 static Point avail(const Point center, const Map map)
 {
-    const Point where = xrand(center, map.grid);
+    const Point where = p_rand(center, map.grid);
 
     // Available tile space is no wall and not above water.
-    return xblok(where, map.walling) == ' '
-        && xblok(where, map.floring) != ' ' ? where : avail(center, map);
+    return p_block(where, map.walling) == ' '
+        && p_block(where, map.floring) != ' ' ? where : avail(center, map);
 }
 
 static Point seek(const Point center, const Map map, const int ascii)
 {
     const Point where = avail(center, map);
-    return xblok(where, map.floring) == ascii ? where : seek(center, map, ascii);
+    return p_block(where, map.floring) == ascii ? where : seek(center, map, ascii);
 }
 
 static Sprites pngarden(Sprites sprites, const Map map, const Point center)
@@ -554,7 +554,7 @@ Map xscount(const Sprites sprites, Map map)
             if(xnocount(sprite))
                 continue;
 
-            if(xeql(sprite->where, map.rooms.wheres[i], map.grid))
+            if(p_eql(sprite->where, map.rooms.wheres[i], map.grid))
                 map.rooms.agents[i]++;
         }
     }

@@ -15,16 +15,16 @@ Flow xstart(const float height)
     f.speed = 0.01f;
     f.direction.x = 1.0f;
     f.direction.y = 1.0f;
-    f.velocity = xmul(f.direction, f.speed);
+    f.velocity = p_mul(f.direction, f.speed);
     f.height = height;
     return f;
 }
 
 Flow xstream(Flow f)
 {
-    f.velocity = xadd(f.velocity, xmul(f.direction, f.acceleration));
-    if(xmag(f.velocity) > f.speed)
-        f.velocity = xmul(xunt(f.velocity), f.speed);
-    f.where = xadd(f.where, f.velocity);
+    f.velocity = p_add(f.velocity, p_mul(f.direction, f.acceleration));
+    if(p_mag(f.velocity) > f.speed)
+        f.velocity = p_mul(p_unit(f.velocity), f.speed);
+    f.where = p_add(f.where, f.velocity);
     return f;
 }

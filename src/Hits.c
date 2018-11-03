@@ -22,38 +22,38 @@ static Hit collision(const Point ray, const Line test, char** const block)
 {
     const float offset = xdec(ray.x + ray.y);
     const int inverted = xinverted(xneedle(test.a, test.b));
-    const Hit hit = { xtile(test.a, block), inverted ? 1.0f - offset : offset, ray, NULL };
+    const Hit hit = { p_tile(test.a, block), inverted ? 1.0f - offset : offset, ray, NULL };
     return hit;
 }
 
 static Hits step(Hits hits, const Point where, const Point direction, const Map map)
 {
-    const Point hor = xshr(where, direction);
-    const Point ver = xsvr(where, direction);
-    const Point ray = xcmp(where, hor, ver);
-    const Point delta = xmul(direction, 0.01f);
+    const Point hor = p_jmphor(where, direction);
+    const Point ver = p_jmpver(where, direction);
+    const Point ray = p_cmp(where, hor, ver);
+    const Point delta = p_mul(direction, 0.01f);
     const Point dx = { delta.x, 0.0f };
     const Point dy = { 0.0f, delta.y };
 
     const Line test = {
-        xadd(ray, xmag(xsub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
-        xsub(ray, xmag(xsub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
+        p_add(ray, p_mag(p_sub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
+        p_sub(ray, p_mag(p_sub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
     };
 
     // Floor wall.
-    if(xtile(test.a, map.floring) && !xtile(test.b, map.floring))
+    if(p_tile(test.a, map.floring) && !p_tile(test.b, map.floring))
         hits.floring = push(hits.floring, collision(ray, test, map.floring));
 
     // Ceiling wall.
-    if(xtile(test.a, map.ceiling) && !xtile(test.b, map.ceiling))
+    if(p_tile(test.a, map.ceiling) && !p_tile(test.b, map.ceiling))
         hits.ceiling = push(hits.ceiling, collision(ray, test, map.ceiling));
 
     // Eye level Wall.
-    if(xtile(test.a, map.walling) && !hits.walling.surface)
+    if(p_tile(test.a, map.walling) && !hits.walling.surface)
         hits.walling = collision(ray, test, map.walling);
 
     // Done casting?
-    if(hits.walling.surface && xtile(test.a, map.ceiling) && xtile(test.a, map.floring))
+    if(hits.walling.surface && p_tile(test.a, map.ceiling) && p_tile(test.a, map.floring))
         return hits;
 
     // Keep on walking.

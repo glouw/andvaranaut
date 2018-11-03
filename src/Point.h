@@ -7,48 +7,48 @@ typedef struct
 }
 Point;
 
-Point xzpoint(void);
+Point p_zero(void);
 
-Point xtrn(const Point, const float t);
+Point p_turn(const Point, const float t);
 
-Point xrag(const Point);
+Point p_rot90(const Point);
 
-Point xsub(const Point a, const Point b);
+Point p_sub(const Point a, const Point b);
 
-Point xadd(const Point a, const Point b);
+Point p_add(const Point a, const Point b);
 
-Point xmul(const Point a, const float n);
+Point p_mul(const Point a, const float n);
 
-float xmag(const Point);
+float p_mag(const Point);
 
-Point xdiv(const Point a, const float n);
+Point p_div(const Point a, const float n);
 
-Point xunt(const Point);
+Point p_unit(const Point);
 
-float xslp(const Point);
+float p_slope(const Point);
 
-Point xshr(const Point a, const Point b);
+Point p_jmphor(const Point a, const Point b);
 
-Point xsvr(const Point a, const Point b);
+Point p_jmpver(const Point a, const Point b);
 
-Point xmid(const Point);
+Point p_mid(const Point);
 
-int xinf(const Point);
+int p_inf(const Point);
 
-Point xcmp(const Point a, const Point b, const Point c);
+Point p_cmp(const Point a, const Point b, const Point c);
 
-int xeql(const Point a, const Point b, const float e);
+int p_eql(const Point a, const Point b, const float e);
 
-int xpsame(const Point a, const Point b);
+int p_same(const Point a, const Point b);
 
-int xblok(const Point, char** const blocks);
+int p_block(const Point, char** const blocks);
 
-int xtile(const Point, char** const blocks);
+int p_tile(const Point, char** const blocks);
 
-Point xabs(const Point);
+Point p_abs(const Point);
 
-Point xsnap(const Point, const int grid);
+Point p_snap(const Point, const int grid);
 
-Point xrand(Point, const int grid);
+Point p_rand(Point, const int grid);
 
-void xpprint(const Point);
+void p_print(const Point);

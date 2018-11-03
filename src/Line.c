@@ -8,11 +8,11 @@ Line xzline(void)
 
 Line xrotate(const Line line, const float t)
 {
-    const Line rotated = { xtrn(line.a, t), xtrn(line.b, t) };
+    const Line rotated = { p_turn(line.a, t), p_turn(line.b, t) };
     return rotated;
 }
 
 Point xlerp(const Line line, const float n)
 {
-    return xadd(line.a, xmul(xsub(line.b, line.a), n));
+    return p_add(line.a, p_mul(p_sub(line.b, line.a), n));
 }
