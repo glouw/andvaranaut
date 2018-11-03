@@ -2,12 +2,12 @@
 
 #include "util.h"
 
-int xinverted(const Compass face)
+int c_isinvert(const Compass face)
 {
     return face == E || face == S;
 }
 
-Compass xneedle(const Point where, const Point other)
+Compass c_needle(const Point where, const Point other)
 {
     if(where.x < other.x && (int) where.y == (int) other.y) return E;
     if(where.x > other.x && (int) where.y == (int) other.y) return W;

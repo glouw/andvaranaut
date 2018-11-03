@@ -128,7 +128,7 @@ static void move(const Sprites sprites, const Field field, const Point to, const
         Sprite* const sprite = &sprites.sprite[i];
         if(xisstuck(sprite))
             continue;
-        const Point dir = xforce(field, sprite->where, to, map);
+        const Point dir = f_force(field, sprite->where, to, map);
 
         // No force applied - slow down.
         if(dir.x == 0.0f && dir.y == 0.0f)
@@ -167,7 +167,7 @@ static void scentwall(const Field field, const Point where, const Map map, const
         const int x = i / field.res;
         const int y = j / field.res;
 
-        if(xon(field, j, i))
+        if(f_on(field, j, i))
         {
             // Scent walls.
             field.mesh[j][i] = map.walling[y][x] == ' ' ? 0.0f : -scent;
@@ -192,7 +192,7 @@ static void scentsprite(const Field field, const Sprites sprites, const float sc
         const int i = field.res * sprite->where.x;
         for(int a = -field.res / 2; a <= field.res / 2; a++)
         for(int b = -field.res / 2; b <= field.res / 2; b++)
-            if(xon(field, j + a, i + b))
+            if(f_on(field, j + a, i + b))
                 field.mesh[j + a][i + b] -= scent;
     }
 }
@@ -210,7 +210,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     scentwall(field, hero.where, map, scent);
     scentsprite(field, sprites, scent);
     scenthero(field, hero.where, 100.0f * scent);
-    xdiffuse(field, hero.where);
+    f_diffuse(field, hero.where);
 }
 
 static Sprites dropit(Sprites sprites, const Attack attack, const Point where)

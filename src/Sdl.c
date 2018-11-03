@@ -87,7 +87,7 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
         const char* const sentence = sprite->speech.sentences[sprite->speech.index];
         const int x = target.x + target.w / 2;
         const int y = target.y + target.h / 3; // TODO: Maybe tune the offset per sprite?
-        xfputxy(text.fill, text.line, sentence, 0xFF, sdl.renderer, x, y);
+        f_put(text.fill, text.line, sentence, 0xFF, sdl.renderer, x, y);
     }
 }
 
@@ -617,7 +617,7 @@ void xdfps(const Sdl sdl, const Text text, const char* const fmt, ...)
         vsprintf(str, fmt, args);
     va_end(args);
 
-    xfputbr(text.fill, text.line, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);
+    f_putbr(text.fill, text.line, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);
 
     free(str);
 }

@@ -8,6 +8,6 @@ typedef enum
 }
 Compass;
 
-int xinverted(const Compass);
+int c_isinvert(const Compass);
 
-Compass xneedle(const Point where, const Point other);
+Compass c_needle(const Point where, const Point other);

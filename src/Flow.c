@@ -2,15 +2,10 @@
 
 #include "util.h"
 
-Flow xzflow(void)
+Flow f_start(const float height)
 {
-    static Flow flow;
-    return flow;
-}
-
-Flow xstart(const float height)
-{
-    Flow f = xzflow();
+    static Flow zero;
+    Flow f = zero;
     f.acceleration = 0.00001f;
     f.speed = 0.01f;
     f.direction.x = 1.0f;
@@ -20,7 +15,7 @@ Flow xstart(const float height)
     return f;
 }
 
-Flow xstream(Flow f)
+Flow f_stream(Flow f)
 {
     f.velocity = p_add(f.velocity, p_mul(f.direction, f.acceleration));
     if(p_mag(f.velocity) > f.speed)

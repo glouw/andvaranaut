@@ -62,7 +62,7 @@ void xttshow(const Text text, const Sdl sdl)
     const float percent = (tt.now - tt.start) / (float) (tt.end - tt.start);
     const float max = 0xFF;
     const float alpha = max * sinf(percent * FPI);
-    xfprint(
+    f_print(
         text.fill,
         text.line,
         tt.str,

@@ -21,7 +21,7 @@ static Hit* push(Hit* ceiling, const Hit hit)
 static Hit collision(const Point ray, const Line test, char** const block)
 {
     const float offset = xdec(ray.x + ray.y);
-    const int inverted = xinverted(xneedle(test.a, test.b));
+    const int inverted = c_isinvert(c_needle(test.a, test.b));
     const Hit hit = { p_tile(test.a, block), inverted ? 1.0f - offset : offset, ray, NULL };
     return hit;
 }

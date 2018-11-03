@@ -27,11 +27,11 @@ int main(int argc, char* argv[])
 
     Overview ov = xinit();
 
-    Flow current = xstart(-1.0f / 6.0f);
+    Flow current = f_start(-1.0f / 6.0f);
 
-    Flow clouds = xstart(9.0f);
+    Flow clouds = f_start(9.0f);
 
-    Field fd = xprepare(wd.map[me.floor], me.aura);
+    Field fd = f_prepare(wd.map[me.floor], me.aura);
 
     Inventory inv = xinvnew();
 
@@ -83,14 +83,14 @@ int main(int argc, char* argv[])
             {
                 me = xteleport(me, wd.map[me.floor]);
 
-                xruin(fd);
-                fd = xprepare(wd.map[me.floor], me.aura);
+                f_ruin(fd);
+                fd = f_prepare(wd.map[me.floor], me.aura);
             }
             ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
 
-            current = xstream(current);
+            current = f_stream(current);
 
-            clouds = xstream(clouds);
+            clouds = f_stream(clouds);
 
             me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, gg, tm);
 
