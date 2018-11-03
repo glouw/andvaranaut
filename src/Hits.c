@@ -6,7 +6,7 @@
 
 static Hit* push(Hit* ceiling, const Hit hit)
 {
-    Hit* temp = xtoss(Hit, 1);
+    Hit* temp = u_toss(Hit, 1);
     *temp = hit;
     temp->next = ceiling;
     return temp;
@@ -14,7 +14,7 @@ static Hit* push(Hit* ceiling, const Hit hit)
 
 static Hit collision(const Point ray, const Line test, char** const block)
 {
-    const float offset = xdec(ray.x + ray.y);
+    const float offset = u_dec(ray.x + ray.y);
     const int inverted = c_isinvert(c_needle(test.a, test.b));
     const Hit hit = { p_tile(test.a, block), inverted ? 1.0f - offset : offset, ray, NULL };
     return hit;
@@ -30,8 +30,8 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     const Point dy = { 0.0f, delta.y };
 
     const Line test = {
-        p_add(ray, p_mag(p_sub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
-        p_sub(ray, p_mag(p_sub(hor, ver)) < 0.001f ? delta : xdec(ray.x) == 0.0f ? dx : dy),
+        p_add(ray, p_mag(p_sub(hor, ver)) < 0.001f ? delta : u_dec(ray.x) == 0.0f ? dx : dy),
+        p_sub(ray, p_mag(p_sub(hor, ver)) < 0.001f ? delta : u_dec(ray.x) == 0.0f ? dx : dy),
     };
 
     // Floor wall.

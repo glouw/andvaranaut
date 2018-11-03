@@ -12,8 +12,8 @@ static uint32_t shade(const uint32_t pixel, const int shading)
 
 static uint32_t pget(const SDL_Surface* const surface, const Point offset)
 {
-    const int row = surface->h * xdec(offset.y);
-    const int col = surface->w * xdec(offset.x);
+    const int row = surface->h * u_dec(offset.y);
+    const int col = surface->w * u_dec(offset.x);
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
     return pixels[col + row * surface->w];
 }
@@ -23,7 +23,7 @@ static void pput(const Scanline sl, const int x, const uint32_t pixel)
     sl.pixels[x + sl.y * sl.width] = pixel;
 }
 
-static void xfer(const Scanline sl, const int x, const Point offset, const int tile, const int distance)
+static void pxfer(const Scanline sl, const int x, const Point offset, const int tile, const int distance)
 {
     const uint32_t color = pget(sl.sdl.surfaces.surface[tile], offset);
     pput(sl, x, shade(color, distance));
@@ -34,7 +34,7 @@ static void rwall(const Scanline sl, const Ray r)
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
         const Point offset = { (x - r.proj.bot) / r.proj.size, r.offset };
-        xfer(sl, x, offset, r.surface, xilluminate(r.torch, r.corrected.x));
+        pxfer(sl, x, offset, r.surface, t_illuminate(r.torch, r.corrected.x));
     }
 }
 
@@ -46,7 +46,7 @@ static void rflor(const Scanline sl, const Ray r, const Map map)
         const int tile = p_tile(offset, map.floring);
         if(!tile)
             continue;
-        xfer(sl, x, offset, tile, xilluminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
+        pxfer(sl, x, offset, tile, t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
     }
 }
 
@@ -58,7 +58,7 @@ static void rceil(const Scanline sl, const Ray r, const Map map)
         const int tile = p_tile(offset, map.ceiling);
         if(!tile)
             continue;
-        xfer(sl, x, offset, tile, xilluminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
+        pxfer(sl, x, offset, tile, t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
     }
 }
 
@@ -70,7 +70,7 @@ static void rsky(const Scanline sl, const Ray r, const Map map, const int floor,
         {
             const Sheer sa = { 0.0f, clouds.height };
             const Point a = l_lerp(r.trace, p_ccast(p_sheer(r.proj, sa), x));
-            xfer(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', xilluminate(r.torch, p_mag(p_sub(a, r.trace.a))));
+            pxfer(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', t_illuminate(r.torch, p_mag(p_sub(a, r.trace.a))));
         }
     }
     else
@@ -79,7 +79,7 @@ static void rsky(const Scanline sl, const Ray r, const Map map, const int floor,
             const Point offset = l_lerp(r.trace, p_ccast(r.proj, x));
             if(p_tile(offset, map.ceiling))
                 continue;
-            xfer(sl, x, offset, '#' - ' ', xilluminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
+            pxfer(sl, x, offset, '#' - ' ', t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
         }
 }
 
@@ -90,7 +90,7 @@ static void rpit(const Scanline sl, const Ray r, const Map map, const Flow curre
         const Point offset = l_lerp(r.trace, p_fcast(r.proj, x));
         if(p_tile(offset, map.floring))
             continue;
-        xfer(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', xilluminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
+        pxfer(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
     }
 }
 

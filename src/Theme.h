@@ -12,6 +12,6 @@ typedef enum
 }
 Theme;
 
-Theme* xthrand(const int count);
+Theme* t_rand(const int count);
 
-const char* xthname(const Theme);
+const char* t_name(const Theme);

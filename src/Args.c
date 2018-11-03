@@ -28,10 +28,10 @@ static void print(const Args args)
 static void check(const Args args)
 {
     if(args.threads <= 0)
-        xbomb("error: not a valid CPU thread count (-t).\n");
+        u_bomb("error: not a valid CPU thread count (-t).\n");
 
     if(args.xres % args.threads)
-        xbomb(
+        u_bomb(
         "error: x-resolution (-x) not divisible by CPU thread count (-t).\n"
         "change either the number of rendering theads or resolution.\n");
 
@@ -48,7 +48,7 @@ static Args parsed(Args args, int argc, char* argv[])
         if(argv[i][0] == '-')
         {
             if(argv[i][1] == 'h')
-                print(args), xbomb("");
+                print(args), u_bomb("");
 
             if(i + 1 == argc)
                 break;
@@ -75,8 +75,8 @@ static Args parsed(Args args, int argc, char* argv[])
 
             case 'v':
                 args.vsync =
-                    xequals(next, "true")  ? 1 : xequals(next, "t") ? 1 :
-                    xequals(next, "false") ? 0 : xequals(next, "f") ? 0 :
+                    u_equals(next, "true")  ? 1 : u_equals(next, "t") ? 1 :
+                    u_equals(next, "false") ? 0 : u_equals(next, "f") ? 0 :
                     strtod(next, NULL) != 0;
                 break;
 
@@ -91,7 +91,7 @@ static Args parsed(Args args, int argc, char* argv[])
                 break;
 
             default:
-                xbomb("error: option -%c not recognized\n", option);
+                u_bomb("error: option -%c not recognized\n", option);
                 break;
             }
         }

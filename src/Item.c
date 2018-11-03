@@ -744,15 +744,10 @@ static void check(const Classification c, const Item items[], const int len)
         assert(items[i].index == i);
 }
 
-static Item xzitem(void)
-{
-    static Item item;
-    return item;
-}
-
 static Item none(void)
 {
-    Item item = xzitem();
+    static Item zero;
+    Item item = zero;
     item.c = NONE;
     return item;
 }
@@ -803,29 +798,29 @@ Item i_rand(void)
 
 void i_test(void)
 {
-    check(AMMO    , ammos    , xlen(ammos)    );
-    check(AMULET  , amulets  , xlen(amulets)  );
-    check(ARMOR   , armors   , xlen(armors)   );
-    check(BOOK    , books    , xlen(books)    );
-    check(BOOT    , boots    , xlen(boots)    );
-    check(CHEST   , chests   , xlen(chests)   );
-    check(FLESH   , fleshes  , xlen(fleshes)  );
-    check(FOOD    , foods    , xlen(foods)    );
-    check(GLOVE   , gloves   , xlen(gloves)   );
-    check(HAT     , hats     , xlen(hats)     );
-    check(KEY     , keys     , xlen(keys)     );
-    check(LETTER  , letter   , xlen(letter)   );
-    check(LIGHT   , lights   , xlen(lights)   );
-    check(LONGWEP , longweps , xlen(longweps) );
-    check(MEDWEP  , medweps  , xlen(medweps)  );
-    check(MONEY   , monies   , xlen(monies)   );
-    check(MUSIC   , musics   , xlen(musics)   );
-    check(POTION  , potions  , xlen(potions)  );
-    check(RING    , rings    , xlen(rings)    );
-    check(ROCK    , rocks    , xlen(rocks)    );
-    check(SCROLL  , scrolls  , xlen(scrolls)  );
-    check(SHIELD  , shields  , xlen(shields)  );
-    check(SHORTWEP, shortweps, xlen(shortweps));
-    check(TOOL    , tools    , xlen(tools)    );
-    check(WAND    , wands    , xlen(wands)    );
+    check(AMMO    , ammos    , u_len(ammos)    );
+    check(AMULET  , amulets  , u_len(amulets)  );
+    check(ARMOR   , armors   , u_len(armors)   );
+    check(BOOK    , books    , u_len(books)    );
+    check(BOOT    , boots    , u_len(boots)    );
+    check(CHEST   , chests   , u_len(chests)   );
+    check(FLESH   , fleshes  , u_len(fleshes)  );
+    check(FOOD    , foods    , u_len(foods)    );
+    check(GLOVE   , gloves   , u_len(gloves)   );
+    check(HAT     , hats     , u_len(hats)     );
+    check(KEY     , keys     , u_len(keys)     );
+    check(LETTER  , letter   , u_len(letter)   );
+    check(LIGHT   , lights   , u_len(lights)   );
+    check(LONGWEP , longweps , u_len(longweps) );
+    check(MEDWEP  , medweps  , u_len(medweps)  );
+    check(MONEY   , monies   , u_len(monies)   );
+    check(MUSIC   , musics   , u_len(musics)   );
+    check(POTION  , potions  , u_len(potions)  );
+    check(RING    , rings    , u_len(rings)    );
+    check(ROCK    , rocks    , u_len(rocks)    );
+    check(SCROLL  , scrolls  , u_len(scrolls)  );
+    check(SHIELD  , shields  , u_len(shields)  );
+    check(SHORTWEP, shortweps, u_len(shortweps));
+    check(TOOL    , tools    , u_len(tools)    );
+    check(WAND    , wands    , u_len(wands)    );
 }

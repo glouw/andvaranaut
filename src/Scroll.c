@@ -6,12 +6,6 @@
 #include <assert.h>
 #include <float.h>
 
-static Scroll xsczero(void)
-{
-    static Scroll sc;
-    return sc;
-}
-
 static float err(const float a, const float b)
 {
     return 0.5f * (a - b) * (a - b);
@@ -300,9 +294,10 @@ Scroll s_new(void)
         }
     };
 
-    Scroll sc = xsczero();
-    sc.casting = xtoss(int, SQUARES);
-    sc.castables = xtoss(int*, SCROLLS);
+    static Scroll zero;
+    Scroll sc = zero;
+    sc.casting = u_toss(int, SQUARES);
+    sc.castables = u_toss(int*, SCROLLS);
     sc.width = WIDTH;
     sc.squares = SQUARES;
     sc.scrolls = SCROLLS;
@@ -315,7 +310,7 @@ Scroll s_new(void)
 char* s_str(const Scroll sc, const int scindex)
 {
     const int len = sc.squares + sc.width + 1;
-    char* const str = xwipe(char, len);
+    char* const str = u_wipe(char, len);
     memset(str, '\n', len - 1);
     for(int j = 0; j < sc.width; j++)
     for(int i = 0; i < sc.width; i++)

@@ -4,7 +4,7 @@
 
 Items i_build(const int max)
 {
-    const Items its = { xtoss(Item, max), max };
+    const Items its = { u_toss(Item, max), max };
     for(int i = 0; i < max; i++)
         its.item[i] = i_new(NONE, 0);
     return its;

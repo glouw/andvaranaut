@@ -13,10 +13,10 @@ typedef struct
 }
 Vram;
 
-Vram xvlock(SDL_Texture* const);
+Vram v_lock(SDL_Texture* const);
 
-void xvunlock(SDL_Texture* const);
+void v_unlock(SDL_Texture* const);
 
-void xvdrooms(const Vram, const Map, const uint32_t in, const uint32_t out);
+void v_drawrooms(const Vram, const Map, const uint32_t in, const uint32_t out);
 
-void xvddot(const Vram, const Point, const int size, const uint32_t in, const uint32_t out);
+void v_drawdot(const Vram, const Point, const int size, const uint32_t in, const uint32_t out);

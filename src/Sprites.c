@@ -9,25 +9,25 @@
 #include <ctype.h>
 #include <math.h>
 
-Sprites xsnew(const int max)
+Sprites s_spawn(const int max)
 {
-    const Sprites sprites = { xtoss(Sprite, max), 0, max, NO_ATTACK };
+    const Sprites sprites = { u_toss(Sprite, max), 0, max, NO_ATTACK };
     return sprites;
 }
 
 static Sprites append(Sprites sprites, const Sprite sprite)
 {
     if(sprites.max == 0)
-        xretoss(sprites.sprite, Sprite, sprites.max = 1);
+        u_retoss(sprites.sprite, Sprite, sprites.max = 1);
 
     if(sprites.count >= sprites.max)
-        xretoss(sprites.sprite, Sprite, sprites.max *= 2);
+        u_retoss(sprites.sprite, Sprite, sprites.max *= 2);
 
     sprites.sprite[sprites.count++] = sprite;
     return sprites;
 }
 
-Sprites xlay(Sprites sprites, const Map map, const Overview ov)
+Sprites s_lay(Sprites sprites, const Map map, const Overview ov)
 {
     if(m_out(map, ov.where))
         return sprites;
@@ -80,13 +80,13 @@ static void turn(const Sprites sprites, const float yaw)
     }
 }
 
-void xorient(const Sprites sprites, const Hero hero)
+void s_orient(const Sprites sprites, const Hero hero)
 {
     pull(sprites, hero);
     turn(sprites, -hero.yaw);
 }
 
-void xplback(const Sprites sprites, const Hero hero)
+void s_placeback(const Sprites sprites, const Hero hero)
 {
     turn(sprites, +hero.yaw);
     push(sprites, hero);
@@ -227,9 +227,9 @@ static void brokelb(const int ascii, const Inventory inv, const Timer tm)
         const Item item = i_rand();
         const int fit = i_add(inv.items, item);
         if(fit)
-            xttset(tm.renders, tm.renders + 120, false, "Picked up %s", item.cstr);
+            t_set(tm.renders, tm.renders + 120, false, "Picked up %s", item.cstr);
         else
-            xttset(tm.renders, tm.renders + 120, false, "Inventory Full");
+            t_set(tm.renders, tm.renders + 120, false, "Inventory Full");
     }
 }
 
@@ -249,7 +249,7 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
         brokelb(sprite->ascii, inv, tm);
 
         // Lootbags count as sprites, so killing a lootbag may drop another lootbag.
-        if(xd10() == 0)
+        if(u_d10() == 0)
             return dropit(sprites, attack, sprite->where);
     }
     else // Just hurt, not killed.
@@ -337,7 +337,7 @@ static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv,
     return sprites;
 }
 
-Sprites xhurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, const Timer tm)
+Sprites s_hurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Inventory inv, const Timer tm)
 {
     if(in.lu)
     {
@@ -363,7 +363,7 @@ static void idle(const Sprites sprites, const Timer tm)
     {
         Sprite* const sprite = &sprites.sprite[i];
 
-        if(xisdead(sprite->state))
+        if(s_dead(sprite->state))
             continue;
 
         if(!s_stunned(sprite, tm))
@@ -462,7 +462,7 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
         Sprite* const sprite = &sprites.sprite[i];
 
         // Mute check very important else segfault.
-        if(xisdead(sprite->state) || s_muted(sprite))
+        if(s_dead(sprite->state) || s_muted(sprite))
             continue;
 
         if(p_eql(hero.where, sprite->where, 2.5f))
@@ -480,7 +480,7 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
     }
 }
 
-Hero xcaretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Gauge gauge, const Timer tm)
+Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Gauge gauge, const Timer tm)
 {
     arrange(sprites, hero);
     idle(sprites, tm);
@@ -523,7 +523,7 @@ static Sprites dummy(const Sprites sprites, const Map map, const Point center)
     return append(sprites, s_register('b', avail(center, map)));
 }
 
-Sprites xspopulate(Sprites sprites, const Map map)
+Sprites s_populate(Sprites sprites, const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {
@@ -544,7 +544,7 @@ Sprites xspopulate(Sprites sprites, const Map map)
     return sprites;
 }
 
-Map xscount(const Sprites sprites, Map map)
+Map s_count(const Sprites sprites, Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {

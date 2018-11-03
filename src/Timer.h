@@ -10,8 +10,8 @@ typedef struct
 }
 Timer;
 
-Timer xtmnew(void);
+Timer t_new(void);
 
-Timer xtmtick(Timer, const int renders, const int ticks);
+Timer t_tick(Timer, const int renders, const int ticks);
 
-int xtmlo(const Timer);
+int t_lo(const Timer);

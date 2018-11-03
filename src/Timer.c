@@ -22,13 +22,13 @@ static int rise(const Timer tm)
     return lo(tm.last) && hi(tm.ticks);
 }
 
-Timer xtmnew(void)
+Timer t_new(void)
 {
     static Timer timer;
     return timer;
 }
 
-Timer xtmtick(Timer tm, const int renders, const int ticks)
+Timer t_tick(Timer tm, const int renders, const int ticks)
 {
     tm.last = tm.ticks;
     tm.ticks = ticks;
@@ -38,7 +38,7 @@ Timer xtmtick(Timer tm, const int renders, const int ticks)
     return tm;
 }
 
-int xtmlo(const Timer tm)
+int t_lo(const Timer tm)
 {
     return lo(tm.ticks);
 }

@@ -13,14 +13,14 @@ typedef struct
 }
 Title;
 
-void xttadvance(const int now);
+void t_advance(const int now);
 
-void xttset(const int start, const int end, const int linger, const char* const text, ...);
+void t_set(const int start, const int end, const int linger, const char* const text, ...);
 
-void xttinit(void);
+void t_init(void);
 
-void xttshow(const Text, const Sdl);
+void t_show(const Text, const Sdl);
 
-void xttclear(void);
+void t_clear(void);
 
-void xttstuckclear(void);
+void t_stuckclear(void);

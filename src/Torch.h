@@ -8,11 +8,9 @@ typedef struct
 }
 Torch;
 
-Torch xztorch(void);
-
 // Returns a value between 0 and 255 based on the torch light intensity and the distance of an object.
-int xilluminate(const Torch, const float distance);
+int t_illuminate(const Torch, const float distance);
 
-Torch xburn(const Torch);
+Torch t_burn(const Torch);
 
-Torch xsnuff(void);
+Torch t_snuff(void);

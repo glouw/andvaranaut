@@ -90,7 +90,7 @@ static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
 {
     // Projection.[ch] does the same thing, but this one accounts for sprite jitter.
     const int size = sprite->size * hero.fov.a.x * 0.5f * sdl.xres / sprite->where.x;
-    const int osize = xodd(size) ? size + 1 : size;
+    const int osize = u_odd(size) ? size + 1 : size;
     const int my = 0.5f * sdl.yres * (2.0f - hero.pitch);
     const int mx = 0.5f * sdl.xres;
     const int l = mx - osize * 0.5f;
@@ -113,7 +113,7 @@ static SDL_Rect rimage(SDL_Surface* const surface, const State state, const Fram
 static void rsprite(const Sdl sdl, const Text text, Sprite* const sprite, const Hero hero, SDL_Texture* const texture, const SDL_Rect image, const SDL_Rect target)
 {
     // Apply lighting to the sprite.
-    const int modding = xilluminate(hero.torch, sprite->where.x);
+    const int modding = t_illuminate(hero.torch, sprite->where.x);
     SDL_SetTextureColorMod(texture, modding, modding, modding);
 
     // Apply transparency to the sprite, if required.
@@ -151,7 +151,7 @@ static void rsprites(const Sdl sdl, const Text text, const Sprites sprites, Poin
                 SDL_Surface* const surface = sdl.surfaces.surface[selected];
                 SDL_Texture* const texture = sdl.textures.texture[selected];
                 const State state = sprite->state;
-                const Frame frame = xtmlo(tm) ? A : B;
+                const Frame frame = t_lo(tm) ? A : B;
                 const SDL_Rect image = rimage(surface, state, frame);
                 sprite->seen = clip(target, sdl.xres, sprite->where, zbuff);
                 if(sprite->seen.w > 0)
@@ -177,7 +177,7 @@ Sdl s_setup(const Args args)
         SDL_WINDOW_SHOWN);
 
     if(sdl.window == NULL)
-        xbomb("error: could not open window\n");
+        u_bomb("error: could not open window\n");
 
     sdl.renderer = SDL_CreateRenderer(
         sdl.window,
@@ -196,8 +196,8 @@ Sdl s_setup(const Args args)
     sdl.yres = args.yres;
     sdl.fps = args.fps;
     sdl.threads = args.threads;
-    sdl.surfaces = xpull();
-    sdl.textures = xcache(sdl.surfaces, sdl.renderer);
+    sdl.surfaces = s_pull();
+    sdl.textures = t_cache(sdl.surfaces, sdl.renderer);
     sdl.gui = '~' - ' ' + 26;
     sdl.wht = 0xFFDFEFD7;
     sdl.blk = 0xFF000000;
@@ -209,13 +209,13 @@ Sdl s_setup(const Args args)
 
 void s_render(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
 {
-    Point* const zbuff = xtoss(Point, sdl.xres);
+    Point* const zbuff = u_toss(Point, sdl.xres);
     const Line camera = l_rotate(hero.fov, hero.yaw);
-    const Vram vram = xvlock(sdl.canvas);
+    const Vram vram = v_lock(sdl.canvas);
 
     // Threaded software rendering.
     // Each thread handles vertical columns <a> to <b> of the screen.
-    Bundle* const b = xtoss(Bundle, sdl.threads);
+    Bundle* const b = u_toss(Bundle, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
     {
         b[i].a = (i + 0) * sdl.xres / sdl.threads;
@@ -229,7 +229,7 @@ void s_render(const Sdl sdl, const Text text, const Hero hero, const Sprites spr
         b[i].clouds = clouds;
         b[i].map = map;
     };
-    SDL_Thread** const threads = xtoss(SDL_Thread*, sdl.threads);
+    SDL_Thread** const threads = u_toss(SDL_Thread*, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
         threads[i] = SDL_CreateThread(b_raster, "n/a", &b[i]);
     for(int i = 0; i < sdl.threads; i++)
@@ -237,15 +237,15 @@ void s_render(const Sdl sdl, const Text text, const Hero hero, const Sprites spr
         int status; // Ignored.
         SDL_WaitThread(threads[i], &status);
     }
-    xvunlock(sdl.canvas);
+    v_unlock(sdl.canvas);
 
     // Render was done sideways for cache efficiency. Rotate upwards.
     churn(sdl);
 
     // Orientate sprites to player's gaze and render to screen. Place back to global coords afterwards.
-    xorient(sprites, hero);
+    s_orient(sprites, hero);
     rsprites(sdl, text, sprites, zbuff, hero, tm);
-    xplback(sprites, hero);
+    s_placeback(sprites, hero);
 
     // Cleanup.
     free(zbuff);
@@ -287,7 +287,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
     if(g.count > 0)
     {
         const int state = it.amplitude / 2.0f;
-        const int width = it.amplitude * xsinc(g.count, it.period) + state;
+        const int width = it.amplitude * u_sinc(g.count, it.period) + state;
 
         const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
@@ -427,7 +427,7 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
         const int index = sprite->ascii - ' ';
         const int w = sdl.surfaces.surface[index]->w / FRAMES;
         const int h = sdl.surfaces.surface[index]->h / STATES;
-        const SDL_Rect from = { w * xtmlo(tm), h * sprite->state, w, h };
+        const SDL_Rect from = { w * t_lo(tm), h * sprite->state, w, h };
         const SDL_Rect to = {
             (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
             (int) ((ov.h * sprite->where.y - ov.h / 1) + ov.py),
@@ -452,7 +452,7 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
         {
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
             const int h = sdl.surfaces.surface[i]->h / STATES;
-            const SDL_Rect from = { w * xtmlo(tm), h * IDLE, w, h };
+            const SDL_Rect from = { w * t_lo(tm), h * IDLE, w, h };
             if(clipping(sdl, ov, to))
                 continue;
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
@@ -470,7 +470,7 @@ void s_view(const Sdl sdl, const Overview ov, const Sprites sprites, const Map m
 }
 
 // Draws status bar (one of health, magic, or fatigue).
-void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, const int size, const Bar bar)
+void drawbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, const int size, const Bar bar)
 {
     const int max =
         bar == HPS ? hero.hpsmax :
@@ -492,7 +492,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
     const SDL_Rect grite = { 0, 64, w, w };
 
     // Will animate bar to flicker if below threshold.
-    const int frame = xtmlo(tm);
+    const int frame = t_lo(tm);
     const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : 0), w, w };
     const SDL_Rect empty[] = {
         { 0, fluid.y + 2 * w, w, w }, // 75%.
@@ -507,14 +507,14 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
         const SDL_Rect to = { ww * i, yy, ww, ww };
 
         // Full fluid level.
-        if(xfl(lvl) > i)
+        if(u_fl(lvl) > i)
             SDL_RenderCopy(sdl.renderer, texture, &fluid, &to);
 
         // Partial fluid level.
-        if(xfl(lvl) == i)
-            xdec(lvl) > 0.75f ? SDL_RenderCopy(sdl.renderer, texture, &empty[0], &to) :
-            xdec(lvl) > 0.50f ? SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to) :
-            xdec(lvl) > 0.25f ? SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to) : 0;
+        if(u_fl(lvl) == i)
+            u_dec(lvl) > 0.75f ? SDL_RenderCopy(sdl.renderer, texture, &empty[0], &to) :
+            u_dec(lvl) > 0.50f ? SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to) :
+            u_dec(lvl) > 0.25f ? SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to) : 0;
 
         // Glass around fluid.
         SDL_RenderCopy(sdl.renderer, texture, i == 0 ? &gleft : i == max - 1 ? &grite : &glass, &to);
@@ -525,9 +525,9 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
 void s_drawbars(const Sdl sdl, const Hero hero, const Timer tm)
 {
     const int size = 1;
-    xdbar(sdl, hero, 2, tm, size, HPS);
-    xdbar(sdl, hero, 1, tm, size, MNA);
-    xdbar(sdl, hero, 0, tm, size, FTG);
+    drawbar(sdl, hero, 2, tm, size, HPS);
+    drawbar(sdl, hero, 1, tm, size, MNA);
+    drawbar(sdl, hero, 0, tm, size, FTG);
 }
 
 // Draws the inventory backpanel. Selected inventory item is highlighted.
@@ -589,10 +589,10 @@ void s_drawmap(const Sdl sdl, const Map map, const Point where)
 
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
-    const Vram vram = xvlock(texture);
-    xvdrooms(vram, map, sdl.wht, sdl.blk);
-    xvddot(vram, where, 3, sdl.red, sdl.blk);
-    xvunlock(texture);
+    const Vram vram = v_lock(texture);
+    v_drawrooms(vram, map, sdl.wht, sdl.blk);
+    v_drawdot(vram, where, 3, sdl.red, sdl.blk);
+    v_unlock(texture);
 
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };
     SDL_RenderCopy(sdl.renderer, texture, NULL, &dst);
@@ -606,13 +606,13 @@ void s_drawfps(const Sdl sdl, const Text text, const char* const fmt, ...)
 
     // Get string length for formatter.
     va_start(args, fmt);
-        const int len = vsnprintf(NULL, 0, fmt, args);
+    const int len = vsnprintf(NULL, 0, fmt, args);
     va_end(args);
 
     // Rewind and format.
     va_start(args, fmt);
-        char* const str = xtoss(char, len + 1);
-        vsprintf(str, fmt, args);
+    char* const str = u_toss(char, len + 1);
+    vsprintf(str, fmt, args);
     va_end(args);
 
     f_putbr(text.fill, text.line, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);

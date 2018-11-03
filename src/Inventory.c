@@ -19,7 +19,7 @@ Inventory i_create(void)
         i_new(SCROLL, 12),
         i_new(LETTER, 0),
     };
-    for(int i = 0; i < xlen(noobits); i++)
+    for(int i = 0; i < u_len(noobits); i++)
         i_add(inv.items, noobits[i]);
     return inv;
 }
@@ -65,7 +65,7 @@ Inventory i_whatis(Inventory inv, const Scroll sc, const Timer tm)
         if(it.c == SCROLL)
         {
             char* const squares = s_str(sc, it.index);
-            xttset(a, b, true,
+            t_set(a, b, true,
                 "%s\n"
                 "%s\n"
                 "%s\n"
@@ -75,12 +75,12 @@ Inventory i_whatis(Inventory inv, const Scroll sc, const Timer tm)
         }
         else
         if(it.c == LETTER)
-            xttset(a, b, true,
+            t_set(a, b, true,
                 "%s\n"
                 "%s\n",
                 it.name, it.desc);
         else
-            xttset(a, b, true,
+            t_set(a, b, true,
                 "%s\n"
                 "%s\n"
                 "%s\n"

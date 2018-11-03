@@ -16,10 +16,10 @@ static char** reset(char** block, const int rows, const int cols, const int blok
 
 static char** mnew(const int rows, const int cols, const int blok)
 {
-    char** block = xtoss(char*, rows);
+    char** block = u_toss(char*, rows);
 
     for(int row = 0; row < rows; row++)
-        block[row] = xtoss(char, cols);
+        block[row] = u_toss(char, cols);
 
     return reset(block, rows, cols, blok);
 }
@@ -65,14 +65,14 @@ Theme lutheme(const Map map, const Point where)
 
 static const char* themestr(const Map map, const Point where)
 {
-    return xthname(lutheme(map, where));
+    return t_name(lutheme(map, where));
 }
 
 Theme m_theme(const Theme last, const Map map, const Point where, const Timer tm)
 {
     const Theme now = lutheme(map, where);
     if(now != last && now != NO_THEME)
-        xttset(tm.renders, tm.renders + 120, false, themestr(map, where));
+        t_set(tm.renders, tm.renders + 120, false, themestr(map, where));
     return now;
 }
 
@@ -122,7 +122,7 @@ void m_room(const Map map, const Point where, const int w, const int h, const Pa
             break;
 
         default:
-            xbomb("room: party not supported\n");
+            u_bomb("room: party not supported\n");
             break;
         }
     }
@@ -158,7 +158,7 @@ void m_platform(const Map map, const int x, const int y, const Party p)
         case FLORING: map.floring[yy][xx] = '"'; break;
         case CEILING: map.ceiling[yy][xx] = '#'; break;
         default:
-            xbomb("platform: party not supported\n");
+            u_bomb("platform: party not supported\n");
             break;
         }
     }
@@ -171,7 +171,7 @@ static void trapdoor(const Map map, const int x, const int y, const Party p)
     case FLORING: map.floring[y][x] = '~'; break;
     case CEILING: map.ceiling[y][x] = '~'; break;
     default:
-        xbomb("trapdoor: party not supported\n");
+        u_bomb("trapdoor: party not supported\n");
         break;
     }
 }

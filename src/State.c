@@ -1,6 +1,6 @@
 #include "State.h"
 
-int xishurt(const State state)
+int s_hurt(const State state)
 {
     return state == HURT_N
         || state == HURT_E
@@ -8,7 +8,7 @@ int xishurt(const State state)
         || state == HURT_W;
 }
 
-int xisdead(const State state)
+int s_dead(const State state)
 {
     return state == DEAD_N
         || state == DEAD_E
@@ -16,7 +16,7 @@ int xisdead(const State state)
         || state == DEAD_W;
 }
 
-int xisalive(const State state)
+int s_alive(const State state)
 {
-    return !xisdead(state);
+    return !s_dead(state);
 }

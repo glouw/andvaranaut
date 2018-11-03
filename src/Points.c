@@ -4,14 +4,14 @@
 
 Points p_new(const int max)
 {
-    const Points ps = { xtoss(Point, max), 0, max };
+    const Points ps = { u_toss(Point, max), 0, max };
     return ps;
 }
 
 Points p_append(Points ps, const Point p)
 {
     if(ps.count == ps.max)
-        xbomb("points size limitation reached\n");
+        u_bomb("points size limitation reached\n");
     ps.point[ps.count++] = p;
     return ps;
 }

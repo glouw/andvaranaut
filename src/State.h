@@ -33,8 +33,8 @@ typedef enum
 }
 State;
 
-int xishurt(const State);
+int s_hurt(const State);
 
-int xisdead(const State);
+int s_dead(const State);
 
-int xisalive(const State);
+int s_alive(const State);

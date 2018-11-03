@@ -9,7 +9,7 @@ Gauge g_new(void)
     static Gauge zero;
     Gauge g = zero;
     g.max = 100;
-    g.points = xtoss(Point, g.max);
+    g.points = u_toss(Point, g.max);
     g.divisor = 2;
     return g;
 }
@@ -39,9 +39,9 @@ static Gauge fizzle(Gauge g, const Timer tm)
         "So tired...",
         "Muscles aching...",
     };
-    const int which = rand() % xlen(tireds);
+    const int which = rand() % u_len(tireds);
     const char* const tired = tireds[which];
-    xttset(tm.renders, tm.renders + 120, false, tired);
+    t_set(tm.renders, tm.renders + 120, false, tired);
 
     return g;
 }

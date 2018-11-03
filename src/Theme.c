@@ -2,9 +2,9 @@
 
 #include "util.h"
 
-Theme* xthrand(const int count)
+Theme* t_rand(const int count)
 {
-    Theme* const th = xwipe(Theme, count);
+    Theme* const th = u_wipe(Theme, count);
     for(int i = 0; i < count; i++)
     {
         const Theme theme = (Theme) (rand() % (int) THEMES);
@@ -13,7 +13,7 @@ Theme* xthrand(const int count)
     return th;
 }
 
-const char* xthname(const Theme th)
+const char* t_name(const Theme th)
 {
     switch(th)
     {

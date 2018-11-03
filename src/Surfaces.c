@@ -6,7 +6,7 @@ static SDL_Surface* load(const char* const path)
 {
     SDL_Surface* const bmp = SDL_LoadBMP(path);
     if(bmp == NULL)
-        xbomb("%s\n", SDL_GetError());
+        u_bomb("%s\n", SDL_GetError());
 
     // Color keys can not be set in SDL when an alpha channel is present.
     SDL_PixelFormat* const allocation = SDL_AllocFormat(SDL_PIXELFORMAT_RGB888);
@@ -23,7 +23,7 @@ static SDL_Surface* load(const char* const path)
     return converted;
 }
 
-Surfaces xpull(void)
+Surfaces s_pull(void)
 {
     static const char* const names[] = {
         // Sprites: Alpha ASCII
@@ -151,8 +151,8 @@ Surfaces xpull(void)
         /* ~ + 25 */ "art/items/wand.bmp",
         /* ~ + 26 */ "art/gui/gui.bmp",
     };
-    const int count = xlen(names);
-    SDL_Surface** const surface = xtoss(SDL_Surface*, count);
+    const int count = u_len(names);
+    SDL_Surface** const surface = u_toss(SDL_Surface*, count);
 
     for(int i = 0; i < count; i++)
         surface[i] = load(names[i]);

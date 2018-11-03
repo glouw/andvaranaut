@@ -72,7 +72,7 @@ float p_slope(const Point a)
 Point p_jmphor(const Point a, const Point b)
 {
     Point out;
-    out.x = b.x > 0.0f ? xfl(a.x + 1.0f) : xcl(a.x - 1.0f);
+    out.x = b.x > 0.0f ? u_fl(a.x + 1.0f) : u_cl(a.x - 1.0f);
     out.y = p_slope(b) * (out.x - a.x) + a.y;
     return out;
 }
@@ -80,7 +80,7 @@ Point p_jmphor(const Point a, const Point b)
 Point p_jmpver(const Point a, const Point b)
 {
     Point out;
-    out.y = b.y > 0.0f ? xfl(a.y + 1.0f) : xcl(a.y - 1.0f);
+    out.y = b.y > 0.0f ? u_fl(a.y + 1.0f) : u_cl(a.y - 1.0f);
     out.x = (out.y - a.y) / p_slope(b) + a.x;
     return out;
 }
@@ -88,8 +88,8 @@ Point p_jmpver(const Point a, const Point b)
 Point p_mid(const Point a)
 {
     Point out;
-    out.x = xfl(a.x) + 0.5f;
-    out.y = xfl(a.y) + 0.5f;
+    out.x = u_fl(a.x) + 0.5f;
+    out.y = u_fl(a.y) + 0.5f;
     return out;
 }
 
@@ -140,8 +140,8 @@ Point p_abs(const Point a)
 Point p_snap(const Point a, const int grid)
 {
     Point out;
-    out.x = xfl(a.x / grid) * grid;
-    out.y = xfl(a.y / grid) * grid;
+    out.x = u_fl(a.x / grid) * grid;
+    out.y = u_fl(a.y / grid) * grid;
     return out;
 }
 

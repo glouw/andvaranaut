@@ -1,6 +1,6 @@
 #include "Vram.h"
 
-Vram xvlock(SDL_Texture* const texture)
+Vram v_lock(SDL_Texture* const texture)
 {
     void* raw;
     int pitch;
@@ -9,12 +9,12 @@ Vram xvlock(SDL_Texture* const texture)
     return vram;
 }
 
-void xvunlock(SDL_Texture* const texture)
+void v_unlock(SDL_Texture* const texture)
 {
     SDL_UnlockTexture(texture);
 }
 
-void xvdrooms(const Vram vram, const Map map, const uint32_t in, const uint32_t out)
+void v_drawrooms(const Vram vram, const Map map, const uint32_t in, const uint32_t out)
 {
     for(int y = 1; y < map.rows - 1; y++)
     for(int x = 1; x < map.cols - 1; x++)
@@ -28,7 +28,7 @@ void xvdrooms(const Vram vram, const Map map, const uint32_t in, const uint32_t 
     }
 }
 
-void xvddot(const Vram vram, const Point where, const int size, const uint32_t in, const uint32_t out)
+void v_drawdot(const Vram vram, const Point where, const int size, const uint32_t in, const uint32_t out)
 {
     for(int y = -size; y <= size; y++)
     for(int x = -size; x <= size; x++)

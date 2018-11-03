@@ -11,7 +11,7 @@ static Sprite initspeech(Sprite sprite)
     switch(sprite.ascii)
     {
     case 'b':
-        sprite.speech = xspgreeting();
+        sprite.speech = s_greet();
         break;
     default:
         static Speech zero;
@@ -88,8 +88,8 @@ static void check(const Sprite table[], const int len, const char first, const c
 
 void s_test(void)
 {
-    check(lower, xlen(lower), 'a', 'z');
-    check(upper, xlen(upper), 'A', 'Z');
+    check(lower, u_len(lower), 'a', 'z');
+    check(upper, u_len(upper), 'A', 'Z');
 }
 
 Sprite s_register(const int ascii, const Point where)
@@ -116,7 +116,7 @@ int s_inanimate(const int ascii)
 
 int s_useless(const Sprite* const sprite)
 {
-    return xisdead(sprite->state) || s_cosmetic(sprite->ascii);
+    return s_dead(sprite->state) || s_cosmetic(sprite->ascii);
 }
 
 int s_nocount(const Sprite* const sprite)
@@ -126,7 +126,7 @@ int s_nocount(const Sprite* const sprite)
 
 int s_stuck(const Sprite* const sprite)
 {
-    return xisdead(sprite->state) || xishurt(sprite->state);
+    return s_dead(sprite->state) || s_hurt(sprite->state);
 }
 
 void s_place(Sprite* const sprite, const Point to)

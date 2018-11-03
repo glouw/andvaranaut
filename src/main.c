@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 
     const Args args = a_parse(argc, argv);
 
-    World wd = xwinit(32);
+    World wd = w_make(32);
 
     const int floor = 0;
 
@@ -41,13 +41,13 @@ int main(int argc, char* argv[])
 
     Theme theme = NO_THEME;
 
-    Timer tm = xtmnew();
+    Timer tm = t_new();
 
     Sdl sdl = s_setup(args);
 
-    const Text text = xtxnew("art/gui/SDS_8x8.ttf", 24, sdl.yel, sdl.blk);
+    const Text text = t_build("art/gui/SDS_8x8.ttf", 24, sdl.yel, sdl.blk);
 
-    xttinit();
+    t_init();
 
     // Game loop. X-Resolution 512 reserved for performance testing.
     for(int renders = 0, fps = 0; args.xres == 512 ? renders < 20 : !in.done; renders++)
@@ -56,9 +56,9 @@ int main(int argc, char* argv[])
 
         const int ticks = renders / 10;
 
-        tm = xtmtick(tm, renders, ticks);
+        tm = t_tick(tm, renders, ticks);
 
-        xttadvance(renders);
+        t_advance(renders);
 
         theme = m_theme(theme, wd.map[me.floor], me.where, tm);
 
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 
             m_edit(wd.map[me.floor], ov);
 
-            wd.sprites[me.floor] = xlay(wd.sprites[me.floor], wd.map[me.floor], ov);
+            wd.sprites[me.floor] = s_lay(wd.sprites[me.floor], wd.map[me.floor], ov);
 
             s_view(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], tm);
         }
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 
             clouds = f_stream(clouds);
 
-            me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, gg, tm);
+            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, gg, tm);
 
             inv = i_select(inv, in);
 
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 
             s_drawmap(sdl, wd.map[me.floor], me.where);
 
-            wd.map[me.floor] = xscount(wd.sprites[me.floor], wd.map[me.floor]);
+            wd.map[me.floor] = s_count(wd.sprites[me.floor], wd.map[me.floor]);
 
             m_barricade(wd.map[me.floor]);
 
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
 
-                xttstuckclear();
+                t_stuckclear();
 
                 const Attack atk = s_drawgauge(sdl, gg, inv, sc);
 
@@ -131,10 +131,10 @@ int main(int argc, char* argv[])
 
                 me = h_sustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);
 
-                wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, tm);
+                wd.sprites[me.floor] = s_hurt(wd.sprites[me.floor], atk, me, in, inv, tm);
             }
         }
-        xttshow(text, sdl);
+        t_show(text, sdl);
 
         s_drawfps(sdl, text, "%d", fps);
 

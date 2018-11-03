@@ -13,4 +13,4 @@ typedef struct
 World;
 
 // Builds a world with the number of floors specified.
-World xwinit(const int floors);
+World w_make(const int floors);

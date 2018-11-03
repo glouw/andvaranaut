@@ -4,29 +4,29 @@
 #include <math.h>
 #include <ctype.h>
 
-char* dups(const char* s)
+char* u_dups(const char* s)
 {
-    char* const d = xtoss(char, strlen(s) + 1);
+    char* const d = u_toss(char, strlen(s) + 1);
     strcpy(d, s);
     return d;
 }
 
-int xfl(const float x)
+int u_fl(const float x)
 {
     return (int) x - (x < (int) x);
 }
 
-int xcl(const float x)
+int u_cl(const float x)
 {
     return (int) x + (x > (int) x);
 }
 
-float xdec(const float x)
+float u_dec(const float x)
 {
     return x - (int) x;
 }
 
-int xlns(FILE* const file)
+int u_lines(FILE* const file)
 {
     int ch = EOF;
     int lines = 0;
@@ -43,39 +43,39 @@ int xlns(FILE* const file)
     return lines;
 }
 
-char* xreadln(FILE* const file)
+char* u_readln(FILE* const file)
 {
     int ch = EOF;
     int reads = 0;
     int size = 128;
-    char* line = xtoss(char, size);
+    char* line = u_toss(char, size);
     while((ch = getc(file)) != '\n' && ch != EOF)
     {
         line[reads++] = ch;
         if(reads + 1 == size)
-            xretoss(line, char, size *= 2);
+            u_retoss(line, char, size *= 2);
     }
     line[reads] = '\0';
     return line;
 }
 
-void xbomb(const char* const message, ...)
+void u_bomb(const char* const message, ...)
 {
     va_list args;
 
     va_start(args, message);
-        vprintf(message, args);
+    vprintf(message, args);
     va_end(args);
 
     exit(1);
 }
 
-float xsinc(const float x, const float p)
+float u_sinc(const float x, const float p)
 {
-    return sinf(FPI * x * p) / (FPI * x * p);
+    return sinf(U_PI * x * p) / (U_PI * x * p);
 }
 
-int xodd(const int a)
+int u_odd(const int a)
 {
     return a % 2;
 }

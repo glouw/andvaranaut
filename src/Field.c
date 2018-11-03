@@ -13,10 +13,10 @@ Field f_prepare(const Map map, const float aura)
     field.res = 2;
     field.rows = field.res * map.rows;
     field.cols = field.res * map.cols;
-    field.mesh = xtoss(float*, field.rows);
+    field.mesh = u_toss(float*, field.rows);
     field.aura = field.res * aura;
     for(int j = 0; j < field.rows; j++)
-        field.mesh[j] = xtoss(float, field.cols);
+        field.mesh[j] = u_toss(float, field.cols);
     return field;
 }
 
@@ -27,7 +27,7 @@ int f_on(const Field field, const int y, const int x)
 
 static void box(const Field field, const int y, const int x, const int w)
 {
-    Atom* const atoms = xtoss(Atom, 8 * w);
+    Atom* const atoms = u_toss(Atom, 8 * w);
     int count = 0;
     const int t = y - w; // Top.
     const int b = y + w; // Bottom.
@@ -70,7 +70,7 @@ Point f_force(const Field field, const Point from, const Point to, const Map map
         { +0.0f, -1.0f }, // N
         { +1.0f, -1.0f }, // NE
     };
-    const int len = xlen(v);
+    const int len = u_len(v);
     float grads[len];
     for(int i = 0; i < len; i++)
         grads[i] = 0.0f;

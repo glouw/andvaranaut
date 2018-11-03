@@ -7,14 +7,14 @@
 
 static Tris tsnew(const int max)
 {
-    const Tris ts = { xtoss(Tri, max), 0, max };
+    const Tris ts = { u_toss(Tri, max), 0, max };
     return ts;
 }
 
 static Tris tsadd(Tris tris, const Tri tri)
 {
     if(tris.count == tris.max)
-        xbomb("tris size limitation reached\n");
+        u_bomb("tris size limitation reached\n");
 
     tris.tri[tris.count++] = tri;
     return tris;
@@ -262,7 +262,7 @@ static void revdel(Tris edges, const int w, const int h, const Flags flags)
     }
 }
 
-static void mdups(const Tris edges, const Flags flags)
+static void mu_dups(const Tris edges, const Flags flags)
 {
     for(int i = 0; i < edges.count; i++)
     for(int j = 0; j < edges.count; j++)
@@ -287,8 +287,8 @@ static void bone(const Map map, const Tri e, const int w, const int h)
     m_room(map, e.a, w, h, WALLING);
     m_room(map, e.b, w, h, WALLING);
 
-    if(xd2() == 0) m_room(map, e.a, w, h, CEILING);
-    if(xd2() == 0) m_room(map, e.b, w, h, CEILING);
+    if(u_d2() == 0) m_room(map, e.a, w, h, CEILING);
+    if(u_d2() == 0) m_room(map, e.b, w, h, CEILING);
 
     m_corridor(map, e.a, e.b);
 }
@@ -309,17 +309,17 @@ static void carve(const Map map, const Tris edges, const Flags flags)
     }
 }
 
-Map xtgen(const Points extra)
+Map t_gen(const Points extra)
 {
     const int w = 150;
     const int h = 350;
     const int grid = 30;
-    const int max = 20 * (1 + xd2());
+    const int max = 20 * (1 + u_d2());
     const int ntraps = 2;
     const int border = 2 * grid;
 
-    if(xodd(grid))
-        xbomb("Grid size must be even\n");
+    if(u_odd(grid))
+        u_bomb("Grid size must be even\n");
 
     const Flags flags = {
         { 0.0, 0.0 },
@@ -338,7 +338,7 @@ Map xtgen(const Points extra)
 
     // Build a map with trapdoors and carve out rooms.
     const Map map = m_gen(h, w, trapdoors, rooms, grid);
-    mdups(edges, flags);
+    mu_dups(edges, flags);
     carve(map, edges, flags);
 
     free(tris.tri);

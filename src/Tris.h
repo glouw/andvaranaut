@@ -11,4 +11,4 @@ typedef struct
 }
 Tris;
 
-Map xtgen(const Points extra);
+Map t_gen(const Points extra);

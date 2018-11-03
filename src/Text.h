@@ -9,4 +9,4 @@ typedef struct
 }
 Text;
 
-Text xtxnew(const char* const path, const int size, const uint32_t inner, const uint32_t outer);
+Text t_build(const char* const path, const int size, const uint32_t inner, const uint32_t outer);

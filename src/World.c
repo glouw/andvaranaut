@@ -6,7 +6,7 @@
 static World append(World w, const Map map, const Sprites sprites)
 {
     if(w.floor == w.floors)
-        xbomb("World size limitation reached");
+        u_bomb("World size limitation reached");
     w.map[w.floor] = map;
     w.sprites[w.floor] = sprites;
     w.floor++;
@@ -15,7 +15,7 @@ static World append(World w, const Map map, const Sprites sprites)
 
 static World wnew(const int floors)
 {
-    const World w = { xtoss(Map, floors), xtoss(Sprites, floors), 0, floors };
+    const World w = { u_toss(Map, floors), u_toss(Sprites, floors), 0, floors };
     return w;
 }
 
@@ -23,7 +23,7 @@ static World wnew(const int floors)
 static World build(World w)
 {
     for(int i = 0; i < w.floors; i++)
-        w = append(w, xtgen(i == 0 ? p_new(0) : w.map[i - 1].trapdoors), xsnew(128));
+        w = append(w, t_gen(i == 0 ? p_new(0) : w.map[i - 1].trapdoors), s_spawn(128));
     return w;
 }
 
@@ -48,10 +48,10 @@ static void attach(const World w)
 static void populate(const World w)
 {
     for(int i = 0; i < w.floors; i++)
-        w.sprites[i] = xspopulate(w.sprites[i], w.map[i]);
+        w.sprites[i] = s_populate(w.sprites[i], w.map[i]);
 }
 
-World xwinit(const int floors)
+World w_make(const int floors)
 {
     World w = build(wnew(floors));
     theme(w);

@@ -22,7 +22,7 @@ Hero h_born(const float focal, const Point where, const int floor, const Gauge g
     hero.where = where;
     hero.speed = 0.12f;
     hero.acceleration = 0.0150f;
-    hero.torch = xsnuff();
+    hero.torch = t_snuff();
     hero.reach = 0.75f;
     hero.aura = 12;
     hero.pitch = 1.0f;
@@ -190,7 +190,7 @@ Hero h_teleport(Hero hero, const Map map)
         hero.height = 0.90;
     }
     hero.pitch = 1.0f;
-    hero.torch = xsnuff();
+    hero.torch = t_snuff();
     return hero;
 }
 
@@ -217,6 +217,6 @@ Hero h_sustain(Hero hero, const Map map, const Input input, const Flow current, 
     hero = vert(hero, map, input);
     hero = move(hero, map, input, current);
     hero = recoil(hero, last);
-    hero.torch = xburn(hero.torch);
+    hero.torch = t_burn(hero.torch);
     return hero;
 }
