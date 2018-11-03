@@ -5,15 +5,10 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 
-Overview xzov(void)
+Overview o_init(void)
 {
-    static Overview ov;
-    return ov;
-}
-
-Overview xinit(void)
-{
-    Overview ov = xzov();
+    static Overview zero;
+    Overview ov = zero;
     ov.where.x = -1.0f;
     ov.where.y = -1.0f;
     ov.w = 32;
@@ -31,14 +26,14 @@ static Overview reset(Overview ov)
     return ov;
 }
 
-Overview xbackpan(Overview ov, const Point where, const int xres, const int yres)
+Overview o_backpan(Overview ov, const Point where, const int xres, const int yres)
 {
     ov.px = -ov.w * where.x + xres / 2;
     ov.py = -ov.h * where.y + yres / 2;
     return ov;
 }
 
-Overview xupdate(Overview ov, const Input input, const int xres)
+Overview o_update(Overview ov, const Input input, const int xres)
 {
     const int textures = '~' - ' ' + 1;
 

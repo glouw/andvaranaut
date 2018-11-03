@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 {
 #if 1
     // Unit tests.
-    xittest();
+    i_test();
 
     xstest();
 #endif
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 
     Hero me = h_born(args.focal, start, floor, gg);
 
-    Overview ov = xinit();
+    Overview ov = o_init();
 
     Flow current = f_start(-1.0f / 6.0f);
 
@@ -33,11 +33,11 @@ int main(int argc, char* argv[])
 
     Field fd = f_prepare(wd.map[me.floor], me.aura);
 
-    Inventory inv = xinvnew();
+    Inventory inv = i_create();
 
     Scroll sc = xscnew();
 
-    Input in = xready(args.msen);
+    Input in = i_ready(args.msen);
 
     Theme theme = NO_THEME;
 
@@ -60,16 +60,16 @@ int main(int argc, char* argv[])
 
         xttadvance(renders);
 
-        theme = xmthemett(theme, wd.map[me.floor], me.where, tm);
+        theme = m_theme(theme, wd.map[me.floor], me.where, tm);
 
         // World edit mode.
         if(in.key[SDL_SCANCODE_TAB])
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
 
-            ov = xupdate(ov, in, sdl.xres);
+            ov = o_update(ov, in, sdl.xres);
 
-            xmedit(wd.map[me.floor], ov);
+            m_edit(wd.map[me.floor], ov);
 
             wd.sprites[me.floor] = xlay(wd.sprites[me.floor], wd.map[me.floor], ov);
 
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
                 f_ruin(fd);
                 fd = f_prepare(wd.map[me.floor], me.aura);
             }
-            ov = xbackpan(ov, me.where, sdl.xres, sdl.yres);
+            ov = o_backpan(ov, me.where, sdl.xres, sdl.yres);
 
             current = f_stream(current);
 
@@ -94,9 +94,9 @@ int main(int argc, char* argv[])
 
             me = xcaretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, gg, tm);
 
-            inv = xinvselect(inv, in);
+            inv = i_select(inv, in);
 
-            inv = xinvhilite(inv, in, sdl.xres);
+            inv = i_highlite(inv, in, sdl.xres);
 
             xrender(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
 
@@ -108,14 +108,14 @@ int main(int argc, char* argv[])
 
             wd.map[me.floor] = xscount(wd.sprites[me.floor], wd.map[me.floor]);
 
-            xmbarricade(wd.map[me.floor]);
+            m_barricade(wd.map[me.floor]);
 
             // Inventory management.
-            if(xinvuse(in))
+            if(i_invuse(in))
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
 
-                inv = xwhatis(inv, sc, tm);
+                inv = i_whatis(inv, sc, tm);
             }
             // World Interaction.
             else
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
 
         xpresent(sdl);
 
-        in = xpump(in);
+        in = i_pump(in);
 
         // Caps framerate in software.
         const int t1 = SDL_GetTicks();

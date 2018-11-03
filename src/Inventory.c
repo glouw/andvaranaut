@@ -5,22 +5,22 @@
 
 #include <SDL2/SDL.h>
 
-Inventory xinvnew(void)
+Inventory i_create(void)
 {
-    const Inventory inv = { xitsnew(16), 0, 32, -1, false, false };
+    const Inventory inv = { i_build(16), 0, 32, -1, false, false };
     const Item noobits[] = {
-        xitnew(SHORTWEP, 0),
-        xitnew(WAND, 0),
-        xitnew(AMMO, 8),
-        xitnew(AMMO, 14),
-        xitnew(SCROLL, 3),
-        xitnew(SCROLL, 1),
-        xitnew(SCROLL, 9),
-        xitnew(SCROLL, 12),
-        xitnew(LETTER, 0),
+        i_new(SHORTWEP, 0),
+        i_new(WAND, 0),
+        i_new(AMMO, 8),
+        i_new(AMMO, 14),
+        i_new(SCROLL, 3),
+        i_new(SCROLL, 1),
+        i_new(SCROLL, 9),
+        i_new(SCROLL, 12),
+        i_new(LETTER, 0),
     };
     for(int i = 0; i < xlen(noobits); i++)
-        xitsadd(inv.items, noobits[i]);
+        i_add(inv.items, noobits[i]);
     return inv;
 }
 
@@ -29,7 +29,7 @@ static int inside(const Inventory inv, const Input in, const int xres)
     return in.x > xres - inv.width;
 }
 
-Inventory xinvselect(Inventory inv, const Input in)
+Inventory i_select(Inventory inv, const Input in)
 {
     if(in.key[SDL_SCANCODE_1]) inv.selected = 0;
     if(in.key[SDL_SCANCODE_2]) inv.selected = 1;
@@ -38,9 +38,9 @@ Inventory xinvselect(Inventory inv, const Input in)
     return inv;
 }
 
-Inventory xinvhilite(Inventory inv, const Input in, const int xres)
+Inventory i_highlite(Inventory inv, const Input in, const int xres)
 {
-    inv.hilited = !xinvuse(in) ? -1 : inside(inv, in, xres) ? in.y / inv.width : -1;
+    inv.hilited = !i_invuse(in) ? -1 : inside(inv, in, xres) ? in.y / inv.width : -1;
     return inv;
 }
 
@@ -53,7 +53,7 @@ static Inventory tilechange(Inventory inv)
     return inv;
 }
 
-Inventory xwhatis(Inventory inv, const Scroll sc, const Timer tm)
+Inventory i_whatis(Inventory inv, const Scroll sc, const Timer tm)
 {
     inv = tilechange(inv);
     if(inv.change && inv.hilited < inv.items.max)

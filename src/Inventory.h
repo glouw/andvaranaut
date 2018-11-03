@@ -16,10 +16,10 @@ typedef struct
 }
 Inventory;
 
-Inventory xinvnew(void);
+Inventory i_create(void);
 
-Inventory xinvselect(Inventory, const Input);
+Inventory i_select(Inventory, const Input);
 
-Inventory xinvhilite(Inventory, const Input, const int xres);
+Inventory i_highlite(Inventory, const Input, const int xres);
 
-Inventory xwhatis(Inventory, const Scroll, const Timer);
+Inventory i_whatis(Inventory, const Scroll, const Timer);

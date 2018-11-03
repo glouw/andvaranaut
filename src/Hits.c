@@ -4,12 +4,6 @@
 #include "Line.h"
 #include "util.h"
 
-Hits xzhits(void)
-{
-    static Hits hits;
-    return hits;
-}
-
 static Hit* push(Hit* ceiling, const Hit hit)
 {
     Hit* temp = xtoss(Hit, 1);
@@ -60,7 +54,8 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     return step(hits, ray, direction, map);
 }
 
-Hits xmarch(const Point where, const Point direction, const Map map)
+Hits h_march(const Point where, const Point direction, const Map map)
 {
-    return step(xzhits(), where, direction, map);
+    static Hits zero;
+    return step(zero, where, direction, map);
 }

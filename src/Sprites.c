@@ -29,7 +29,7 @@ static Sprites append(Sprites sprites, const Sprite sprite)
 
 Sprites xlay(Sprites sprites, const Map map, const Overview ov)
 {
-    if(xmout(map, ov.where))
+    if(m_out(map, ov.where))
         return sprites;
 
     const int ascii = ov.selected + ' ';
@@ -101,6 +101,7 @@ static void arrange(const Sprites sprites, const Hero hero)
 
 static void bound(const Sprites sprites, const Map map)
 {
+    static Point zero;
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
@@ -109,14 +110,14 @@ static void bound(const Sprites sprites, const Map map)
         if(p_tile(sprite->where, map.walling))
         {
             xsplace(sprite, p_mid(sprite->last));
-            sprite->velocity = p_zero();
+            sprite->velocity = zero;
         }
 
         // Stuck in water.
         if(p_block(sprite->where, map.floring) == ' ')
         {
             xsplace(sprite, p_mid(sprite->last));
-            sprite->velocity = p_zero();
+            sprite->velocity = zero;
         }
     }
 }
@@ -223,8 +224,8 @@ static void brokelb(const int ascii, const Inventory inv, const Timer tm)
 {
     if(ascii == 'd')
     {
-        const Item item = xitrand();
-        const int fit = xitsadd(inv.items, item);
+        const Item item = i_rand();
+        const int fit = i_add(inv.items, item);
         if(fit)
             xttset(tm.renders, tm.renders + 120, false, "Picked up %s", item.cstr);
         else

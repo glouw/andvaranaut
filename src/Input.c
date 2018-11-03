@@ -4,13 +4,7 @@
 
 #include <SDL2/SDL.h>
 
-Input xzinput(void)
-{
-    static Input input;
-    return input;
-}
-
-Input xpump(Input input)
+Input i_pump(Input input)
 {
     SDL_Event event;
     SDL_PollEvent(&event);
@@ -38,19 +32,20 @@ Input xpump(Input input)
     return input;
 }
 
-Input xready(const float sensitivity)
+Input i_ready(const float sensitivity)
 {
-    Input input = xzinput();
+    static Input zero;
+    Input input = zero;
 
     input.sx = sensitivity;
     input.sy = sensitivity;
 
     input.key = SDL_GetKeyboardState(NULL);
 
-    return xpump(input);
+    return i_pump(input);
 }
 
-int xinvuse(const Input in)
+int i_invuse(const Input in)
 {
     return in.key[SDL_SCANCODE_LSHIFT];
 }

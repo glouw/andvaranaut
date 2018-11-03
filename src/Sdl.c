@@ -214,7 +214,7 @@ Sdl xsetup(const Args args)
 void xrender(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
 {
     Point* const zbuff = xtoss(Point, sdl.xres);
-    const Line camera = xrotate(hero.fov, hero.yaw);
+    const Line camera = l_rotate(hero.fov, hero.yaw);
     const Vram vram = xvlock(sdl.canvas);
 
     // Threaded software rendering.
@@ -280,7 +280,8 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     const int last = g.count - 1;
     const int first = g.count - tail;
     const Point dir = p_unit(p_sub(g.points[last], g.points[first]));
-    const Attack melee = { it.damage, dir, it.hurts, MELEE, 0, p_zero() };
+    static Point zero;
+    const Attack melee = { it.damage, dir, it.hurts, MELEE, 0, zero };
     return melee;
 }
 
@@ -378,7 +379,8 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
     // Direction won't be needed for magic attacks as magic will spawn new sprites, be it food sprites,
     // attack sprites (fire / ice), etc.
     const Point dir = { 0.0f, 0.0f };
-    const Attack magic = { mag, dir, 0, MAGIC, scindex, p_zero() };
+    static Point zero;
+    const Attack magic = { mag, dir, 0, MAGIC, scindex, zero };
     return magic;
 }
 

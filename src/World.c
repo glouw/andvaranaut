@@ -31,17 +31,17 @@ static World build(World w)
 static void theme(const World w)
 {
     for(int i = 0; i < w.floors; i++)
-        xmthemeate(w.map[i]);
+        m_themeate(w.map[i]);
 }
 
 // Links all floors with trapdoors.
 static void attach(const World w)
 {
     for(int i = 0; i < w.floors; i++)
-        xmtrapdoors(w.map[i], w.map[i - 0].trapdoors, FLORING);
+        m_trapdoors(w.map[i], w.map[i - 0].trapdoors, FLORING);
 
     for(int i = 1; i < w.floors; i++)
-        xmtrapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
+        m_trapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
 }
 
 // Populates rooms with sprites based on room theme.

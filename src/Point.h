@@ -7,8 +7,6 @@ typedef struct
 }
 Point;
 
-Point p_zero(void);
-
 Point p_turn(const Point, const float t);
 
 Point p_rot90(const Point);

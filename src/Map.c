@@ -6,12 +6,6 @@
 
 #include <math.h>
 
-Map xzmap(void)
-{
-    static Map map;
-    return map;
-}
-
 static char** reset(char** block, const int rows, const int cols, const int blok)
 {
     for(int row = 0; row < rows; row++)
@@ -30,7 +24,7 @@ static char** mnew(const int rows, const int cols, const int blok)
     return reset(block, rows, cols, blok);
 }
 
-Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid)
+Map m_gen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid)
 {
     const Sheer mid = {
         0.0f,
@@ -41,7 +35,8 @@ Map xmgen(const int rows, const int cols, const Points trapdoors, const Points i
         top.a + (float) (rand() % 2)
     };
 
-    Map map = xzmap();
+    static Map zero;
+    Map map = zero;
 
     map.rows = rows;
     map.cols = cols;
@@ -73,7 +68,7 @@ static const char* themestr(const Map map, const Point where)
     return xthname(lutheme(map, where));
 }
 
-Theme xmthemett(const Theme last, const Map map, const Point where, const Timer tm)
+Theme m_theme(const Theme last, const Map map, const Point where, const Timer tm)
 {
     const Theme now = lutheme(map, where);
     if(now != last && now != NO_THEME)
@@ -81,20 +76,20 @@ Theme xmthemett(const Theme last, const Map map, const Point where, const Timer 
     return now;
 }
 
-int xmisportal(char** block, const Point where)
+int m_isportal(char** block, const Point where)
 {
     return p_block(where, block) == '~';
 }
 
-int xmout(const Map map, const Point where)
+int m_out(const Map map, const Point where)
 {
     return (int) where.x >= map.cols || (int) where.x < 0
         || (int) where.y >= map.rows || (int) where.y < 0;
 }
 
-void xmedit(const Map map, const Overview ov)
+void m_edit(const Map map, const Overview ov)
 {
-    if(xmout(map, ov.where))
+    if(m_out(map, ov.where))
         return;
 
     const int ascii = ov.selected + ' ';
@@ -110,7 +105,7 @@ void xmedit(const Map map, const Overview ov)
     if(ov.party == CEILING) map.ceiling[y][x] = ascii;
 }
 
-void xmroom(const Map map, const Point where, const int w, const int h, const Party p)
+void m_room(const Map map, const Point where, const int w, const int h, const Party p)
 {
     for(int i = -w; i <= w; i++)
     for(int j = -h; j <= h; j++)
@@ -133,7 +128,7 @@ void xmroom(const Map map, const Point where, const int w, const int h, const Pa
     }
 }
 
-void xmpole(const Map map, const Point where, const int ascii)
+void m_column(const Map map, const Point where, const int ascii)
 {
     const int x = where.x;
     const int y = where.y;
@@ -151,7 +146,7 @@ static void supports(const Map map, const int x, const int y, const Party p)
     }
 }
 
-void xmplatform(const Map map, const int x, const int y, const Party p)
+void m_platform(const Map map, const int x, const int y, const Party p)
 {
     for(int j = -1; j <= 1; j++)
     for(int k = -1; k <= 1; k++)
@@ -181,7 +176,7 @@ static void trapdoor(const Map map, const int x, const int y, const Party p)
     }
 }
 
-void xmtrapdoors(const Map map, const Points trapdoors, const Party p)
+void m_trapdoors(const Map map, const Points trapdoors, const Party p)
 {
     for(int i = 0; i < trapdoors.count; i++)
     {
@@ -190,13 +185,13 @@ void xmtrapdoors(const Map map, const Points trapdoors, const Party p)
         const int x = where.x;
         const int y = where.y;
 
-        xmplatform(map, x, y, p);
+        m_platform(map, x, y, p);
         supports(map, x, y, p);
         trapdoor(map, x, y, p);
     }
 }
 
-void xmcorridor(const Map map, const Point a, const Point b)
+void m_corridor(const Map map, const Point a, const Point b)
 {
     const Point step = p_sub(b, a);
     const Point delta = {
@@ -235,7 +230,7 @@ static void pass(const Map map, const int x, const int y)
     cross(map, x, y, '!', ' ');
 }
 
-void xmbarricade(const Map map)
+void m_barricade(const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {
@@ -251,12 +246,12 @@ void xmbarricade(const Map map)
     }
 }
 
-int xmrmin(const Map map)
+int m_min(const Map map)
 {
     return map.grid / 8;
 }
 
-int xmrmax(const Map map)
+int m_max(const Map map)
 {
     return map.grid / 2;
 }
@@ -265,8 +260,8 @@ static void grass(const Map map, const Point where)
 {
     const int x = where.x;
     const int y = where.y;
-    for(int i = -xmrmax(map); i <= xmrmax(map); i++)
-    for(int j = -xmrmax(map); j <= xmrmax(map); j++)
+    for(int i = -m_max(map); i <= m_max(map); i++)
+    for(int j = -m_max(map); j <= m_max(map); j++)
     {
         const int xx = x + i;
         const int yy = y + j;
@@ -278,14 +273,14 @@ static void path(const Map map, const Point where)
 {
     const int x = where.x;
     const int y = where.y;
-    const int end = xmrmax(map);
+    const int end = m_max(map);
     if(map.walling[y + 0][x + end] == ' ') for(int i = 0; i <= end; i++) map.floring[y + 0][x + i] = '"';
     if(map.walling[y + 0][x - end] == ' ') for(int i = 0; i <= end; i++) map.floring[y + 0][x - i] = '"';
     if(map.walling[y + end][x + 0] == ' ') for(int i = 0; i <= end; i++) map.floring[y + i][x + 0] = '"';
     if(map.walling[y - end][x + 0] == ' ') for(int i = 0; i <= end; i++) map.floring[y - i][x + 0] = '"';
 }
 
-void xmthemeate(const Map map)
+void m_themeate(const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {
@@ -298,8 +293,8 @@ void xmthemeate(const Map map)
             break;
 
         case WATER_WELL:
-            xmroom(map, where, xmrmin(map), xmrmin(map), FLORING);
-            xmplatform(map, where.x, where.y, FLORING);
+            m_room(map, where, m_min(map), m_min(map), FLORING);
+            m_platform(map, where.x, where.y, FLORING);
             break;
 
         default:

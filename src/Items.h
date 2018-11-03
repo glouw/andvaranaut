@@ -9,8 +9,6 @@ typedef struct
 }
 Items;
 
-Items xzitems(void);
+Items i_build(const int max);
 
-Items xitsnew(const int max);
-
-int xitsadd(Items, const Item);
+int i_add(Items, const Item);

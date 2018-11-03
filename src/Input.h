@@ -39,10 +39,8 @@ typedef struct
 }
 Input;
 
-Input xzinput(void);
+Input i_pump(Input);
 
-Input xpump(Input);
+Input i_ready(const float sensitivity);
 
-Input xready(const float sensitivity);
-
-int xinvuse(const Input);
+int i_invuse(const Input);

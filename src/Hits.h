@@ -18,6 +18,4 @@ typedef struct
 }
 Hits;
 
-Hits xzhits(void);
-
-Hits xmarch(const Point where, const Point direction, const Map);
+Hits h_march(const Point where, const Point direction, const Map);

@@ -33,10 +33,8 @@ typedef struct
 }
 Overview;
 
-Overview xzov(void);
+Overview o_init(void);
 
-Overview xinit(void);
+Overview o_update(Overview, const Input, const int xres);
 
-Overview xupdate(Overview, const Input, const int xres);
-
-Overview xbackpan(Overview, const Point where, const int xres, const int yres);
+Overview o_backpan(Overview, const Point where, const int xres, const int yres);

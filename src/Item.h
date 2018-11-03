@@ -16,8 +16,8 @@ typedef struct
 }
 Item;
 
-Item xitnew(const Classification, const int index);
+Item i_new(const Classification, const int index);
 
-Item xitrand(void);
+Item i_rand(void);
 
-void xittest(void);
+void i_test(void);

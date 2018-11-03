@@ -6,12 +6,6 @@
 #include <math.h>
 #include <float.h>
 
-Point p_zero(void)
-{
-    static Point point;
-    return point;
-}
-
 Point p_turn(const Point a, const float t)
 {
     Point out;

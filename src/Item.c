@@ -757,7 +757,7 @@ static Item none(void)
     return item;
 }
 
-Item xitnew(const Classification c, const int index)
+Item i_new(const Classification c, const int index)
 {
     switch(c)
     {
@@ -794,14 +794,14 @@ Item xitnew(const Classification c, const int index)
     return none();
 }
 
-Item xitrand(void)
+Item i_rand(void)
 {
     const Classification c = c_rand();
     const int index = rand() % c_indices(c);
-    return xitnew(c, index);
+    return i_new(c, index);
 }
 
-void xittest(void)
+void i_test(void)
 {
     check(AMMO    , ammos    , xlen(ammos)    );
     check(AMULET  , amulets  , xlen(amulets)  );

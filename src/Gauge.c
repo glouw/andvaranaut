@@ -73,7 +73,8 @@ Gauge g_wind(Gauge g, const Input input, const Timer tm)
 
 Point g_sum(const Gauge g, const int count)
 {
-    Point sum = p_zero();
+    static Point zero;
+    Point sum = zero;
     for(int i = 0; i < count; i++)
         sum = p_add(sum, g.points[i]);
     return sum;

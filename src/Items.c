@@ -2,17 +2,11 @@
 
 #include "util.h"
 
-Items xzitems(void)
-{
-    static Items items;
-    return items;
-}
-
-Items xitsnew(const int max)
+Items i_build(const int max)
 {
     const Items its = { xtoss(Item, max), max };
     for(int i = 0; i < max; i++)
-        its.item[i] = xitnew(NONE, 0);
+        its.item[i] = i_new(NONE, 0);
     return its;
 }
 
@@ -24,7 +18,7 @@ static int avail(const Items its)
     return -1;
 }
 
-int xitsadd(Items its, const Item it)
+int i_add(Items its, const Item it)
 {
     const int index = avail(its);
     if(index == -1)

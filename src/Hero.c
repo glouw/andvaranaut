@@ -153,7 +153,8 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     // Collision detection.
     if(p_tile(hero.where, map.walling))
     {
-        hero.velocity = p_zero();
+        static Point zero;
+        hero.velocity = zero;
         hero.where = last;
     }
     return hero;
@@ -161,12 +162,12 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
 
 static int telup(const Hero hero, const Map map)
 {
-    return hero.pitch < 1.0f && xmisportal(map.ceiling, hero.where);
+    return hero.pitch < 1.0f && m_isportal(map.ceiling, hero.where);
 }
 
 static int teldn(const Hero hero, const Map map)
 {
-    return hero.pitch > 1.0f && xmisportal(map.floring, hero.where);
+    return hero.pitch > 1.0f && m_isportal(map.floring, hero.where);
 }
 
 Hero h_teleporting(Hero hero, const Map map, const Input input, const Timer tm)

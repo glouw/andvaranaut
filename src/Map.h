@@ -34,34 +34,32 @@ typedef struct
 }
 Map;
 
-Map xzmap(void);
+Map m_gen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid);
 
-Map xmgen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid);
+int m_isportal(char** block, const Point where);
 
-int xmisportal(char** block, const Point where);
+void m_edit(const Map, const Overview);
 
-void xmedit(const Map, const Overview);
+int m_out(const Map, const Point where);
 
-int xmout(const Map, const Point where);
+int m_carvable(const Map, const int x, const int y);
 
-int xmcarvable(const Map, const int x, const int y);
+void m_room(const Map, const Point where, const int w, const int h, const Party);
 
-void xmroom(const Map, const Point where, const int w, const int h, const Party);
+void m_column(const Map, const Point where, const int ascii);
 
-void xmpole(const Map, const Point where, const int ascii);
+void m_trapdoors(const Map, const Points trapdoors, const Party);
 
-void xmtrapdoors(const Map, const Points trapdoors, const Party);
+void m_corridor(const Map, const Point a, const Point b);
 
-void xmcorridor(const Map, const Point a, const Point b);
+Theme m_theme(const Theme, const Map, const Point where, const Timer);
 
-Theme xmthemett(const Theme, const Map, const Point where, const Timer);
+void m_platform(const Map, const int x, const int y, const Party);
 
-void xmplatform(const Map, const int x, const int y, const Party);
+void m_barricade(const Map);
 
-void xmbarricade(const Map);
+int m_min(const Map);
 
-int xmrmin(const Map);
+int m_max(const Map);
 
-int xmrmax(const Map);
-
-void xmthemeate(const Map);
+void m_themeate(const Map);

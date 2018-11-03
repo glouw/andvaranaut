@@ -284,13 +284,13 @@ static void mdups(const Tris edges, const Flags flags)
 // #############################################
 static void bone(const Map map, const Tri e, const int w, const int h)
 {
-    xmroom(map, e.a, w, h, WALLING);
-    xmroom(map, e.b, w, h, WALLING);
+    m_room(map, e.a, w, h, WALLING);
+    m_room(map, e.b, w, h, WALLING);
 
-    if(xd2() == 0) xmroom(map, e.a, w, h, CEILING);
-    if(xd2() == 0) xmroom(map, e.b, w, h, CEILING);
+    if(xd2() == 0) m_room(map, e.a, w, h, CEILING);
+    if(xd2() == 0) m_room(map, e.b, w, h, CEILING);
 
-    xmcorridor(map, e.a, e.b);
+    m_corridor(map, e.a, e.b);
 }
 
 static void carve(const Map map, const Tris edges, const Flags flags)
@@ -302,9 +302,9 @@ static void carve(const Map map, const Tris edges, const Flags flags)
         if(p_same(e.c, flags.one))
             continue;
 
-        const int size = xmrmax(map) - xmrmin(map);
-        const int w = xmrmin(map) + rand() % size;
-        const int h = xmrmin(map) + rand() % size;
+        const int size = m_max(map) - m_min(map);
+        const int w = m_min(map) + rand() % size;
+        const int h = m_min(map) + rand() % size;
         bone(map, e, w, h);
     }
 }
@@ -337,7 +337,7 @@ Map xtgen(const Points extra)
         trapdoors = xpsadduq(trapdoors, rooms);
 
     // Build a map with trapdoors and carve out rooms.
-    const Map map = xmgen(h, w, trapdoors, rooms, grid);
+    const Map map = m_gen(h, w, trapdoors, rooms, grid);
     mdups(edges, flags);
     carve(map, edges, flags);
 
