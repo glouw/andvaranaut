@@ -272,7 +272,10 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     }
     const int tail = 10;
     if(g.count < tail)
-        return a_zero();
+    {
+        static Attack zero;
+        return zero;
+    }
     const int last = g.count - 1;
     const int first = g.count - tail;
     const Point dir = p_unit(p_sub(g.points[last], g.points[first]));
@@ -306,7 +309,11 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         const Attack range = { mag, dir, it.hurts, RANGE, 0, reticule };
         return range;
     }
-    else return a_zero();
+    else
+    {
+        static Attack zero;
+        return zero;
+    }
 }
 
 // Draws magic gauge.
@@ -385,11 +392,11 @@ Attack s_drawgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scro
 {
     const Item it = inv.items.item[inv.selected];
     const float sens = 2.0f;
+    static Attack zero;
     return
         c_ismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         c_isrange(it.c) ? dgrange(sdl, g, it, sens) :
-        c_ismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) :
-        a_zero();
+        c_ismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) : zero;
 }
 
 static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)

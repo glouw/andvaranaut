@@ -13,5 +13,3 @@ typedef struct
     Point reticule;
 }
 Attack;
-
-Attack a_zero(void);

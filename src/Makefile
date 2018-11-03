@@ -26,7 +26,6 @@ SRCS  = main.c
 SRCS += util.c
 SRCS += Args.c
 SRCS += Atom.c
-SRCS += Attack.c
 SRCS += Bundle.c
 SRCS += Classification.c
 SRCS += Clamped.c
