@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Args xzargs(void)
+static Args zero(void)
 {
     static Args args;
     return args;
@@ -103,7 +103,7 @@ static Args parsed(Args args, int argc, char* argv[])
 
 static Args defaults(void)
 {
-    Args args = xzargs();
+    Args args = zero();
     args.xres = 1000;
     args.yres = 600;
     args.focal = 0.8f;
@@ -119,7 +119,7 @@ static Args defaults(void)
     return args;
 }
 
-Args xparse(int argc, char* argv[])
+Args a_parse(int argc, char* argv[])
 {
     return parsed(defaults(), argc, argv);
 }

@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 
     srand(true ? time(NULL) : 0);
 
-    const Args args = xparse(argc, argv);
+    const Args args = a_parse(argc, argv);
 
     World wd = xwinit(32);
 
