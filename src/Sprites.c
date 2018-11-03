@@ -233,7 +233,7 @@ static void brokelb(const int ascii, const Inventory inv, const Timer tm)
     }
 }
 
-static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
+static Sprites harm(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
 {
     const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
 
@@ -285,7 +285,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
 
         if(p_eql(hand, sprite->where, 2.0f))
         {
-            sprites = hurt(sprites, sprite, attack, inv, tm);
+            sprites = harm(sprites, sprite, attack, inv, tm);
             if(++hurts == it.hurts)
                 return sprites;
         }
@@ -312,7 +312,7 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
 
         if(hit)
         {
-            sprites = hurt(sprites, sprite, attack, inv, tm);
+            sprites = harm(sprites, sprite, attack, inv, tm);
             if(++hurts == it.hurts)
                 return sprites;
         }
