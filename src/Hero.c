@@ -199,8 +199,8 @@ Ray h_cast(const Hero hero, const Hit hit, const Sheer sheer, const int yres, co
     const Point end = p_sub(hit.where, hero.where);
     const Point corrected = p_turn(end, -hero.yaw);
     const Line trace = { hero.where, hit.where };
-    const Projection projection = xproject(yres, xres, hero.fov.a.x, hero.pitch, corrected, hero.height);
-    const Ray ray = { trace, corrected, xsheer(projection, sheer), hit.surface, hit.offset, hero.torch };
+    const Projection projection = p_project(yres, xres, hero.fov.a.x, hero.pitch, corrected, hero.height);
+    const Ray ray = { trace, corrected, p_sheer(projection, sheer), hit.surface, hit.offset, hero.torch };
     return ray;
 }
 

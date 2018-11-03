@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
     // Unit tests.
     i_test();
 
-    xstest();
+    s_test();
 #endif
 
     srand(true ? time(NULL) : 0);
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
     Inventory inv = i_create();
 
-    Scroll sc = xscnew();
+    Scroll sc = s_new();
 
     Input in = i_ready(args.msen);
 
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 
     Timer tm = xtmnew();
 
-    Sdl sdl = xsetup(args);
+    Sdl sdl = s_setup(args);
 
     const Text text = xtxnew("art/gui/SDS_8x8.ttf", 24, sdl.yel, sdl.blk);
 
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 
             wd.sprites[me.floor] = xlay(wd.sprites[me.floor], wd.map[me.floor], ov);
 
-            xview(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], tm);
+            s_view(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], tm);
         }
         // Play Mode.
         else
@@ -98,13 +98,13 @@ int main(int argc, char* argv[])
 
             inv = i_highlite(inv, in, sdl.xres);
 
-            xrender(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
+            s_render(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
 
-            xdinv(sdl, inv);
+            s_drawinv(sdl, inv);
 
-            xdbars(sdl, me, tm);
+            s_drawbars(sdl, me, tm);
 
-            xdmap(sdl, wd.map[me.floor], me.where);
+            s_drawmap(sdl, wd.map[me.floor], me.where);
 
             wd.map[me.floor] = xscount(wd.sprites[me.floor], wd.map[me.floor]);
 
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
 
                 xttstuckclear();
 
-                const Attack atk = xdgauge(sdl, gg, inv, sc);
+                const Attack atk = s_drawgauge(sdl, gg, inv, sc);
 
                 // TODO: Maybe pass in item wind rate.
                 gg = g_wind(gg, in, tm);
@@ -136,9 +136,9 @@ int main(int argc, char* argv[])
         }
         xttshow(text, sdl);
 
-        xdfps(sdl, text, "%d", fps);
+        s_drawfps(sdl, text, "%d", fps);
 
-        xpresent(sdl);
+        s_present(sdl);
 
         in = i_pump(in);
 

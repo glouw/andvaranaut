@@ -2,12 +2,6 @@
 
 #include "util.h"
 
-Speech xspzero(void)
-{
-    static Speech sp;
-    return sp;
-}
-
 static Speech xspappend(Speech sp, const char* const sentence)
 {
     if(sp.count == xlen(sp.sentences))
@@ -18,7 +12,8 @@ static Speech xspappend(Speech sp, const char* const sentence)
 
 static Speech build(const char* const sentences[], const int len)
 {
-    Speech sp = xspzero();
+    static Speech zero;
+    Speech sp = zero;
     for(int i = 0; i < len; i++)
         sp = xspappend(sp, sentences[i]);
     return sp;

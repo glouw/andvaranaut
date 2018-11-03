@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-Rooms xrsinit(const Points interests)
+Rooms r_init(const Points interests)
 {
     const int count = interests.count;
     const Rooms rooms = { interests.point, xthrand(count), xwipe(int, count), count };

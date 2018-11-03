@@ -64,7 +64,7 @@ Inventory i_whatis(Inventory inv, const Scroll sc, const Timer tm)
 
         if(it.c == SCROLL)
         {
-            char* const squares = xsstr(sc, it.index);
+            char* const squares = s_str(sc, it.index);
             xttset(a, b, true,
                 "%s\n"
                 "%s\n"

@@ -154,8 +154,8 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
 
 static Points prand(const int w, const int h, const int max, const int grid, const int border, const Points extra)
 {
-    Points ps = xpsnew(max);
-    ps = xpscat(ps, extra);
+    Points ps = p_new(max);
+    ps = p_cat(ps, extra);
 
     for(int i = ps.count; i < ps.max; i++)
     {
@@ -164,8 +164,8 @@ static Points prand(const int w, const int h, const int max, const int grid, con
             (float) (rand() % (h - border) + border / 2),
         };
         const Point snapped = p_mid(p_snap(p, grid));
-        if(!xpsfind(ps, snapped))
-            ps = xpsadd(ps, snapped);
+        if(!p_find(ps, snapped))
+            ps = p_append(ps, snapped);
     }
     return ps;
 }
@@ -190,16 +190,16 @@ static void sort(const Tris edges)
 // Returns true if two points are connected.
 static int connected(const Point a, const Point b, const Tris edges, const Flags flags)
 {
-    Points todo = xpsnew(edges.max);
-    Points done = xpsnew(edges.max);
+    Points todo = p_new(edges.max);
+    Points done = p_new(edges.max);
     Tris reach = tsnew(edges.max);
-    todo = xpsadd(todo, a);
+    todo = p_append(todo, a);
 
     int connection = false;
     while(todo.count != 0 && connection != true)
     {
         const Point removed = todo.point[--todo.count];
-        done = xpsadd(done, removed);
+        done = p_append(done, removed);
 
         // Get reachable edges from current point.
         reach.count = 0;
@@ -224,8 +224,8 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
                 break;
             }
             // Otherwise add point of reachable edge to todo list.
-            if(!xpsfind(done, reach.tri[i].b))
-                todo = xpsadd(todo, reach.tri[i].b);
+            if(!p_find(done, reach.tri[i].b))
+                todo = p_append(todo, reach.tri[i].b);
         }
     }
     free(todo.point);
@@ -332,9 +332,9 @@ Map xtgen(const Points extra)
     revdel(edges, w, h, flags);
 
     // Randomly select which rooms will become trapdoors.
-    Points trapdoors = xpsnew(ntraps);
+    Points trapdoors = p_new(ntraps);
     for(int i = 0; i < ntraps; i++)
-        trapdoors = xpsadduq(trapdoors, rooms);
+        trapdoors = p_addunique(trapdoors, rooms);
 
     // Build a map with trapdoors and carve out rooms.
     const Map map = m_gen(h, w, trapdoors, rooms, grid);

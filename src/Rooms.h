@@ -12,4 +12,4 @@ typedef struct
 }
 Rooms;
 
-Rooms xrsinit(const Points);
+Rooms r_init(const Points);

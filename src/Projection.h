@@ -17,12 +17,10 @@ typedef struct
 }
 Projection;
 
-Projection xzproj(void);
+Projection p_project(const int yres, const int xres, const float focal, const float pitch, const Point corrected, const float height);
 
-Projection xproject(const int yres, const int xres, const float focal, const float pitch, const Point corrected, const float height);
+Projection p_sheer(const Projection, const Sheer);
 
-Projection xsheer(const Projection, const Sheer);
+float p_ccast(const Projection, const int x);
 
-float xccast(const Projection, const int x);
-
-float xfcast(const Projection, const int x);
+float p_fcast(const Projection, const int x);

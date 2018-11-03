@@ -42,7 +42,7 @@ static void rflor(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
-        const Point offset = l_lerp(r.trace, xfcast(r.proj, x));
+        const Point offset = l_lerp(r.trace, p_fcast(r.proj, x));
         const int tile = p_tile(offset, map.floring);
         if(!tile)
             continue;
@@ -54,7 +54,7 @@ static void rceil(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
-        const Point offset = l_lerp(r.trace, xccast(r.proj, x));
+        const Point offset = l_lerp(r.trace, p_ccast(r.proj, x));
         const int tile = p_tile(offset, map.ceiling);
         if(!tile)
             continue;
@@ -69,14 +69,14 @@ static void rsky(const Scanline sl, const Ray r, const Map map, const int floor,
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
             const Sheer sa = { 0.0f, clouds.height };
-            const Point a = l_lerp(r.trace, xccast(xsheer(r.proj, sa), x));
+            const Point a = l_lerp(r.trace, p_ccast(p_sheer(r.proj, sa), x));
             xfer(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', xilluminate(r.torch, p_mag(p_sub(a, r.trace.a))));
         }
     }
     else
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
-            const Point offset = l_lerp(r.trace, xccast(r.proj, x));
+            const Point offset = l_lerp(r.trace, p_ccast(r.proj, x));
             if(p_tile(offset, map.ceiling))
                 continue;
             xfer(sl, x, offset, '#' - ' ', xilluminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
@@ -87,7 +87,7 @@ static void rpit(const Scanline sl, const Ray r, const Map map, const Flow curre
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
-        const Point offset = l_lerp(r.trace, xfcast(r.proj, x));
+        const Point offset = l_lerp(r.trace, p_fcast(r.proj, x));
         if(p_tile(offset, map.floring))
             continue;
         xfer(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', xilluminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
@@ -130,7 +130,7 @@ static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const 
     return ray.corrected;
 }
 
-Point xraster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
+Point s_raster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
     rupper(sl, hits, hero, map, clouds);
     rlower(sl, hits, hero, map, current);

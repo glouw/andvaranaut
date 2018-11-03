@@ -25,13 +25,13 @@ static float toterr(int* a, int* b, const int size)
     return sum;
 }
 
-void xsclear(const Scroll sc)
+void s_clear(const Scroll sc)
 {
     for(int i = 0; i < sc.squares; i++)
         sc.casting[i] = 0;
 }
 
-int xsindex(const Scroll sc)
+int s_index(const Scroll sc)
 {
     float min = FLT_MAX;
     int index = 0;
@@ -47,7 +47,7 @@ int xsindex(const Scroll sc)
     return index;
 }
 
-Scroll xscnew(void)
+Scroll s_new(void)
 {
     #define SCROLLS 24
     #define WIDTH    9
@@ -312,7 +312,7 @@ Scroll xscnew(void)
 }
 
 // Converts a scroll to _one_ string with many newlines.
-char* xsstr(const Scroll sc, const int scindex)
+char* s_str(const Scroll sc, const int scindex)
 {
     const int len = sc.squares + sc.width + 1;
     char* const str = xwipe(char, len);

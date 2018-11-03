@@ -10,12 +10,12 @@ typedef struct
 }
 Points;
 
-Points xpsnew(const int max);
+Points p_new(const int max);
 
-Points xpsadd(Points, const Point);
+Points p_append(Points, const Point);
 
-Points xpsadduq(Points a, const Points b);
+Points p_addunique(Points a, const Points b);
 
-Points xpscat(Points, const Points other);
+Points p_cat(Points, const Points other);
 
-int xpsfind(const Points, const Point);
+int p_find(const Points, const Point);

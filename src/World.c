@@ -23,7 +23,7 @@ static World wnew(const int floors)
 static World build(World w)
 {
     for(int i = 0; i < w.floors; i++)
-        w = append(w, xtgen(i == 0 ? xpsnew(0) : w.map[i - 1].trapdoors), xsnew(128));
+        w = append(w, xtgen(i == 0 ? p_new(0) : w.map[i - 1].trapdoors), xsnew(128));
     return w;
 }
 

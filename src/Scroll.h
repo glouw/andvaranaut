@@ -10,10 +10,10 @@ typedef struct
 }
 Scroll;
 
-Scroll xscnew(void);
+Scroll s_new(void);
 
-int xsindex(const Scroll);
+int s_index(const Scroll);
 
-void xsclear(const Scroll);
+void s_clear(const Scroll);
 
-char* xsstr(const Scroll, const int scindex);
+char* s_str(const Scroll, const int scindex);

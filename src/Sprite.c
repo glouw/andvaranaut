@@ -14,7 +14,8 @@ static Sprite initspeech(Sprite sprite)
         sprite.speech = xspgreeting();
         break;
     default:
-        sprite.speech = xspzero();
+        static Speech zero;
+        sprite.speech = zero;
         break;
     }
     return sprite;
@@ -85,61 +86,61 @@ static void check(const Sprite table[], const int len, const char first, const c
     assert(len == last - first + 1);
 }
 
-void xstest(void)
+void s_test(void)
 {
     check(lower, xlen(lower), 'a', 'z');
     check(upper, xlen(upper), 'A', 'Z');
 }
 
-Sprite xsregistrar(const int ascii, const Point where)
+Sprite s_register(const int ascii, const Point where)
 {
     Sprite sprite = islower(ascii) ? lower[ascii - 'a'] : upper[ascii - 'A'];
     sprite.where = sprite.last = where;
     return initspeech(sprite);
 }
 
-int xsissprite(const int ascii)
+int s_sprite(const int ascii)
 {
     return isalpha(ascii);
 }
 
-int xiscosmetic(const int ascii)
+int s_cosmetic(const int ascii)
 {
     return ascii == 'a';
 }
 
-int xisinanimate(const int ascii)
+int s_inanimate(const int ascii)
 {
     return ascii == 'd';
 }
 
-int xisuseless(const Sprite* const sprite)
+int s_useless(const Sprite* const sprite)
 {
-    return xisdead(sprite->state) || xiscosmetic(sprite->ascii);
+    return xisdead(sprite->state) || s_cosmetic(sprite->ascii);
 }
 
-int xnocount(const Sprite* const sprite)
+int s_nocount(const Sprite* const sprite)
 {
-    return xisuseless(sprite) || xisinanimate(sprite->ascii);
+    return s_useless(sprite) || s_inanimate(sprite->ascii);
 }
 
-int xisstuck(const Sprite* const sprite)
+int s_stuck(const Sprite* const sprite)
 {
     return xisdead(sprite->state) || xishurt(sprite->state);
 }
 
-void xsplace(Sprite* const sprite, const Point to)
+void s_place(Sprite* const sprite, const Point to)
 {
     sprite->last = sprite->where;
     sprite->where = to;
 }
 
-int xismute(const Sprite* const sprite)
+int s_muted(const Sprite* const sprite)
 {
     return sprite->speech.count == 0;
 }
 
-int xisattack(const Sprite* const sprite)
+int s_attacking(const Sprite* const sprite)
 {
     return sprite->state == ATTACK_N
         || sprite->state == ATTACK_E
@@ -147,17 +148,17 @@ int xisattack(const Sprite* const sprite)
         || sprite->state == ATTACK_W;
 }
 
-int xisstun(const Sprite* const sprite, const Timer tm)
+int s_stunned(const Sprite* const sprite, const Timer tm)
 {
     return tm.ticks < sprite->stunticks;
 }
 
-void xstun(Sprite* const sprite, const Timer tm)
+void s_stun(Sprite* const sprite, const Timer tm)
 {
     sprite->stunticks = tm.ticks + 5;
 }
 
-int xisimpulse(Sprite* const sprite, const Timer tm)
+int s_impulse(Sprite* const sprite, const Timer tm)
 {
-    return xisattack(sprite) && tm.rise;
+    return s_attacking(sprite) && tm.rise;
 }

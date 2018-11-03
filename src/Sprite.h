@@ -36,32 +36,30 @@ typedef struct
 }
 Sprite;
 
-Sprite xzsprite(void);
+int s_sprite(const int ascii);
 
-int xsissprite(const int ascii);
+int s_cosmetic(const int ascii);
 
-int xiscosmetic(const int ascii);
+int s_inanimate(const int ascii);
 
-int xisinanimate(const int ascii);
+int s_useless(const Sprite* const);
 
-int xisuseless(const Sprite* const);
+int s_nocount(const Sprite* const);
 
-int xnocount(const Sprite* const);
+int s_stuck(const Sprite* const);
 
-int xisstuck(const Sprite* const);
+void s_test(void);
 
-void xstest(void);
+Sprite s_register(const int ascii, const Point where);
 
-Sprite xsregistrar(const int ascii, const Point where);
+void s_place(Sprite* const, const Point);
 
-void xsplace(Sprite* const, const Point);
+int s_muted(const Sprite* const);
 
-int xismute(const Sprite* const);
+int s_attacking(const Sprite* const);
 
-int xisattack(const Sprite* const);
+int s_stunned(const Sprite* const, const Timer);
 
-int xisstun(const Sprite* const, const Timer);
+void s_stun(Sprite* const, const Timer);
 
-void xstun(Sprite* const, const Timer);
-
-int xisimpulse(Sprite* const, const Timer);
+int s_impulse(Sprite* const, const Timer);

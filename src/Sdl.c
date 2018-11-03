@@ -6,12 +6,6 @@
 #include "Bundle.h"
 #include "util.h"
 
-Sdl xzsdl(void)
-{
-    static Sdl sdl;
-    return sdl;
-}
-
 static void churn(const Sdl sdl)
 {
     const SDL_Rect dst = {
@@ -23,7 +17,7 @@ static void churn(const Sdl sdl)
     SDL_RenderCopyEx(sdl.renderer, sdl.canvas, NULL, &dst, -90, NULL, SDL_FLIP_NONE);
 }
 
-void xpresent(const Sdl sdl)
+void s_present(const Sdl sdl)
 {
     SDL_RenderPresent(sdl.renderer);
 }
@@ -167,10 +161,12 @@ static void rsprites(const Sdl sdl, const Text text, const Sprites sprites, Poin
     }
 }
 
-Sdl xsetup(const Args args)
+Sdl s_setup(const Args args)
 {
     SDL_Init(SDL_INIT_VIDEO);
-    Sdl sdl = xzsdl();
+
+    static Sdl zero;
+    Sdl sdl = zero;
 
     sdl.window = SDL_CreateWindow(
         "Andvaranaut",
@@ -211,7 +207,7 @@ Sdl xsetup(const Args args)
     return sdl;
 }
 
-void xrender(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
+void s_render(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
 {
     Point* const zbuff = xtoss(Point, sdl.xres);
     const Line camera = l_rotate(hero.fov, hero.yaw);
@@ -316,7 +312,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 // Draws magic gauge.
 static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float sens, const Inventory inv, const Scroll sc)
 {
-    xsclear(sc);
+    s_clear(sc);
     if(g.count > 0)
     {
         const int size = (sc.width - 1) / 2;
@@ -367,7 +363,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
     }
 
     // Calculate attack.
-    const int scindex = xsindex(sc);
+    const int scindex = s_index(sc);
 
     // TODO: Maybe accuracy to scroll gives better attack + item base attack?
     (void) it;
@@ -385,7 +381,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
 }
 
 // Draws all power gauge squares.
-Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll sc)
+Attack s_drawgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll sc)
 {
     const Item it = inv.items.item[inv.selected];
     const float sens = 2.0f;
@@ -452,7 +448,7 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
         const SDL_Rect to = { ov.w * (i - ov.wheel), 0, ov.w, ov.h };
 
         // Draw sprite on panel.
-        if(xsissprite(i + ' '))
+        if(s_sprite(i + ' '))
         {
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
             const int h = sdl.surfaces.surface[i]->h / STATES;
@@ -467,7 +463,7 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
 }
 
 // View the map editor.
-void xview(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
+void s_view(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
 {
     dgridl(sdl, ov, sprites, map, tm);
     dpanel(sdl, ov, tm);
@@ -526,7 +522,7 @@ void xdbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, c
 }
 
 // Draws all hero status bars (health, mana, and fatigue).
-void xdbars(const Sdl sdl, const Hero hero, const Timer tm)
+void s_drawbars(const Sdl sdl, const Hero hero, const Timer tm)
 {
     const int size = 1;
     xdbar(sdl, hero, 2, tm, size, HPS);
@@ -575,14 +571,14 @@ static void dinvits(const Sdl sdl, const Inventory inv)
 }
 
 // Draws the inventory.
-void xdinv(const Sdl sdl, const Inventory inv)
+void s_drawinv(const Sdl sdl, const Inventory inv)
 {
     dinvbp(sdl, inv);
     dinvits(sdl, inv);
 }
 
 // Draws the map.
-void xdmap(const Sdl sdl, const Map map, const Point where)
+void s_drawmap(const Sdl sdl, const Map map, const Point where)
 {
     SDL_Texture* const texture = SDL_CreateTexture(
         sdl.renderer,
@@ -604,7 +600,7 @@ void xdmap(const Sdl sdl, const Map map, const Point where)
 }
 
 
-void xdfps(const Sdl sdl, const Text text, const char* const fmt, ...)
+void s_drawfps(const Sdl sdl, const Text text, const char* const fmt, ...)
 {
     va_list args;
 

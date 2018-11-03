@@ -46,7 +46,7 @@ Map m_gen(const int rows, const int cols, const Points trapdoors, const Points i
     map.floring = mnew(map.rows, map.cols, '"');
 
     map.trapdoors = trapdoors;
-    map.rooms = xrsinit(interests);
+    map.rooms = r_init(interests);
 
     map.top = top;
     map.mid = mid;
@@ -94,7 +94,7 @@ void m_edit(const Map map, const Overview ov)
 
     const int ascii = ov.selected + ' ';
 
-    if(xsissprite(ascii))
+    if(s_sprite(ascii))
         return;
 
     const int x = ov.where.x;

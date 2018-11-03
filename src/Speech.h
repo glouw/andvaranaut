@@ -9,8 +9,6 @@ typedef struct
 }
 Speech;
 
-Speech xspzero(void);
-
 Speech xspgreeting(void);
 
 Speech xspmercy(void);

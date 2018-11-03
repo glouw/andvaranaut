@@ -33,8 +33,8 @@ Sprites xlay(Sprites sprites, const Map map, const Overview ov)
         return sprites;
 
     const int ascii = ov.selected + ' ';
-    if(xsissprite(ascii))
-        sprites = append(sprites, xsregistrar(ascii, ov.where));
+    if(s_sprite(ascii))
+        sprites = append(sprites, s_register(ascii, ov.where));
 
     return sprites;
 }
@@ -109,14 +109,14 @@ static void bound(const Sprites sprites, const Map map)
         // Stuck in a wall.
         if(p_tile(sprite->where, map.walling))
         {
-            xsplace(sprite, p_mid(sprite->last));
+            s_place(sprite, p_mid(sprite->last));
             sprite->velocity = zero;
         }
 
         // Stuck in water.
         if(p_block(sprite->where, map.floring) == ' ')
         {
-            xsplace(sprite, p_mid(sprite->last));
+            s_place(sprite, p_mid(sprite->last));
             sprite->velocity = zero;
         }
     }
@@ -127,7 +127,7 @@ static void move(const Sprites sprites, const Field field, const Point to, const
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
-        if(xisstuck(sprite))
+        if(s_stuck(sprite))
             continue;
         const Point dir = f_force(field, sprite->where, to, map);
 
@@ -151,7 +151,7 @@ static void move(const Sprites sprites, const Field field, const Point to, const
 
         // Sprite will stop running if close to player.
         sprite->state = p_mag(sprite->velocity) > 0.005f ? CHASING : IDLE;
-        xsplace(sprite, p_add(sprite->where, sprite->velocity));
+        s_place(sprite, p_add(sprite->where, sprite->velocity));
     }
 }
 
@@ -186,7 +186,7 @@ static void scentsprite(const Field field, const Sprites sprites, const float sc
     {
         Sprite* const sprite = &sprites.sprite[s];
 
-        if(xiscosmetic(sprite->ascii))
+        if(s_cosmetic(sprite->ascii))
             continue;
 
         const int j = field.res * sprite->where.y;
@@ -217,7 +217,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
 static Sprites dropit(Sprites sprites, const Attack attack, const Point where)
 {
     const Point delta = p_mul(p_rot90(attack.dir), 0.5f);
-    return append(sprites, xsregistrar('d', p_add(where, delta)));
+    return append(sprites, s_register('d', p_add(where, delta)));
 }
 
 static void brokelb(const int ascii, const Inventory inv, const Timer tm)
@@ -258,13 +258,14 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
             (attack.dir.x > 0.0f ? HURT_W : HURT_E):
             (attack.dir.y > 0.0f ? HURT_N : HURT_S);
 
-        xstun(sprite, tm);
+        s_stun(sprite, tm);
 
         // Hurt a good sprite, make 'em angry.
         if(!sprite->evil)
         {
             sprite->evil = true;
-            sprite->speech = xspzero();
+            static Speech zero;
+            sprite->speech = zero;
         }
     }
     return sprites;
@@ -279,7 +280,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
     {
         Sprite* const sprite = &sprites.sprite[i];
 
-        if(xisuseless(sprite))
+        if(s_useless(sprite))
             continue;
 
         if(p_eql(hand, sprite->where, 2.0f))
@@ -304,7 +305,7 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
     {
         Sprite* const sprite = &sprites.sprite[i];
 
-        if(xisuseless(sprite))
+        if(s_useless(sprite))
             continue;
 
         const int hit = SDL_PointInRect(&point, &sprite->seen);
@@ -365,7 +366,7 @@ static void idle(const Sprites sprites, const Timer tm)
         if(xisdead(sprite->state))
             continue;
 
-        if(!xisstun(sprite, tm))
+        if(!s_stunned(sprite, tm))
             sprite->state = IDLE;
     }
 }
@@ -377,7 +378,7 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
     {
         Sprite* const sprite = &sprites.sprite[i];
 
-        if(xisuseless(sprite))
+        if(s_useless(sprite))
             continue;
 
         // TODO: Maybe sprites have different attack ranges.
@@ -387,7 +388,7 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
         {
             sprite->state = ATTACK_N;
 
-            if(xisimpulse(sprite, tm))
+            if(s_impulse(sprite, tm))
             {
                 // TODO: Hero defense lessens sprite damage?
                 hero.hps -= sprite->damage;
@@ -432,7 +433,7 @@ static void block(const Sprites sprites, const Hero hero, const Gauge gauge)
         {
             Sprite* const sprite = &sprites.sprite[i];
 
-            if(xisuseless(sprite))
+            if(s_useless(sprite))
                 continue;
 
             if(p_eql(hero.where, sprite->where, 2.5f))
@@ -461,7 +462,7 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
         Sprite* const sprite = &sprites.sprite[i];
 
         // Mute check very important else segfault.
-        if(xisdead(sprite->state) || xismute(sprite))
+        if(xisdead(sprite->state) || s_muted(sprite))
             continue;
 
         if(p_eql(hero.where, sprite->where, 2.5f))
@@ -510,16 +511,16 @@ static Sprites pngarden(Sprites sprites, const Map map, const Point center)
 {
     const int flowers = 256;
     for(int i = 0; i < flowers; i++)
-        sprites = append(sprites, xsregistrar('a', seek(center, map, '(')));
+        sprites = append(sprites, s_register('a', seek(center, map, '(')));
 
     // Gardener.
-    sprites = append(sprites, xsregistrar('b', avail(center, map)));
+    sprites = append(sprites, s_register('b', avail(center, map)));
     return sprites;
 }
 
 static Sprites dummy(const Sprites sprites, const Map map, const Point center)
 {
-    return append(sprites, xsregistrar('b', avail(center, map)));
+    return append(sprites, s_register('b', avail(center, map)));
 }
 
 Sprites xspopulate(Sprites sprites, const Map map)
@@ -552,7 +553,7 @@ Map xscount(const Sprites sprites, Map map)
         {
             Sprite* const sprite = &sprites.sprite[s];
 
-            if(xnocount(sprite))
+            if(s_nocount(sprite))
                 continue;
 
             if(p_eql(sprite->where, map.rooms.wheres[i], map.grid))

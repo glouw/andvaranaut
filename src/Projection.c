@@ -4,18 +4,13 @@
 
 #include <math.h>
 
-Projection xzproj(void)
-{
-    static Projection proj;
-    return proj;
-}
-
-Projection xproject(const int yres, const int xres, const float focal, const float pitch, const Point corrected, const float height)
+Projection p_project(const int yres, const int xres, const float focal, const float pitch, const Point corrected, const float height)
 {
     const float min = 1e-5;
     const float normal = corrected.x < min ? min : corrected.x;
 
-    Projection p = xzproj();
+    static Projection zero;
+    Projection p = zero;
     p.size = focal * 0.5f * xres / normal;
     p.mid = pitch * yres / 2.0f;
     p.bot = p.mid + (0.0f - height) * p.size;
@@ -28,7 +23,7 @@ Projection xproject(const int yres, const int xres, const float focal, const flo
     return p;
 }
 
-Projection xsheer(Projection p, const Sheer s)
+Projection p_sheer(Projection p, const Sheer s)
 {
     // Not sure where the math went wrong. Adding these pixel offsets is required.
     p.bot += p.size * s.a - (s.b >= s.a  ? 1.0f : 0.0f);
@@ -39,12 +34,12 @@ Projection xsheer(Projection p, const Sheer s)
     return p;
 }
 
-float xccast(const Projection p, const int x)
+float p_ccast(const Projection p, const int x)
 {
     return (1.0f - p.height + p.sheer.b) * p.size / (x + 1 - p.mid);
 }
 
-float xfcast(const Projection p, const int x)
+float p_fcast(const Projection p, const int x)
 {
     return (0.0f - p.height - p.sheer.a) * p.size / (x + 0 - p.mid);
 }

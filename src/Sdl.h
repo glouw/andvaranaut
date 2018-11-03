@@ -32,22 +32,20 @@ typedef struct
 }
 Sdl;
 
-Sdl xzsdl(void);
+Sdl s_setup(const Args);
 
-Sdl xsetup(const Args);
+void s_present(const Sdl);
 
-void xpresent(const Sdl);
+void s_render(const Sdl, const Text, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const Timer);
 
-void xrender(const Sdl, const Text, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const Timer);
+void s_view(const Sdl, const Overview, const Sprites, const Map, const Timer);
 
-void xview(const Sdl, const Overview, const Sprites, const Map, const Timer);
+Attack s_drawgauge(const Sdl, const Gauge, const Inventory, const Scroll);
 
-Attack xdgauge(const Sdl, const Gauge, const Inventory, const Scroll);
+void s_drawmap(const Sdl, const Map, const Point);
 
-void xdmap(const Sdl, const Map, const Point);
+void s_drawinv(const Sdl, const Inventory);
 
-void xdinv(const Sdl, const Inventory);
+void s_drawbars(const Sdl, const Hero, const Timer);
 
-void xdbars(const Sdl, const Hero, const Timer);
-
-void xdfps(const Sdl, const Text, const char* const fmt, ...);
+void s_drawfps(const Sdl, const Text, const char* const fmt, ...);

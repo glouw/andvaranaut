@@ -10,7 +10,7 @@ int b_raster(void* const bundle)
         const Point column = l_lerp(b->camera, x / (float) b->sdl.xres);
         const Hits hits = h_march(b->hero.where, column, b->map);
         const Scanline scanline = { b->sdl, b->vram.pixels, b->vram.width, x };
-        b->zbuff[x] = xraster(scanline, hits, b->hero, b->current, b->clouds, b->map);
+        b->zbuff[x] = s_raster(scanline, hits, b->hero, b->current, b->clouds, b->map);
     }
     return 0;
 }
