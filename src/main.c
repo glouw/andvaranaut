@@ -21,9 +21,9 @@ int main(int argc, char* argv[])
 
     const Point start = wd.map[floor].trapdoors.point[0];
 
-    Gauge gg = xgnew();
+    Gauge gg = g_new();
 
-    Hero me = xspawn(args.focal, start, floor, gg);
+    Hero me = h_born(args.focal, start, floor, gg);
 
     Overview ov = xinit();
 
@@ -78,10 +78,10 @@ int main(int argc, char* argv[])
         // Play Mode.
         else
         {
-            me = xteleporting(me, wd.map[me.floor], in, tm);
+            me = h_teleporting(me, wd.map[me.floor], in, tm);
             if(me.teleporting)
             {
-                me = xteleport(me, wd.map[me.floor]);
+                me = h_teleport(me, wd.map[me.floor]);
 
                 f_ruin(fd);
                 fd = f_prepare(wd.map[me.floor], me.aura);
@@ -127,9 +127,9 @@ int main(int argc, char* argv[])
                 const Attack atk = xdgauge(sdl, gg, inv, sc);
 
                 // TODO: Maybe pass in item wind rate.
-                gg = xgwind(gg, in, tm);
+                gg = g_wind(gg, in, tm);
 
-                me = xsustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);
+                me = h_sustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);
 
                 wd.sprites[me.floor] = xhurt(wd.sprites[me.floor], atk, me, in, inv, tm);
             }

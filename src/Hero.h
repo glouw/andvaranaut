@@ -42,16 +42,14 @@ typedef struct
 }
 Hero;
 
-Hero xzhero(void);
+Hero h_born(const float focal, const Point where, const int floor, const Gauge);
 
-Hero xspawn(const float focal, const Point where, const int floor, const Gauge);
+Point h_touch(const Hero);
 
-Point xtouch(const Hero);
+Hero h_teleporting(Hero, const Map, const Input, const Timer);
 
-Hero xteleporting(Hero, const Map, const Input, const Timer);
+Hero h_teleport(Hero, const Map);
 
-Hero xteleport(Hero, const Map);
+Hero h_sustain(Hero, const Map, const Input, const Flow, const Method);
 
-Hero xsustain(Hero, const Map, const Input, const Flow, const Method);
-
-Ray xcalc(const Hero, const Hit, const Sheer, const int yres, const int xres);
+Ray h_cast(const Hero, const Hit, const Sheer, const int yres, const int xres);

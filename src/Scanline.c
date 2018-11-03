@@ -100,7 +100,7 @@ static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Ma
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
-        const Ray ray = xcalc(hero, *which, map.top, sl.sdl.yres, sl.sdl.xres);
+        const Ray ray = h_cast(hero, *which, map.top, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
             rsky(sl, ray, map, hero.floor, clouds);
         rwall(sl, ray);
@@ -114,7 +114,7 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
     {
         const Hit* const which = hit;
         const Sheer sheer = { current.height, -1.0f };
-        const Ray ray = xcalc(hero, *which, sheer, sl.sdl.yres, sl.sdl.xres);
+        const Ray ray = h_cast(hero, *which, sheer, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
             rpit(sl, ray, map, current);
         rwall(sl, ray);
@@ -123,7 +123,7 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
 
 static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
-    const Ray ray = xcalc(hero, hits.walling, map.mid, sl.sdl.yres, sl.sdl.xres);
+    const Ray ray = h_cast(hero, hits.walling, map.mid, sl.sdl.yres, sl.sdl.xres);
     rwall(sl, ray);
     rflor(sl, ray, map);
     rceil(sl, ray, map);

@@ -16,14 +16,12 @@ typedef struct
 }
 Gauge;
 
-Gauge xzgauge(void);
+Gauge g_new(void);
 
-Gauge xgnew(void);
+void g_free(const Gauge);
 
-void xgfree(const Gauge);
+int g_fizzled(const Gauge, const Timer);
 
-int xgfizzled(const Gauge, const Timer);
+Gauge g_wind(Gauge, const Input, const Timer);
 
-Gauge xgwind(Gauge, const Input, const Timer);
-
-Point xgsum(const Gauge, const int count);
+Point g_sum(const Gauge, const int count);

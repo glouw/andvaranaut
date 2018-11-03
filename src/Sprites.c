@@ -271,7 +271,7 @@ static Sprites hurt(Sprites sprites, Sprite* const sprite, const Attack attack, 
 
 static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm, const Hero hero)
 {
-    const Point hand = xtouch(hero);
+    const Point hand = h_touch(hero);
     const Item it = inv.items.item[inv.selected];
 
     for(int i = 0, hurts = 0; i < sprites.count; i++)
@@ -414,7 +414,7 @@ static Hero dftg(Hero hero, const Timer tm, const Gauge gauge)
 
     hero.ftg = (gauge.max - gauge.count) / gauge.divisor;
 
-    if(xgfizzled(gauge, tm))
+    if(g_fizzled(gauge, tm))
         hero.ftg = 0;
 
     return hero;

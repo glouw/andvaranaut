@@ -4,22 +4,17 @@
 
 #include "util.h"
 
-Gauge xzgauge(void)
+Gauge g_new(void)
 {
-    static Gauge gauge;
-    return gauge;
-}
-
-Gauge xgnew(void)
-{
-    Gauge g = xzgauge();
+    static Gauge zero;
+    Gauge g = zero;
     g.max = 100;
     g.points = xtoss(Point, g.max);
     g.divisor = 2;
     return g;
 }
 
-void xgfree(const Gauge g)
+void g_free(const Gauge g)
 {
     free(g.points);
 }
@@ -51,14 +46,14 @@ static Gauge fizzle(Gauge g, const Timer tm)
     return g;
 }
 
-int xgfizzled(const Gauge g, const Timer tm)
+int g_fizzled(const Gauge g, const Timer tm)
 {
     return tm.ticks < g.ticks;
 }
 
-Gauge xgwind(Gauge g, const Input input, const Timer tm)
+Gauge g_wind(Gauge g, const Input input, const Timer tm)
 {
-    if(xgfizzled(g, tm))
+    if(g_fizzled(g, tm))
         return g;
     else
     {
@@ -76,7 +71,7 @@ Gauge xgwind(Gauge g, const Input input, const Timer tm)
     }
 }
 
-Point xgsum(const Gauge g, const int count)
+Point g_sum(const Gauge g, const int count)
 {
     Point sum = p_zero();
     for(int i = 0; i < count; i++)

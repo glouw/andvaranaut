@@ -4,12 +4,6 @@
 
 #include <SDL2/SDL.h>
 
-Hero xzhero(void)
-{
-    static Hero hero;
-    return hero;
-}
-
 static Line lens(const float focal)
 {
     const Line fov = {
@@ -19,9 +13,10 @@ static Line lens(const float focal)
     return fov;
 }
 
-Hero xspawn(const float focal, const Point where, const int floor, const Gauge gg)
+Hero h_born(const float focal, const Point where, const int floor, const Gauge gg)
 {
-    Hero hero = xzhero();
+    static Hero zero; // From zero to hero.
+    Hero hero = zero;
     hero.floor = floor;
     hero.fov = lens(focal);
     hero.where = where;
@@ -109,7 +104,7 @@ static Hero vert(Hero hero, const Map map, const Input input)
     return hero;
 }
 
-Point xtouch(const Hero hero)
+Point h_touch(const Hero hero)
 {
     const Point reference = { hero.reach, 0.0f };
     const Point direction = p_turn(reference, hero.yaw);
@@ -174,7 +169,7 @@ static int teldn(const Hero hero, const Map map)
     return hero.pitch > 1.0f && xmisportal(map.floring, hero.where);
 }
 
-Hero xteleporting(Hero hero, const Map map, const Input input, const Timer tm)
+Hero h_teleporting(Hero hero, const Map map, const Input input, const Timer tm)
 {
     hero.teleporting = false;
     if(tm.ticks < hero.teleported + 2 || !input.key[SDL_SCANCODE_E])
@@ -184,7 +179,7 @@ Hero xteleporting(Hero hero, const Map map, const Input input, const Timer tm)
     return hero;
 }
 
-Hero xteleport(Hero hero, const Map map)
+Hero h_teleport(Hero hero, const Map map)
 {
     if(telup(hero, map))
         hero.floor--;
@@ -198,7 +193,7 @@ Hero xteleport(Hero hero, const Map map)
     return hero;
 }
 
-Ray xcalc(const Hero hero, const Hit hit, const Sheer sheer, const int yres, const int xres)
+Ray h_cast(const Hero hero, const Hit hit, const Sheer sheer, const int yres, const int xres)
 {
     const Point end = p_sub(hit.where, hero.where);
     const Point corrected = p_turn(end, -hero.yaw);
@@ -215,7 +210,7 @@ static Hero recoil(Hero hero, const Method last)
     return hero;
 }
 
-Hero xsustain(Hero hero, const Map map, const Input input, const Flow current, const Method last)
+Hero h_sustain(Hero hero, const Map map, const Input input, const Flow current, const Method last)
 {
     hero = look(hero, input);
     hero = vert(hero, map, input);
