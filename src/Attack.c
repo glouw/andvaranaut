@@ -1,6 +1,6 @@
 #include "Attack.h"
 
-Attack xzattack(void)
+Attack a_zero(void)
 {
     static Attack attack;
     return attack;

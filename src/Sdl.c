@@ -235,7 +235,7 @@ void xrender(const Sdl sdl, const Text text, const Hero hero, const Sprites spri
     };
     SDL_Thread** const threads = xtoss(SDL_Thread*, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
-        threads[i] = SDL_CreateThread(xbraster, "n/a", &b[i]);
+        threads[i] = SDL_CreateThread(b_raster, "n/a", &b[i]);
     for(int i = 0; i < sdl.threads; i++)
     {
         int status; // Ignored.
@@ -276,7 +276,7 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     }
     const int tail = 10;
     if(g.count < tail)
-        return xzattack();
+        return a_zero();
     const int last = g.count - 1;
     const int first = g.count - tail;
     const Point dir = p_unit(p_sub(g.points[last], g.points[first]));
@@ -309,7 +309,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
         const Attack range = { mag, dir, it.hurts, RANGE, 0, reticule };
         return range;
     }
-    else return xzattack();
+    else return a_zero();
 }
 
 // Draws magic gauge.
@@ -391,7 +391,7 @@ Attack xdgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll s
         xismelee(it.c) ? dgmelee(sdl, g, it, sens) :
         xisrange(it.c) ? dgrange(sdl, g, it, sens) :
         xismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) :
-        xzattack();
+        a_zero();
 }
 
 static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)

@@ -14,4 +14,4 @@ typedef struct
 }
 Attack;
 
-Attack xzattack(void);
+Attack a_zero(void);

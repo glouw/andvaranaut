@@ -2,7 +2,7 @@
 
 #include "Scanline.h"
 
-int xbraster(void* const bundle)
+int b_raster(void* const bundle)
 {
     Bundle* const b = (Bundle*) bundle;
     for(int x = b->a; x < b->b; x++)

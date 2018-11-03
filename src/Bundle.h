@@ -22,4 +22,4 @@ typedef struct
 }
 Bundle;
 
-int xbraster(void* const bundle);
+int b_raster(void* const bundle);
