@@ -16,7 +16,7 @@ DEBUG = 0
 # Use the C++ compiler for extra type checking.
 CC  = gcc -std=c99
 CXX = g++ -std=c++98
-CMP = $(CXX)
+CMP = $(CC)
 
 NAME = ../andvaranaut
 

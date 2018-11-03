@@ -8,13 +8,13 @@
 
 static Sprite initspeech(Sprite sprite)
 {
+    static Speech zero;
     switch(sprite.ascii)
     {
     case 'b':
         sprite.speech = s_greet();
         break;
     default:
-        static Speech zero;
         sprite.speech = zero;
         break;
     }
@@ -126,7 +126,7 @@ int s_nocount(const Sprite* const sprite)
 
 int s_stuck(const Sprite* const sprite)
 {
-    return s_dead(sprite->state) || s_hurt(sprite->state);
+    return s_dead(sprite->state) || s_hurting(sprite->state);
 }
 
 void s_place(Sprite* const sprite, const Point to)

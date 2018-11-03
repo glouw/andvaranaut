@@ -33,7 +33,7 @@ typedef enum
 }
 State;
 
-int s_hurt(const State);
+int s_hurting(const State);
 
 int s_dead(const State);
 

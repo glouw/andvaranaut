@@ -1,6 +1,6 @@
 #include "State.h"
 
-int s_hurt(const State state)
+int s_hurting(const State state)
 {
     return state == HURT_N
         || state == HURT_E
