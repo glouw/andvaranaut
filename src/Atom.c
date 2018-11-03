@@ -17,7 +17,7 @@ static float average(const Field field, const int y, const int x)
     return sum / sums;
 }
 
-Atom xmaterialize(const Field field, const int y, const int x)
+Atom a_materialize(const Field field, const int y, const int x)
 {
     const Atom atom = { y, x, average(field, y, x) };
     return atom;

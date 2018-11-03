@@ -43,7 +43,7 @@ static void box(const Field field, const int y, const int x, const int w)
         if((i == l || j == t || i == r || j == b)
         && xon(field, j, i)
         && field.mesh[j][i] == 0.0f)
-            atoms[count++] = xmaterialize(field, j, i);
+            atoms[count++] = a_materialize(field, j, i);
     for(int a = 0; a < count; a++)
         field.mesh[atoms[a].y][atoms[a].x] = atoms[a].val;
     free(atoms);
