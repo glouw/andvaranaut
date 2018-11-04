@@ -81,7 +81,7 @@ static void render_speech(Sprite* const sprite, const Sdl sdl, const Text text, 
     }
 }
 
-static SDL_Rect calc_size(const Sdl sdl, Sprite* const sprite, const Hero hero)
+static SDL_Rect calc_sprite_size(const Sdl sdl, Sprite* const sprite, const Hero hero)
 {
     // Projection.[ch] does the same thing, but this one accounts for sprite jitter.
     const int size = sprite->size * hero.fov.a.x * 0.5f * sdl.xres / sprite->where.x;
@@ -136,7 +136,7 @@ static void render_sprites(const Sdl sdl, const Text text, const Sprites sprites
         Sprite* const sprite = &sprites.sprite[which];
         if(sprite->where.x > 0)
         {
-            const SDL_Rect target = calc_size(sdl, sprite, hero);
+            const SDL_Rect target = calc_sprite_size(sdl, sprite, hero);
             if(target.x + target.w >= 0 && target.x < sdl.xres)
             {
                 const int selected = sprite->ascii - ' ';
