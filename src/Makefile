@@ -5,7 +5,7 @@
 #                             THE DUNGEON CRAWLER
 #
 # -----------------------------------------------------------------------------
-# Required dependencies:
+# Dependencies:
 #   SDL2-devel
 #   SDL2-devel-ttf
 
@@ -13,14 +13,11 @@
 # 1: Best crash messages.
 DEBUG = 0
 
-# Use the C++ compiler for extra type checking.
-CC  = gcc -std=c99
-CXX = g++ -std=c++98
-CMP = $(CC)
+# 0: Compile with C.
+# 1: Compile with C++ (Better type checking).
+C++ = 0
 
-NAME = ../andvaranaut
-
-BIN = $(NAME)
+BINARY = ../andvaranaut
 
 SRCS  = main.c
 SRCS += util.c
@@ -67,28 +64,30 @@ SRCS += Tris.c
 SRCS += Vram.c
 SRCS += World.c
 
-CMP_FLAGS  = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Wunused-result
-CMP_FLAGS += -Ofast -march=native -pipe
-ifeq ($(DEBUG), 1)
-CMP_FLAGS += -g -fsanitize=address
+ifeq (1, $(C++))
+COMPILER = g++ -std=c++98
 else
-CMP_FLAGS += -flto
+COMPILER = gcc -std=c99
 endif
 
-LIB_FLAGS  = -lm
-LIB_FLAGS += -lSDL2
-LIB_FLAGS += -lSDL2_ttf
+COMPILER_FLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -march=native
+
+ifeq (1, $(DEBUG))
+COMPILER_FLAGS += -g -fsanitize=address
+else
+# Cannot combine flto and fsanitize - gives useless crash logs.
+COMPILER_FLAGS += -flto
+endif
+
+LIBRARY_FLAGS = -lm -lSDL2 -lSDL2_ttf
 
 # Linker.
-$(BIN): $(SRCS:.c=.o)
-	@echo LINK $(BIN)
-	@$(CMP) $(CMP_FLAGS) $(SRCS:.c=.o) $(LIB_FLAGS) -o $(BIN)
+$(BINARY): $(SRCS:.c=.o)
+	$(COMPILER) $(COMPILER_FLAGS) $(SRCS:.c=.o) $(LIBRARY_FLAGS) -o $(BINARY)
 
 # Compiler.
-# Saving the Makefile will recompile everything.
 %.o : %.c Makefile
-	@echo COMPILE $*.c
-	@$(CMP) $(CMP_FLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
+	$(COMPILER) $(COMPILER_FLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@rm -f $*.d
 	@mv -f $*.td $*.d
 
@@ -100,7 +99,7 @@ clean:
 	rm -f vgcore.*
 	rm -f cachegrind.out.*
 	rm -f callgrind.out.*
-	rm -f $(BIN)
+	rm -f $(BINARY)
 	rm -f $(SRCS:.c=.o)
 	rm -f $(SRCS:.c=.d)
 
