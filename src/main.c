@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 
             wd.sprites[me.floor] = s_lay(wd.sprites[me.floor], wd.map[me.floor], ov);
 
-            s_view(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], tm);
+            s_render_overlay(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], tm);
         }
         // Play Mode.
         else
@@ -104,13 +104,7 @@ int main(int argc, char* argv[])
 
             inv = i_highlite(inv, in, sdl.xres);
 
-            s_render(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
-
-            s_drawinv(sdl, inv);
-
-            s_drawbars(sdl, me, tm);
-
-            s_drawmap(sdl, wd.map[me.floor], me.where);
+            s_render_playing(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, inv, tm);
 
             wd.map[me.floor] = s_count(wd.sprites[me.floor], wd.map[me.floor]);
 
@@ -130,7 +124,7 @@ int main(int argc, char* argv[])
 
                 t_stuckclear();
 
-                const Attack atk = s_drawgauge(sdl, gg, inv, sc);
+                const Attack atk = s_draw_gauge(sdl, gg, inv, sc);
 
                 // TODO: Maybe pass in item wind rate.
                 gg = g_wind(gg, in, tm);
@@ -143,7 +137,7 @@ int main(int argc, char* argv[])
         }
         t_show(text, sdl);
 
-        s_drawfps(sdl, text, "%d", fps);
+        s_draw_fps(sdl, text, "%d", fps);
 
         s_present(sdl);
 

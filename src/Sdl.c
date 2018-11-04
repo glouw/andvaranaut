@@ -22,8 +22,7 @@ void s_present(const Sdl sdl)
     SDL_RenderPresent(sdl.renderer);
 }
 
-// Left clip a sprite based on zbuffer.
-static SDL_Rect lclip(SDL_Rect seen, const int xres, const Point where, Point* const zbuff)
+static SDL_Rect left_clip(SDL_Rect seen, const int xres, const Point where, Point* const zbuff)
 {
     for(; seen.w > 0; seen.w--, seen.x++)
     {
@@ -36,8 +35,7 @@ static SDL_Rect lclip(SDL_Rect seen, const int xres, const Point where, Point* c
     return seen;
 }
 
-// Right clip a sprite based on zbuffer.
-static SDL_Rect rclip(SDL_Rect seen, const int xres, const Point where, Point* const zbuff)
+static SDL_Rect rite_clip(SDL_Rect seen, const int xres, const Point where, Point* const zbuff)
 {
     for(; seen.w > 0; seen.w--)
     {
@@ -53,14 +51,13 @@ static SDL_Rect rclip(SDL_Rect seen, const int xres, const Point where, Point* c
     return seen;
 }
 
-// Clips a sprite left and right based on wall zbuffer.
 static SDL_Rect clip(SDL_Rect seen, const int xres, const Point where, Point* const zbuff)
 {
-    seen = lclip(seen, xres, where, zbuff);
-    return rclip(seen, xres, where, zbuff);
+    seen = left_clip(seen, xres, where, zbuff);
+    return rite_clip(seen, xres, where, zbuff);
 }
 
-static void dbox(const Sdl sdl, const int x, const int y, const int width, const uint32_t color, const int filled)
+static void draw_box(const Sdl sdl, const int x, const int y, const int width, const uint32_t color, const int filled)
 {
     const int a = (color >> 0x18) & 0xFF;
     const int r = (color >> 0x10) & 0xFF;
@@ -73,8 +70,7 @@ static void dbox(const Sdl sdl, const int x, const int y, const int width, const
         SDL_RenderDrawRect(sdl.renderer, &square);
 }
 
-// Renders sprite speech text box.
-static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const SDL_Rect target)
+static void render_speech(Sprite* const sprite, const Sdl sdl, const Text text, const SDL_Rect target)
 {
     if(sprite->state == SPEAKING)
     {
@@ -85,8 +81,7 @@ static void rspeech(Sprite* const sprite, const Sdl sdl, const Text text, const 
     }
 }
 
-// Calculates sprite size releative to player.
-static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
+static SDL_Rect calc_size(const Sdl sdl, Sprite* const sprite, const Hero hero)
 {
     // Projection.[ch] does the same thing, but this one accounts for sprite jitter.
     const int size = sprite->size * hero.fov.a.x * 0.5f * sdl.xres / sprite->where.x;
@@ -100,8 +95,7 @@ static SDL_Rect rtarget(const Sdl sdl, Sprite* const sprite, const Hero hero)
     return target;
 }
 
-// Calculates which sprite frame and state to use based on sprite state and timer clock.
-static SDL_Rect rimage(SDL_Surface* const surface, const State state, const Frame frame)
+static SDL_Rect calc_state_frame(SDL_Surface* const surface, const State state, const Frame frame)
 {
     const int w = surface->w / FRAMES;
     const int h = surface->h / STATES;
@@ -109,8 +103,7 @@ static SDL_Rect rimage(SDL_Surface* const surface, const State state, const Fram
     return image;
 }
 
-// Renders one sprite to screen.
-static void rsprite(const Sdl sdl, const Text text, Sprite* const sprite, const Hero hero, SDL_Texture* const texture, const SDL_Rect image, const SDL_Rect target)
+static void render_one_sprite(const Sdl sdl, const Text text, Sprite* const sprite, const Hero hero, SDL_Texture* const texture, const SDL_Rect image, const SDL_Rect target)
 {
     // Apply lighting to the sprite.
     const int modding = t_illuminate(hero.torch, sprite->where.x);
@@ -133,18 +126,17 @@ static void rsprite(const Sdl sdl, const Text text, Sprite* const sprite, const 
     SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
 
     // If the sprite is within earshot of hero then render speech sentences.
-    rspeech(sprite, sdl, text, target);
+    render_speech(sprite, sdl, text, target);
 }
 
-// Renders all sprites to screen.
-static void rsprites(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
+static void render_sprites(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
     for(int which = 0; which < sprites.count; which++)
     {
         Sprite* const sprite = &sprites.sprite[which];
         if(sprite->where.x > 0)
         {
-            const SDL_Rect target = rtarget(sdl, sprite, hero);
+            const SDL_Rect target = calc_size(sdl, sprite, hero);
             if(target.x + target.w >= 0 && target.x < sdl.xres)
             {
                 const int selected = sprite->ascii - ' ';
@@ -152,10 +144,10 @@ static void rsprites(const Sdl sdl, const Text text, const Sprites sprites, Poin
                 SDL_Texture* const texture = sdl.textures.texture[selected];
                 const State state = sprite->state;
                 const Frame frame = t_lo(tm) ? A : B;
-                const SDL_Rect image = rimage(surface, state, frame);
+                const SDL_Rect image = calc_state_frame(surface, state, frame);
                 sprite->seen = clip(target, sdl.xres, sprite->where, zbuff);
                 if(sprite->seen.w > 0)
-                    rsprite(sdl, text, sprite, hero, texture, image, target);
+                    render_one_sprite(sdl, text, sprite, hero, texture, image, target);
             }
         }
     }
@@ -207,54 +199,7 @@ Sdl s_setup(const Args args)
     return sdl;
 }
 
-void s_render(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
-{
-    Point* const zbuff = u_toss(Point, sdl.xres);
-    const Line camera = l_rotate(hero.fov, hero.yaw);
-    const Vram vram = v_lock(sdl.canvas);
-
-    // Threaded software rendering.
-    // Each thread handles vertical columns <a> to <b> of the screen.
-    Bundle* const b = u_toss(Bundle, sdl.threads);
-    for(int i = 0; i < sdl.threads; i++)
-    {
-        b[i].a = (i + 0) * sdl.xres / sdl.threads;
-        b[i].b = (i + 1) * sdl.xres / sdl.threads;
-        b[i].zbuff = zbuff;
-        b[i].camera = camera;
-        b[i].vram = vram;
-        b[i].sdl = sdl;
-        b[i].hero = hero;
-        b[i].current = current;
-        b[i].clouds = clouds;
-        b[i].map = map;
-    };
-    SDL_Thread** const threads = u_toss(SDL_Thread*, sdl.threads);
-    for(int i = 0; i < sdl.threads; i++)
-        threads[i] = SDL_CreateThread(b_raster, "n/a", &b[i]);
-    for(int i = 0; i < sdl.threads; i++)
-    {
-        int status; // Ignored.
-        SDL_WaitThread(threads[i], &status);
-    }
-    v_unlock(sdl.canvas);
-
-    // Render was done sideways for cache efficiency. Rotate upwards.
-    churn(sdl);
-
-    // Orientate sprites to player's gaze and render to screen. Place back to global coords afterwards.
-    s_orient(sprites, hero);
-    rsprites(sdl, text, sprites, zbuff, hero, tm);
-    s_placeback(sprites, hero);
-
-    // Cleanup.
-    free(zbuff);
-    free(b);
-    free(threads);
-}
-
-// Draws melee gauge and calculates attack.
-static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float sens)
+static Attack draw_gauge_melee(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
     for(int i = 0; i < g.count; i++)
     {
@@ -268,7 +213,7 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
             (width - sdl.yres) / 2.0f,
         };
         const Point where = p_sub(p_mul(g.points[i], sens), mid);
-        dbox(sdl, where.x, where.y, width, color, true);
+        draw_box(sdl, where.x, where.y, width, color, true);
     }
     const int tail = 10;
     if(g.count < tail)
@@ -284,8 +229,7 @@ static Attack dgmelee(const Sdl sdl, const Gauge g, const Item it, const float s
     return melee;
 }
 
-// Draws ranged gauge.
-static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float sens)
+static Attack draw_gauge_range(const Sdl sdl, const Gauge g, const Item it, const float sens)
 {
     if(g.count > 0)
     {
@@ -294,7 +238,7 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
 
         const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
-        dbox(sdl, x, y, width, sdl.wht, false);
+        draw_box(sdl, x, y, width, sdl.wht, false);
 
         // TODO: Fix this so that range attack is based on sinc steady state.
         const float mag = 100.0f;
@@ -316,8 +260,8 @@ static Attack dgrange(const Sdl sdl, const Gauge g, const Item it, const float s
     }
 }
 
-// Draws magic gauge.
-static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float sens, const Inventory inv, const Scroll sc)
+// TODO: Format... way too long.
+static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, const float sens, const Inventory inv, const Scroll sc)
 {
     s_clear(sc);
     if(g.count > 0)
@@ -338,7 +282,7 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             const Point corner = p_snap(point, grid);
             const Point center = p_sub(p_add(corner, middle), shift);
 
-            dbox(sdl, center.x, center.y, grid, sdl.wht, true);
+            draw_box(sdl, center.x, center.y, grid, sdl.wht, true);
 
             // Populate Scroll int array that was cleared earlier.
             const int x = size + corner.x / grid;
@@ -360,13 +304,13 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
             };
             const Point corner = p_mul(which, grid);
             const Point center = p_sub(p_add(corner, middle), shift);
-            dbox(sdl, center.x, center.y, grid, sdl.red, false);
+            draw_box(sdl, center.x, center.y, grid, sdl.red, false);
         }
 
         // Draw the cursor.
         const Point point = p_add(p_mul(g.points[g.count - 1], sens), shift);
         const Point center = p_sub(p_add(point, middle), shift);
-        dbox(sdl, center.x, center.y, 6, sdl.red, true);
+        draw_box(sdl, center.x, center.y, 6, sdl.red, true);
     }
 
     // Calculate attack.
@@ -387,16 +331,15 @@ static Attack dgmagic(const Sdl sdl, const Gauge g, const Item it, const float s
     return magic;
 }
 
-// Draws all power gauge squares.
-Attack s_drawgauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll sc)
+Attack s_draw_gauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll sc)
 {
     const Item it = inv.items.item[inv.selected];
     const float sens = 2.0f;
     static Attack zero;
     return
-        c_ismelee(it.c) ? dgmelee(sdl, g, it, sens) :
-        c_isrange(it.c) ? dgrange(sdl, g, it, sens) :
-        c_ismagic(it.c) ? dgmagic(sdl, g, it, sens, inv, sc) : zero;
+        c_ismelee(it.c) ? draw_gauge_melee(sdl, g, it, sens) :
+        c_isrange(it.c) ? draw_gauge_range(sdl, g, it, sens) :
+        c_ismagic(it.c) ? draw_gauge_magic(sdl, g, it, sens, inv, sc) : zero;
 }
 
 static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
@@ -405,8 +348,7 @@ static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
         && (to.y > sdl.yres || to.y < -ov.h);
 }
 
-// Draws tiles for the grid layout.
-static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
+static void draw_grid_layout(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
 {
     SDL_SetRenderDrawColor(sdl.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(sdl.renderer);
@@ -447,8 +389,7 @@ static void dgridl(const Sdl sdl, const Overview ov, const Sprites sprites, cons
     }
 }
 
-// Draw the selection panel.
-static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
+static void draw_sprite_panel(const Sdl sdl, const Overview ov, const Timer tm)
 {
     for(int i = ov.wheel; i <= '~' - ' '; i++)
     {
@@ -469,15 +410,14 @@ static void dpanel(const Sdl sdl, const Overview ov, const Timer tm)
     }
 }
 
-// View the map editor.
-void s_view(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
+void s_render_overlay(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
 {
-    dgridl(sdl, ov, sprites, map, tm);
-    dpanel(sdl, ov, tm);
+    draw_grid_layout(sdl, ov, sprites, map, tm);
+
+    draw_sprite_panel(sdl, ov, tm);
 }
 
-// Draws status bar (one of health, magic, or fatigue).
-void drawbar(const Sdl sdl, const Hero hero, const int position, const Timer tm, const int size, const Bar bar)
+static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, const Timer tm, const int size, const Bar bar)
 {
     const int max =
         bar == HPS ? hero.hpsmax :
@@ -528,17 +468,15 @@ void drawbar(const Sdl sdl, const Hero hero, const int position, const Timer tm,
     }
 }
 
-// Draws all hero status bars (health, mana, and fatigue).
-void s_drawbars(const Sdl sdl, const Hero hero, const Timer tm)
+static void draw_all_bars(const Sdl sdl, const Hero hero, const Timer tm)
 {
     const int size = 1;
-    drawbar(sdl, hero, 2, tm, size, HPS);
-    drawbar(sdl, hero, 1, tm, size, MNA);
-    drawbar(sdl, hero, 0, tm, size, FTG);
+    draw_one_bar(sdl, hero, 2, tm, size, HPS);
+    draw_one_bar(sdl, hero, 1, tm, size, MNA);
+    draw_one_bar(sdl, hero, 0, tm, size, FTG);
 }
 
-// Draws the inventory backpanel. Selected inventory item is highlighted.
-static void dinvbp(const Sdl sdl, const Inventory inv)
+static void draw_inv_panel(const Sdl sdl, const Inventory inv)
 {
     const Point wht = { 0.0, 512.0 };
     const Point red = { 0.0, 528.0 };
@@ -549,18 +487,20 @@ static void dinvbp(const Sdl sdl, const Inventory inv)
         SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
+
+        // Selected inventory item is highlighted.
         const SDL_Rect from = {
             (int) (i == inv.hilited ? grn.x : i == inv.selected ? red.x : wht.x),
             (int) (i == inv.hilited ? grn.y : i == inv.selected ? red.y : wht.y),
             w, w
         };
+
         const SDL_Rect to = { xx, inv.width * i, inv.width, inv.width };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }
 
-// Draws the inventory items.
-static void dinvits(const Sdl sdl, const Inventory inv)
+static void draw_inv_items(const Sdl sdl, const Inventory inv)
 {
     for(int i = 0; i < inv.items.max; i++)
     {
@@ -577,15 +517,13 @@ static void dinvits(const Sdl sdl, const Inventory inv)
     }
 }
 
-// Draws the inventory.
-void s_drawinv(const Sdl sdl, const Inventory inv)
+static void draw_inv(const Sdl sdl, const Inventory inv)
 {
-    dinvbp(sdl, inv);
-    dinvits(sdl, inv);
+    draw_inv_panel(sdl, inv);
+    draw_inv_items(sdl, inv);
 }
 
-// Draws the map.
-void s_drawmap(const Sdl sdl, const Map map, const Point where)
+static void draw_map(const Sdl sdl, const Map map, const Point where)
 {
     SDL_Texture* const texture = SDL_CreateTexture(
         sdl.renderer,
@@ -607,7 +545,7 @@ void s_drawmap(const Sdl sdl, const Map map, const Point where)
 }
 
 
-void s_drawfps(const Sdl sdl, const Text text, const char* const fmt, ...)
+void s_draw_fps(const Sdl sdl, const Text text, const char* const fmt, ...)
 {
     va_list args;
 
@@ -625,4 +563,54 @@ void s_drawfps(const Sdl sdl, const Text text, const char* const fmt, ...)
     f_putbr(text.fill, text.line, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);
 
     free(str);
+}
+
+void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Inventory inv, const Timer tm)
+{
+    Point* const zbuff = u_toss(Point, sdl.xres);
+    const Line camera = l_rotate(hero.fov, hero.yaw);
+    const Vram vram = v_lock(sdl.canvas);
+
+    // Threaded software rendering - each thread handles vertical columns <a> to <b> of the screen.
+    Bundle* const b = u_toss(Bundle, sdl.threads);
+    for(int i = 0; i < sdl.threads; i++)
+    {
+        b[i].a = (i + 0) * sdl.xres / sdl.threads;
+        b[i].b = (i + 1) * sdl.xres / sdl.threads;
+        b[i].zbuff = zbuff;
+        b[i].camera = camera;
+        b[i].vram = vram;
+        b[i].sdl = sdl;
+        b[i].hero = hero;
+        b[i].current = current;
+        b[i].clouds = clouds;
+        b[i].map = map;
+    };
+    SDL_Thread** const threads = u_toss(SDL_Thread*, sdl.threads);
+    for(int i = 0; i < sdl.threads; i++)
+        threads[i] = SDL_CreateThread(b_raster, "n/a", &b[i]);
+    for(int i = 0; i < sdl.threads; i++)
+    {
+        int status; // Ignored.
+        SDL_WaitThread(threads[i], &status);
+    }
+    v_unlock(sdl.canvas);
+
+    // Render was done sideways for cache efficiency. Rotate upwards.
+    churn(sdl);
+
+    // Orientate sprites to player's gaze and render to screen. Place back to global coords afterwards.
+    s_orient(sprites, hero);
+    render_sprites(sdl, text, sprites, zbuff, hero, tm);
+    s_placeback(sprites, hero);
+
+    // Draw the user interface.
+    draw_inv(sdl, inv);
+    draw_all_bars(sdl, hero, tm);
+    draw_map(sdl, map, hero.where);
+
+    // Cleanup.
+    free(zbuff);
+    free(b);
+    free(threads);
 }
