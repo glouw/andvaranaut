@@ -96,7 +96,7 @@ Surfaces s_pull(void)
         /* `      */ "art/tiles/error.bmp",
         /* a      */ "art/sprites/flower.bmp",
         /* b      */ "art/sprites/dwarf.bmp",
-        /* c      */ "art/sprites/fire.bmp",
+        /* c      */ "art/sprites/ember.bmp",
         /* d      */ "art/sprites/lootbag.bmp",
         /* e      */ "art/sprites/missing.bmp",
         /* f      */ "art/sprites/missing.bmp",

@@ -92,15 +92,13 @@ int main(int argc, char* argv[])
                 f_extinguish(fire);
                 fire = f_kindle(wd.map[me.floor]);
             }
-            fire = f_track(fire, wd.sprites[me.floor]);
-
             ov = o_backpan(ov, me.where, sdl.xres, sdl.yres);
 
             current = f_stream(current);
 
             clouds = f_stream(clouds);
 
-            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, gg, tm);
+            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], fd, gg, fire, tm);
 
             inv = i_select(inv, in);
 
@@ -141,8 +139,6 @@ int main(int argc, char* argv[])
 
                 wd.sprites[me.floor] = s_hurt(wd.sprites[me.floor], atk, me, in, inv, tm);
             }
-            f_burn(fire, me);
-
             f_clear(fire);
         }
         t_show(text, sdl);

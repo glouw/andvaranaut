@@ -7,6 +7,7 @@
 #include "Gauge.h"
 #include "Inventory.h"
 #include "Method.h"
+#include "Fire.h"
 
 typedef struct
 {
@@ -29,7 +30,7 @@ Sprites s_lay(Sprites, const Map, const Overview);
 
 Sprites s_hurt(Sprites, const Attack, const Hero, const Input, const Inventory, const Timer);
 
-Hero s_caretake(const Sprites, const Hero, const Map, const Field, const Gauge, const Timer);
+Hero s_caretake(const Sprites, const Hero, const Map, const Field, const Gauge, const Fire, const Timer);
 
 Sprites s_gen(const int max, const Map);
 

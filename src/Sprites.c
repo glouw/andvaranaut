@@ -386,6 +386,7 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
         && sprite->state == IDLE
         && p_eql(hero.where, sprite->where, 2.2f))
         {
+            // Will need another timer to expire before a new attack direction.
             sprite->state = ATTACK_N;
 
             if(s_impulse(sprite, tm))
@@ -480,7 +481,40 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
     }
 }
 
-Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Gauge gauge, const Timer tm)
+static void track(const Sprites sprites, const Fire fire)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+
+        if(s_firey(sprite->ascii))
+        {
+            const int x = sprite->where.x;
+            const int y = sprite->where.y;
+            fire.embers[y][x] = e_append(fire.embers[y][x], sprite);
+        }
+    }
+}
+
+static void burn(const Sprites sprites, const Fire fire)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+
+        if(s_firey(sprite->ascii))
+            continue;
+
+        const int x = sprite->where.x;
+        const int y = sprite->where.y;
+        const Embers embers = fire.embers[y][x];
+
+        for(int j = 0; j < embers.count; j++)
+            embers.ember[j]->state = ATTACK_N;
+    }
+}
+
+Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Gauge gauge, const Fire fire, const Timer tm)
 {
     arrange(sprites, hero);
     idle(sprites, tm);
@@ -489,6 +523,8 @@ Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Fie
     bound(sprites, map);
     speak(sprites, hero, tm);
     block(sprites, hero, gauge);
+    track(sprites, fire);
+    burn(sprites, fire);
     return damage(hero, sprites, gauge, tm);
 }
 
