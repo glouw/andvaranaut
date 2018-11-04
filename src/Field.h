@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Map.h"
-#include "Hero.h"
 
 typedef struct
 {

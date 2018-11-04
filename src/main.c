@@ -1,5 +1,6 @@
 #include "World.h"
 #include "Title.h"
+#include "Fire.h"
 #include "util.h"
 
 int main(int argc, char* argv[])
@@ -32,6 +33,8 @@ int main(int argc, char* argv[])
     Flow clouds = f_start(9.0f);
 
     Field fd = f_prepare(wd.map[me.floor], me.aura);
+
+    Fire fire = f_kindle(wd.map[me.floor]);
 
     Inventory inv = i_create();
 
@@ -85,7 +88,12 @@ int main(int argc, char* argv[])
 
                 f_ruin(fd);
                 fd = f_prepare(wd.map[me.floor], me.aura);
+
+                f_extinguish(fire);
+                fire = f_kindle(wd.map[me.floor]);
             }
+            fire = f_track(fire, wd.sprites[me.floor]);
+
             ov = o_backpan(ov, me.where, sdl.xres, sdl.yres);
 
             current = f_stream(current);
@@ -133,6 +141,9 @@ int main(int argc, char* argv[])
 
                 wd.sprites[me.floor] = s_hurt(wd.sprites[me.floor], atk, me, in, inv, tm);
             }
+            f_burn(fire, me);
+
+            f_clear(fire);
         }
         t_show(text, sdl);
 

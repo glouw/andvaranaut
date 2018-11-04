@@ -40,6 +40,8 @@ int s_sprite(const int ascii);
 
 int s_cosmetic(const int ascii);
 
+int s_firey(const int ascii);
+
 int s_inanimate(const int ascii);
 
 int s_useless(const Sprite* const);

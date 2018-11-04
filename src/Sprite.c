@@ -109,6 +109,11 @@ int s_cosmetic(const int ascii)
     return ascii == 'a';
 }
 
+int s_firey(const int ascii)
+{
+    return ascii == 'c';
+}
+
 int s_inanimate(const int ascii)
 {
     return ascii == 'd';
