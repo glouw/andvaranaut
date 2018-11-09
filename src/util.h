@@ -8,15 +8,13 @@
 #include <stdlib.h>
 #include <limits.h>
 
-char* u_dups(const char* s);
+char* u_str_dup(const char* s);
 
 int u_fl(const float x);
 
 int u_cl(const float x);
 
 float u_dec(const float x);
-
-char* u_readln(FILE* const file);
 
 void u_bomb(const char* const message, ...);
 

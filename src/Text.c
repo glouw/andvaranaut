@@ -46,7 +46,7 @@ void t_put_bottom_right(const Text text, const char* const str, const int alpha,
 
 void t_print(const Text text, const char* const str, const int alpha, SDL_Renderer* const rend, const int x, const int y)
 {
-    char* const copy = u_dups(str);
+    char* const copy = u_str_dup(str);
     const char* const delim = "\n";
     int newline = 0;
     for(char* tok = strtok(copy, delim); tok; tok = strtok(NULL, delim))
