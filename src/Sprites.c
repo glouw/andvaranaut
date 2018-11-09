@@ -502,6 +502,41 @@ static void burn(const Sprites sprites, const Fire fire)
     }
 }
 
+Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Timer tm)
+{
+    if(tm.rise)
+    {
+        // Do not want growing sprite count.
+        const int count = sprites.count;
+
+        for(int i = 0; i < count; i++)
+        {
+            Sprite* const sprite = &sprites.sprite[i];
+
+            // Is this an ember sprite?
+            if(s_firey(sprite->ascii)
+            // Is the ember sprite alive?
+            && s_alive(sprite->state)
+            // Is the ember sprite on grass?
+            && p_block(sprite->where, map.floring) == '(')
+            {
+                const int x = sprite->where.x;
+                const int y = sprite->where.y;
+                if(fire.embers[y][x].count < 2)
+                {
+                    const Point dir = {
+                        2.0f * (u_frand() - 0.5f),
+                        2.0f * (u_frand() - 0.5f),
+                    };
+                    const Point where = p_add(sprite->where, dir);
+                    sprites = append(sprites, s_register('c', where));
+                }
+            }
+        }
+    }
+    return sprites;
+}
+
 Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Gauge gauge, const Fire fire, const Timer tm)
 {
     arrange(sprites, hero, s_nearest_first);

@@ -12,8 +12,8 @@ Text t_build(const char* const path, const int size, const uint32_t inner, const
 
 static void render_text(const Text text, SDL_Renderer* const rend, const SDL_Rect target, const char* const str, const int alpha)
 {
-    SDL_Texture* tfill = f_get_texture(text.fill, rend, alpha, str);
-    SDL_Texture* tline = f_get_texture(text.line, rend, alpha, str);
+    SDL_Texture* const tfill = f_get_texture(text.fill, rend, alpha, str);
+    SDL_Texture* const tline = f_get_texture(text.line, rend, alpha, str);
     SDL_RenderCopy(rend, tfill, NULL, &target);
     SDL_RenderCopy(rend, tline, NULL, &target);
     SDL_DestroyTexture(tfill);

@@ -40,3 +40,5 @@ Sprites s_gen(const int max, const Map);
 Sprites s_populate(Sprites, const Map);
 
 Map s_count(const Sprites, Map);
+
+Sprites s_spread_fire(Sprites, const Fire, const Map, const Timer);

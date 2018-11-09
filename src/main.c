@@ -98,6 +98,8 @@ int main(int argc, char* argv[])
 
             me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], field, gg, fire, tm);
 
+            wd.sprites[me.floor] = s_spread_fire(wd.sprites[me.floor], fire, wd.map[me.floor], tm);
+
             wd.map[me.floor] = s_count(wd.sprites[me.floor], wd.map[me.floor]);
 
             m_barricade(wd.map[me.floor]);
