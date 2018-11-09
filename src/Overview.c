@@ -26,7 +26,7 @@ static Overview reset(Overview ov)
     return ov;
 }
 
-Overview o_backpan(Overview ov, const Point where, const int xres, const int yres)
+Overview o_pan(Overview ov, const Point where, const int xres, const int yres)
 {
     ov.px = -ov.w * where.x + xres / 2;
     ov.py = -ov.h * where.y + yres / 2;

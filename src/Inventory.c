@@ -40,11 +40,11 @@ Inventory i_select(Inventory inv, const Input in)
 
 Inventory i_highlite(Inventory inv, const Input in, const int xres)
 {
-    inv.hilited = !i_invuse(in) ? -1 : inside(inv, in, xres) ? in.y / inv.width : -1;
+    inv.hilited = inside(inv, in, xres) ? in.y / inv.width : -1;
     return inv;
 }
 
-static Inventory tilechange(Inventory inv)
+static Inventory tile_change(Inventory inv)
 {
     inv.change = false;
     if(inv.hilited != -1 && inv.hilited != inv.last)
@@ -53,9 +53,9 @@ static Inventory tilechange(Inventory inv)
     return inv;
 }
 
-Inventory i_whatis(Inventory inv, const Scroll sc, const Timer tm)
+Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
 {
-    inv = tilechange(inv);
+    inv = tile_change(inv);
     if(inv.change && inv.hilited < inv.items.max)
     {
         const int a = tm.renders;
@@ -64,7 +64,7 @@ Inventory i_whatis(Inventory inv, const Scroll sc, const Timer tm)
 
         if(it.c == SCROLL)
         {
-            char* const squares = s_str(sc, it.index);
+            char* const squares = s_scroll_to_str(sc, it.index);
             t_set(a, b, true,
                 "%s\n"
                 "%s\n"

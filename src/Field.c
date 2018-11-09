@@ -25,7 +25,7 @@ int f_on(const Field field, const int y, const int x)
     return y >= 0 && x >= 0 && y < field.rows && x < field.cols;
 }
 
-static void box(const Field field, const int y, const int x, const int w)
+static void box_diffuse(const Field field, const int y, const int x, const int w)
 {
     Atom* const atoms = u_toss(Atom, 8 * w);
     int count = 0;
@@ -93,18 +93,7 @@ void f_diffuse(const Field field, const Point where)
     const int y = field.res * where.y;
     const int x = field.res * where.x;
     for(int w = 1; w <= field.aura; w++)
-        box(field, y, x, w);
-}
-
-void f_examine(const Field field)
-{
-    for(int j = 0; j < field.rows; j++)
-    {
-        for(int i = 0; i < field.cols; i++)
-            printf("%d ", field.mesh[j][i] > 0.0f);
-        putchar('\n');
-    }
-    putchar('\n');
+        box_diffuse(field, y, x, w);
 }
 
 void f_ruin(const Field field)

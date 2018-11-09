@@ -35,7 +35,7 @@ static void check(const Args args)
         "and will exit after a certain number of frame renders.\n");
 }
 
-static Args parsed(Args args, int argc, char* argv[])
+static Args parse(Args args, int argc, char* argv[])
 {
     for(int i = 1; i < argc; i += 2)
     {
@@ -95,7 +95,7 @@ static Args parsed(Args args, int argc, char* argv[])
     return args;
 }
 
-static Args defaults(void)
+static Args get_defaults(void)
 {
     static Args zero;
     Args args = zero;
@@ -116,5 +116,5 @@ static Args defaults(void)
 
 Args a_parse(int argc, char* argv[])
 {
-    return parsed(defaults(), argc, argv);
+    return parse(get_defaults(), argc, argv);
 }

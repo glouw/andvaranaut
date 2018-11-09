@@ -2,19 +2,19 @@
 
 #include "util.h"
 
-Embers e_append(Embers embers, Sprite* const ember)
+Embers e_append(Embers e, Sprite* const ember)
 {
-    if(embers.max == 0)
-        u_retoss(embers.ember, Sprite*, embers.max = 1);
-    if(embers.count >= embers.max)
-        u_retoss(embers.ember, Sprite*, embers.max *= 2);
-    embers.ember[embers.count++] = ember;
-    return embers;
+    if(e.max == 0)
+        u_retoss(e.ember, Sprite*, e.max = 1);
+    if(e.count >= e.max)
+        u_retoss(e.ember, Sprite*, e.max *= 2);
+    e.ember[e.count++] = ember;
+    return e;
 }
 
-Embers e_reset(const Embers embers)
+Embers e_reset(const Embers e)
 {
-    free(embers.ember);
+    free(e.ember);
     static Embers zero;
     return zero;
 }

@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <ctype.h>
 
-static Sprite initspeech(Sprite sprite)
+static Sprite init_speech(Sprite sprite)
 {
     static Speech zero;
     switch(sprite.ascii)
@@ -96,7 +96,7 @@ Sprite s_register(const int ascii, const Point where)
 {
     Sprite sprite = islower(ascii) ? lower[ascii - 'a'] : upper[ascii - 'A'];
     sprite.where = sprite.last = where;
-    return initspeech(sprite);
+    return init_speech(sprite);
 }
 
 int s_sprite(const int ascii)
@@ -124,7 +124,7 @@ int s_useless(const Sprite* const sprite)
     return s_dead(sprite->state) || s_cosmetic(sprite->ascii);
 }
 
-int s_nocount(const Sprite* const sprite)
+int s_no_count(const Sprite* const sprite)
 {
     return s_useless(sprite) || s_inanimate(sprite->ascii);
 }

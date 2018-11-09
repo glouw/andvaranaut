@@ -37,4 +37,4 @@ Overview o_init(void);
 
 Overview o_update(Overview, const Input, const int xres);
 
-Overview o_backpan(Overview, const Point where, const int xres, const int yres);
+Overview o_pan(Overview, const Point where, const int xres, const int yres);

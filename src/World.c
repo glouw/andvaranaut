@@ -3,6 +3,7 @@
 #include "Tris.h"
 #include "util.h"
 
+// Appends a new floor to the world map.
 static World append(World w, const Map map, const Sprites sprites)
 {
     if(w.floor == w.floors)
@@ -13,21 +14,22 @@ static World append(World w, const Map map, const Sprites sprites)
     return w;
 }
 
-static World wnew(const int floors)
+// Allocates memory for all floors.
+static World make(const int floors)
 {
     const World w = { u_toss(Map, floors), u_toss(Sprites, floors), 0, floors };
     return w;
 }
 
-// Builds all floors and carves out rooms.
-static World build(World w)
+// Carves rooms into each floor.
+static World carve(World w)
 {
     for(int i = 0; i < w.floors; i++)
         w = append(w, t_gen(i == 0 ? p_new(0) : w.map[i - 1].trapdoors), s_spawn(128));
     return w;
 }
 
-// Applies themes to each room.
+// Applies theme to each room of each floor.
 static void theme(const World w)
 {
     for(int i = 0; i < w.floors; i++)
@@ -53,7 +55,7 @@ static void populate(const World w)
 
 World w_make(const int floors)
 {
-    World w = build(wnew(floors));
+    World w = carve(make(floors));
     theme(w);
     attach(w);
     populate(w);

@@ -15,15 +15,15 @@ static Hit* push(Hit* ceiling, const Hit hit)
 static Hit collision(const Point ray, const Line test, char** const block)
 {
     const float offset = u_dec(ray.x + ray.y);
-    const int inverted = c_isinvert(c_needle(test.a, test.b));
+    const int inverted = c_is_inverted(c_needle(test.a, test.b));
     const Hit hit = { p_tile(test.a, block), inverted ? 1.0f - offset : offset, ray, NULL };
     return hit;
 }
 
 static Hits step(Hits hits, const Point where, const Point direction, const Map map)
 {
-    const Point hor = p_jmphor(where, direction);
-    const Point ver = p_jmpver(where, direction);
+    const Point hor = p_jump_hor(where, direction);
+    const Point ver = p_jump_ver(where, direction);
     const Point ray = p_cmp(where, hor, ver);
     const Point delta = p_mul(direction, 0.01f);
     const Point dx = { delta.x, 0.0f };
@@ -50,7 +50,7 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     if(hits.walling.surface && p_tile(test.a, map.ceiling) && p_tile(test.a, map.floring))
         return hits;
 
-    // Keep on walking.
+    // Else keep on walking.
     return step(hits, ray, direction, map);
 }
 

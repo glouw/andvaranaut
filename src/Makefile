@@ -56,6 +56,7 @@ SRCS += Timer.c
 SRCS += Scanline.c
 SRCS += Sprite.c
 SRCS += Scroll.c
+SRCS += Sorter.c
 SRCS += Sprites.c
 SRCS += Surfaces.c
 SRCS += Textures.c

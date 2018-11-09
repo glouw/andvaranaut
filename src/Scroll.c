@@ -6,16 +6,16 @@
 #include <assert.h>
 #include <float.h>
 
-static float err(const float a, const float b)
+static float error(const float a, const float b)
 {
     return 0.5f * (a - b) * (a - b);
 }
 
-static float toterr(int* a, int* b, const int size)
+static float total_error(int* a, int* b, const int size)
 {
     float sum = 0.0f;
     for(int i = 0; i < size; i++)
-        sum += err(a[i], b[i]);
+        sum += error(a[i], b[i]);
     return sum;
 }
 
@@ -31,7 +31,7 @@ int s_index(const Scroll sc)
     int index = 0;
     for(int i = 0; i < sc.scrolls; i++)
     {
-        const float err = toterr(sc.casting, sc.castables[i], sc.squares);
+        const float err = total_error(sc.casting, sc.castables[i], sc.squares);
         if(err < min)
         {
             min = err;
@@ -44,11 +44,10 @@ int s_index(const Scroll sc)
 Scroll s_new(void)
 {
     #define SCROLLS 24
-    #define WIDTH    9
+    #define WIDTH 9
     #define SQUARES (WIDTH * WIDTH)
 
-    // Not doing VLAs for C++ compatability so this check is necessary.
-    assert(SCROLLS == c_indices(SCROLL));
+    assert(SCROLLS == c_max_indices(SCROLL));
 
     static int runes[SCROLLS][SQUARES] = {
         {
@@ -306,8 +305,7 @@ Scroll s_new(void)
     return sc;
 }
 
-// Converts a scroll to _one_ string with many newlines.
-char* s_str(const Scroll sc, const int scindex)
+char* s_scroll_to_str(const Scroll sc, const int scindex)
 {
     const int len = sc.squares + sc.width + 1;
     char* const str = u_wipe(char, len);

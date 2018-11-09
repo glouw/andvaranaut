@@ -77,7 +77,7 @@ static void render_speech(Sprite* const sprite, const Sdl sdl, const Text text, 
         const char* const sentence = sprite->speech.sentences[sprite->speech.index];
         const int x = target.x + target.w / 2;
         const int y = target.y + target.h / 3; // TODO: Maybe tune the offset per sprite?
-        f_put(text.fill, text.line, sentence, 0xFF, sdl.renderer, x, y);
+        t_put(text, sentence, 0xFF, sdl.renderer, x, y);
     }
 }
 
@@ -129,8 +129,11 @@ static void render_one_sprite(const Sdl sdl, const Text text, Sprite* const spri
     render_speech(sprite, sdl, text, target);
 }
 
-static void render_sprites(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
+static void render_all_sprites(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
+    s_orient(sprites, hero);
+    s_sort(sprites, s_furthest_first);
+
     for(int which = 0; which < sprites.count; which++)
     {
         Sprite* const sprite = &sprites.sprite[which];
@@ -151,6 +154,7 @@ static void render_sprites(const Sdl sdl, const Text text, const Sprites sprites
             }
         }
     }
+    s_place_back(sprites, hero);
 }
 
 Sdl s_setup(const Args args)
@@ -337,9 +341,9 @@ Attack s_draw_gauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scr
     const float sens = 2.0f;
     static Attack zero;
     return
-        c_ismelee(it.c) ? draw_gauge_melee(sdl, g, it, sens) :
-        c_isrange(it.c) ? draw_gauge_range(sdl, g, it, sens) :
-        c_ismagic(it.c) ? draw_gauge_magic(sdl, g, it, sens, inv, sc) : zero;
+        c_is_melee(it.c) ? draw_gauge_melee(sdl, g, it, sens) :
+        c_is_range(it.c) ? draw_gauge_range(sdl, g, it, sens) :
+        c_is_magic(it.c) ? draw_gauge_magic(sdl, g, it, sens, inv, sc) : zero;
 }
 
 static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
@@ -507,7 +511,7 @@ static void draw_inv_items(const Sdl sdl, const Inventory inv)
         const Item item = inv.items.item[i];
         if(item.c == NONE)
             continue;
-        const int index = c_index(item.c);
+        const int index = c_get_index(item.c);
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
         const int w = surface->w;
@@ -535,8 +539,8 @@ static void draw_map(const Sdl sdl, const Map map, const Point where)
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
     const Vram vram = v_lock(texture);
-    v_drawrooms(vram, map, sdl.wht, sdl.blk);
-    v_drawdot(vram, where, 3, sdl.red, sdl.blk);
+    v_draw_rooms(vram, map, sdl.wht, sdl.blk);
+    v_draw_dot(vram, where, 3, sdl.red, sdl.blk);
     v_unlock(texture);
 
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };
@@ -560,7 +564,7 @@ void s_draw_fps(const Sdl sdl, const Text text, const char* const fmt, ...)
     vsprintf(str, fmt, args);
     va_end(args);
 
-    f_putbr(text.fill, text.line, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);
+    t_put_bottom_right(text, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);
 
     free(str);
 }
@@ -599,10 +603,7 @@ void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Spr
     // Render was done sideways for cache efficiency. Rotate upwards.
     churn(sdl);
 
-    // Orientate sprites to player's gaze and render to screen. Place back to global coords afterwards.
-    s_orient(sprites, hero);
-    render_sprites(sdl, text, sprites, zbuff, hero, tm);
-    s_placeback(sprites, hero);
+    render_all_sprites(sdl, text, sprites, zbuff, hero, tm);
 
     // Draw the user interface.
     draw_inv(sdl, inv);

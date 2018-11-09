@@ -8,41 +8,46 @@
 
 Point p_turn(const Point a, const float t)
 {
-    Point out;
-    out.x = a.x * cosf(t) - a.y * sinf(t);
-    out.y = a.x * sinf(t) + a.y * cosf(t);
+    const Point out = {
+        a.x * cosf(t) - a.y * sinf(t),
+        a.x * sinf(t) + a.y * cosf(t),
+    };
     return out;
 }
 
 Point p_rot90(const Point a)
 {
-    Point out;
-    out.x = -a.y;
-    out.y = +a.x;
+    const Point out = {
+        -a.y,
+        +a.x,
+    };
     return out;
 }
 
 Point p_sub(const Point a, const Point b)
 {
-    Point out;
-    out.x = a.x - b.x;
-    out.y = a.y - b.y;
+    const Point out = {
+        a.x - b.x,
+        a.y - b.y,
+    };
     return out;
 }
 
 Point p_add(const Point a, const Point b)
 {
-    Point out;
-    out.x = a.x + b.x;
-    out.y = a.y + b.y;
+    const Point out = {
+        a.x + b.x,
+        a.y + b.y,
+    };
     return out;
 }
 
 Point p_mul(const Point a, const float n)
 {
-    Point out;
-    out.x = a.x * n;
-    out.y = a.y * n;
+    const Point out = {
+        a.x * n,
+        a.y * n,
+    };
     return out;
 }
 
@@ -53,9 +58,10 @@ float p_mag(const Point a)
 
 Point p_div(const Point a, const float n)
 {
-    Point out;
-    out.x = a.x / n;
-    out.y = a.y / n;
+    const Point out = {
+        a.x / n,
+        a.y / n,
+    };
     return out;
 }
 
@@ -69,7 +75,7 @@ float p_slope(const Point a)
     return a.y / a.x;
 }
 
-Point p_jmphor(const Point a, const Point b)
+Point p_jump_hor(const Point a, const Point b)
 {
     Point out;
     out.x = b.x > 0.0f ? u_fl(a.x + 1.0f) : u_cl(a.x - 1.0f);
@@ -77,7 +83,7 @@ Point p_jmphor(const Point a, const Point b)
     return out;
 }
 
-Point p_jmpver(const Point a, const Point b)
+Point p_jump_ver(const Point a, const Point b)
 {
     Point out;
     out.y = b.y > 0.0f ? u_fl(a.y + 1.0f) : u_cl(a.y - 1.0f);
@@ -87,9 +93,10 @@ Point p_jmpver(const Point a, const Point b)
 
 Point p_mid(const Point a)
 {
-    Point out;
-    out.x = u_fl(a.x) + 0.5f;
-    out.y = u_fl(a.y) + 0.5f;
+    const Point out = {
+        u_fl(a.x) + 0.5f,
+        u_fl(a.y) + 0.5f,
+    };
     return out;
 }
 
@@ -131,25 +138,29 @@ int p_tile(const Point a, char** const blocks)
 
 Point p_abs(const Point a)
 {
-    Point b;
-    b.x = fabsf(a.x);
-    b.y = fabsf(a.y);
+    const Point b = {
+        fabsf(a.x),
+        fabsf(a.y),
+    };
     return b;
 }
 
 Point p_snap(const Point a, const int grid)
 {
-    Point out;
-    out.x = u_fl(a.x / grid) * grid;
-    out.y = u_fl(a.y / grid) * grid;
+    const Point out = {
+        u_fl(a.x / grid) * grid,
+        u_fl(a.y / grid) * grid,
+    };
     return out;
 }
 
-Point p_rand(Point a, const int grid)
+Point p_rand(const int grid)
 {
-    a.x += rand() % grid - grid / 2.0f;
-    a.y += rand() % grid - grid / 2.0f;
-    return a;
+    const Point b = {
+        rand() % grid - grid / 2.0f,
+        rand() % grid - grid / 2.0f,
+    };
+    return b;
 }
 
 void p_print(const Point a)

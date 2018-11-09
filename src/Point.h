@@ -25,9 +25,9 @@ Point p_unit(const Point);
 
 float p_slope(const Point);
 
-Point p_jmphor(const Point a, const Point b);
+Point p_jump_hor(const Point a, const Point b);
 
-Point p_jmpver(const Point a, const Point b);
+Point p_jump_ver(const Point a, const Point b);
 
 Point p_mid(const Point);
 
@@ -47,6 +47,6 @@ Point p_abs(const Point);
 
 Point p_snap(const Point, const int grid);
 
-Point p_rand(Point, const int grid);
+Point p_rand(const int grid);
 
 void p_print(const Point);

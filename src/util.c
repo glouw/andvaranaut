@@ -26,23 +26,6 @@ float u_dec(const float x)
     return x - (int) x;
 }
 
-int u_lines(FILE* const file)
-{
-    int ch = EOF;
-    int lines = 0;
-    int pc = '\n';
-    while((ch = getc(file)) != EOF)
-    {
-        if(ch == '\n')
-            lines++;
-        pc = ch;
-    }
-    if(pc != '\n')
-        lines++;
-    rewind(file);
-    return lines;
-}
-
 char* u_readln(FILE* const file)
 {
     int ch = EOF;

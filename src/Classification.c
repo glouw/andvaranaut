@@ -2,12 +2,12 @@
 
 #include "util.h"
 
-int c_index(const Classification c)
+int c_get_index(const Classification c)
 {
     return '~' + 1 - ' ' + (int) c;
 }
 
-int c_indices(const Classification c)
+int c_max_indices(const Classification c)
 {
     switch(c)
     {
@@ -45,7 +45,7 @@ int c_indices(const Classification c)
     return 1;
 }
 
-int c_ismelee(const Classification c)
+int c_is_melee(const Classification c)
 {
     return c == ARMOR
         || c == AMULET
@@ -68,20 +68,20 @@ int c_ismelee(const Classification c)
         || c == TOOL;
 }
 
-int c_isrange(const Classification c)
+int c_is_range(const Classification c)
 {
     return c == AMMO
         || c == MONEY
         || c == POTION;
 }
 
-int c_ismagic(const Classification c)
+int c_is_magic(const Classification c)
 {
     return c == SCROLL
         || c == WAND;
 }
 
-int c_isconsume(const Classification c)
+int c_is_consumable(const Classification c)
 {
     return c == BOOK
         || c == FOOD
@@ -93,5 +93,4 @@ Classification c_rand(void)
 {
     const Classification c = (Classification) (rand() % (int) CLASSIFICATIONS);
     return (c == NONE || c == CLASSIFICATIONS) ? c_rand() : c;
-
 }

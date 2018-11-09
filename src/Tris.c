@@ -5,13 +5,13 @@
 #include "Flags.h"
 #include "util.h"
 
-static Tris tsnew(const int max)
+static Tris make(const int max)
 {
     const Tris ts = { u_toss(Tri, max), 0, max };
     return ts;
 }
 
-static Tris tsadd(Tris tris, const Tri tri)
+static Tris append(Tris tris, const Tri tri)
 {
     if(tris.count == tris.max)
         u_bomb("tris size limitation reached\n");
@@ -20,22 +20,23 @@ static Tris tsadd(Tris tris, const Tri tri)
     return tris;
 }
 
-static int reveql(const Tri a, const Tri b)
+static int reverse_eql(const Tri a, const Tri b)
 {
     return p_same(a.a, b.b) && p_same(a.b, b.a);
 }
 
-static int foreql(const Tri a, const Tri b)
+static int forward_eql(const Tri a, const Tri b)
 {
     return p_same(a.a, b.a) && p_same(a.b, b.b);
 }
 
 static int alligned(const Tri a, const Tri b)
 {
-    return foreql(a, b) || reveql(a, b);
+    return forward_eql(a, b)
+        || reverse_eql(a, b);
 }
 
-static void emark(Tris edges, const Flags flags)
+static void mark(Tris edges, const Flags flags)
 {
     for(int i = 0; i < edges.count; i++)
     {
@@ -52,7 +53,7 @@ static void emark(Tris edges, const Flags flags)
     }
 }
 
-static Tris ejoin(Tris tris, const Tris edges, const Point p, const Flags flags)
+static Tris join(Tris tris, const Tris edges, const Point p, const Flags flags)
 {
     for(int j = 0; j < edges.count; j++)
     {
@@ -60,18 +61,18 @@ static Tris ejoin(Tris tris, const Tris edges, const Point p, const Flags flags)
         if(p_same(edge.c, flags.zer))
         {
             const Tri tri = { edge.a, edge.b, p };
-            tris = tsadd(tris, tri);
+            tris = append(tris, tri);
         }
     }
     return tris;
 }
 
-static int outob(const Point p, const int w, const int h)
+static int out_of_bounce(const Point p, const int w, const int h)
 {
     return p.x < 0 || p.y < 0 || p.x >= w || p.y >= h;
 }
 
-static int incircum(const Tri t, const Point p)
+static int in_circumcenter(const Tri t, const Point p)
 {
     const float ax = t.a.x - p.x;
     const float ay = t.a.y - p.y;
@@ -86,7 +87,7 @@ static int incircum(const Tri t, const Point p)
     return det > 0.0f;
 }
 
-static Tris ecollect(Tris edges, const Tris in, const Flags flags)
+static Tris collect(Tris edges, const Tris in, const Flags flags)
 {
     for(int i = 0; i < in.count; i++)
     {
@@ -94,19 +95,20 @@ static Tris ecollect(Tris edges, const Tris in, const Flags flags)
         const Tri ab = { tri.a, tri.b, flags.zer };
         const Tri bc = { tri.b, tri.c, flags.zer };
         const Tri ca = { tri.c, tri.a, flags.zer };
-        edges = tsadd(edges, ab);
-        edges = tsadd(edges, bc);
-        edges = tsadd(edges, ca);
+        edges = append(edges, ab);
+        edges = append(edges, bc);
+        edges = append(edges, ca);
     }
     return edges;
 }
 
-static Tris delaunay(const Points ps, const int w, const int h, const int max, const Flags flags)
+// https://en.wikipedia.org/wiki/Delaunay_triangulation
+static Tris triangulate(const Points ps, const int w, const int h, const int max, const Flags flags)
 {
-    Tris in = tsnew(max);
-    Tris out = tsnew(max);
-    Tris tris = tsnew(max);
-    Tris edges = tsnew(max);
+    Tris in = make(max);
+    Tris out = make(max);
+    Tris tris = make(max);
+    Tris edges = make(max);
 
     // Note:
     // Shallow copies are exploited here for quick array concatentations.
@@ -116,7 +118,7 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
 
     // The super triangle will snuggley fit over the screen.
     const Tri super = { { (float) -w, 0.0f }, { 2.0f * w, 0.0f }, { w / 2.0f, 2.0f * h } };
-    tris = tsadd(tris, super);
+    tris = append(tris, super);
     for(int j = 0; j < ps.count; j++)
     {
         in.count = out.count = edges.count = 0;
@@ -127,20 +129,20 @@ static Tris delaunay(const Points ps, const int w, const int h, const int max, c
             const Tri tri = tris.tri[i];
 
             // Get triangles where point lies inside their circumcenter.
-            if(incircum(tri, p))
-                in = tsadd(in, tri);
+            if(in_circumcenter(tri, p))
+                in = append(in, tri);
             // Get triangles where point lies outside of their circumcenter.
-            else out = tsadd(out, tri);
+            else out = append(out, tri);
         }
 
         // Collect all triangle edges where point was inside circumcenter.
-        edges = ecollect(edges, in, flags);
+        edges = collect(edges, in, flags);
 
         // Flag edges that are non-unique.
-        emark(edges, flags);
+        mark(edges, flags);
 
         // Construct new triangles with unique edges.
-        out = ejoin(out, edges, p, flags);
+        out = join(out, edges, p, flags);
 
         // Update triangle list. (See note above on shallow copying).
         tris = out;
@@ -175,7 +177,7 @@ static float len(const Tri edge)
     return p_mag(p_sub(edge.b, edge.a));
 }
 
-static int descending(const void* a, const void* b)
+static int descend(const void* a, const void* b)
 {
     const Tri ea = *(const Tri*) a;
     const Tri eb = *(const Tri*) b;
@@ -184,15 +186,14 @@ static int descending(const void* a, const void* b)
 
 static void sort(const Tris edges)
 {
-    qsort(edges.tri, edges.count, sizeof(Tri), descending);
+    qsort(edges.tri, edges.count, sizeof(Tri), descend);
 }
 
-// Returns true if two points are connected.
 static int connected(const Point a, const Point b, const Tris edges, const Flags flags)
 {
     Points todo = p_new(edges.max);
     Points done = p_new(edges.max);
-    Tris reach = tsnew(edges.max);
+    Tris reach = make(edges.max);
     todo = p_append(todo, a);
 
     int connection = false;
@@ -211,7 +212,7 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
                 continue;
 
             if(p_same(edge.a, removed))
-                reach = tsadd(reach, edge);
+                reach = append(reach, edge);
         }
 
         // For all reachable edges
@@ -235,8 +236,7 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
     return connection;
 }
 
-// Reverse Delete (C) Kruskal 1956.
-static void revdel(Tris edges, const int w, const int h, const Flags flags)
+static void reverse_delete(Tris edges, const int w, const int h, const Flags flags)
 {
     sort(edges);
     for(int i = 0; i < edges.count; i++)
@@ -244,8 +244,8 @@ static void revdel(Tris edges, const int w, const int h, const Flags flags)
         Tri* edge = &edges.tri[i];
 
         // Flag out of bound edges.
-        if(outob(edge->a, w, h)
-        || outob(edge->b, w, h))
+        if(out_of_bounce(edge->a, w, h)
+        || out_of_bounce(edge->b, w, h))
         {
             edge->c = flags.one;
             continue;
@@ -262,7 +262,7 @@ static void revdel(Tris edges, const int w, const int h, const Flags flags)
     }
 }
 
-static void mu_dups(const Tris edges, const Flags flags)
+static void remove_dups(const Tris edges, const Flags flags)
 {
     for(int i = 0; i < edges.count; i++)
     for(int j = 0; j < edges.count; j++)
@@ -270,7 +270,7 @@ static void mu_dups(const Tris edges, const Flags flags)
         if(p_same(edges.tri[j].c, flags.one)) continue;
         if(p_same(edges.tri[i].c, flags.one)) continue;
 
-        if(reveql(edges.tri[i], edges.tri[j]))
+        if(reverse_eql(edges.tri[i], edges.tri[j]))
             edges.tri[j].c = flags.one;
     }
 }
@@ -282,7 +282,7 @@ static void mu_dups(const Tris edges, const Flags flags)
 // #           #####################           #
 // #           #####################           #
 // #############################################
-static void bone(const Map map, const Tri e, const int w, const int h)
+static void place_bone(const Map map, const Tri e, const int w, const int h)
 {
     m_room(map, e.a, w, h, WALLING);
     m_room(map, e.b, w, h, WALLING);
@@ -305,7 +305,7 @@ static void carve(const Map map, const Tris edges, const Flags flags)
         const int size = m_max(map) - m_min(map);
         const int w = m_min(map) + rand() % size;
         const int h = m_min(map) + rand() % size;
-        bone(map, e, w, h);
+        place_bone(map, e, w, h);
     }
 }
 
@@ -327,18 +327,18 @@ Map t_gen(const Points extra)
     };
 
     Points rooms = prand(w, h, max, grid, border, extra);
-    const Tris tris = delaunay(rooms , w, h, 9 * max, flags);
-    const Tris edges = ecollect(tsnew(27 * max), tris, flags);
-    revdel(edges, w, h, flags);
+    const Tris tris = triangulate(rooms , w, h, 9 * max, flags);
+    const Tris edges = collect(make(27 * max), tris, flags);
+    reverse_delete(edges, w, h, flags);
 
     // Randomly select which rooms will become trapdoors.
     Points trapdoors = p_new(ntraps);
     for(int i = 0; i < ntraps; i++)
-        trapdoors = p_addunique(trapdoors, rooms);
+        trapdoors = p_add_unique(trapdoors, rooms);
 
     // Build a map with trapdoors and carve out rooms.
     const Map map = m_gen(h, w, trapdoors, rooms, grid);
-    mu_dups(edges, flags);
+    remove_dups(edges, flags);
     carve(map, edges, flags);
 
     free(tris.tri);

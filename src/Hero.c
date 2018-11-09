@@ -13,7 +13,7 @@ static Line lens(const float focal)
     return fov;
 }
 
-Hero h_born(const float focal, const Point where, const int floor, const Gauge gg)
+Hero h_birth(const float focal, const Point where, const int floor, const Gauge gg)
 {
     static Hero zero; // From zero to hero.
     Hero hero = zero;
@@ -35,13 +35,13 @@ Hero h_born(const float focal, const Point where, const int floor, const Gauge g
     return hero;
 }
 
-static Hero yaw(Hero hero, const Input input)
+static Hero calc_yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dx * input.sx;
     return hero;
 }
 
-static Hero pitch(Hero hero, const Input input)
+static Hero calc_pitch(Hero hero, const Input input)
 {
     hero.pitch += input.dy * input.sy;
     const float max = 1.80f;
@@ -60,23 +60,23 @@ static Hero look(const Hero hero, const Input input)
 {
     if(input.l)
         return hero;
-    return pitch(yaw(hero, input), input);
+    return calc_pitch(calc_yaw(hero, input), input);
 }
 
-static float hduck(const Hero hero)
+static float calc_duck_height(const Hero hero)
 {
     return 0.7f * hero.tall;
 }
 
-static float hswim(const Hero hero)
+static float calc_swim_height(const Hero hero)
 {
     return 0.1f * hero.tall;
 }
 
-static Hero vert(Hero hero, const Map map, const Input input)
+static Hero do_vert_math(Hero hero, const Map map, const Input input)
 {
     const int onland = p_tile(hero.where, map.floring);
-    const float tall = onland ? hero.tall : hswim(hero);
+    const float tall = onland ? hero.tall : calc_swim_height(hero);
     const int jumped = input.key[SDL_SCANCODE_SPACE];
     const int crouch = input.key[SDL_SCANCODE_LCTRL];
 
@@ -99,7 +99,7 @@ static Hero vert(Hero hero, const Map map, const Input input)
     if(hero.height < min) hero.height = min;
 
     if(crouch && onland)
-        hero.height = hduck(hero);
+        hero.height = calc_duck_height(hero);
 
     return hero;
 }
@@ -121,9 +121,9 @@ static Point accelerate(const Hero hero)
 static Hero move(Hero hero, const Map map, const Input input, const Flow current)
 {
     const Point last = hero.where;
-    const int swimming = hero.height <= hswim(hero);
-    const int crouching = hero.height <= hduck(hero);
-    const float speed = swimming ? 0.3f * hero.speed : crouching ? 0.5f * hero.speed : hero.speed;
+    const int swimming = hero.height <= calc_swim_height(hero);
+    const int crouchin = hero.height <= calc_duck_height(hero);
+    const float speed = swimming ? 0.3f * hero.speed : crouchin ? 0.5f * hero.speed : hero.speed;
 
     // Accelerate?
     if(input.key[SDL_SCANCODE_W]
@@ -160,12 +160,12 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
     return hero;
 }
 
-static int telup(const Hero hero, const Map map)
+static int teleporting_up(const Hero hero, const Map map)
 {
     return hero.pitch < 1.0f && m_isportal(map.ceiling, hero.where);
 }
 
-static int teldn(const Hero hero, const Map map)
+static int teleporting_down(const Hero hero, const Map map)
 {
     return hero.pitch > 1.0f && m_isportal(map.floring, hero.where);
 }
@@ -176,15 +176,15 @@ Hero h_teleporting(Hero hero, const Map map, const Input input, const Timer tm)
     if(tm.ticks < hero.teleported + 2 || !input.key[SDL_SCANCODE_E])
         return hero;
     hero.teleported = tm.ticks;
-    hero.teleporting = telup(hero, map) || teldn(hero, map);
+    hero.teleporting = teleporting_up(hero, map) || teleporting_down(hero, map);
     return hero;
 }
 
 Hero h_teleport(Hero hero, const Map map)
 {
-    if(telup(hero, map))
+    if(teleporting_up(hero, map))
         hero.floor--;
-    if(teldn(hero, map))
+    if(teleporting_down(hero, map))
     {
         hero.floor++;
         hero.height = 0.90;
@@ -213,8 +213,8 @@ static Hero recoil(Hero hero, const Method last)
 
 Hero h_sustain(Hero hero, const Map map, const Input input, const Flow current, const Method last)
 {
+    hero = do_vert_math(hero, map, input);
     hero = look(hero, input);
-    hero = vert(hero, map, input);
     hero = move(hero, map, input, current);
     hero = recoil(hero, last);
     hero.torch = t_burn(hero.torch);

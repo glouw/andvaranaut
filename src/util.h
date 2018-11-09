@@ -16,8 +16,6 @@ int u_cl(const float x);
 
 float u_dec(const float x);
 
-int u_lines(FILE* const file);
-
 char* u_readln(FILE* const file);
 
 void u_bomb(const char* const message, ...);

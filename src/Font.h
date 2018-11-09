@@ -12,8 +12,6 @@ Font;
 
 Font f_build(const char* const path, const int size, const uint32_t color, const int outline);
 
-void f_put(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y);
+SDL_Texture* f_get_texture(const Font, SDL_Renderer* const rend, const int alpha, const char* str);
 
-void f_putbr(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y);
-
-void f_print(const Font fill, const Font line, const char* const text, const int alpha, SDL_Renderer* const rend, const int x, const int y);
+SDL_Rect f_calc_size(const Font, const char* const str);

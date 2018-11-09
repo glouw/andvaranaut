@@ -29,7 +29,7 @@ static void pxfer(const Scanline sl, const int x, const Point offset, const int 
     pput(sl, x, shade(color, distance));
 }
 
-static void rwall(const Scanline sl, const Ray r)
+static void raster_wall(const Scanline sl, const Ray r)
 {
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
@@ -38,7 +38,7 @@ static void rwall(const Scanline sl, const Ray r)
     }
 }
 
-static void rflor(const Scanline sl, const Ray r, const Map map)
+static void raster_flor(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
@@ -50,7 +50,7 @@ static void rflor(const Scanline sl, const Ray r, const Map map)
     }
 }
 
-static void rceil(const Scanline sl, const Ray r, const Map map)
+static void raster_ceil(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
@@ -62,7 +62,7 @@ static void rceil(const Scanline sl, const Ray r, const Map map)
     }
 }
 
-static void rsky(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
+static void raster_sky(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
 {
     if(floor == 0)
     {
@@ -83,7 +83,7 @@ static void rsky(const Scanline sl, const Ray r, const Map map, const int floor,
         }
 }
 
-static void rpit(const Scanline sl, const Ray r, const Map map, const Flow current)
+static void raster_pit(const Scanline sl, const Ray r, const Map map, const Flow current)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
@@ -94,7 +94,7 @@ static void rpit(const Scanline sl, const Ray r, const Map map, const Flow curre
     }
 }
 
-static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow clouds)
+static void raster_upper_wall(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow clouds)
 {
     int link = 0;
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
@@ -102,12 +102,12 @@ static void rupper(const Scanline sl, const Hits hits, const Hero hero, const Ma
         const Hit* const which = hit;
         const Ray ray = h_cast(hero, *which, map.top, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
-            rsky(sl, ray, map, hero.floor, clouds);
-        rwall(sl, ray);
+            raster_sky(sl, ray, map, hero.floor, clouds);
+        raster_wall(sl, ray);
     }
 }
 
-static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow current)
+static void raster_lower_wall(const Scanline sl, const Hits hits, const Hero hero, const Map map, const Flow current)
 {
     int link = 0;
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
@@ -116,23 +116,23 @@ static void rlower(const Scanline sl, const Hits hits, const Hero hero, const Ma
         const Sheer sheer = { current.height, -1.0f };
         const Ray ray = h_cast(hero, *which, sheer, sl.sdl.yres, sl.sdl.xres);
         if(link++ == 0)
-            rpit(sl, ray, map, current);
-        rwall(sl, ray);
+            raster_pit(sl, ray, map, current);
+        raster_wall(sl, ray);
     }
 }
 
-static Point rmiddle(const Scanline sl, const Hits hits, const Hero hero, const Map map)
+static Point raster_middle_wall(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     const Ray ray = h_cast(hero, hits.walling, map.mid, sl.sdl.yres, sl.sdl.xres);
-    rwall(sl, ray);
-    rflor(sl, ray, map);
-    rceil(sl, ray, map);
+    raster_wall(sl, ray);
+    raster_flor(sl, ray, map);
+    raster_ceil(sl, ray, map);
     return ray.corrected;
 }
 
 Point s_raster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
-    rupper(sl, hits, hero, map, clouds);
-    rlower(sl, hits, hero, map, current);
-    return rmiddle(sl, hits, hero, map);
+    raster_upper_wall(sl, hits, hero, map, clouds);
+    raster_lower_wall(sl, hits, hero, map, current);
+    return raster_middle_wall(sl, hits, hero, map);
 }

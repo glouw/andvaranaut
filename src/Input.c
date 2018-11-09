@@ -45,7 +45,12 @@ Input i_ready(const float sensitivity)
     return i_pump(input);
 }
 
-int i_invuse(const Input in)
+int i_using_inventory(const Input in)
 {
     return in.key[SDL_SCANCODE_LSHIFT];
+}
+
+int i_using_world_edit_mode(const Input in)
+{
+    return in.key[SDL_SCANCODE_TAB];
 }

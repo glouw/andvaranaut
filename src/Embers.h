@@ -10,6 +10,6 @@ typedef struct
 }
 Embers;
 
-Embers e_append(Embers embers, Sprite* const ember);
+Embers e_append(Embers, Sprite* const ember);
 
 Embers e_reset(const Embers);

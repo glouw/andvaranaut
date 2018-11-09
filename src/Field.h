@@ -22,8 +22,6 @@ Field f_prepare(const Map, const float aura);
 
 Point f_force(const Field, const Point from, const Point to, const Map map);
 
-void f_examine(const Field);
-
 void f_deposit(const Field, const Point p, const float val);
 
 void f_ruin(const Field);

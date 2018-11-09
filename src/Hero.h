@@ -42,7 +42,7 @@ typedef struct
 }
 Hero;
 
-Hero h_born(const float focal, const Point where, const int floor, const Gauge);
+Hero h_birth(const float focal, const Point where, const int floor, const Gauge);
 
 Point h_touch(const Hero);
 

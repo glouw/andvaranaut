@@ -57,18 +57,9 @@ static void push(const Sprites sprites, const Hero hero)
     }
 }
 
-static int comparator(const void* const a, const void* const b)
+void s_sort(const Sprites sprites, Sorter sorter)
 {
-    const Sprite* const sa = (const Sprite*) a;
-    const Sprite* const sb = (const Sprite*) b;
-    return
-        p_mag(sa->where) < p_mag(sb->where) ? +1 :
-        p_mag(sa->where) > p_mag(sb->where) ? -1 : 0;
-}
-
-static void sort(const Sprites sprites)
-{
-    qsort(sprites.sprite, sprites.count, sizeof(Sprite), comparator);
+    qsort(sprites.sprite, sprites.count, sizeof(Sprite), sorter);
 }
 
 static void turn(const Sprites sprites, const float yaw)
@@ -86,16 +77,16 @@ void s_orient(const Sprites sprites, const Hero hero)
     turn(sprites, -hero.yaw);
 }
 
-void s_placeback(const Sprites sprites, const Hero hero)
+void s_place_back(const Sprites sprites, const Hero hero)
 {
     turn(sprites, +hero.yaw);
     push(sprites, hero);
 }
 
-static void arrange(const Sprites sprites, const Hero hero)
+static void arrange(const Sprites sprites, const Hero hero, Sorter dir)
 {
     pull(sprites, hero);
-    sort(sprites);
+    s_sort(sprites, dir);
     push(sprites, hero);
 }
 
@@ -155,7 +146,7 @@ static void move(const Sprites sprites, const Field field, const Point to, const
     }
 }
 
-static void scentwall(const Field field, const Point where, const Map map, const float scent)
+static void scent_wall(const Field field, const Point where, const Map map, const float scent)
 {
     const int t = field.res * where.y - field.aura; // Top.
     const int b = field.res * where.y + field.aura; // Bottom.
@@ -180,7 +171,7 @@ static void scentwall(const Field field, const Point where, const Map map, const
     }
 }
 
-static void scentsprite(const Field field, const Sprites sprites, const float scent)
+static void scent_sprite(const Field field, const Sprites sprites, const float scent)
 {
     for(int s = 0; s < sprites.count; s++)
     {
@@ -198,7 +189,7 @@ static void scentsprite(const Field field, const Sprites sprites, const float sc
     }
 }
 
-static void scenthero(const Field field, const Point where, const float scent)
+static void scent_hero(const Field field, const Point where, const float scent)
 {
     const int j = field.res * where.y;
     const int i = field.res * where.x;
@@ -208,19 +199,19 @@ static void scenthero(const Field field, const Point where, const float scent)
 static void route(const Sprites sprites, const Field field, const Map map, const Hero hero)
 {
     const float scent = 1000.0f;
-    scentwall(field, hero.where, map, scent);
-    scentsprite(field, sprites, scent);
-    scenthero(field, hero.where, 100.0f * scent);
+    scent_wall(field, hero.where, map, scent);
+    scent_sprite(field, sprites, scent);
+    scent_hero(field, hero.where, 100.0f * scent);
     f_diffuse(field, hero.where);
 }
 
-static Sprites dropit(Sprites sprites, const Attack attack, const Point where)
+static Sprites drop_item(Sprites sprites, const Attack attack, const Point where)
 {
     const Point delta = p_mul(p_rot90(attack.dir), 0.5f);
     return append(sprites, s_register('d', p_add(where, delta)));
 }
 
-static void brokelb(const int ascii, const Inventory inv, const Timer tm)
+static void broke_lootbag(const int ascii, const Inventory inv, const Timer tm)
 {
     if(ascii == 'd')
     {
@@ -246,11 +237,11 @@ static Sprites harm(Sprites sprites, Sprite* const sprite, const Attack attack, 
             (attack.dir.x > 0.0f ? DEAD_W : DEAD_E):
             (attack.dir.y > 0.0f ? DEAD_N : DEAD_S);
 
-        brokelb(sprite->ascii, inv, tm);
+        broke_lootbag(sprite->ascii, inv, tm);
 
         // Lootbags count as sprites, so killing a lootbag may drop another lootbag.
         if(u_d10() == 0)
-            return dropit(sprites, attack, sprite->where);
+            return drop_item(sprites, attack, sprite->where);
     }
     else // Just hurt, not killed.
     {
@@ -271,7 +262,7 @@ static Sprites harm(Sprites sprites, Sprite* const sprite, const Attack attack, 
     return sprites;
 }
 
-static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm, const Hero hero)
+static Sprites hurt_melee(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm, const Hero hero)
 {
     const Point hand = h_touch(hero);
     const Item it = inv.items.item[inv.selected];
@@ -293,7 +284,7 @@ static Sprites hmelee(Sprites sprites, const Attack attack, const Inventory inv,
     return sprites;
 }
 
-static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm)
+static Sprites hurt_range(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm)
 {
     const SDL_Point point = {
         (int) attack.reticule.x,
@@ -320,7 +311,7 @@ static Sprites hrange(Sprites sprites, const Attack attack, const Inventory inv,
     return sprites;
 }
 
-static Sprites hmagic(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm, const Hero hero)
+static Sprites hurt_magic(Sprites sprites, const Attack attack, const Inventory inv, const Timer tm, const Hero hero)
 {
     // TODO
     // Casting magic scrolls will spawn new sprites.
@@ -344,13 +335,13 @@ Sprites s_hurt(Sprites sprites, const Attack attack, const Hero hero, const Inpu
         sprites.last = attack.method;
 
         if(attack.method == MELEE)
-            return hmelee(sprites, attack, inv, tm, hero);
+            return hurt_melee(sprites, attack, inv, tm, hero);
 
         if(attack.method == RANGE)
-            return hrange(sprites, attack, inv, tm);
+            return hurt_range(sprites, attack, inv, tm);
 
         if(attack.method == MAGIC)
-            return hmagic(sprites, attack, inv, tm, hero);
+            return hurt_magic(sprites, attack, inv, tm, hero);
     }
     sprites.last = NO_ATTACK;
 
@@ -371,8 +362,7 @@ static void idle(const Sprites sprites, const Timer tm)
     }
 }
 
-// Damage hero health points.
-static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
+static Hero damage_hps(Hero hero, const Sprites sprites, const Timer tm)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -402,16 +392,14 @@ static Hero dhps(Hero hero, const Sprites sprites, const Timer tm)
     return hero;
 }
 
-// Damage hero mana (enemy sprites can sap mana, etc...)
-static Hero dmna(Hero hero, const Sprites sprites, const Timer tm)
+static Hero damage_mna(Hero hero, const Sprites sprites, const Timer tm)
 {
     (void) sprites;
     (void) tm;
     return hero;
 }
 
-// Damage hero fatigue (enemy sprites can sap fatigue, etc...).
-static Hero dftg(Hero hero, const Timer tm, const Gauge gauge)
+static Hero damage_ftg(Hero hero, const Timer tm, const Gauge gauge)
 {
     (void) tm;
 
@@ -450,9 +438,9 @@ static void block(const Sprites sprites, const Hero hero, const Gauge gauge)
 
 static Hero damage(Hero hero, const Sprites sprites, const Gauge gauge, const Timer tm)
 {
-    hero = dhps(hero, sprites, tm);
-    hero = dmna(hero, sprites, tm);
-    hero = dftg(hero, tm, gauge);
+    hero = damage_hps(hero, sprites, tm);
+    hero = damage_mna(hero, sprites, tm);
+    hero = damage_ftg(hero, tm, gauge);
     return hero;
 }
 
@@ -516,7 +504,7 @@ static void burn(const Sprites sprites, const Fire fire)
 
 Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Gauge gauge, const Fire fire, const Timer tm)
 {
-    arrange(sprites, hero);
+    arrange(sprites, hero, s_nearest_first);
     idle(sprites, tm);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
@@ -530,7 +518,7 @@ Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Fie
 
 static Point avail(const Point center, const Map map)
 {
-    const Point where = p_rand(center, map.grid);
+    const Point where = p_add(center, p_rand(map.grid));
 
     // Available tile space is no wall and not above water.
     return p_block(where, map.walling) == ' '
@@ -543,7 +531,7 @@ static Point seek(const Point center, const Map map, const int ascii)
     return p_block(where, map.floring) == ascii ? where : seek(center, map, ascii);
 }
 
-static Sprites pngarden(Sprites sprites, const Map map, const Point center)
+static Sprites lay_nice_garden(Sprites sprites, const Map map, const Point center)
 {
     const int flowers = 256;
     for(int i = 0; i < flowers; i++)
@@ -554,7 +542,7 @@ static Sprites pngarden(Sprites sprites, const Map map, const Point center)
     return sprites;
 }
 
-static Sprites dummy(const Sprites sprites, const Map map, const Point center)
+static Sprites place_dummy(const Sprites sprites, const Map map, const Point center)
 {
     return append(sprites, s_register('b', avail(center, map)));
 }
@@ -568,12 +556,12 @@ Sprites s_populate(Sprites sprites, const Map map)
         switch(map.rooms.themes[i])
         {
         case NICE_GARDEN:
-            sprites = pngarden(sprites, map, center);
+            sprites = lay_nice_garden(sprites, map, center);
             break;
 
         // TODO: TEMP. Just puts a guy in a room for now so that each room has some sort of placeholder.
         default:
-            sprites = dummy(sprites, map, center);
+            sprites = place_dummy(sprites, map, center);
             break;
         }
     }
@@ -589,7 +577,7 @@ Map s_count(const Sprites sprites, Map map)
         {
             Sprite* const sprite = &sprites.sprite[s];
 
-            if(s_nocount(sprite))
+            if(s_no_count(sprite))
                 continue;
 
             if(p_eql(sprite->where, map.rooms.wheres[i], map.grid))

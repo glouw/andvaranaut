@@ -23,4 +23,4 @@ void t_show(const Text, const Sdl);
 
 void t_clear(void);
 
-void t_stuckclear(void);
+void t_clear_when_linger(void);

@@ -16,10 +16,10 @@ Points p_append(Points ps, const Point p)
     return ps;
 }
 
-Points p_addunique(Points a, const Points b)
+Points p_add_unique(Points a, const Points b)
 {
     const Point point = b.point[rand() % b.count];
-    return p_find(a, point) ? p_addunique(a, b) : p_append(a, point);
+    return p_find(a, point) ? p_add_unique(a, b) : p_append(a, point);
 }
 
 Points p_cat(Points ps, const Points other)

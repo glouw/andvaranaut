@@ -32,16 +32,16 @@ typedef enum
 }
 Classification;
 
-int c_index(const Classification);
+int c_get_index(const Classification);
 
-int c_indices(const Classification);
+int c_max_indices(const Classification);
 
-int c_ismelee(const Classification);
+int c_is_melee(const Classification);
 
-int c_isrange(const Classification);
+int c_is_range(const Classification);
 
-int c_ismagic(const Classification);
+int c_is_magic(const Classification);
 
-int c_isconsume(const Classification);
+int c_is_consumable(const Classification);
 
 Classification c_rand(void);

@@ -39,7 +39,7 @@ void t_clear(void)
     t_set(0, 0, false, "");
 }
 
-void t_stuckclear(void)
+void t_clear_when_linger(void)
 {
     if(tt.linger)
         t_clear();
@@ -62,9 +62,8 @@ void t_show(const Text text, const Sdl sdl)
     const float percent = (tt.now - tt.start) / (float) (tt.end - tt.start);
     const float max = 0xFF;
     const float alpha = max * sinf(percent * U_PI);
-    f_print(
-        text.fill,
-        text.line,
+    t_print(
+        text,
         tt.str,
         (percent > 0.5f && tt.linger) ? max : alpha, // If lingering, do not fade out.
         sdl.renderer,

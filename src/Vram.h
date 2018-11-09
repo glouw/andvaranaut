@@ -17,6 +17,6 @@ Vram v_lock(SDL_Texture* const);
 
 void v_unlock(SDL_Texture* const);
 
-void v_drawrooms(const Vram, const Map, const uint32_t in, const uint32_t out);
+void v_draw_rooms(const Vram, const Map, const uint32_t in, const uint32_t out);
 
-void v_drawdot(const Vram, const Point, const int size, const uint32_t in, const uint32_t out);
+void v_draw_dot(const Vram, const Point, const int size, const uint32_t in, const uint32_t out);

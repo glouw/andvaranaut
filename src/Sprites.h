@@ -6,6 +6,7 @@
 #include "Field.h"
 #include "Gauge.h"
 #include "Inventory.h"
+#include "Sorter.h"
 #include "Method.h"
 #include "Fire.h"
 
@@ -24,9 +25,11 @@ Sprites s_spawn(const int max);
 
 void s_orient(const Sprites, const Hero);
 
-void s_placeback(const Sprites, const Hero);
+void s_place_back(const Sprites, const Hero);
 
 Sprites s_lay(Sprites, const Map, const Overview);
+
+void s_sort(const Sprites, Sorter);
 
 Sprites s_hurt(Sprites, const Attack, const Hero, const Input, const Inventory, const Timer);
 

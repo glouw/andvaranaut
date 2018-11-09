@@ -5,32 +5,32 @@
 Fire f_kindle(const Map map)
 {
     static Fire zero;
-    Fire fire = zero;
-    fire.rows = map.rows;
-    fire.cols = map.cols;
-    fire.embers = u_wipe(Embers*, fire.rows);
-    for(int j = 0; j < fire.rows; j++)
+    Fire f = zero;
+    f.rows = map.rows;
+    f.cols = map.cols;
+    f.embers = u_wipe(Embers*, f.rows);
+    for(int j = 0; j < f.rows; j++)
         // Notice the wipe; ember append needs ember max and count to be zero.
-        fire.embers[j] = u_wipe(Embers, fire.cols);
-    return fire;
+        f.embers[j] = u_wipe(Embers, f.cols);
+    return f;
 }
 
-void f_clear(const Fire fire)
+void f_clear(const Fire f)
 {
-    for(int y = 0; y < fire.rows; y++)
-    for(int x = 0; x < fire.cols; x++)
-        fire.embers[y][x] = e_reset(fire.embers[y][x]);
+    for(int y = 0; y < f.rows; y++)
+    for(int x = 0; x < f.cols; x++)
+        f.embers[y][x] = e_reset(f.embers[y][x]);
 }
 
-static void gofree(const Fire fire)
+static void go_free(const Fire f)
 {
-    for(int j = 0; j < fire.rows; j++)
-        free(fire.embers[j]);
-    free(fire.embers);
+    for(int j = 0; j < f.rows; j++)
+        free(f.embers[j]);
+    free(f.embers);
 }
 
-void f_extinguish(const Fire fire)
+void f_extinguish(const Fire f)
 {
-    f_clear(fire);
-    gofree(fire);
+    f_clear(f);
+    go_free(f);
 }

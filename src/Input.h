@@ -43,4 +43,6 @@ Input i_pump(Input);
 
 Input i_ready(const float sensitivity);
 
-int i_invuse(const Input);
+int i_using_inventory(const Input);
+
+int i_using_world_edit_mode(const Input);

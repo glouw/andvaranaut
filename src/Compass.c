@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-int c_isinvert(const Compass face)
+int c_is_inverted(const Compass face)
 {
     return face == E || face == S;
 }

@@ -16,4 +16,4 @@ int s_index(const Scroll);
 
 void s_clear(const Scroll);
 
-char* s_str(const Scroll, const int scindex);
+char* s_scroll_to_str(const Scroll, const int scindex);
