@@ -520,16 +520,23 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
             // Is the ember sprite on grass?
             && p_block(sprite->where, map.floring) == '(')
             {
-                const int x = sprite->where.x;
-                const int y = sprite->where.y;
-                if(fire.embers[y][x].count < 2)
+                const Point dir = {
+                    2.0f * (u_frand() - 0.5f),
+                    2.0f * (u_frand() - 0.5f),
+                };
+                const Point where = p_add(sprite->where, dir);
+
+                // Do no burn into walls.
+                if(p_block(where, map.walling) == ' ')
                 {
-                    const Point dir = {
-                        2.0f * (u_frand() - 0.5f),
-                        2.0f * (u_frand() - 0.5f),
-                    };
-                    const Point where = p_add(sprite->where, dir);
-                    sprites = append(sprites, s_register('c', where));
+                    const int xx = where.x;
+                    const int yy = where.y;
+                    if(fire.embers[yy][xx].count < 2)
+                    {
+                        sprites = append(sprites, s_register('c', where));
+                        Sprite* const ember = &sprites.sprite[sprites.count - 1];
+                        fire.embers[yy][xx] = e_append(fire.embers[yy][xx], ember);
+                    }
                 }
             }
         }
