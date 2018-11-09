@@ -148,8 +148,8 @@ Point p_abs(const Point a)
 Point p_snap(const Point a, const int grid)
 {
     const Point out = {
-        u_fl(a.x / grid) * grid,
-        u_fl(a.y / grid) * grid,
+        (float) u_fl(a.x / grid) * grid,
+        (float) u_fl(a.y / grid) * grid,
     };
     return out;
 }
