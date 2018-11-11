@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 
     const Text text = t_build("art/gui/SDS_8x8.ttf", 24, sdl.yel, sdl.blk);
 
-    t_init();
+    t_clear_title();
 
     // X-Resolution 512 reserved for performance testing.
     for(int renders = 0, fps = 0; args.xres == 512 ? renders < 20 : !in.done; renders++)
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
         tm = t_tick(tm, renders, ticks);
 
-        t_advance(renders);
+        t_advance_title(renders);
 
         theme = m_theme(theme, wd.map[me.floor], me.where, tm);
 
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
 
-                t_clear_when_linger();
+                t_clear_title_when_linger();
 
                 const Attack atk = s_draw_gauge(sdl, gg, inv, sc);
 
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 
             f_clear(fire);
         }
-        t_show(text, sdl);
+        t_show_title(text, sdl);
 
         s_draw_fps(sdl, text, "%d", fps);
 

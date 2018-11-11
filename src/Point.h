@@ -47,6 +47,4 @@ Point p_abs(const Point);
 
 Point p_snap(const Point, const int grid);
 
-Point p_rand(const int grid);
-
 void p_print(const Point);

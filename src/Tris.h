@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Tri.h"
-#include "Sdl.h"
+#include "Map.h"
 
 typedef struct
 {

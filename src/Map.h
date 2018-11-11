@@ -36,7 +36,7 @@ Map;
 
 Map m_gen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid);
 
-int m_isportal(char** block, const Point where);
+int m_is_portal(char** block, const Point where);
 
 void m_edit(const Map, const Overview);
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Point.h"
-#include "Compass.h"
 #include "Map.h"
 #include "Hit.h"
 

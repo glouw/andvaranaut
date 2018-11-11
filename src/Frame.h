@@ -5,7 +5,8 @@
 
 typedef enum
 {
-    A, B,
+    FRAME_A,
+    FRAME_B,
     FRAMES
 }
 Frame;

@@ -65,7 +65,7 @@ Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
         if(it.c == SCROLL)
         {
             char* const squares = s_scroll_to_str(sc, it.index);
-            t_set(a, b, true,
+            t_set_title(a, b, true,
                 "%s\n"
                 "%s\n"
                 "%s\n"
@@ -75,12 +75,12 @@ Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
         }
         else
         if(it.c == LETTER)
-            t_set(a, b, true,
+            t_set_title(a, b, true,
                 "%s\n"
                 "%s\n",
                 it.name, it.desc);
         else
-            t_set(a, b, true,
+            t_set_title(a, b, true,
                 "%s\n"
                 "%s\n"
                 "%s\n"

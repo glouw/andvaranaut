@@ -162,12 +162,12 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
 
 static int teleporting_up(const Hero hero, const Map map)
 {
-    return hero.pitch < 1.0f && m_isportal(map.ceiling, hero.where);
+    return hero.pitch < 1.0f && m_is_portal(map.ceiling, hero.where);
 }
 
 static int teleporting_down(const Hero hero, const Map map)
 {
-    return hero.pitch > 1.0f && m_isportal(map.floring, hero.where);
+    return hero.pitch > 1.0f && m_is_portal(map.floring, hero.where);
 }
 
 Hero h_teleporting(Hero hero, const Map map, const Input input, const Timer tm)

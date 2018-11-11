@@ -131,9 +131,9 @@ static void render_one_sprite(const Sdl sdl, const Text text, Sprite* const spri
 
 static void render_all_sprites(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
-    s_orient(sprites, hero);
+    s_pull(sprites, hero);
+    s_turn(sprites, -hero.yaw);
     s_sort(sprites, s_furthest_first);
-
     for(int which = 0; which < sprites.count; which++)
     {
         Sprite* const sprite = &sprites.sprite[which];
@@ -146,7 +146,7 @@ static void render_all_sprites(const Sdl sdl, const Text text, const Sprites spr
                 SDL_Surface* const surface = sdl.surfaces.surface[selected];
                 SDL_Texture* const texture = sdl.textures.texture[selected];
                 const State state = sprite->state;
-                const Frame frame = t_lo(tm) ? A : B;
+                const Frame frame = t_lo(tm) ? FRAME_A : FRAME_B;
                 const SDL_Rect image = calc_state_frame(surface, state, frame);
                 sprite->seen = clip(target, sdl.xres, sprite->where, zbuff);
                 if(sprite->seen.w > 0)
@@ -154,7 +154,8 @@ static void render_all_sprites(const Sdl sdl, const Text text, const Sprites spr
             }
         }
     }
-    s_place_back(sprites, hero);
+    s_turn(sprites, hero.yaw);
+    s_push(sprites, hero);
 }
 
 Sdl s_setup(const Args args)
@@ -192,7 +193,7 @@ Sdl s_setup(const Args args)
     sdl.yres = args.yres;
     sdl.fps = args.fps;
     sdl.threads = args.threads;
-    sdl.surfaces = s_pull();
+    sdl.surfaces = s_load_surfaces();
     sdl.textures = t_cache(sdl.surfaces, sdl.renderer);
     sdl.gui = '~' - ' ' + 26;
     sdl.wht = 0xFFDFEFD7;

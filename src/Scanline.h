@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Sdl.h"
+#include "Hits.h"
 
 typedef struct
 {

@@ -23,7 +23,7 @@ static SDL_Surface* load(const char* const path)
     return converted;
 }
 
-Surfaces s_pull(void)
+Surfaces s_load_surfaces(void)
 {
     static const char* const names[] = {
         // Sprites: Alpha ASCII

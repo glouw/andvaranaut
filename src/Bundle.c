@@ -1,5 +1,6 @@
 #include "Bundle.h"
 
+#include "Hits.h"
 #include "Scanline.h"
 
 int b_raster(void* const bundle)

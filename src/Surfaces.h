@@ -9,4 +9,4 @@ typedef struct
 }
 Surfaces;
 
-Surfaces s_pull(void);
+Surfaces s_load_surfaces(void);

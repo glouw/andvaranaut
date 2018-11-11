@@ -39,7 +39,7 @@ Sprites s_lay(Sprites sprites, const Map map, const Overview ov)
     return sprites;
 }
 
-static void pull(const Sprites sprites, const Hero hero)
+void s_pull(const Sprites sprites, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -48,7 +48,7 @@ static void pull(const Sprites sprites, const Hero hero)
     }
 }
 
-static void push(const Sprites sprites, const Hero hero)
+void s_push(const Sprites sprites, const Hero hero)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -62,32 +62,13 @@ void s_sort(const Sprites sprites, Sorter sorter)
     qsort(sprites.sprite, sprites.count, sizeof(Sprite), sorter);
 }
 
-static void turn(const Sprites sprites, const float yaw)
+void s_turn(const Sprites sprites, const float yaw)
 {
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
         sprite->where = p_turn(sprite->where, yaw);
     }
-}
-
-void s_orient(const Sprites sprites, const Hero hero)
-{
-    pull(sprites, hero);
-    turn(sprites, -hero.yaw);
-}
-
-void s_place_back(const Sprites sprites, const Hero hero)
-{
-    turn(sprites, +hero.yaw);
-    push(sprites, hero);
-}
-
-static void arrange(const Sprites sprites, const Hero hero, Sorter dir)
-{
-    pull(sprites, hero);
-    s_sort(sprites, dir);
-    push(sprites, hero);
 }
 
 static void bound(const Sprites sprites, const Map map)
@@ -218,9 +199,9 @@ static void broke_lootbag(const int ascii, const Inventory inv, const Timer tm)
         const Item item = i_rand();
         const int fit = i_add(inv.items, item);
         if(fit)
-            t_set(tm.renders, tm.renders + 120, false, "Picked up %s", item.cstr);
+            t_set_title(tm.renders, tm.renders + 120, false, "Picked up %s", item.cstr);
         else
-            t_set(tm.renders, tm.renders + 120, false, "Inventory Full");
+            t_set_title(tm.renders, tm.renders + 120, false, "Inventory Full");
     }
 }
 
@@ -546,7 +527,10 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
 
 Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Gauge gauge, const Fire fire, const Timer tm)
 {
-    arrange(sprites, hero, s_nearest_first);
+    s_pull(sprites, hero);
+    s_sort(sprites, s_nearest_first);
+    s_push(sprites, hero);
+
     idle(sprites, tm);
     route(sprites, field, map, hero);
     move(sprites, field, hero.where, map);
@@ -555,12 +539,17 @@ Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Fie
     block(sprites, hero, gauge);
     track(sprites, fire);
     burn(sprites, fire);
+
     return damage(hero, sprites, gauge, tm);
 }
 
 static Point avail(const Point center, const Map map)
 {
-    const Point where = p_add(center, p_rand(map.grid));
+    const Point random = {
+        rand() % map.grid - map.grid / 2.0f,
+        rand() % map.grid - map.grid / 2.0f,
+    };
+    const Point where = p_add(center, random);
 
     // Available tile space is no wall and not above water.
     return p_block(where, map.walling) == ' '

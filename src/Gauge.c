@@ -41,7 +41,7 @@ static Gauge fizzle(Gauge g, const Timer tm)
     };
     const int which = rand() % u_len(tireds);
     const char* const tired = tireds[which];
-    t_set(tm.renders, tm.renders + 120, false, tired);
+    t_set_title(tm.renders, tm.renders + 120, false, tired);
 
     return g;
 }

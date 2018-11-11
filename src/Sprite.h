@@ -4,7 +4,6 @@
 #include "State.h"
 #include "Timer.h"
 #include "Speech.h"
-#include "Compass.h"
 
 #include <SDL2/SDL.h>
 

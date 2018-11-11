@@ -9,7 +9,7 @@
 #include "Map.h"
 #include "Input.h"
 #include "Flow.h"
-#include "Hits.h"
+#include "Hit.h"
 #include "Gauge.h"
 
 typedef struct

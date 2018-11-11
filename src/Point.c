@@ -154,15 +154,6 @@ Point p_snap(const Point a, const int grid)
     return out;
 }
 
-Point p_rand(const int grid)
-{
-    const Point b = {
-        rand() % grid - grid / 2.0f,
-        rand() % grid - grid / 2.0f,
-    };
-    return b;
-}
-
 void p_print(const Point a)
 {
     printf("%f %f\n", (double) a.x, (double) a.y);

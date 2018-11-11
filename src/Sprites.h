@@ -23,11 +23,13 @@ Sprites;
 
 Sprites s_spawn(const int max);
 
-void s_orient(const Sprites, const Hero);
-
-void s_place_back(const Sprites, const Hero);
-
 Sprites s_lay(Sprites, const Map, const Overview);
+
+void s_pull(const Sprites, const Hero);
+
+void s_push(const Sprites, const Hero);
+
+void s_turn(const Sprites, const float yaw);
 
 void s_sort(const Sprites, Sorter);
 

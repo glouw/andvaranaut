@@ -72,11 +72,11 @@ Theme m_theme(const Theme last, const Map map, const Point where, const Timer tm
 {
     const Theme now = lutheme(map, where);
     if(now != last && now != NO_THEME)
-        t_set(tm.renders, tm.renders + 120, false, themestr(map, where));
+        t_set_title(tm.renders, tm.renders + 120, false, themestr(map, where));
     return now;
 }
 
-int m_isportal(char** block, const Point where)
+int m_is_portal(char** block, const Point where)
 {
     return p_block(where, block) == '~';
 }

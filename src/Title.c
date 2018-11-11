@@ -7,12 +7,12 @@
 // Does need to be passed around as only one title will be used.
 static Title tt;
 
-void t_advance(const int now)
+void t_advance_title(const int now)
 {
     tt.now = now;
 }
 
-void t_set(const int start, const int end, const int linger, const char* const fmt, ...)
+void t_set_title(const int start, const int end, const int linger, const char* const fmt, ...)
 {
     va_list args;
 
@@ -34,20 +34,15 @@ void t_set(const int start, const int end, const int linger, const char* const f
     tt.end = end;
 }
 
-void t_clear(void)
+void t_clear_title(void)
 {
-    t_set(0, 0, false, "");
+    t_set_title(0, 0, false, "");
 }
 
-void t_clear_when_linger(void)
+void t_clear_title_when_linger(void)
 {
     if(tt.linger)
-        t_clear();
-}
-
-void t_init(void)
-{
-    t_clear();
+        t_clear_title();
 }
 
 static int done(void)
@@ -55,7 +50,7 @@ static int done(void)
     return !tt.linger && tt.now > tt.end;
 }
 
-void t_show(const Text text, const Sdl sdl)
+void t_show_title(const Text text, const Sdl sdl)
 {
     if(done())
         return;
