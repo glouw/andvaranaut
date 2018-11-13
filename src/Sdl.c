@@ -481,7 +481,7 @@ static void draw_all_bars(const Sdl sdl, const Hero hero, const Timer tm)
     draw_one_bar(sdl, hero, 0, tm, size, FTG);
 }
 
-static void draw_inv_panel(const Sdl sdl, const Inventory inv)
+static void draw_inventory_panel(const Sdl sdl, const Inventory inv)
 {
     const Point wht = { 0.0, 512.0 };
     const Point red = { 0.0, 528.0 };
@@ -505,7 +505,7 @@ static void draw_inv_panel(const Sdl sdl, const Inventory inv)
     }
 }
 
-static void draw_inv_items(const Sdl sdl, const Inventory inv)
+static void draw_inventory_items(const Sdl sdl, const Inventory inv)
 {
     for(int i = 0; i < inv.items.max; i++)
     {
@@ -522,10 +522,10 @@ static void draw_inv_items(const Sdl sdl, const Inventory inv)
     }
 }
 
-static void draw_inv(const Sdl sdl, const Inventory inv)
+static void draw_inventory(const Sdl sdl, const Inventory inv)
 {
-    draw_inv_panel(sdl, inv);
-    draw_inv_items(sdl, inv);
+    draw_inventory_panel(sdl, inv);
+    draw_inventory_items(sdl, inv);
 }
 
 static void draw_map(const Sdl sdl, const Map map, const Point where)
@@ -607,7 +607,7 @@ void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Spr
     render_all_sprites(sdl, text, sprites, zbuff, hero, tm);
 
     // Draw the user interface.
-    draw_inv(sdl, inv);
+    draw_inventory(sdl, inv);
     draw_all_bars(sdl, hero, tm);
     draw_map(sdl, map, hero.where);
 

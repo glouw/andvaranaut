@@ -44,7 +44,7 @@ Inventory i_highlite(Inventory inv, const Input in, const int xres)
     return inv;
 }
 
-static Inventory tile_change(Inventory inv)
+static Inventory check_tile_change(Inventory inv)
 {
     inv.change = false;
     if(inv.hilited != -1 && inv.hilited != inv.last)
@@ -55,7 +55,7 @@ static Inventory tile_change(Inventory inv)
 
 Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
 {
-    inv = tile_change(inv);
+    inv = check_tile_change(inv);
     if(inv.change && inv.hilited < inv.items.max)
     {
         const int a = tm.renders;

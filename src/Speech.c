@@ -19,7 +19,7 @@ static Speech build(const char* const sentences[], const int len)
     return sp;
 }
 
-Speech s_greet(void)
+Speech s_use_greet(void)
 {
     const char* const sentences[] = {
         "Hello there!",

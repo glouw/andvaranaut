@@ -6,16 +6,16 @@
 #include <assert.h>
 #include <float.h>
 
-static float error(const float a, const float b)
+static float calc_error(const float a, const float b)
 {
     return 0.5f * (a - b) * (a - b);
 }
 
-static float total_error(int* a, int* b, const int size)
+static float calc_total_error(int* a, int* b, const int size)
 {
     float sum = 0.0f;
     for(int i = 0; i < size; i++)
-        sum += error(a[i], b[i]);
+        sum += calc_error(a[i], b[i]);
     return sum;
 }
 
@@ -31,7 +31,7 @@ int s_index(const Scroll sc)
     int index = 0;
     for(int i = 0; i < sc.scrolls; i++)
     {
-        const float err = total_error(sc.casting, sc.castables[i], sc.squares);
+        const float err = calc_total_error(sc.casting, sc.castables[i], sc.squares);
         if(err < min)
         {
             min = err;

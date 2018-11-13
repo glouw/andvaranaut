@@ -14,7 +14,7 @@ static char** reset(char** block, const int rows, const int cols, const int blok
     return block;
 }
 
-static char** mnew(const int rows, const int cols, const int blok)
+static char** make(const int rows, const int cols, const int blok)
 {
     char** block = u_toss(char*, rows);
 
@@ -24,7 +24,7 @@ static char** mnew(const int rows, const int cols, const int blok)
     return reset(block, rows, cols, blok);
 }
 
-Map m_gen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid)
+Map m_generate(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid)
 {
     const Sheer mid = {
         0.0f,
@@ -37,25 +37,20 @@ Map m_gen(const int rows, const int cols, const Points trapdoors, const Points i
 
     static Map zero;
     Map map = zero;
-
     map.rows = rows;
     map.cols = cols;
-
-    map.ceiling = mnew(map.rows, map.cols, '#');
-    map.walling = mnew(map.rows, map.cols, '#');
-    map.floring = mnew(map.rows, map.cols, '"');
-
+    map.ceiling = make(map.rows, map.cols, '#');
+    map.walling = make(map.rows, map.cols, '#');
+    map.floring = make(map.rows, map.cols, '"');
     map.trapdoors = trapdoors;
     map.rooms = r_init(interests);
-
     map.top = top;
     map.mid = mid;
     map.grid = grid;
-
     return map;
 }
 
-Theme lutheme(const Map map, const Point where)
+static Theme look_up_theme(const Map map, const Point where)
 {
     for(int i = 0; i < map.rooms.count; i++)
         if(p_eql(where, map.rooms.wheres[i], map.grid))
@@ -63,16 +58,19 @@ Theme lutheme(const Map map, const Point where)
     return NO_THEME;
 }
 
-static const char* themestr(const Map map, const Point where)
+static const char* get_theme_string(const Map map, const Point where)
 {
-    return t_name(lutheme(map, where));
+    return t_name(look_up_theme(map, where));
 }
 
-Theme m_theme(const Theme last, const Map map, const Point where, const Timer tm)
+Theme m_get_theme(const Theme last, const Map map, const Point where, const Timer tm)
 {
-    const Theme now = lutheme(map, where);
+    const Theme now = look_up_theme(map, where);
     if(now != last && now != NO_THEME)
-        t_set_title(tm.renders, tm.renders + 120, false, themestr(map, where));
+    {
+        const char* const string = get_theme_string(map, where);
+        t_set_title(tm.renders, tm.renders + 120, false, string);
+    }
     return now;
 }
 
@@ -81,7 +79,7 @@ int m_is_portal(char** block, const Point where)
     return p_block(where, block) == '~';
 }
 
-int m_out(const Map map, const Point where)
+int m_out_of_bounds(const Map map, const Point where)
 {
     return (int) where.x >= map.cols || (int) where.x < 0
         || (int) where.y >= map.rows || (int) where.y < 0;
@@ -89,7 +87,7 @@ int m_out(const Map map, const Point where)
 
 void m_edit(const Map map, const Overview ov)
 {
-    if(m_out(map, ov.where))
+    if(m_out_of_bounds(map, ov.where))
         return;
 
     const int ascii = ov.selected + ' ';
@@ -105,7 +103,7 @@ void m_edit(const Map map, const Overview ov)
     if(ov.party == CEILING) map.ceiling[y][x] = ascii;
 }
 
-void m_room(const Map map, const Point where, const int w, const int h, const Party p)
+void m_place_room(const Map map, const Point where, const int w, const int h, const Party p)
 {
     for(int i = -w; i <= w; i++)
     for(int j = -h; j <= h; j++)
@@ -128,14 +126,14 @@ void m_room(const Map map, const Point where, const int w, const int h, const Pa
     }
 }
 
-void m_column(const Map map, const Point where, const int ascii)
+void m_place_column(const Map map, const Point where, const int ascii)
 {
     const int x = where.x;
     const int y = where.y;
     map.ceiling[y][x] = map.walling[y][x] = map.floring[y][x] = ascii;
 }
 
-static void supports(const Map map, const int x, const int y, const Party p)
+static void place_supports(const Map map, const int x, const int y, const Party p)
 {
     if(p == CEILING)
     {
@@ -146,7 +144,7 @@ static void supports(const Map map, const int x, const int y, const Party p)
     }
 }
 
-void m_platform(const Map map, const int x, const int y, const Party p)
+void m_place_platform(const Map map, const int x, const int y, const Party p)
 {
     for(int j = -1; j <= 1; j++)
     for(int k = -1; k <= 1; k++)
@@ -164,7 +162,7 @@ void m_platform(const Map map, const int x, const int y, const Party p)
     }
 }
 
-static void trapdoor(const Map map, const int x, const int y, const Party p)
+static void place_trapdoor(const Map map, const int x, const int y, const Party p)
 {
     switch(p)
     {
@@ -176,7 +174,7 @@ static void trapdoor(const Map map, const int x, const int y, const Party p)
     }
 }
 
-void m_trapdoors(const Map map, const Points trapdoors, const Party p)
+void m_set_trapdoors(const Map map, const Points trapdoors, const Party p)
 {
     for(int i = 0; i < trapdoors.count; i++)
     {
@@ -185,13 +183,13 @@ void m_trapdoors(const Map map, const Points trapdoors, const Party p)
         const int x = where.x;
         const int y = where.y;
 
-        m_platform(map, x, y, p);
-        supports(map, x, y, p);
-        trapdoor(map, x, y, p);
+        m_place_platform(map, x, y, p);
+        place_supports(map, x, y, p);
+        place_trapdoor(map, x, y, p);
     }
 }
 
-void m_corridor(const Map map, const Point a, const Point b)
+void m_lay_corridor(const Map map, const Point a, const Point b)
 {
     const Point step = p_sub(b, a);
     const Point delta = {
@@ -211,7 +209,7 @@ void m_corridor(const Map map, const Point a, const Point b)
     for(int i = 0; i < sy; i++) map.walling[y += dy][x] = ' ';
 }
 
-static void cross(const Map map, const int x, const int y, const char a, const char b)
+static void place_cross(const Map map, const int x, const int y, const char a, const char b)
 {
     const int end = map.grid / 2;
     if(map.walling[y + 0][x + end] == a) map.walling[y + 0][x + end] = b;
@@ -220,29 +218,29 @@ static void cross(const Map map, const int x, const int y, const char a, const c
     if(map.walling[y - end][x + 0] == a) map.walling[y - end][x + 0] = b;
 }
 
-static void door(const Map map, const int x, const int y)
+static void place_door(const Map map, const int x, const int y)
 {
-    cross(map, x, y, ' ', '!');
+    place_cross(map, x, y, ' ', '!');
 }
 
-static void pass(const Map map, const int x, const int y)
+static void place_pass(const Map map, const int x, const int y)
 {
-    cross(map, x, y, '!', ' ');
+    place_cross(map, x, y, '!', ' ');
 }
 
-void m_barricade(const Map map)
+void m_place_barricades(const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {
         const Point mid = map.rooms.wheres[i];
-        door(map, mid.x, mid.y);
+        place_door(map, mid.x, mid.y);
     }
     for(int i = 0; i < map.rooms.count; i++)
     {
         const Point mid = map.rooms.wheres[i];
 
         if(map.rooms.agents[i] == 0)
-            pass(map, mid.x, mid.y);
+            place_pass(map, mid.x, mid.y);
     }
 }
 
@@ -256,7 +254,7 @@ int m_max(const Map map)
     return map.grid / 2;
 }
 
-static void grass(const Map map, const Point where)
+static void lay_grass(const Map map, const Point where)
 {
     const int x = where.x;
     const int y = where.y;
@@ -269,7 +267,7 @@ static void grass(const Map map, const Point where)
     }
 }
 
-static void path(const Map map, const Point where)
+static void lay_down_path(const Map map, const Point where)
 {
     const int x = where.x;
     const int y = where.y;
@@ -288,13 +286,13 @@ void m_themeate(const Map map)
         switch(map.rooms.themes[i])
         {
         case NICE_GARDEN:
-            grass(map, where);
-            path(map, where);
+            lay_grass(map, where);
+            lay_down_path(map, where);
             break;
 
         case WATER_WELL:
-            m_room(map, where, m_min(map), m_min(map), FLORING);
-            m_platform(map, where.x, where.y, FLORING);
+            m_place_room(map, where, m_min(map), m_min(map), FLORING);
+            m_place_platform(map, where.x, where.y, FLORING);
             break;
 
         default:

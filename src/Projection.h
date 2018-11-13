@@ -21,6 +21,6 @@ Projection p_project(const int yres, const int xres, const float focal, const fl
 
 Projection p_sheer(const Projection, const Sheer);
 
-float p_ccast(const Projection, const int x);
+float p_ceil_cast(const Projection, const int x);
 
-float p_fcast(const Projection, const int x);
+float p_flor_cast(const Projection, const int x);

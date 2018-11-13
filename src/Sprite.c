@@ -12,7 +12,7 @@ static Sprite init_speech(Sprite sprite)
     switch(sprite.ascii)
     {
     case 'b':
-        sprite.speech = s_greet();
+        sprite.speech = s_use_greet();
         break;
     default:
         sprite.speech = zero;

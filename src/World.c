@@ -25,7 +25,7 @@ static World make(const int floors)
 static World carve(World w)
 {
     for(int i = 0; i < w.floors; i++)
-        w = append(w, t_gen(i == 0 ? p_new(0) : w.map[i - 1].trapdoors), s_spawn(128));
+        w = append(w, t_generate(i == 0 ? p_new(0) : w.map[i - 1].trapdoors), s_spawn(128));
     return w;
 }
 
@@ -40,10 +40,10 @@ static void theme(const World w)
 static void attach(const World w)
 {
     for(int i = 0; i < w.floors; i++)
-        m_trapdoors(w.map[i], w.map[i - 0].trapdoors, FLORING);
+        m_set_trapdoors(w.map[i], w.map[i - 0].trapdoors, FLORING);
 
     for(int i = 1; i < w.floors; i++)
-        m_trapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
+        m_set_trapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
 }
 
 // Populates rooms with sprites based on room theme.

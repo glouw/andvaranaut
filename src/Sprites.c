@@ -29,7 +29,7 @@ static Sprites append(Sprites sprites, const Sprite sprite)
 
 Sprites s_lay(Sprites sprites, const Map map, const Overview ov)
 {
-    if(m_out(map, ov.where))
+    if(m_out_of_bounds(map, ov.where))
         return sprites;
 
     const int ascii = ov.selected + ' ';
@@ -101,7 +101,7 @@ static void move(const Sprites sprites, const Field field, const Point to, const
         Sprite* const sprite = &sprites.sprite[i];
         if(s_stuck(sprite))
             continue;
-        const Point dir = f_force(field, sprite->where, to, map);
+        const Point dir = f_generate_force(field, sprite->where, to, map);
 
         // No force applied - slow down.
         if(dir.x == 0.0f && dir.y == 0.0f)
@@ -140,7 +140,7 @@ static void scent_wall(const Field field, const Point where, const Map map, cons
         const int x = i / field.res;
         const int y = j / field.res;
 
-        if(f_on(field, j, i))
+        if(f_is_on(field, j, i))
         {
             // Scent walls.
             field.mesh[j][i] = map.walling[y][x] == ' ' ? 0.0f : -scent;
@@ -165,7 +165,7 @@ static void scent_sprite(const Field field, const Sprites sprites, const float s
         const int i = field.res * sprite->where.x;
         for(int a = -field.res / 2; a <= field.res / 2; a++)
         for(int b = -field.res / 2; b <= field.res / 2; b++)
-            if(f_on(field, j + a, i + b))
+            if(f_is_on(field, j + a, i + b))
                 field.mesh[j + a][i + b] -= scent;
     }
 }
@@ -205,7 +205,7 @@ static void broke_lootbag(const int ascii, const Inventory inv, const Timer tm)
     }
 }
 
-static Sprites harm(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
+static Sprites calc_hurt(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
 {
     const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
 
@@ -257,7 +257,7 @@ static Sprites hurt_melee(Sprites sprites, const Attack attack, const Inventory 
 
         if(p_eql(hand, sprite->where, 2.0f))
         {
-            sprites = harm(sprites, sprite, attack, inv, tm);
+            sprites = calc_hurt(sprites, sprite, attack, inv, tm);
             if(++hurts == it.hurts)
                 return sprites;
         }
@@ -284,7 +284,7 @@ static Sprites hurt_range(Sprites sprites, const Attack attack, const Inventory 
 
         if(hit)
         {
-            sprites = harm(sprites, sprite, attack, inv, tm);
+            sprites = calc_hurt(sprites, sprite, attack, inv, tm);
             if(++hurts == it.hurts)
                 return sprites;
         }
@@ -343,7 +343,7 @@ static void idle(const Sprites sprites, const Timer tm)
     }
 }
 
-static Hero damage_hps(Hero hero, const Sprites sprites, const Timer tm)
+static Hero calc_damage_hps(Hero hero, const Sprites sprites, const Timer tm)
 {
     for(int i = 0; i < sprites.count; i++)
     {
@@ -373,14 +373,14 @@ static Hero damage_hps(Hero hero, const Sprites sprites, const Timer tm)
     return hero;
 }
 
-static Hero damage_mna(Hero hero, const Sprites sprites, const Timer tm)
+static Hero calc_damage_mna(Hero hero, const Sprites sprites, const Timer tm)
 {
     (void) sprites;
     (void) tm;
     return hero;
 }
 
-static Hero damage_ftg(Hero hero, const Timer tm, const Gauge gauge)
+static Hero calc_damage_ftg(Hero hero, const Timer tm, const Gauge gauge)
 {
     (void) tm;
 
@@ -419,9 +419,9 @@ static void block(const Sprites sprites, const Hero hero, const Gauge gauge)
 
 static Hero damage(Hero hero, const Sprites sprites, const Gauge gauge, const Timer tm)
 {
-    hero = damage_hps(hero, sprites, tm);
-    hero = damage_mna(hero, sprites, tm);
-    hero = damage_ftg(hero, tm, gauge);
+    hero = calc_damage_hps(hero, sprites, tm);
+    hero = calc_damage_mna(hero, sprites, tm);
+    hero = calc_damage_ftg(hero, tm, gauge);
     return hero;
 }
 

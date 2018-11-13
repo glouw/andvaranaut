@@ -9,4 +9,4 @@ typedef struct
 }
 Speech;
 
-Speech s_greet(void);
+Speech s_use_greet(void);

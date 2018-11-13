@@ -20,10 +20,10 @@ void f_diffuse(const Field, const Point where);
 
 Field f_prepare(const Map, const float aura);
 
-Point f_force(const Field, const Point from, const Point to, const Map map);
+Point f_generate_force(const Field, const Point from, const Point to, const Map map);
 
 void f_deposit(const Field, const Point p, const float val);
 
 void f_ruin(const Field);
 
-int f_on(const Field, const int y, const int x);
+int f_is_on(const Field, const int y, const int x);

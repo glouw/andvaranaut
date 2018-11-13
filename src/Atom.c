@@ -7,7 +7,7 @@ static float average(const Field field, const int y, const int x)
     for(int j = y - 1; j <= y + 1; j++)
     for(int i = x - 1; i <= x + 1; i++)
     {
-        if(!f_on(field, j, i))
+        if(!f_is_on(field, j, i))
             continue;
         if(j == y && i == x)
             continue;

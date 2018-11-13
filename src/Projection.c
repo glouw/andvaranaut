@@ -34,12 +34,12 @@ Projection p_sheer(Projection p, const Sheer s)
     return p;
 }
 
-float p_ccast(const Projection p, const int x)
+float p_ceil_cast(const Projection p, const int x)
 {
     return (1.0f - p.height + p.sheer.b) * p.size / (x + 1 - p.mid);
 }
 
-float p_fcast(const Projection p, const int x)
+float p_flor_cast(const Projection p, const int x)
 {
     return (0.0f - p.height - p.sheer.a) * p.size / (x + 0 - p.mid);
 }

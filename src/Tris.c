@@ -284,13 +284,13 @@ static void remove_dups(const Tris edges, const Flags flags)
 // #############################################
 static void place_bone(const Map map, const Tri e, const int w, const int h)
 {
-    m_room(map, e.a, w, h, WALLING);
-    m_room(map, e.b, w, h, WALLING);
+    m_place_room(map, e.a, w, h, WALLING);
+    m_place_room(map, e.b, w, h, WALLING);
 
-    if(u_d2() == 0) m_room(map, e.a, w, h, CEILING);
-    if(u_d2() == 0) m_room(map, e.b, w, h, CEILING);
+    if(u_d2() == 0) m_place_room(map, e.a, w, h, CEILING);
+    if(u_d2() == 0) m_place_room(map, e.b, w, h, CEILING);
 
-    m_corridor(map, e.a, e.b);
+    m_lay_corridor(map, e.a, e.b);
 }
 
 static void carve(const Map map, const Tris edges, const Flags flags)
@@ -309,7 +309,7 @@ static void carve(const Map map, const Tris edges, const Flags flags)
     }
 }
 
-Map t_gen(const Points extra)
+Map t_generate(const Points extra)
 {
     const int w = 150;
     const int h = 350;
@@ -337,7 +337,7 @@ Map t_gen(const Points extra)
         trapdoors = p_add_unique(trapdoors, rooms);
 
     // Build a map with trapdoors and carve out rooms.
-    const Map map = m_gen(h, w, trapdoors, rooms, grid);
+    const Map map = m_generate(h, w, trapdoors, rooms, grid);
     remove_dups(edges, flags);
     carve(map, edges, flags);
 

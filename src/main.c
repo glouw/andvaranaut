@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 
     s_test();
 
-    srand(true ? time(NULL) : 0);
+    srand(time(NULL));
 
     const Args args = a_parse(argc, argv);
 
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 
         t_advance_title(renders);
 
-        theme = m_theme(theme, wd.map[me.floor], me.where, tm);
+        theme = m_get_theme(theme, wd.map[me.floor], me.where, tm);
 
         if(i_using_world_edit_mode(in))
         {
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
 
             wd.map[me.floor] = s_count(wd.sprites[me.floor], wd.map[me.floor]);
 
-            m_barricade(wd.map[me.floor]);
+            m_place_barricades(wd.map[me.floor]);
 
             inv = i_select(inv, in);
 

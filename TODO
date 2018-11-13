@@ -10,7 +10,7 @@
 [ ] gloves grab things sprites
 [ ] old man who speaks constant gibberish
 [ ] inventory management (movement + delete + give items)
-[ ] shovel can dig
+[ ] shovel can dig (to protect against fire)
 [ ] last enemy in room surrenders and asks for mercy kill
 
 [x] attacking a friendly sprite changes speech into anger
@@ -49,3 +49,5 @@
     get instrument if he dies.
 
 [ ] Ducking to avoid left / right attacks.
+
+[ ] one on one battle surrounded by fire

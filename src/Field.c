@@ -20,7 +20,7 @@ Field f_prepare(const Map map, const float aura)
     return field;
 }
 
-int f_on(const Field field, const int y, const int x)
+int f_is_on(const Field field, const int y, const int x)
 {
     return y >= 0 && x >= 0 && y < field.rows && x < field.cols;
 }
@@ -36,7 +36,7 @@ static void box_diffuse(const Field field, const int y, const int x, const int w
     for(int j = t; j <= b; j++)
     for(int i = l; i <= r; i++)
         if((i == l || j == t || i == r || j == b)
-        && f_on(field, j, i)
+        && f_is_on(field, j, i)
         && field.mesh[j][i] == 0.0f)
             atoms[count++] = a_materialize(field, j, i);
     for(int a = 0; a < count; a++)
@@ -54,7 +54,7 @@ static int largest(float* gradients, const int size)
     return index;
 }
 
-Point f_force(const Field field, const Point from, const Point to, const Map map)
+Point f_generate_force(const Field field, const Point from, const Point to, const Map map)
 {
     const Point dead = { 0.0f, 0.0f };
     const float dist = p_mag(p_sub(from, to));
@@ -79,7 +79,7 @@ Point f_force(const Field field, const Point from, const Point to, const Map map
         const Point dir = p_add(v[i], from);
         const int y = field.res * from.y, yy = field.res * dir.y;
         const int x = field.res * from.x, xx = field.res * dir.x;
-        if(f_on(field, yy, xx)) grads[i] = field.mesh[yy][xx] - field.mesh[y][x];
+        if(f_is_on(field, yy, xx)) grads[i] = field.mesh[yy][xx] - field.mesh[y][x];
     }
     const Point grad = v[largest(grads, len)];
     const Point where = p_add(grad, from);

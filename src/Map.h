@@ -13,14 +13,10 @@ typedef struct
     char** walling;
     char** floring;
 
-    // Map width and height.
     int rows;
     int cols;
 
-    // Trapdoor points for moving up and down map floors.
     Points trapdoors;
-
-    // Room information, eg. room location, number of agents (sprites), theme, etc.
     Rooms rooms;
 
     // These sheers form an optical illusion with the middle and upper ceiling heights.
@@ -34,29 +30,27 @@ typedef struct
 }
 Map;
 
-Map m_gen(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid);
+Map m_generate(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid);
+
+Theme m_get_theme(const Theme last, const Map, const Point where, const Timer);
 
 int m_is_portal(char** block, const Point where);
 
+int m_out_of_bounds(const Map, const Point where);
+
 void m_edit(const Map, const Overview);
 
-int m_out(const Map, const Point where);
+void m_place_room(const Map, const Point where, const int w, const int h, const Party p);
 
-int m_carvable(const Map, const int x, const int y);
+void m_place_column(const Map, const Point where, const int ascii);
 
-void m_room(const Map, const Point where, const int w, const int h, const Party);
+void m_place_platform(const Map, const int x, const int y, const Party);
 
-void m_column(const Map, const Point where, const int ascii);
+void m_set_trapdoors(const Map, const Points, const Party);
 
-void m_trapdoors(const Map, const Points trapdoors, const Party);
+void m_lay_corridor(const Map, const Point a, const Point b);
 
-void m_corridor(const Map, const Point a, const Point b);
-
-Theme m_theme(const Theme, const Map, const Point where, const Timer);
-
-void m_platform(const Map, const int x, const int y, const Party);
-
-void m_barricade(const Map);
+void m_place_barricades(const Map);
 
 int m_min(const Map);
 

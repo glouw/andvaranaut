@@ -95,7 +95,7 @@ static Args parse(Args args, int argc, char* argv[])
     return args;
 }
 
-static Args get_defaults(void)
+static Args make(void)
 {
     static Args zero;
     Args args = zero;
@@ -116,5 +116,5 @@ static Args get_defaults(void)
 
 Args a_parse(int argc, char* argv[])
 {
-    return parse(get_defaults(), argc, argv);
+    return parse(make(), argc, argv);
 }
