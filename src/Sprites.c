@@ -315,14 +315,9 @@ Sprites s_hurt(Sprites sprites, const Attack attack, const Hero hero, const Inpu
     {
         sprites.last = attack.method;
 
-        if(attack.method == MELEE)
-            return hurt_melee(sprites, attack, inv, tm, hero);
-
-        if(attack.method == RANGE)
-            return hurt_range(sprites, attack, inv, tm);
-
-        if(attack.method == MAGIC)
-            return hurt_magic(sprites, attack, inv, tm, hero);
+        if(attack.method == MELEE) return hurt_melee(sprites, attack, inv, tm, hero);
+        if(attack.method == RANGE) return hurt_range(sprites, attack, inv, tm);
+        if(attack.method == MAGIC) return hurt_magic(sprites, attack, inv, tm, hero);
     }
     sprites.last = NO_ATTACK;
 
@@ -599,7 +594,7 @@ Sprites s_populate(Sprites sprites, const Map map)
     return sprites;
 }
 
-Map s_count(const Sprites sprites, Map map)
+Map s_count_agents(const Sprites sprites, Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {

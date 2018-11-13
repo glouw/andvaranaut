@@ -16,3 +16,6 @@
 
 [x] Furthest enemy is being attacked.
     -> Sorting was only in one direction for renderer, not in other direction for sprites
+
+[x] Upper case sprites not showing
+    -> Size was set to 0.0 in registrar

@@ -15,7 +15,7 @@ DEBUG = 0
 
 # 0: Compile with C.
 # 1: Compile with C++ (Better type checking).
-C++ = 0
+C++ = 1
 
 BINARY = ../andvaranaut
 

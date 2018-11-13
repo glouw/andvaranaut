@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 
             wd.sprites[me.floor] = s_spread_fire(wd.sprites[me.floor], fire, wd.map[me.floor], tm);
 
-            wd.map[me.floor] = s_count(wd.sprites[me.floor], wd.map[me.floor]);
+            wd.map[me.floor] = s_count_agents(wd.sprites[me.floor], wd.map[me.floor]);
 
             m_place_barricades(wd.map[me.floor]);
 

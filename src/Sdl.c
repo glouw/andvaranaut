@@ -118,7 +118,7 @@ static void render_one_sprite(const Sdl sdl, const Text text, Sprite* const spri
     SDL_RenderCopy(sdl.renderer, texture, &image, &target);
     SDL_RenderSetClipRect(sdl.renderer, NULL);
 
-    // Remove transperancy from the sprite.
+    // Remove transparancy from the sprite.
     if(sprite->transparent)
         SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
