@@ -154,6 +154,7 @@ static void render_all_sprites(const Sdl sdl, const Text text, const Sprites spr
             }
         }
     }
+    s_sort(sprites, s_nearest_first);
     s_turn(sprites, hero.yaw);
     s_push(sprites, hero);
 }

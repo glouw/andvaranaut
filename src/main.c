@@ -70,35 +70,38 @@ int main(int argc, char* argv[])
         }
         else
         {
+            wd.map[me.floor] = s_count_agents(wd.sprites[me.floor], wd.map[me.floor]);
+
+            m_place_barricades(wd.map[me.floor]);
+
             me = h_teleporting(me, wd.map[me.floor], in, tm);
+
+            current = f_stream(current);
+
+            clouds = f_stream(clouds);
 
             if(me.teleporting)
             {
                 me = h_teleport(me, wd.map[me.floor]);
 
                 f_ruin(field);
+
                 field = f_prepare(wd.map[me.floor], me.aura);
 
                 f_extinguish(fire);
+
                 fire = f_kindle(wd.map[me.floor]);
             }
+
+            wd.sprites[me.floor] = s_spread_fire(wd.sprites[me.floor], fire, wd.map[me.floor], tm);
+
             ov = o_pan(ov, me.where, sdl.xres, sdl.yres);
 
-            current = f_stream(current);
-
-            clouds = f_stream(clouds);
+            me.inventory = i_select(me.inventory, in);
 
             me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], field, fire, tm);
 
             s_render_playing(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
-
-            wd.sprites[me.floor] = s_spread_fire(wd.sprites[me.floor], fire, wd.map[me.floor], tm);
-
-            wd.map[me.floor] = s_count_agents(wd.sprites[me.floor], wd.map[me.floor]);
-
-            m_place_barricades(wd.map[me.floor]);
-
-            me.inventory = i_select(me.inventory, in);
 
             if(i_using_inventory(in))
             {
@@ -116,7 +119,6 @@ int main(int argc, char* argv[])
 
                 const Attack atk = s_draw_gauge(sdl, me, scroll);
 
-                // TODO: Maybe pass in item wind rate.
                 me.gauge = g_wind(me.gauge, in, tm);
 
                 me = h_sustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);

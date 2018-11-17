@@ -360,10 +360,7 @@ static void rage(const Sprites sprites, const Hero hero, const Timer tm)
         if(s_useless(sprite))
             continue;
 
-        if(s_busy(sprite, tm))
-            continue;
-
-        if(sprite->evil && tm.fall && close_enough(sprite, hero))
+        if(sprite->state == IDLE && sprite->evil && tm.fall && close_enough(sprite, hero))
         {
             s_go_busy(sprite, tm, 2);
             const Compass direction = rand() % DIRS;
