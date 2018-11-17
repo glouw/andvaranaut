@@ -2,6 +2,7 @@
 
 #include "Sheer.h"
 #include "Method.h"
+#include "Inventory.h"
 #include "Line.h"
 #include "Timer.h"
 #include "Torch.h"
@@ -39,10 +40,12 @@ typedef struct
     float warning;
     int teleported;
     int teleporting;
+    Gauge gauge;
+    Inventory inventory;
 }
 Hero;
 
-Hero h_birth(const float focal, const Point where, const int floor, const Gauge);
+Hero h_birth(const float focal, const Point where, const int floor);
 
 Point h_touch(const Hero);
 

@@ -336,15 +336,15 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
     return magic;
 }
 
-Attack s_draw_gauge(const Sdl sdl, const Gauge g, const Inventory inv, const Scroll sc)
+Attack s_draw_gauge(const Sdl sdl, const Hero hero, const Scroll scroll)
 {
-    const Item it = inv.items.item[inv.selected];
     const float sens = 2.0f;
+    const Item item = hero.inventory.items.item[hero.inventory.selected];
     static Attack zero;
     return
-        c_is_melee(it.c) ? draw_gauge_melee(sdl, g, it, sens) :
-        c_is_range(it.c) ? draw_gauge_range(sdl, g, it, sens) :
-        c_is_magic(it.c) ? draw_gauge_magic(sdl, g, it, sens, inv, sc) : zero;
+        c_is_melee(item.clas) ? draw_gauge_melee(sdl, hero.gauge, item, sens) :
+        c_is_range(item.clas) ? draw_gauge_range(sdl, hero.gauge, item, sens) :
+        c_is_magic(item.clas) ? draw_gauge_magic(sdl, hero.gauge, item, sens, hero.inventory, scroll) : zero;
 }
 
 static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)
@@ -510,9 +510,9 @@ static void draw_inventory_items(const Sdl sdl, const Inventory inv)
     for(int i = 0; i < inv.items.max; i++)
     {
         const Item item = inv.items.item[i];
-        if(item.c == NONE)
+        if(item.clas == NONE)
             continue;
-        const int index = c_get_index(item.c);
+        const int index = c_get_index(item.clas);
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
         const int w = surface->w;
@@ -570,7 +570,7 @@ void s_draw_fps(const Sdl sdl, const Text text, const char* const fmt, ...)
     free(str);
 }
 
-void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Inventory inv, const Timer tm)
+void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
 {
     Point* const zbuff = u_toss(Point, sdl.xres);
     const Line camera = l_rotate(hero.fov, hero.yaw);
@@ -607,7 +607,7 @@ void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Spr
     render_all_sprites(sdl, text, sprites, zbuff, hero, tm);
 
     // Draw the user interface.
-    draw_inventory(sdl, inv);
+    draw_inventory(sdl, hero.inventory);
     draw_all_bars(sdl, hero, tm);
     draw_map(sdl, map, hero.where);
 

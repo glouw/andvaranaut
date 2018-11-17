@@ -28,10 +28,10 @@ Timer t_new(void)
     return timer;
 }
 
-Timer t_tick(Timer tm, const int renders, const int ticks)
+Timer t_tick(Timer tm, const int renders)
 {
     tm.last = tm.ticks;
-    tm.ticks = ticks;
+    tm.ticks = renders / 15;
     tm.renders = renders;
     tm.rise = rise(tm);
     tm.fall = fall(tm);

@@ -5,7 +5,7 @@
 typedef struct
 {
     int index;
-    Classification c;
+    Classification clas;
     const char* cstr;
     const char* name;
     const char* desc;

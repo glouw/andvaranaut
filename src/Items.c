@@ -13,7 +13,7 @@ Items i_build(const int max)
 static int avail(const Items its)
 {
     for(int i = 0; i < its.max; i++)
-        if(its.item[i].c == NONE)
+        if(its.item[i].clas == NONE)
             return i;
     return -1;
 }

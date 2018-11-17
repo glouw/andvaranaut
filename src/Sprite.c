@@ -153,14 +153,14 @@ int s_attacking(const Sprite* const sprite)
         || sprite->state == ATTACK_W;
 }
 
-int s_stunned(const Sprite* const sprite, const Timer tm)
+int s_busy(const Sprite* const sprite, const Timer tm)
 {
-    return tm.ticks < sprite->stunticks;
+    return tm.ticks < sprite->busyticks;
 }
 
-void s_stun(Sprite* const sprite, const Timer tm)
+void s_go_busy(Sprite* const sprite, const Timer tm, const int ticks)
 {
-    sprite->stunticks = tm.ticks + 5;
+    sprite->busyticks = tm.ticks + ticks;
 }
 
 int s_impulse(Sprite* const sprite, const Timer tm)

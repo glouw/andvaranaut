@@ -62,7 +62,7 @@ Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
         const int b = tm.renders + 90;
         const Item it = inv.items.item[inv.hilited];
 
-        if(it.c == SCROLL)
+        if(it.clas == SCROLL)
         {
             char* const squares = s_scroll_to_str(sc, it.index);
             t_set_title(a, b, true,
@@ -74,7 +74,7 @@ Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
             free(squares);
         }
         else
-        if(it.c == LETTER)
+        if(it.clas == LETTER)
             t_set_title(a, b, true,
                 "%s\n"
                 "%s\n",

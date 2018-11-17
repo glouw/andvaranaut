@@ -748,7 +748,7 @@ static Item none(void)
 {
     static Item zero;
     Item item = zero;
-    item.c = NONE;
+    item.clas = NONE;
     return item;
 }
 

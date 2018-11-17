@@ -33,9 +33,9 @@ void s_turn(const Sprites, const float yaw);
 
 void s_sort(const Sprites, Sorter);
 
-Sprites s_hurt(Sprites, const Attack, const Hero, const Input, const Inventory, const Timer);
+Sprites s_hurt(Sprites, const Attack, const Hero, const Input, const Timer);
 
-Hero s_caretake(const Sprites, const Hero, const Map, const Field, const Gauge, const Fire, const Timer);
+Hero s_caretake(const Sprites, const Hero, const Map, const Field, const Fire, const Timer);
 
 Sprites s_gen(const int max, const Map);
 

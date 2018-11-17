@@ -31,7 +31,7 @@ typedef struct
     SDL_Rect seen;
     Speech speech;
 
-    int stunticks;
+    int busyticks;
 }
 Sprite;
 
@@ -59,8 +59,8 @@ int s_muted(const Sprite* const);
 
 int s_attacking(const Sprite* const);
 
-int s_stunned(const Sprite* const, const Timer);
+int s_busy(const Sprite* const, const Timer);
 
-void s_stun(Sprite* const, const Timer);
+void s_go_busy(Sprite* const, const Timer, const int ticks);
 
 int s_impulse(Sprite* const, const Timer);

@@ -19,9 +19,7 @@ int main(int argc, char* argv[])
 
     const Point start = wd.map[floor].trapdoors.point[0];
 
-    Gauge gg = g_new();
-
-    Hero me = h_birth(args.focal, start, floor, gg);
+    Hero me = h_birth(args.focal, start, floor);
 
     Overview ov = o_init();
 
@@ -33,9 +31,7 @@ int main(int argc, char* argv[])
 
     Fire fire = f_kindle(wd.map[me.floor]);
 
-    Inventory inv = i_create();
-
-    Scroll sc = s_new();
+    Scroll scroll = s_new();
 
     Input in = i_ready(args.msen);
 
@@ -54,9 +50,7 @@ int main(int argc, char* argv[])
     {
         const int t0 = SDL_GetTicks();
 
-        const int ticks = renders / 10;
-
-        tm = t_tick(tm, renders, ticks);
+        tm = t_tick(tm, renders);
 
         t_advance_title(renders);
 
@@ -76,8 +70,6 @@ int main(int argc, char* argv[])
         }
         else
         {
-            s_render_playing(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, inv, tm);
-
             me = h_teleporting(me, wd.map[me.floor], in, tm);
 
             if(me.teleporting)
@@ -96,7 +88,9 @@ int main(int argc, char* argv[])
 
             clouds = f_stream(clouds);
 
-            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], field, gg, fire, tm);
+            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], field, fire, tm);
+
+            s_render_playing(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
 
             wd.sprites[me.floor] = s_spread_fire(wd.sprites[me.floor], fire, wd.map[me.floor], tm);
 
@@ -104,15 +98,15 @@ int main(int argc, char* argv[])
 
             m_place_barricades(wd.map[me.floor]);
 
-            inv = i_select(inv, in);
+            me.inventory = i_select(me.inventory, in);
 
             if(i_using_inventory(in))
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
 
-                inv = i_highlite(inv, in, sdl.xres);
+                me.inventory = i_highlite(me.inventory, in, sdl.xres);
 
-                inv = i_what_is(inv, sc, tm);
+                me.inventory = i_what_is(me.inventory, scroll, tm);
             }
             else
             {
@@ -120,14 +114,14 @@ int main(int argc, char* argv[])
 
                 t_clear_title_when_linger();
 
-                const Attack atk = s_draw_gauge(sdl, gg, inv, sc);
+                const Attack atk = s_draw_gauge(sdl, me, scroll);
 
                 // TODO: Maybe pass in item wind rate.
-                gg = g_wind(gg, in, tm);
+                me.gauge = g_wind(me.gauge, in, tm);
 
                 me = h_sustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);
 
-                wd.sprites[me.floor] = s_hurt(wd.sprites[me.floor], atk, me, in, inv, tm);
+                wd.sprites[me.floor] = s_hurt(wd.sprites[me.floor], atk, me, in, tm);
             }
 
             f_clear(fire);

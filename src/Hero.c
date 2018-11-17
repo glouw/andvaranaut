@@ -13,7 +13,7 @@ static Line lens(const float focal)
     return fov;
 }
 
-Hero h_birth(const float focal, const Point where, const int floor, const Gauge gg)
+Hero h_birth(const float focal, const Point where, const int floor)
 {
     static Hero zero; // From zero to hero.
     Hero hero = zero;
@@ -28,10 +28,12 @@ Hero h_birth(const float focal, const Point where, const int floor, const Gauge 
     hero.pitch = 1.0f;
     hero.tall = 0.5f;
     hero.height = hero.tall;
+    hero.gauge = g_new();
     hero.hps = hero.hpsmax = 9.0f;
     hero.mna = hero.mnamax = 10.0f;
-    hero.ftg = hero.ftgmax = gg.max / gg.divisor;
+    hero.ftg = hero.ftgmax = hero.gauge.max / hero.gauge.divisor;
     hero.warning = 0.25f;
+    hero.inventory = i_create();
     return hero;
 }
 
