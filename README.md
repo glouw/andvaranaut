@@ -30,33 +30,33 @@ the life of a dweller, or help the wrong dweller, may have unintended consequenc
     1, 2, 3, 4: Select inventory attack item
     W A S D and Mouse: Movement and combat
 
-## Combat
+# Combat
 Your enemy, be it dweller or beast, can be attacked in different ways.
 
-    MELEE
+## Melee
 
-    Enemies can be hurt from four melee directions.
-    To do so, select a melee weapon from your inventory, hold down the mouse,
-    and draw a directional shape from the center of the screen.
-    Enemies will attempt to block your attack. Be crafty by faking hits before striking.
-    Watch your green fatigue bar while striking - too long of a swing will tire you out.
+Enemies can be hurt from four melee directions.
+To do so, select a melee weapon from your inventory, hold down the mouse,
+and draw a directional shape from the center of the screen.
+Enemies will attempt to block your attack. Be crafty by faking hits before striking.
+Watch your green fatigue bar while striking - too long of a swing will tire you out.
 
-    RANGE
+## Range
 
-    Attacking with a range weapon creates an on screen reticule.
-    The smaller the reticule, the more accurate the shot. Ranged weapons, like the
-    dwarven revolver, suffer from poor target reticules but can be employed to tremendous
-    effect up close. Watch your green bar while drawing your bow or aiming your cannon -
-    your fatigue quickly deplenishes.
+Attacking with a range weapon creates an on screen reticule.
+The smaller the reticule, the more accurate the shot. Ranged weapons, like the
+dwarven revolver, suffer from poor target reticules but can be employed to tremendous
+effect up close. Watch your green bar while drawing your bow or aiming your cannon -
+your fatigue quickly deplenishes.
 
-    MAGIC
+## MAGIC
 
-    Casting magic requires both a scroll and a wand be be present in your inventory.
-    While using the inventory, hover over the scroll to reveal its spell glpyh.
-    Equip the wand, and draw the shape of the spell glyph. The accuracy of the casted
-    glpyh will determine the potentcy of the spell (if available).
-    Watch your blue mana bar as you cast your spell - if you run out, the spell will reset,
-    and you will suffer a casting penalty.
+Casting magic requires both a scroll and a wand be be present in your inventory.
+While using the inventory, hover over the scroll to reveal its spell glpyh.
+Equip the wand, and draw the shape of the spell glyph. The accuracy of the casted
+glpyh will determine the potentcy of the spell (if available).
+Watch your blue mana bar as you cast your spell - if you run out, the spell will reset,
+and you will suffer a casting penalty.
 
 ## Contributing
 Sprite and tile art is always welcome but must be suitable for all ages.
