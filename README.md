@@ -49,7 +49,7 @@ dwarven revolver, suffer from poor target reticules but can be employed to treme
 effect up close. Watch your green bar while drawing your bow or aiming your cannon -
 your fatigue quickly deplenishes.
 
-## MAGIC
+## Magic
 
 Casting magic requires both a scroll and a wand be be present in your inventory.
 While using the inventory, hover over the scroll to reveal its spell glpyh.
