@@ -19,7 +19,7 @@ The open source dungeon crawler
 
 ## Quest
 Your quest is to reach the bottom of Andvaranaut dungeon and retrieve Andvari's gift.
-Along your way you will encounter beasts and dungeon dwellers searching for golf of similar fortune.
+Along your way you will encounter beasts and dungeon dwellers searching for gold of similar fortune.
 Some dungeon dwellers will be friendly. Help them and you will be rewarded, but keep in
 mind each dweller has their own story to tell and problems to overcome. Choosing to end
 the life of a dweller, or help the wrong dweller, may have unintended consequences.
