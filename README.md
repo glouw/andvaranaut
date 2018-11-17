@@ -2,7 +2,7 @@
 
 The open source dungeon crawler
 
-![](art/screenshots/2018-09-30-083300_920x550_scrot.png)
+![](art/screenshots/2018-11-17-113313_1000x600_scrot.png)
 
 ## Dependencies
     SDL2-ttf-devel
@@ -76,5 +76,3 @@ Color pallette by DawnBringer
 
 ## Special Thanks
 Cam - Prototype tile and sprite art work
-
-Paolo - Prototype quest storylines
