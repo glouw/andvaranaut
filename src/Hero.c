@@ -40,6 +40,7 @@ Hero h_birth(const float focal, const Point where, const int floor)
 static Hero calc_yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dx * input.sx;
+    hero.yaw -= (hero.dyaw *= 0.8f);
     return hero;
 }
 

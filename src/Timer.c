@@ -31,7 +31,7 @@ Timer t_new(void)
 Timer t_tick(Timer tm, const int renders)
 {
     tm.last = tm.ticks;
-    tm.ticks = renders / 15;
+    tm.ticks = renders / 10;
     tm.renders = renders;
     tm.rise = rise(tm);
     tm.fall = fall(tm);

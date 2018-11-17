@@ -100,8 +100,10 @@ static void move(const Sprites sprites, const Field field, const Point to, const
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+
         if(s_stuck(sprite))
             continue;
+
         const Point dir = f_generate_force(field, sprite->where, to, map);
 
         // No force applied - slow down.
@@ -344,6 +346,32 @@ static void idle(const Sprites sprites, const Timer tm)
     }
 }
 
+static int close_enough(const Sprite* const sprite, const Hero hero)
+{
+    return p_eql(sprite->where, hero.where, 2.2f);
+}
+
+static void rage(const Sprites sprites, const Hero hero, const Timer tm)
+{
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+
+        if(s_useless(sprite))
+            continue;
+
+        if(s_busy(sprite, tm))
+            continue;
+
+        if(sprite->evil && tm.fall && close_enough(sprite, hero))
+        {
+            s_go_busy(sprite, tm, 2);
+            const Compass direction = rand() % DIRS;
+            sprite->state = (State) direction + ATTACK_N;
+        }
+    }
+}
+
 static Hero calc_damage_hps(Hero hero, const Sprites sprites, const Timer tm)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -353,29 +381,18 @@ static Hero calc_damage_hps(Hero hero, const Sprites sprites, const Timer tm)
         if(s_useless(sprite))
             continue;
 
-        if(sprite->evil && p_eql(hero.where, sprite->where, 2.2f))
+        if(sprite->evil && close_enough(sprite, hero))
         {
             if(s_impulse(sprite, tm))
             {
-                // TODO: Hero defense lessens sprite damage?
-                hero.hps -= sprite->damage;
-
                 // TODO: More recoil for larger damage taken. Use compass for direction.
                 if(sprite->state == ATTACK_N) hero.dpitch = +0.025f;
                 if(sprite->state == ATTACK_S) hero.dpitch = -0.025f;
-            }
-        }
+                if(sprite->state == ATTACK_W) hero.dyaw = +0.025f;
+                if(sprite->state == ATTACK_E) hero.dyaw = -0.025f;
 
-        if(s_busy(sprite, tm))
-            continue;
-
-        // TODO: Maybe sprites have different attack ranges.
-        if(sprite->evil && p_eql(hero.where, sprite->where, 2.2f))
-        {
-            if(tm.fall)
-            {
-                s_go_busy(sprite, tm, 2);
-                sprite->state = (rand() % DIRS) + ATTACK_N;
+                // TODO: Hero defense lessens sprite damage?
+                hero.hps -= sprite->damage;
             }
         }
     }
@@ -415,7 +432,7 @@ static void block(const Sprites sprites, const Hero hero)
             if(s_useless(sprite))
                 continue;
 
-            if(p_eql(hero.where, sprite->where, 2.5f))
+            if(close_enough(sprite, hero))
             {
                 if(unit.y < 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_N;
                 if(unit.y > 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_S;
@@ -444,7 +461,7 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
         if(s_dead(sprite->state) || s_muted(sprite))
             continue;
 
-        if(p_eql(hero.where, sprite->where, 2.5f))
+        if(close_enough(sprite, hero))
         {
             const int speed = 8; // How fast sprite talks (arbitrary pick).
             const int ticks = tm.ticks - sprite->speech.ticks;
@@ -487,6 +504,7 @@ static void burn(const Sprites sprites, const Fire fire)
         const int y = sprite->where.y;
         const Embers embers = fire.embers[y][x];
 
+        // TODO fire must hurt sprites.
         for(int j = 0; j < embers.count; j++)
             embers.ember[j]->state = ATTACK_N;
     }
@@ -549,6 +567,7 @@ Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Fie
     track(sprites, fire);
     burn(sprites, fire);
 
+    rage(sprites, hero, tm);
     return damage(hero, sprites, tm);
 }
 
