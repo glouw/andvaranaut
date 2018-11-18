@@ -93,13 +93,13 @@ int main(int argc, char* argv[])
                 fire = f_kindle(wd.map[me.floor]);
             }
 
+            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], field, fire, in, tm);
+
             wd.sprites[me.floor] = s_spread_fire(wd.sprites[me.floor], fire, wd.map[me.floor], tm);
 
             ov = o_pan(ov, me.where, sdl.xres, sdl.yres);
 
             me.inventory = i_select(me.inventory, in);
-
-            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], field, fire, in, tm);
 
             s_render_playing(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
 

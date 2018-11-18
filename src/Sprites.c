@@ -370,8 +370,8 @@ static void rage(const Sprites sprites, const Hero hero, const Timer tm)
 
         if(sprite->state == IDLE && sprite->evil && tm.fall && close_enough(sprite, hero))
         {
-            const Compass direction = rand() % DIRS;
-            const State attack = (State) direction + ATTACK_N;
+            const Compass direction = (Compass) (rand() % DIRS);
+            const State attack = (State) ((int) direction + (int) ATTACK_N);
             s_go_busy(sprite, tm, 1 * FRAMES, attack);
         }
     }

@@ -23,3 +23,6 @@
 
 [ ] Sprite sometimes spawns in a '!' block.
     -> ...
+
+[x] Fire causing segfault.
+    -> caretake() must be called before spread_fire()
