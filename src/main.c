@@ -119,8 +119,6 @@ int main(int argc, char* argv[])
 
                 me = s_draw_gauge(sdl, me, scroll);
 
-                printf("%d\n", me.attack.method);
-
                 me.gauge = g_wind(me.gauge, in, tm);
 
                 me = h_sustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);
