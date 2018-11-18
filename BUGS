@@ -13,9 +13,13 @@
 [ ] Thought: How is 144hz refresh rate handled?
     -> Needs testing: lock at 60fps since timings require this update speed.
     -> VSYNC should handle this.
+    -> ...
 
 [x] Furthest enemy is being attacked.
     -> Sorting was only in one direction for renderer, not in other direction for sprites
 
 [x] Upper case sprites not showing
     -> Size was set to 0.0 in registrar
+
+[ ] Sprite sometimes spawns in a '!' block.
+    -> ...

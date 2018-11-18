@@ -3,6 +3,7 @@
 #include "Field.h"
 #include "Title.h"
 #include "Compass.h"
+#include "Frame.h"
 #include "Speech.h"
 #include "Inventory.h"
 #include "util.h"
@@ -237,7 +238,8 @@ static Sprites calc_hurt(Sprites sprites, Sprite* const sprite, const Attack att
             (attack.dir.x > 0.0f ? HURT_W : HURT_E):
             (attack.dir.y > 0.0f ? HURT_N : HURT_S);
 
-        s_go_busy(sprite, tm, 6);
+        // TODO: Different sprites have different stun times.
+        s_go_busy(sprite, tm, 3 * FRAMES);
 
         // Hurt a good sprite, make 'em angry.
         if(!sprite->evil)
@@ -362,7 +364,7 @@ static void rage(const Sprites sprites, const Hero hero, const Timer tm)
 
         if(sprite->state == IDLE && sprite->evil && tm.fall && close_enough(sprite, hero))
         {
-            s_go_busy(sprite, tm, 2);
+            s_go_busy(sprite, tm, 1 * FRAMES);
             const Compass direction = rand() % DIRS;
             sprite->state = (State) direction + ATTACK_N;
         }
@@ -415,7 +417,7 @@ static Hero calc_damage_ftg(Hero hero, const Timer tm)
     return hero;
 }
 
-static void block(const Sprites sprites, const Hero hero)
+static void block(const Sprites sprites, const Hero hero, const Timer tm)
 {
     if(hero.gauge.count > 0)
     {
@@ -429,13 +431,29 @@ static void block(const Sprites sprites, const Hero hero)
             if(s_useless(sprite))
                 continue;
 
+            if(s_busy(sprite, tm))
+                continue;
+
             if(close_enough(sprite, hero))
             {
                 if(unit.y < 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_N;
                 if(unit.y > 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_S;
                 if(unit.x > 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_E;
                 if(unit.x < 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_W;
+
+                if(tm.fall && sprite->evil)
+                {
+                    // TODO: block time varies per sprite.
+                    const int blocktime = 4;
+                    if(tm.ticks - sprite->blockstart > blocktime)
+                    {
+                        sprite->state = IDLE;
+                        sprite->blockstart = tm.ticks;
+                    }
+                }
+
             }
+            else sprite->blockstart = tm.ticks;
         }
     }
 }
@@ -560,7 +578,7 @@ Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Fie
     move(sprites, field, hero.where, map, tm);
     bound(sprites, map);
     speak(sprites, hero, tm);
-    block(sprites, hero);
+    block(sprites, hero, tm);
     track(sprites, fire);
     burn(sprites, fire);
 

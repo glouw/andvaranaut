@@ -58,7 +58,7 @@ Point f_generate_force(const Field field, const Point from, const Point to, cons
 {
     const Point dead = { 0.0f, 0.0f };
     const float dist = p_mag(p_sub(from, to));
-    if(dist < 1.33f || dist > field.aura / field.res)
+    if(dist < 1.10f || dist > field.aura / field.res)
         return dead;
     const Point v[] = {
         { +1.0f, -0.0f }, // E

@@ -8,7 +8,7 @@ Gauge g_new(void)
 {
     static Gauge zero;
     Gauge g = zero;
-    g.max = 100;
+    g.max = 500;
     g.points = u_toss(Point, g.max);
     g.divisor = 2;
     return g;
