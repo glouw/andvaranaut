@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     {
         const int t0 = SDL_GetTicks();
 
-        tm = t_tick(tm, renders);
+        tm = t_tick(tm, me.gauge.count && i_can_block(i_get_equipped(me.inventory)), renders);
 
         t_advance_title(renders);
 
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 
             me.inventory = i_select(me.inventory, in);
 
-            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], field, fire, tm);
+            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], field, fire, in, tm);
 
             s_render_playing(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
 
@@ -117,13 +117,15 @@ int main(int argc, char* argv[])
 
                 t_clear_title_when_linger();
 
-                const Attack atk = s_draw_gauge(sdl, me, scroll);
+                me = s_draw_gauge(sdl, me, scroll);
+
+                printf("%d\n", me.attack.method);
 
                 me.gauge = g_wind(me.gauge, in, tm);
 
                 me = h_sustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);
 
-                wd.sprites[me.floor] = s_hurt(wd.sprites[me.floor], atk, me, in, tm);
+                wd.sprites[me.floor] = s_hurt(wd.sprites[me.floor], me, in, tm);
             }
 
             f_clear(fire);

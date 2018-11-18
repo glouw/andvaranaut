@@ -2,6 +2,7 @@
 
 #include "Sheer.h"
 #include "Method.h"
+#include "Attack.h"
 #include "Inventory.h"
 #include "Line.h"
 #include "Timer.h"
@@ -42,6 +43,7 @@ typedef struct
     int teleporting;
     Gauge gauge;
     Inventory inventory;
+    Attack attack;
 }
 Hero;
 

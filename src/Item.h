@@ -21,3 +21,5 @@ Item i_new(const Classification, const int index);
 Item i_rand(void);
 
 void i_test(void);
+
+int i_can_block(const Item);

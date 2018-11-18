@@ -40,6 +40,6 @@ void s_render_playing(const Sdl, const Text, const Hero, const Sprites, const Ma
 
 void s_render_overlay(const Sdl, const Overview, const Sprites, const Map, const Timer);
 
-Attack s_draw_gauge(const Sdl, const Hero, const Scroll);
+Hero s_draw_gauge(const Sdl, Hero, const Scroll);
 
 void s_draw_fps(const Sdl, const Text, const char* const fmt, ...);

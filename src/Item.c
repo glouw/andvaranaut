@@ -824,3 +824,8 @@ void i_test(void)
     check(TOOL    , tools    , u_len(tools)    );
     check(WAND    , wands    , u_len(wands)    );
 }
+
+int i_can_block(const Item item)
+{
+    return item.clas == SHIELD;
+}

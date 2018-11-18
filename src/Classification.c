@@ -47,38 +47,21 @@ int c_max_indices(const Classification c)
 
 int c_is_melee(const Classification c)
 {
-    return c == ARMOR
-        || c == AMULET
-        || c == BOOK
-        || c == CHEST
-        || c == BOOT
-        || c == GLOVE
-        || c == HAT
-        || c == KEY
-        || c == LIGHT
-        || c == LONGWEP
+    return c == LONGWEP
         || c == MEDWEP
-        || c == MUSIC
-        || c == FLESH
-        || c == FOOD
-        || c == RING
         || c == ROCK
         || c == SHIELD
-        || c == SHORTWEP
-        || c == TOOL;
+        || c == SHORTWEP;
 }
 
 int c_is_range(const Classification c)
 {
-    return c == AMMO
-        || c == MONEY
-        || c == POTION;
+    return c == AMMO;
 }
 
 int c_is_magic(const Classification c)
 {
-    return c == SCROLL
-        || c == WAND;
+    return c == WAND;
 }
 
 int c_is_consumable(const Classification c)

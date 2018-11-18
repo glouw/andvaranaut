@@ -23,3 +23,5 @@ Inventory i_select(Inventory, const Input);
 Inventory i_highlite(Inventory, const Input, const int xres);
 
 Inventory i_what_is(Inventory, const Scroll, const Timer);
+
+Item i_get_equipped(const Inventory);

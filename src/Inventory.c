@@ -12,6 +12,7 @@ Inventory i_create(void)
         i_new(SHORTWEP, 0),
         i_new(WAND, 0),
         i_new(AMMO, 8),
+        i_new(SHIELD, 0),
         i_new(AMMO, 14),
         i_new(SCROLL, 3),
         i_new(SCROLL, 1),
@@ -88,4 +89,9 @@ Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
                 it.cstr, it.desc, it.name, (double) it.damage);
     }
     return inv;
+}
+
+Item i_get_equipped(const Inventory inv)
+{
+    return inv.items.item[inv.selected];
 }

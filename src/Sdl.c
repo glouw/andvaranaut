@@ -337,15 +337,16 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
     return magic;
 }
 
-Attack s_draw_gauge(const Sdl sdl, const Hero hero, const Scroll scroll)
+Hero s_draw_gauge(const Sdl sdl, Hero hero, const Scroll scroll)
 {
     const float sens = 2.0f;
     const Item item = hero.inventory.items.item[hero.inventory.selected];
     static Attack zero;
-    return
+    hero.attack =
         c_is_melee(item.clas) ? draw_gauge_melee(sdl, hero.gauge, item, sens) :
         c_is_range(item.clas) ? draw_gauge_range(sdl, hero.gauge, item, sens) :
         c_is_magic(item.clas) ? draw_gauge_magic(sdl, hero.gauge, item, sens, hero.inventory, scroll) : zero;
+    return hero;
 }
 
 static int clipping(const Sdl sdl, const Overview ov, const SDL_Rect to)

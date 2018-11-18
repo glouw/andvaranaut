@@ -158,9 +158,10 @@ int s_busy(const Sprite* const sprite, const Timer tm)
     return tm.ticks < sprite->busyticks;
 }
 
-void s_go_busy(Sprite* const sprite, const Timer tm, const int ticks)
+void s_go_busy(Sprite* const sprite, const Timer tm, const int ticks, const State state)
 {
     sprite->busyticks = tm.ticks + ticks;
+    sprite->state = state;
 }
 
 int s_impulse(Sprite* const sprite, const Timer tm)

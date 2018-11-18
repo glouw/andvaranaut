@@ -102,6 +102,10 @@ static void move(const Sprites sprites, const Field field, const Point to, const
     {
         Sprite* const sprite = &sprites.sprite[i];
 
+        const float slowdown = tm.slowmo ? tm.slowdown : 1.0f;
+        const float speed = sprite->speed / slowdown;
+        const float accel = sprite->acceleration / slowdown;
+
         if(s_stuck(sprite))
             continue;
 
@@ -110,19 +114,19 @@ static void move(const Sprites sprites, const Field field, const Point to, const
         // No force applied - slow down.
         if(dir.x == 0.0f && dir.y == 0.0f)
         {
-            if(sprite->speed == 0.0f)
+            if(speed == 0.0f)
                 continue;
 
-            sprite->velocity = p_mul(sprite->velocity, 1.0f - sprite->acceleration / sprite->speed);
+            sprite->velocity = p_mul(sprite->velocity, 1.0f - accel / speed);
         }
         // Force applied - speed up.
         else
         {
-            const Point acc = p_mul(dir, sprite->acceleration);
+            const Point acc = p_mul(dir, accel);
             sprite->velocity = p_add(sprite->velocity, acc);
 
-            if(p_mag(sprite->velocity) > sprite->speed)
-                sprite->velocity = p_mul(p_unit(sprite->velocity), sprite->speed);
+            if(p_mag(sprite->velocity) > speed)
+                sprite->velocity = p_mul(p_unit(sprite->velocity), speed);
         }
 
         s_place(sprite, p_add(sprite->where, sprite->velocity));
@@ -234,12 +238,12 @@ static Sprites calc_hurt(Sprites sprites, Sprite* const sprite, const Attack att
     }
     else // Just hurt, not killed.
     {
-        sprite->state = side ?
+        const State hurt = side ?
             (attack.dir.x > 0.0f ? HURT_W : HURT_E):
             (attack.dir.y > 0.0f ? HURT_N : HURT_S);
 
         // TODO: Different sprites have different stun times.
-        s_go_busy(sprite, tm, 3 * FRAMES);
+        s_go_busy(sprite, tm, 3 * FRAMES, hurt);
 
         // Hurt a good sprite, make 'em angry.
         if(!sprite->evil)
@@ -252,10 +256,10 @@ static Sprites calc_hurt(Sprites sprites, Sprite* const sprite, const Attack att
     return sprites;
 }
 
-static Sprites hurt_melee(Sprites sprites, const Attack attack, const Timer tm, const Hero hero)
+static Sprites hurt_melee(Sprites sprites, const Timer tm, const Hero hero)
 {
     const Point hand = h_touch(hero);
-    const Item it = hero.inventory.items.item[hero.inventory.selected];
+    const Item equipped = i_get_equipped(hero.inventory);
 
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
@@ -264,23 +268,26 @@ static Sprites hurt_melee(Sprites sprites, const Attack attack, const Timer tm, 
         if(s_useless(sprite))
             continue;
 
-        if(p_eql(hand, sprite->where, 2.0f))
+        if(i_can_block(equipped))
+            continue;
+
+        if(p_eql(hand, sprite->where, 2.0f)) // TODO: Maybe use close_enough instead?
         {
-            sprites = calc_hurt(sprites, sprite, attack, hero.inventory, tm);
-            if(++hurts == it.hurts)
+            sprites = calc_hurt(sprites, sprite, hero.attack, hero.inventory, tm);
+            if(++hurts == equipped.hurts)
                 return sprites;
         }
     }
     return sprites;
 }
 
-static Sprites hurt_range(Sprites sprites, const Attack attack, const Timer tm, const Hero hero)
+static Sprites hurt_range(Sprites sprites, const Timer tm, const Hero hero)
 {
     const SDL_Point point = {
-        (int) attack.reticule.x,
-        (int) attack.reticule.y,
+        (int) hero.attack.reticule.x,
+        (int) hero.attack.reticule.y,
     };
-    const Item it = hero.inventory.items.item[hero.inventory.selected];
+    const Item it = i_get_equipped(hero.inventory);
 
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
@@ -293,7 +300,7 @@ static Sprites hurt_range(Sprites sprites, const Attack attack, const Timer tm, 
 
         if(hit)
         {
-            sprites = calc_hurt(sprites, sprite, attack, hero.inventory, tm);
+            sprites = calc_hurt(sprites, sprite, hero.attack, hero.inventory, tm);
             if(++hurts == it.hurts)
                 return sprites;
         }
@@ -301,15 +308,14 @@ static Sprites hurt_range(Sprites sprites, const Attack attack, const Timer tm, 
     return sprites;
 }
 
-static Sprites hurt_magic(Sprites sprites, const Attack attack, const Timer tm, const Hero hero)
+static Sprites hurt_magic(Sprites sprites, const Timer tm, const Hero hero)
 {
     // TODO
     // Casting magic scrolls will spawn new sprites.
     // These sprites will do something like heal the hero, teleport the hero, or be something like fire
     // which hurts, heals, or teleports other sprites.
-    const Item it = hero.inventory.items.item[hero.inventory.selected];
+    const Item it = i_get_equipped(hero.inventory);
 
-    (void) attack;
     (void) hero;
     (void) tm;
     (void) it;
@@ -317,15 +323,15 @@ static Sprites hurt_magic(Sprites sprites, const Attack attack, const Timer tm, 
     return sprites;
 }
 
-Sprites s_hurt(Sprites sprites, const Attack attack, const Hero hero, const Input in, const Timer tm)
+Sprites s_hurt(Sprites sprites, const Hero hero, const Input in, const Timer tm)
 {
     if(in.lu)
     {
-        sprites.last = attack.method;
+        sprites.last = hero.attack.method;
 
-        if(attack.method == MELEE) return hurt_melee(sprites, attack, tm, hero);
-        if(attack.method == RANGE) return hurt_range(sprites, attack, tm, hero);
-        if(attack.method == MAGIC) return hurt_magic(sprites, attack, tm, hero);
+        if(hero.attack.method == MELEE) return hurt_melee(sprites, tm, hero);
+        if(hero.attack.method == RANGE) return hurt_range(sprites, tm, hero);
+        if(hero.attack.method == MAGIC) return hurt_magic(sprites, tm, hero);
     }
     sprites.last = NO_ATTACK;
 
@@ -364,15 +370,17 @@ static void rage(const Sprites sprites, const Hero hero, const Timer tm)
 
         if(sprite->state == IDLE && sprite->evil && tm.fall && close_enough(sprite, hero))
         {
-            s_go_busy(sprite, tm, 1 * FRAMES);
             const Compass direction = rand() % DIRS;
-            sprite->state = (State) direction + ATTACK_N;
+            const State attack = (State) direction + ATTACK_N;
+            s_go_busy(sprite, tm, 1 * FRAMES, attack);
         }
     }
 }
 
-static Hero calc_damage_hps(Hero hero, const Sprites sprites, const Timer tm)
+static Hero calc_damage_hps(Hero hero, const Sprites sprites, const Input in, const Timer tm)
 {
+    const Item equipped = i_get_equipped(hero.inventory);
+
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
@@ -384,14 +392,33 @@ static Hero calc_damage_hps(Hero hero, const Sprites sprites, const Timer tm)
         {
             if(s_impulse(sprite, tm))
             {
-                // TODO: More recoil for larger damage taken. Use compass for direction.
-                if(sprite->state == ATTACK_N) hero.dpitch = +0.025f;
-                if(sprite->state == ATTACK_S) hero.dpitch = -0.025f;
-                if(sprite->state == ATTACK_W) hero.dyaw = +0.025f;
-                if(sprite->state == ATTACK_E) hero.dyaw = -0.025f;
+                if(sprite->state == ATTACK_N) { hero.hps -= sprite->damage; hero.dpitch = +0.025f; }
+                if(sprite->state == ATTACK_S) { hero.hps -= sprite->damage; hero.dpitch = -0.025f; }
+                if(sprite->state == ATTACK_W) { hero.hps -= sprite->damage; hero.dyaw   = +0.025f; }
+                if(sprite->state == ATTACK_E) { hero.hps -= sprite->damage; hero.dyaw   = -0.025f; }
+            }
 
-                // TODO: Hero defense lessens sprite damage?
-                hero.hps -= sprite->damage;
+            if(in.lu
+            // Attacking frame (FRAME_B)
+            && t_hi(tm)
+            // IE. Shield..
+            && i_can_block(equipped)
+            // Blocking movements are considered a melee.
+            && hero.attack.method == MELEE)
+            {
+                const Point unit = p_unit(hero.attack.dir);
+                const int n = unit.y < 0 && fabs(unit.y) > fabs(unit.x);
+                const int s = unit.y > 0 && fabs(unit.y) > fabs(unit.x);
+                const int w = unit.x < 0 && fabs(unit.x) > fabs(unit.y);
+                const int e = unit.x > 0 && fabs(unit.x) > fabs(unit.y);
+
+                // Hero block direction must counter sprite attack direction.
+                // TODO: Different parry stun ticks for each sprite.
+                const int parryticks = 6 * FRAMES;
+                if(sprite->state == ATTACK_N) if(s) s_go_busy(sprite, tm, parryticks, HURT_S);
+                if(sprite->state == ATTACK_S) if(n) s_go_busy(sprite, tm, parryticks, HURT_S);
+                if(sprite->state == ATTACK_W) if(e) s_go_busy(sprite, tm, parryticks, HURT_S);
+                if(sprite->state == ATTACK_E) if(w) s_go_busy(sprite, tm, parryticks, HURT_S);
             }
         }
     }
@@ -419,6 +446,8 @@ static Hero calc_damage_ftg(Hero hero, const Timer tm)
 
 static void block(const Sprites sprites, const Hero hero, const Timer tm)
 {
+    const Item equipped = i_get_equipped(hero.inventory);
+
     if(hero.gauge.count > 0)
     {
         const Point where = hero.gauge.points[hero.gauge.count - 1];
@@ -432,6 +461,10 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
                 continue;
 
             if(s_busy(sprite, tm))
+                continue;
+
+            // Sprite must not block when hero is swinging their shield.
+            if(i_can_block(equipped))
                 continue;
 
             if(close_enough(sprite, hero))
@@ -458,9 +491,9 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
     }
 }
 
-static Hero damage(Hero hero, const Sprites sprites, const Timer tm)
+static Hero damage(Hero hero, const Sprites sprites, const Input in, const Timer tm)
 {
-    hero = calc_damage_hps(hero, sprites, tm);
+    hero = calc_damage_hps(hero, sprites, in, tm);
     hero = calc_damage_mna(hero, sprites, tm);
     hero = calc_damage_ftg(hero, tm);
     return hero;
@@ -567,7 +600,7 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
     return sprites;
 }
 
-Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Fire fire, const Timer tm)
+Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Fire fire, const Input in, const Timer tm)
 {
     s_pull(sprites, hero);
     s_sort(sprites, s_nearest_first);
@@ -583,7 +616,7 @@ Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Fie
     burn(sprites, fire);
 
     rage(sprites, hero, tm);
-    return damage(hero, sprites, tm);
+    return damage(hero, sprites, in, tm);
 }
 
 static Point avail(const Point center, const Map map)
