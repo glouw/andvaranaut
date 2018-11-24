@@ -7,7 +7,7 @@
 
 Inventory i_create(void)
 {
-    const Inventory inv = { i_build(16), 0, 32, -1, false, false };
+    const Inventory inv = { i_build(10), 0, 32, -1, false, false };
     const Item noobits[] = {
         i_new(SHORTWEP, 0),
         i_new(WAND, 0),
