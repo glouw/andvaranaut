@@ -124,7 +124,7 @@ int s_useless(const Sprite* const sprite)
     return s_dead(sprite->state) || s_cosmetic(sprite->ascii);
 }
 
-int s_no_count(const Sprite* const sprite)
+int s_not_agent(const Sprite* const sprite)
 {
     return s_useless(sprite) || s_inanimate(sprite->ascii);
 }

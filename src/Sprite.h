@@ -46,7 +46,7 @@ int s_inanimate(const int ascii);
 
 int s_useless(const Sprite* const);
 
-int s_no_count(const Sprite* const);
+int s_not_agent(const Sprite* const);
 
 int s_stuck(const Sprite* const);
 

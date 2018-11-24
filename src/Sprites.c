@@ -674,7 +674,7 @@ Map s_count_agents(const Sprites sprites, Map map)
         {
             Sprite* const sprite = &sprites.sprite[s];
 
-            if(s_no_count(sprite))
+            if(s_not_agent(sprite))
                 continue;
 
             if(p_eql(sprite->where, map.rooms.wheres[i], map.grid))
