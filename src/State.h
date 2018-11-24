@@ -28,6 +28,7 @@ typedef enum
     BLOCK_W,
 
     SPEAKING,
+    STUNNED,
 
     STATES
 }

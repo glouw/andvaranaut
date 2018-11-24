@@ -79,3 +79,31 @@ Point g_sum(const Gauge g, const int count)
         sum = p_add(sum, g.points[i]);
     return sum;
 }
+
+Point g_position(const Gauge g)
+{
+    if(g.count > 1)
+        return g.points[g.count - 1];
+    static Point zero;
+    return zero;
+}
+
+Point g_velocity(const Gauge g)
+{
+    if(g.count > 2)
+        return p_sub(g.points[g.count - 1], g.points[g.count - 2]);
+    static Point zero;
+    return zero;
+}
+
+Point g_acceleration(const Gauge g)
+{
+    if(g.count > 4)
+    {
+        const Point a = p_sub(g.points[g.count - 3], g.points[g.count - 4]);
+        const Point b = p_sub(g.points[g.count - 1], g.points[g.count - 2]);
+        return p_sub(b, a);
+    }
+    static Point zero;
+    return zero;
+}

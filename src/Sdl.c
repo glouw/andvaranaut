@@ -227,11 +227,8 @@ static Attack draw_gauge_melee(const Sdl sdl, const Gauge g, const Item it, cons
         static Attack zero;
         return zero;
     }
-    const int last = g.count - 1;
-    const int first = g.count - tail;
-    const Point dir = p_unit(p_sub(g.points[last], g.points[first]));
     static Point zero;
-    const Attack melee = { it.damage, dir, it.hurts, MELEE, 0, zero };
+    const Attack melee = { it.damage, g_velocity(g), it.hurts, MELEE, 0, zero };
     return melee;
 }
 

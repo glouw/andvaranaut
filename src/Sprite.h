@@ -32,7 +32,6 @@ typedef struct
     Speech speech;
 
     int busy_ticks;
-    int block_start;
 }
 Sprite;
 
@@ -65,10 +64,12 @@ int s_busy(const Sprite* const, const Timer);
 
 void s_go_busy(Sprite* const, const Timer, const int ticks, const State);
 
-int s_impulse(Sprite* const, const Timer);
+int s_impulse(const Sprite* const, const Timer);
 
-int s_evil_act(Sprite* const, const Timer);
+int s_evil_act(const Sprite* const, const Timer);
 
-int s_will_rage(Sprite* const, const Timer);
+int s_will_rage(const Sprite* const, const Timer);
 
-int s_must_spread(Sprite* const, char** const floring);
+int s_must_spread(const Sprite* const, char** const floring);
+
+int s_stunned(const Sprite* const);

@@ -6,7 +6,7 @@
 typedef struct
 {
     float power;
-    Point dir;
+    Point velocity;
     int hurts;
     Method method;
     int scindex;

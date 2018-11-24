@@ -110,6 +110,9 @@ static void move(const Sprites sprites, const Field field, const Point to, const
         if(s_stuck(sprite))
             continue;
 
+        if(s_stunned(sprite))
+            continue;
+
         const Point dir = f_generate_force(field, sprite->where, to, map);
 
         // No force applied - slow down.
@@ -201,7 +204,7 @@ static void route(const Sprites sprites, const Field field, const Map map, const
 
 static Sprites drop_item(Sprites sprites, const Attack attack, const Point where)
 {
-    const Point delta = p_mul(p_rot90(attack.dir), 0.5f);
+    const Point delta = p_mul(p_rot90(attack.velocity), 0.5f);
     return append(sprites, s_register('d', p_add(where, delta)));
 }
 
@@ -225,38 +228,52 @@ static int close_enough(const Sprite* const sprite, const Hero hero)
 
 static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
 {
-    const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
-
-    sprite->health -= attack.power;
-
-    // Dead.
-    if(sprite->health <= 0.0f)
+    if(!sprite->evil)
     {
-        sprite->state = side ?
-            (attack.dir.x > 0.0f ? DEAD_W : DEAD_E):
-            (attack.dir.y > 0.0f ? DEAD_N : DEAD_S);
-
-        broke_lootbag(sprite->ascii, inv, tm);
-
-        // Lootbags count as sprites, so killing a lootbag may drop another lootbag.
-        if(u_d10() == 0)
-            return drop_item(sprites, attack, sprite->where);
+        sprite->evil = true;
+        static Speech zero;
+        sprite->speech = zero;
     }
-    else // Just hurt, not killed.
+
+    // Block.
+    const Point vel = p_unit(attack.velocity);
+    const int s = p_south(vel);
+    const int n = p_north(vel);
+    const int e = p_east (vel);
+    const int w = p_west (vel);
+    if((sprite->state == BLOCK_N && s)
+    || (sprite->state == BLOCK_S && n)
+    || (sprite->state == BLOCK_W && e)
+    || (sprite->state == BLOCK_E && w))
+        t_set_title(tm.renders, tm.renders + 60, false, "Blocked!");
+    // Hurt or dead.
+    else
     {
-        const State hurt = side ?
-            (attack.dir.x > 0.0f ? HURT_W : HURT_E):
-            (attack.dir.y > 0.0f ? HURT_N : HURT_S);
+        sprite->health -= attack.power;
 
-        // TODO: Different sprites have different stun times.
-        s_go_busy(sprite, tm, 3 * FRAMES, hurt);
-
-        // Hurt a good sprite, make 'em angry.
-        if(!sprite->evil)
+        // Hurt.
+        if(sprite->health <= 0.0f)
         {
-            sprite->evil = true;
-            static Speech zero;
-            sprite->speech = zero;
+            sprite->state =
+                s ? DEAD_N :
+                n ? DEAD_S :
+                e ? DEAD_W : DEAD_E;
+
+            broke_lootbag(sprite->ascii, inv, tm);
+
+            if(u_d10() == 0)
+                return drop_item(sprites, attack, sprite->where);
+        }
+        // Dead.
+        else
+        {
+            const State hurt =
+                s ? HURT_N :
+                n ? HURT_S :
+                e ? HURT_W : HURT_E;
+
+            // TODO: Different sprites have different stun times.
+            s_go_busy(sprite, tm, 3 * FRAMES, hurt);
         }
     }
     return sprites;
@@ -277,7 +294,7 @@ static Sprites h_damage_melee(Sprites sprites, const Timer tm, const Hero hero)
         if(i_can_block(equipped))
             continue;
 
-        if(p_eql(h_touch(hero), sprite->where, 2.0f)) // TODO: Maybe use close_enough instead?
+        if(close_enough(sprite, hero))
         {
             sprites = damage(sprites, sprite, hero.attack, hero.inventory, tm);
             if(++hurts == equipped.hurts)
@@ -339,7 +356,7 @@ static void h_block(Sprite* const sprite, const Point dir, const Timer tm)
         // TODO: Different ticks for each sprite.
         // TODO: Make a stunned animation.
         const int stun_ticks = 6 * FRAMES;
-        s_go_busy(sprite, tm, stun_ticks, HURT_S);
+        s_go_busy(sprite, tm, stun_ticks, STUNNED);
     }
 }
 
@@ -361,9 +378,9 @@ static Hero h_damage_health(Hero hero, const Sprites sprites, const Input in, co
             if(s_impulse(sprite, tm))
                 hero = h_struck(hero, sprite->state, sprite->damage);
 
-            // Block sprite to for a stun.
+            // Block sprite for a stun.
             if(i_successful_block(equipped, in, tm))
-                h_block(sprite, hero.attack.dir, tm);
+                h_block(sprite, hero.attack.velocity, tm);
         }
     }
     return hero;
@@ -455,32 +472,17 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
             if(s_busy(sprite, tm))
                 continue;
 
-            // Sprite must not block when hero is swinging their shield.
             if(i_can_block(equipped))
                 continue;
 
             if(close_enough(sprite, hero))
             {
-                // TODO: Block reaction varies with sprites.
-                const int block_reaction = 1;
-                const Point block = p_unit(hero.gauge.points[hero.gauge.count - block_reaction]);
+                const Point block = g_sum(hero.gauge, hero.gauge.count);
                 if(p_north(block)) sprite->state = BLOCK_N;
                 if(p_east (block)) sprite->state = BLOCK_E;
                 if(p_south(block)) sprite->state = BLOCK_S;
                 if(p_west (block)) sprite->state = BLOCK_W;
-
-                if(s_evil_act(sprite, tm))
-                {
-                    // TODO: block time varies per sprite.
-                    const int block_ticks = 4;
-                    if(tm.ticks - sprite->block_start > block_ticks)
-                    {
-                        sprite->state = IDLE;
-                        sprite->block_start = tm.ticks;
-                    }
-                }
             }
-            else sprite->block_start = tm.ticks;
         }
     }
 }
