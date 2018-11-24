@@ -412,6 +412,8 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
 
             if(h_close_enough(hero, sprite->where))
             {
+                // TODO:
+                // Subtract sprite dependent value from gauge count to have sprites react slower.
                 const Point block = g_sum(hero.gauge, hero.gauge.count);
                 if(p_north(block)) sprite->state = BLOCK_N;
                 if(p_east (block)) sprite->state = BLOCK_E;
