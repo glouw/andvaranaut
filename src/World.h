@@ -12,5 +12,6 @@ typedef struct
 }
 World;
 
-// Builds a world with the number of floors specified.
 World w_make(const int floors);
+
+Hero w_interact(Hero, const Sprites, const Input, const Timer);

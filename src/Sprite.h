@@ -73,3 +73,5 @@ int s_will_rage(const Sprite* const, const Timer);
 int s_must_spread(const Sprite* const, char** const floring);
 
 int s_stunned(const Sprite* const);
+
+void s_parried(Sprite* const, const Point, const Timer);

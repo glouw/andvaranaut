@@ -35,7 +35,7 @@ void s_sort(const Sprites, Sorter);
 
 Sprites s_hero_damage_sprites(Sprites, const Hero, const Input, const Timer);
 
-Hero s_caretake(const Sprites, const Hero, const Map, const Field, const Fire, const Input, const Timer);
+void s_caretake(const Sprites, const Hero, const Map, const Field, const Fire, const Timer);
 
 Sprites s_gen(const int max, const Map);
 

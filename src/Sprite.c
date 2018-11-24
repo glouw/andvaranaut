@@ -1,6 +1,7 @@
 #include "Sprite.h"
 
 #include "Speech.h"
+#include "Frame.h"
 #include "util.h"
 
 #include <assert.h>
@@ -187,4 +188,19 @@ int s_must_spread(const Sprite* const sprite, char** const floring)
 int s_stunned(const Sprite* const sprite)
 {
     return sprite->state == STUNNED;
+}
+
+void s_parried(Sprite* const sprite, const Point dir, const Timer tm)
+{
+    const Point block = p_unit(dir);
+    if((sprite->state == ATTACK_N && p_south(block))
+    || (sprite->state == ATTACK_S && p_north(block))
+    || (sprite->state == ATTACK_W && p_east (block))
+    || (sprite->state == ATTACK_E && p_west (block)))
+    {
+        // TODO: Different ticks for each sprite.
+        // TODO: Make a stunned animation.
+        const int stun_ticks = 6 * FRAMES;
+        s_go_busy(sprite, tm, stun_ticks, STUNNED);
+    }
 }

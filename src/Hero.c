@@ -233,3 +233,8 @@ Hero h_struck(Hero hero, const State state, const float damage)
     if(state == ATTACK_E) hero.d_yaw = -0.025f;
     return hero;
 }
+
+int h_close_enough(const Hero hero, const Point other)
+{
+    return p_eql(hero.where, other, 2.2f);
+}

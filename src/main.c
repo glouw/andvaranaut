@@ -93,7 +93,9 @@ int main(int argc, char* argv[])
                 fire = f_kindle(wd.map[hero.floor]);
             }
 
-            hero = s_caretake(wd.sprites[hero.floor], hero, wd.map[hero.floor], field, fire, in, tm);
+            s_caretake(wd.sprites[hero.floor], hero, wd.map[hero.floor], field, fire, tm);
+
+            hero = w_interact(hero, wd.sprites[hero.floor], in, tm);
 
             wd.sprites[hero.floor] = s_spread_fire(wd.sprites[hero.floor], fire, wd.map[hero.floor], tm);
 
