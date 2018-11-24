@@ -39,7 +39,7 @@ int p_eql(const Point a, const Point b, const float e);
 
 int p_same(const Point a, const Point b);
 
-int p_block(const Point, char** const blocks);
+int p_char(const Point, char** const blocks);
 
 int p_tile(const Point, char** const blocks);
 
@@ -48,3 +48,11 @@ Point p_abs(const Point);
 Point p_snap(const Point, const int grid);
 
 void p_print(const Point);
+
+int p_north(const Point p);
+
+int p_south(const Point);
+
+int p_west(const Point);
+
+int p_east(const Point);

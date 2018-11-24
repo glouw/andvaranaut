@@ -29,9 +29,9 @@ Hero h_birth(const float focal, const Point where, const int floor)
     hero.tall = 0.5f;
     hero.height = hero.tall;
     hero.gauge = g_new();
-    hero.hps = hero.hpsmax = 9.0f;
-    hero.mna = hero.mnamax = 10.0f;
-    hero.ftg = hero.ftgmax = hero.gauge.max / hero.gauge.divisor;
+    hero.health = hero.health_max= 9.0f;
+    hero.mana = hero.mana_max = 10.0f;
+    hero.fatigue = hero.fatigue_max = hero.gauge.max / hero.gauge.divisor;
     hero.warning = 0.25f;
     hero.inventory = i_create();
     return hero;
@@ -40,7 +40,7 @@ Hero h_birth(const float focal, const Point where, const int floor)
 static Hero calc_yaw(Hero hero, const Input input)
 {
     hero.yaw += input.dx * input.sx;
-    hero.yaw -= (hero.dyaw *= 0.8f);
+    hero.yaw -= (hero.d_yaw *= 0.8f);
     return hero;
 }
 
@@ -54,7 +54,7 @@ static Hero calc_pitch(Hero hero, const Input input)
         hero.pitch < min ? min :
         hero.pitch;
 
-    hero.pitch -= (hero.dpitch *= 0.8f);
+    hero.pitch -= (hero.d_pitch *= 0.8f);
 
     return hero;
 }
@@ -84,15 +84,15 @@ static Hero do_vert_math(Hero hero, const Map map, const Input input)
     const int crouch = input.key[SDL_SCANCODE_LCTRL];
 
     if(jumped && hero.height <= tall)
-        hero.vvel = 0.05f;
+        hero.vertical_velocity = 0.05f;
 
-    hero.height += hero.vvel;
+    hero.height += hero.vertical_velocity;
 
     if(hero.height > tall)
-        hero.vvel -= 0.005f;
+        hero.vertical_velocity -= 0.005f;
     else
     {
-        hero.vvel = 0.0f;
+        hero.vertical_velocity = 0.0f;
         hero.height = tall;
     }
 
@@ -210,7 +210,7 @@ Ray h_cast(const Hero hero, const Hit hit, const Sheer sheer, const int yres, co
 static Hero recoil(Hero hero, const Method last)
 {
     if(last == RANGE)
-        hero.dpitch = 0.12f; // TODO: Different weapons have different recoil?
+        hero.d_pitch = 0.12f; // TODO: Different weapons have different recoil?
     return hero;
 }
 
@@ -221,5 +221,15 @@ Hero h_sustain(Hero hero, const Map map, const Input input, const Flow current, 
     hero = move(hero, map, input, current);
     hero = recoil(hero, last);
     hero.torch = t_burn(hero.torch);
+    return hero;
+}
+
+Hero h_struck(Hero hero, const State state, const float damage)
+{
+    hero.health -= damage;
+    if(state == ATTACK_N) hero.d_pitch = +0.025f;
+    if(state == ATTACK_S) hero.d_pitch = -0.025f;
+    if(state == ATTACK_W) hero.d_yaw = +0.025f;
+    if(state == ATTACK_E) hero.d_yaw = -0.025f;
     return hero;
 }

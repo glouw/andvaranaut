@@ -3,6 +3,7 @@
 #include "Sheer.h"
 #include "Method.h"
 #include "Attack.h"
+#include "State.h"
 #include "Inventory.h"
 #include "Line.h"
 #include "Timer.h"
@@ -22,22 +23,22 @@ typedef struct
     float speed;
     float acceleration;
     float yaw;
-    float dyaw; // Rate of change of yaw (TODO: IMPLEMENT)
+    float d_yaw; // Rate of change of yaw (TODO: IMPLEMENT)
     float pitch;
-    float dpitch; // Rate of change of pitch.
+    float d_pitch; // Rate of change of pitch.
     Torch torch;
     float reach;
     int floor;
     int aura;
     float height;
     float tall;
-    float vvel;
-    float hps;
-    float hpsmax;
-    float mna;
-    float mnamax;
-    float ftg;
-    float ftgmax;
+    float vertical_velocity;
+    float health;
+    float health_max;
+    float mana;
+    float mana_max;
+    float fatigue;
+    float fatigue_max;
     float warning;
     int teleported;
     int teleporting;
@@ -58,3 +59,5 @@ Hero h_teleport(Hero, const Map);
 Hero h_sustain(Hero, const Map, const Input, const Flow, const Method);
 
 Ray h_cast(const Hero, const Hit, const Sheer, const int yres, const int xres);
+
+Hero h_struck(Hero, const State, const float damage);

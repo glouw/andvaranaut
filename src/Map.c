@@ -76,7 +76,7 @@ Theme m_get_theme(const Theme last, const Map map, const Point where, const Time
 
 int m_is_portal(char** block, const Point where)
 {
-    return p_block(where, block) == '~';
+    return p_char(where, block) == '~';
 }
 
 int m_out_of_bounds(const Map map, const Point where)

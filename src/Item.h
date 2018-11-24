@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Classification.h"
+#include "Input.h"
+#include "Timer.h"
 
 typedef struct
 {
@@ -23,3 +25,5 @@ Item i_rand(void);
 void i_test(void);
 
 int i_can_block(const Item);
+
+int i_successful_block(const Item, const Input, const Timer);

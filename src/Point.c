@@ -124,7 +124,7 @@ int p_same(const Point a, const Point b)
     return a.x == b.x && a.y == b.y;
 }
 
-int p_block(const Point a, char** const blocks)
+int p_char(const Point a, char** const blocks)
 {
     const int y = a.y;
     const int x = a.x;
@@ -133,7 +133,7 @@ int p_block(const Point a, char** const blocks)
 
 int p_tile(const Point a, char** const blocks)
 {
-    return p_block(a, blocks) - ' ';
+    return p_char(a, blocks) - ' ';
 }
 
 Point p_abs(const Point a)
@@ -157,4 +157,24 @@ Point p_snap(const Point a, const int grid)
 void p_print(const Point a)
 {
     printf("%f %f\n", (double) a.x, (double) a.y);
+}
+
+int p_north(const Point p)
+{
+    return p.y < 0 && fabs(p.y) > fabs(p.x);
+}
+
+int p_south(const Point p)
+{
+    return p.y > 0 && fabs(p.y) > fabs(p.x);
+}
+
+int p_west(const Point p)
+{
+    return p.x < 0 && fabs(p.x) > fabs(p.y);
+}
+
+int p_east(const Point p)
+{
+    return p.x > 0 && fabs(p.x) > fabs(p.y);
 }

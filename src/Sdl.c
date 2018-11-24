@@ -426,13 +426,9 @@ void s_render_overlay(const Sdl sdl, const Overview ov, const Sprites sprites, c
 
 static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, const Timer tm, const int size, const Bar bar)
 {
-    const int max =
-        bar == HPS ? hero.hpsmax :
-        bar == FTG ? hero.ftgmax : hero.mnamax;
+    const int max = bar == HPS ? hero.health_max : bar == FTG ? hero.fatigue_max : hero.mana_max;
 
-    const float lvl =
-        bar == HPS ? hero.hps :
-        bar == FTG ? hero.ftg : hero.mna;
+    const float level = bar == HPS ? hero.health : bar == FTG ? hero.fatigue : hero.mana;
 
     const float threshold = hero.warning * max;
 
@@ -447,7 +443,7 @@ static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, con
 
     // Will animate bar to flicker if below threshold.
     const int frame = t_lo(tm);
-    const SDL_Rect fluid = { 0, (int) bar + (lvl < threshold ? w * frame : 0), w, w };
+    const SDL_Rect fluid = { 0, (int) bar + (level < threshold ? w * frame : 0), w, w };
     const SDL_Rect empty[] = {
         { 0, fluid.y + 2 * w, w, w }, // 75%.
         { 0, fluid.y + 4 * w, w, w }, // 50%.
@@ -461,14 +457,14 @@ static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, con
         const SDL_Rect to = { ww * i, yy, ww, ww };
 
         // Full fluid level.
-        if(u_fl(lvl) > i)
+        if(u_fl(level) > i)
             SDL_RenderCopy(sdl.renderer, texture, &fluid, &to);
 
         // Partial fluid level.
-        if(u_fl(lvl) == i)
-            u_dec(lvl) > 0.75f ? SDL_RenderCopy(sdl.renderer, texture, &empty[0], &to) :
-            u_dec(lvl) > 0.50f ? SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to) :
-            u_dec(lvl) > 0.25f ? SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to) : 0;
+        if(u_fl(level) == i)
+            u_dec(level) > 0.75f ? SDL_RenderCopy(sdl.renderer, texture, &empty[0], &to) :
+            u_dec(level) > 0.50f ? SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to) :
+            u_dec(level) > 0.25f ? SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to) : 0;
 
         // Glass around fluid.
         SDL_RenderCopy(sdl.renderer, texture, i == 0 ? &gleft : i == max - 1 ? &grite : &glass, &to);

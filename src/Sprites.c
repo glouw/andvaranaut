@@ -75,10 +75,11 @@ void s_turn(const Sprites sprites, const float yaw)
 
 static void bound(const Sprites sprites, const Map map)
 {
-    static Point zero;
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
+
+        static Point zero;
 
         // Stuck in a wall.
         if(p_tile(sprite->where, map.walling))
@@ -88,7 +89,7 @@ static void bound(const Sprites sprites, const Map map)
         }
 
         // Stuck in water.
-        if(p_block(sprite->where, map.floring) == ' ')
+        if(p_char(sprite->where, map.floring) == ' ')
         {
             s_place(sprite, p_mid(sprite->last));
             sprite->velocity = zero;
@@ -217,7 +218,12 @@ static void broke_lootbag(const int ascii, const Inventory inv, const Timer tm)
     }
 }
 
-static Sprites calc_hurt(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
+static int close_enough(const Sprite* const sprite, const Hero hero)
+{
+    return p_eql(sprite->where, hero.where, 2.2f);
+}
+
+static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
 {
     const int side = fabsf(attack.dir.x) > fabsf(attack.dir.y);
 
@@ -256,9 +262,9 @@ static Sprites calc_hurt(Sprites sprites, Sprite* const sprite, const Attack att
     return sprites;
 }
 
-static Sprites hurt_melee(Sprites sprites, const Timer tm, const Hero hero)
+// @: Placed here to resolve circular dependecy.
+static Sprites h_damage_melee(Sprites sprites, const Timer tm, const Hero hero)
 {
-    const Point hand = h_touch(hero);
     const Item equipped = i_get_equipped(hero.inventory);
 
     for(int i = 0, hurts = 0; i < sprites.count; i++)
@@ -271,9 +277,9 @@ static Sprites hurt_melee(Sprites sprites, const Timer tm, const Hero hero)
         if(i_can_block(equipped))
             continue;
 
-        if(p_eql(hand, sprite->where, 2.0f)) // TODO: Maybe use close_enough instead?
+        if(p_eql(h_touch(hero), sprite->where, 2.0f)) // TODO: Maybe use close_enough instead?
         {
-            sprites = calc_hurt(sprites, sprite, hero.attack, hero.inventory, tm);
+            sprites = damage(sprites, sprite, hero.attack, hero.inventory, tm);
             if(++hurts == equipped.hurts)
                 return sprites;
         }
@@ -281,7 +287,8 @@ static Sprites hurt_melee(Sprites sprites, const Timer tm, const Hero hero)
     return sprites;
 }
 
-static Sprites hurt_range(Sprites sprites, const Timer tm, const Hero hero)
+// @: Placed here to resolve circular dependecy.
+static Sprites h_damage_range(Sprites sprites, const Timer tm, const Hero hero)
 {
     const SDL_Point point = {
         (int) hero.attack.reticule.x,
@@ -296,11 +303,9 @@ static Sprites hurt_range(Sprites sprites, const Timer tm, const Hero hero)
         if(s_useless(sprite))
             continue;
 
-        const int hit = SDL_PointInRect(&point, &sprite->seen);
-
-        if(hit)
+        if(SDL_PointInRect(&point, &sprite->seen))
         {
-            sprites = calc_hurt(sprites, sprite, hero.attack, hero.inventory, tm);
+            sprites = damage(sprites, sprite, hero.attack, hero.inventory, tm);
             if(++hurts == it.hurts)
                 return sprites;
         }
@@ -308,30 +313,92 @@ static Sprites hurt_range(Sprites sprites, const Timer tm, const Hero hero)
     return sprites;
 }
 
-static Sprites hurt_magic(Sprites sprites, const Timer tm, const Hero hero)
+// @: Placed here to resolve circular dependecy.
+static Sprites h_damage_magic(Sprites sprites, const Timer tm, const Hero hero)
 {
     // TODO
     // Casting magic scrolls will spawn new sprites.
     // These sprites will do something like heal the hero, teleport the hero, or be something like fire
     // which hurts, heals, or teleports other sprites.
     const Item it = i_get_equipped(hero.inventory);
-
     (void) hero;
     (void) tm;
     (void) it;
-
     return sprites;
 }
 
-Sprites s_hurt(Sprites sprites, const Hero hero, const Input in, const Timer tm)
+// @: Placed here to resolve circular dependecy.
+static void h_block(Sprite* const sprite, const Point dir, const Timer tm)
+{
+    const Point block = p_unit(dir);
+    if((sprite->state == ATTACK_N && p_south(block))
+    || (sprite->state == ATTACK_S && p_north(block))
+    || (sprite->state == ATTACK_W && p_east (block))
+    || (sprite->state == ATTACK_E && p_west (block)))
+    {
+        // TODO: Different ticks for each sprite.
+        // TODO: Make a stunned animation.
+        const int stun_ticks = 6 * FRAMES;
+        s_go_busy(sprite, tm, stun_ticks, HURT_S);
+    }
+}
+
+// @: Placed here to resolve circular dependecy.
+static Hero h_damage_health(Hero hero, const Sprites sprites, const Input in, const Timer tm)
+{
+    const Item equipped = i_get_equipped(hero.inventory);
+
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+
+        if(s_useless(sprite))
+            continue;
+
+        if(close_enough(sprite, hero))
+        {
+            // Take damage from sprite.
+            if(s_impulse(sprite, tm))
+                hero = h_struck(hero, sprite->state, sprite->damage);
+
+            // Block sprite to for a stun.
+            if(i_successful_block(equipped, in, tm))
+                h_block(sprite, hero.attack.dir, tm);
+        }
+    }
+    return hero;
+}
+
+// @: Placed here to resolve circular dependecy.
+static Hero h_damage_mana(Hero hero, const Sprites sprites, const Timer tm)
+{
+    (void) sprites;
+    (void) tm;
+    return hero;
+}
+
+// @: Placed here to resolve circular dependecy.
+static Hero h_damage_fatigue(Hero hero, const Sprites sprites, const Timer tm)
+{
+    (void) tm;
+    (void) sprites;
+
+    hero.fatigue = (hero.gauge.max - hero.gauge.count) / hero.gauge.divisor;
+    if(g_fizzled(hero.gauge, tm))
+        hero.fatigue = 0;
+
+    return hero;
+}
+
+Sprites s_hero_damage_sprites(Sprites sprites, const Hero hero, const Input in, const Timer tm)
 {
     if(in.lu)
     {
         sprites.last = hero.attack.method;
 
-        if(hero.attack.method == MELEE) return hurt_melee(sprites, tm, hero);
-        if(hero.attack.method == RANGE) return hurt_range(sprites, tm, hero);
-        if(hero.attack.method == MAGIC) return hurt_magic(sprites, tm, hero);
+        if(hero.attack.method == MELEE) return h_damage_melee(sprites, tm, hero);
+        if(hero.attack.method == RANGE) return h_damage_range(sprites, tm, hero);
+        if(hero.attack.method == MAGIC) return h_damage_magic(sprites, tm, hero);
     }
     sprites.last = NO_ATTACK;
 
@@ -354,11 +421,6 @@ static void idle(const Sprites sprites, const Timer tm)
     }
 }
 
-static int close_enough(const Sprite* const sprite, const Hero hero)
-{
-    return p_eql(sprite->where, hero.where, 2.2f);
-}
-
 static void rage(const Sprites sprites, const Hero hero, const Timer tm)
 {
     for(int i = 0; i < sprites.count; i++)
@@ -368,7 +430,7 @@ static void rage(const Sprites sprites, const Hero hero, const Timer tm)
         if(s_useless(sprite))
             continue;
 
-        if(sprite->state == IDLE && sprite->evil && tm.fall && close_enough(sprite, hero))
+        if(s_will_rage(sprite, tm) && close_enough(sprite, hero))
         {
             const Compass direction = (Compass) (rand() % DIRS);
             const State attack = (State) ((int) direction + (int) ATTACK_N);
@@ -377,82 +439,12 @@ static void rage(const Sprites sprites, const Hero hero, const Timer tm)
     }
 }
 
-static Hero calc_damage_hps(Hero hero, const Sprites sprites, const Input in, const Timer tm)
-{
-    const Item equipped = i_get_equipped(hero.inventory);
-
-    for(int i = 0; i < sprites.count; i++)
-    {
-        Sprite* const sprite = &sprites.sprite[i];
-
-        if(s_useless(sprite))
-            continue;
-
-        if(sprite->evil && close_enough(sprite, hero))
-        {
-            if(s_impulse(sprite, tm))
-            {
-                if(sprite->state == ATTACK_N) { hero.hps -= sprite->damage; hero.dpitch = +0.025f; }
-                if(sprite->state == ATTACK_S) { hero.hps -= sprite->damage; hero.dpitch = -0.025f; }
-                if(sprite->state == ATTACK_W) { hero.hps -= sprite->damage; hero.dyaw   = +0.025f; }
-                if(sprite->state == ATTACK_E) { hero.hps -= sprite->damage; hero.dyaw   = -0.025f; }
-            }
-
-            if(in.lu
-            // Attacking frame (FRAME_B)
-            && t_hi(tm)
-            // IE. Shield..
-            && i_can_block(equipped)
-            // Blocking movements are considered a melee.
-            && hero.attack.method == MELEE)
-            {
-                const Point unit = p_unit(hero.attack.dir);
-                const int n = unit.y < 0 && fabs(unit.y) > fabs(unit.x);
-                const int s = unit.y > 0 && fabs(unit.y) > fabs(unit.x);
-                const int w = unit.x < 0 && fabs(unit.x) > fabs(unit.y);
-                const int e = unit.x > 0 && fabs(unit.x) > fabs(unit.y);
-
-                // Hero block direction must counter sprite attack direction.
-                // TODO: Different parry stun ticks for each sprite.
-                const int parryticks = 6 * FRAMES;
-                if(sprite->state == ATTACK_N) if(s) s_go_busy(sprite, tm, parryticks, HURT_S);
-                if(sprite->state == ATTACK_S) if(n) s_go_busy(sprite, tm, parryticks, HURT_S);
-                if(sprite->state == ATTACK_W) if(e) s_go_busy(sprite, tm, parryticks, HURT_S);
-                if(sprite->state == ATTACK_E) if(w) s_go_busy(sprite, tm, parryticks, HURT_S);
-            }
-        }
-    }
-    return hero;
-}
-
-static Hero calc_damage_mna(Hero hero, const Sprites sprites, const Timer tm)
-{
-    (void) sprites;
-    (void) tm;
-    return hero;
-}
-
-static Hero calc_damage_ftg(Hero hero, const Timer tm)
-{
-    (void) tm;
-
-    hero.ftg = (hero.gauge.max - hero.gauge.count) / hero.gauge.divisor;
-
-    if(g_fizzled(hero.gauge, tm))
-        hero.ftg = 0;
-
-    return hero;
-}
-
 static void block(const Sprites sprites, const Hero hero, const Timer tm)
 {
     const Item equipped = i_get_equipped(hero.inventory);
 
     if(hero.gauge.count > 0)
     {
-        const Point where = hero.gauge.points[hero.gauge.count - 1];
-        const Point unit = p_unit(where);
-
         for(int i = 0; i < sprites.count; i++)
         {
             Sprite* const sprite = &sprites.sprite[i];
@@ -469,33 +461,36 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
 
             if(close_enough(sprite, hero))
             {
-                if(unit.y < 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_N;
-                if(unit.y > 0 && fabs(unit.y) > fabs(unit.x)) sprite->state = BLOCK_S;
-                if(unit.x > 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_E;
-                if(unit.x < 0 && fabs(unit.x) > fabs(unit.y)) sprite->state = BLOCK_W;
+                // TODO: Block reaction varies with sprites.
+                const int block_reaction = 1;
+                const Point block = p_unit(hero.gauge.points[hero.gauge.count - block_reaction]);
+                if(p_north(block)) sprite->state = BLOCK_N;
+                if(p_east (block)) sprite->state = BLOCK_E;
+                if(p_south(block)) sprite->state = BLOCK_S;
+                if(p_west (block)) sprite->state = BLOCK_W;
 
-                if(tm.fall && sprite->evil)
+                if(s_evil_act(sprite, tm))
                 {
                     // TODO: block time varies per sprite.
-                    const int blocktime = 4;
-                    if(tm.ticks - sprite->blockstart > blocktime)
+                    const int block_ticks = 4;
+                    if(tm.ticks - sprite->block_start > block_ticks)
                     {
                         sprite->state = IDLE;
-                        sprite->blockstart = tm.ticks;
+                        sprite->block_start = tm.ticks;
                     }
                 }
-
             }
-            else sprite->blockstart = tm.ticks;
+            else sprite->block_start = tm.ticks;
         }
     }
 }
 
-static Hero damage(Hero hero, const Sprites sprites, const Input in, const Timer tm)
+// @: Placed here to resolve circular dependecy.
+static Hero h_damage(Hero hero, const Sprites sprites, const Input in, const Timer tm)
 {
-    hero = calc_damage_hps(hero, sprites, in, tm);
-    hero = calc_damage_mna(hero, sprites, tm);
-    hero = calc_damage_ftg(hero, tm);
+    hero = h_damage_health(hero, sprites, in, tm);
+    hero = h_damage_mana(hero, sprites, tm);
+    hero = h_damage_fatigue(hero, sprites, tm);
     return hero;
 }
 
@@ -569,12 +564,7 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
         {
             Sprite* const sprite = &sprites.sprite[i];
 
-            // Is this an ember sprite?
-            if(s_firey(sprite->ascii)
-            // Is the ember sprite alive?
-            && s_alive(sprite->state)
-            // Is the ember sprite on grass?
-            && p_block(sprite->where, map.floring) == '(')
+            if(s_must_spread(sprite, map.floring))
             {
                 const Point dir = {
                     2.0f * (u_frand() - 0.5f),
@@ -583,7 +573,7 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
                 const Point where = p_add(sprite->where, dir);
 
                 // Do no burn into walls.
-                if(p_block(where, map.walling) == ' ')
+                if(p_char(where, map.walling) == ' ')
                 {
                     const int xx = where.x;
                     const int yy = where.y;
@@ -616,7 +606,7 @@ Hero s_caretake(const Sprites sprites, const Hero hero, const Map map, const Fie
     burn(sprites, fire);
 
     rage(sprites, hero, tm);
-    return damage(hero, sprites, in, tm);
+    return h_damage(hero, sprites, in, tm);
 }
 
 static Point avail(const Point center, const Map map)
@@ -628,14 +618,14 @@ static Point avail(const Point center, const Map map)
     const Point where = p_add(center, random);
 
     // Available tile space is no wall and not above water.
-    return p_block(where, map.walling) == ' '
-        && p_block(where, map.floring) != ' ' ? where : avail(center, map);
+    return p_char(where, map.walling) == ' '
+        && p_char(where, map.floring) != ' ' ? where : avail(center, map);
 }
 
 static Point seek(const Point center, const Map map, const int ascii)
 {
     const Point where = avail(center, map);
-    return p_block(where, map.floring) == ascii ? where : seek(center, map, ascii);
+    return p_char(where, map.floring) == ascii ? where : seek(center, map, ascii);
 }
 
 static Sprites lay_nice_garden(Sprites sprites, const Map map, const Point center)

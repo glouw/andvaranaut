@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
     const Point start = wd.map[floor].trapdoors.point[0];
 
-    Hero me = h_birth(args.focal, start, floor);
+    Hero hero = h_birth(args.focal, start, floor);
 
     Overview ov = o_init();
 
@@ -27,9 +27,9 @@ int main(int argc, char* argv[])
 
     Flow clouds = f_start(9.0f);
 
-    Field field = f_prepare(wd.map[me.floor], me.aura);
+    Field field = f_prepare(wd.map[hero.floor], hero.aura);
 
-    Fire fire = f_kindle(wd.map[me.floor]);
+    Fire fire = f_kindle(wd.map[hero.floor]);
 
     Scroll scroll = s_new();
 
@@ -50,66 +50,66 @@ int main(int argc, char* argv[])
     {
         const int t0 = SDL_GetTicks();
 
-        tm = t_tick(tm, me.gauge.count && i_can_block(i_get_equipped(me.inventory)), renders);
+        tm = t_tick(tm, hero.gauge.count && i_can_block(i_get_equipped(hero.inventory)), renders);
 
         t_advance_title(renders);
 
-        theme = m_get_theme(theme, wd.map[me.floor], me.where, tm);
+        theme = m_get_theme(theme, wd.map[hero.floor], hero.where, tm);
 
         if(i_using_world_edit_mode(in))
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
 
-            s_render_overlay(sdl, ov, wd.sprites[me.floor], wd.map[me.floor], tm);
+            s_render_overlay(sdl, ov, wd.sprites[hero.floor], wd.map[hero.floor], tm);
 
             ov = o_update(ov, in, sdl.xres);
 
-            m_edit(wd.map[me.floor], ov);
+            m_edit(wd.map[hero.floor], ov);
 
-            wd.sprites[me.floor] = s_lay(wd.sprites[me.floor], wd.map[me.floor], ov);
+            wd.sprites[hero.floor] = s_lay(wd.sprites[hero.floor], wd.map[hero.floor], ov);
         }
         else
         {
-            wd.map[me.floor] = s_count_agents(wd.sprites[me.floor], wd.map[me.floor]);
+            wd.map[hero.floor] = s_count_agents(wd.sprites[hero.floor], wd.map[hero.floor]);
 
-            m_place_barricades(wd.map[me.floor]);
+            m_place_barricades(wd.map[hero.floor]);
 
-            me = h_teleporting(me, wd.map[me.floor], in, tm);
+            hero = h_teleporting(hero, wd.map[hero.floor], in, tm);
 
             current = f_stream(current);
 
             clouds = f_stream(clouds);
 
-            if(me.teleporting)
+            if(hero.teleporting)
             {
-                me = h_teleport(me, wd.map[me.floor]);
+                hero = h_teleport(hero, wd.map[hero.floor]);
 
                 f_ruin(field);
 
-                field = f_prepare(wd.map[me.floor], me.aura);
+                field = f_prepare(wd.map[hero.floor], hero.aura);
 
                 f_extinguish(fire);
 
-                fire = f_kindle(wd.map[me.floor]);
+                fire = f_kindle(wd.map[hero.floor]);
             }
 
-            me = s_caretake(wd.sprites[me.floor], me, wd.map[me.floor], field, fire, in, tm);
+            hero = s_caretake(wd.sprites[hero.floor], hero, wd.map[hero.floor], field, fire, in, tm);
 
-            wd.sprites[me.floor] = s_spread_fire(wd.sprites[me.floor], fire, wd.map[me.floor], tm);
+            wd.sprites[hero.floor] = s_spread_fire(wd.sprites[hero.floor], fire, wd.map[hero.floor], tm);
 
-            ov = o_pan(ov, me.where, sdl.xres, sdl.yres);
+            ov = o_pan(ov, hero.where, sdl.xres, sdl.yres);
 
-            me.inventory = i_select(me.inventory, in);
+            hero.inventory = i_select(hero.inventory, in);
 
-            s_render_playing(sdl, text, me, wd.sprites[me.floor], wd.map[me.floor], current, clouds, tm);
+            s_render_playing(sdl, text, hero, wd.sprites[hero.floor], wd.map[hero.floor], current, clouds, tm);
 
             if(i_using_inventory(in))
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
 
-                me.inventory = i_highlite(me.inventory, in, sdl.xres);
+                hero.inventory = i_highlite(hero.inventory, in, sdl.xres);
 
-                me.inventory = i_what_is(me.inventory, scroll, tm);
+                hero.inventory = i_what_is(hero.inventory, scroll, tm);
             }
             else
             {
@@ -117,13 +117,13 @@ int main(int argc, char* argv[])
 
                 t_clear_title_when_linger();
 
-                me = s_draw_gauge(sdl, me, scroll);
+                hero = s_draw_gauge(sdl, hero, scroll);
 
-                me.gauge = g_wind(me.gauge, in, tm);
+                hero.gauge = g_wind(hero.gauge, in, tm);
 
-                me = h_sustain(me, wd.map[me.floor], in, current, wd.sprites[me.floor].last);
+                hero = h_sustain(hero, wd.map[hero.floor], in, current, wd.sprites[hero.floor].last);
 
-                wd.sprites[me.floor] = s_hurt(wd.sprites[me.floor], me, in, tm);
+                wd.sprites[hero.floor] = s_hero_damage_sprites(wd.sprites[hero.floor], hero, in, tm);
             }
 
             f_clear(fire);

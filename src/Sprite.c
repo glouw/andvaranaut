@@ -155,16 +155,31 @@ int s_attacking(const Sprite* const sprite)
 
 int s_busy(const Sprite* const sprite, const Timer tm)
 {
-    return tm.ticks < sprite->busyticks;
+    return tm.ticks < sprite->busy_ticks;
 }
 
 void s_go_busy(Sprite* const sprite, const Timer tm, const int ticks, const State state)
 {
-    sprite->busyticks = tm.ticks + ticks;
+    sprite->busy_ticks = tm.ticks + ticks;
     sprite->state = state;
 }
 
 int s_impulse(Sprite* const sprite, const Timer tm)
 {
     return s_attacking(sprite) && tm.rise;
+}
+
+int s_evil_act(Sprite* const sprite, const Timer tm)
+{
+    return sprite->evil && tm.fall;
+}
+
+int s_will_rage(Sprite* const sprite, const Timer tm)
+{
+    return sprite->state == IDLE && s_evil_act(sprite, tm);
+}
+
+int s_must_spread(Sprite* const sprite, char** const floring)
+{
+    return s_firey(sprite->ascii) && s_alive(sprite->state) && p_char(sprite->where, floring) == '(';
 }
