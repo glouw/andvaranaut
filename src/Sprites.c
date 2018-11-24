@@ -110,9 +110,6 @@ static void move(const Sprites sprites, const Field field, const Point to, const
         if(s_stuck(sprite))
             continue;
 
-        if(s_stunned(sprite))
-            continue;
-
         const Point dir = f_generate_force(field, sprite->where, to, map);
 
         // No force applied - slow down.
@@ -223,6 +220,7 @@ static void broke_lootbag(const int ascii, const Inventory inv, const Timer tm)
 
 static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
 {
+    // Check attack speed.
     static Point zero;
     if(p_same(attack.velocity, zero))
     {
@@ -230,14 +228,15 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
         return sprites;
     }
 
-    if(!sprite->evil)
+    // Sprite is now angry.
+    if(sprite->evil == false)
     {
         sprite->evil = true;
         static Speech none;
         sprite->speech = none;
     }
 
-    // Block.
+    // Sprite attempts to Block.
     const Point vel = p_unit(attack.velocity);
     const int s = p_south(vel);
     const int n = p_north(vel);
@@ -248,7 +247,7 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
     || (sprite->state == BLOCK_W && e)
     || (sprite->state == BLOCK_E && w))
         t_set_title(tm.renders, tm.renders + 60, false, "Blocked!");
-    // Hurt or dead.
+    // If the block was not successful Sprite is now either hurt or dead.
     else
     {
         sprite->health -= attack.power;
@@ -281,7 +280,6 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
     return sprites;
 }
 
-// @: Placed here to resolve circular dependecy.
 static Sprites damage_melee(Sprites sprites, const Timer tm, const Hero hero)
 {
     const Item equipped = i_get_equipped(hero.inventory);
@@ -306,7 +304,6 @@ static Sprites damage_melee(Sprites sprites, const Timer tm, const Hero hero)
     return sprites;
 }
 
-// @: Placed here to resolve circular dependecy.
 static Sprites damage_range(Sprites sprites, const Timer tm, const Hero hero)
 {
     const SDL_Point point = {
@@ -332,7 +329,6 @@ static Sprites damage_range(Sprites sprites, const Timer tm, const Hero hero)
     return sprites;
 }
 
-// @: Placed here to resolve circular dependecy.
 static Sprites damage_magic(Sprites sprites, const Timer tm, const Hero hero)
 {
     // TODO
@@ -586,7 +582,8 @@ Sprites s_populate(Sprites sprites, const Map map)
             sprites = lay_nice_garden(sprites, map, center);
             break;
 
-        // TODO: TEMP. Just puts a guy in a room for now so that each room has some sort of placeholder.
+        // TODO: TEMP.
+        // Just puts a guy in a room for now so that each room has some sort of placeholder.
         default:
             sprites = place_dummy(sprites, map, center);
             break;

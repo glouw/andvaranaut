@@ -39,3 +39,9 @@ int s_hurting(const State);
 int s_dead(const State);
 
 int s_alive(const State);
+
+int s_stunned(const State);
+
+int s_attacking(const State);
+
+int s_blocking(const State);

@@ -54,4 +54,6 @@
 
 [ ] time travel - can slow down sprite ticks for better blocks (bullet time?) maybe with shield.
 
-[ ] stun animation
+[x] stun animation
+
+[ ] go busy should vary to make it less predictable

@@ -132,7 +132,7 @@ int s_not_agent(const Sprite* const sprite)
 
 int s_stuck(const Sprite* const sprite)
 {
-    return s_dead(sprite->state) || s_hurting(sprite->state);
+    return s_dead(sprite->state) || s_hurting(sprite->state) || s_stunned(sprite->state);
 }
 
 void s_place(Sprite* const sprite, const Point to)
@@ -144,14 +144,6 @@ void s_place(Sprite* const sprite, const Point to)
 int s_muted(const Sprite* const sprite)
 {
     return sprite->speech.count == 0;
-}
-
-int s_attacking(const Sprite* const sprite)
-{
-    return sprite->state == ATTACK_N
-        || sprite->state == ATTACK_E
-        || sprite->state == ATTACK_S
-        || sprite->state == ATTACK_W;
 }
 
 int s_busy(const Sprite* const sprite, const Timer tm)
@@ -167,7 +159,7 @@ void s_go_busy(Sprite* const sprite, const Timer tm, const int ticks, const Stat
 
 int s_impulse(const Sprite* const sprite, const Timer tm)
 {
-    return s_attacking(sprite) && tm.rise;
+    return s_attacking(sprite->state) && tm.rise;
 }
 
 int s_evil_act(const Sprite* const sprite, const Timer tm)
@@ -185,21 +177,16 @@ int s_must_spread(const Sprite* const sprite, char** const floring)
     return s_firey(sprite->ascii) && s_alive(sprite->state) && p_char(sprite->where, floring) == '(';
 }
 
-int s_stunned(const Sprite* const sprite)
+// TODO: Different ticks for each sprite.
+// TODO: Make a stunned animation.
+void s_parried(Sprite* const sprite, const Point velocity, const Timer tm)
 {
-    return sprite->state == STUNNED;
-}
-
-void s_parried(Sprite* const sprite, const Point dir, const Timer tm)
-{
-    const Point block = p_unit(dir);
-    if((sprite->state == ATTACK_N && p_south(block))
-    || (sprite->state == ATTACK_S && p_north(block))
-    || (sprite->state == ATTACK_W && p_east (block))
-    || (sprite->state == ATTACK_E && p_west (block)))
+    const Point dir = p_unit(velocity);
+    if((sprite->state == ATTACK_N && p_south(dir))
+    || (sprite->state == ATTACK_S && p_north(dir))
+    || (sprite->state == ATTACK_W && p_east (dir))
+    || (sprite->state == ATTACK_E && p_west (dir)))
     {
-        // TODO: Different ticks for each sprite.
-        // TODO: Make a stunned animation.
         const int stun_ticks = 6 * FRAMES;
         s_go_busy(sprite, tm, stun_ticks, STUNNED);
     }

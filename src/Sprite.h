@@ -57,8 +57,6 @@ void s_place(Sprite* const, const Point);
 
 int s_muted(const Sprite* const);
 
-int s_attacking(const Sprite* const);
-
 // Busy sprites cannot be interrupted and must wait for the timer ticks to expire.
 int s_busy(const Sprite* const, const Timer);
 
@@ -71,7 +69,5 @@ int s_evil_act(const Sprite* const, const Timer);
 int s_will_rage(const Sprite* const, const Timer);
 
 int s_must_spread(const Sprite* const, char** const floring);
-
-int s_stunned(const Sprite* const);
 
 void s_parried(Sprite* const, const Point, const Timer);
