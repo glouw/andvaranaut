@@ -423,9 +423,9 @@ void s_render_overlay(const Sdl sdl, const Overview ov, const Sprites sprites, c
 
 static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, const Timer tm, const int size, const Bar bar)
 {
-    const int max = bar == HPS ? hero.health_max : bar == FTG ? hero.fatigue_max : hero.mana_max;
+    const int max = bar == HEALTH ? hero.health_max : bar == FATIGUE ? hero.fatigue_max : hero.mana_max;
 
-    const float level = bar == HPS ? hero.health : bar == FTG ? hero.fatigue : hero.mana;
+    const float level = bar == HEALTH ? hero.health : bar == FATIGUE ? hero.fatigue : hero.mana;
 
     const float threshold = hero.warning * max;
 
@@ -471,9 +471,9 @@ static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, con
 static void draw_all_bars(const Sdl sdl, const Hero hero, const Timer tm)
 {
     const int size = 1;
-    draw_one_bar(sdl, hero, 2, tm, size, HPS);
-    draw_one_bar(sdl, hero, 1, tm, size, MNA);
-    draw_one_bar(sdl, hero, 0, tm, size, FTG);
+    draw_one_bar(sdl, hero, 2, tm, size, HEALTH);
+    draw_one_bar(sdl, hero, 1, tm, size, MANA);
+    draw_one_bar(sdl, hero, 0, tm, size, FATIGUE);
 }
 
 static void draw_inventory_panel(const Sdl sdl, const Inventory inv)
