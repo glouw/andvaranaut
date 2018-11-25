@@ -115,13 +115,11 @@ int main(int argc, char* argv[])
 
                 t_clear_title_when_linger();
 
+                hero = h_sustain(hero, world.map[hero.floor], in, current, world.sprites[hero.floor].last, tm);
+
                 hero = s_draw_gauge(sdl, hero, scroll);
 
-                hero.gauge = g_wind(hero.gauge, in, tm);
-
-                hero = h_sustain(hero, world.map[hero.floor], in, current, world.sprites[hero.floor].last);
-
-                world.sprites[hero.floor] = s_hero_damage_sprites(world.sprites[hero.floor], hero, in, tm);
+                world.sprites[hero.floor] = s_hero_damage_sprites(world.sprites[hero.floor], hero, tm);
             }
 
             f_clear(fire);

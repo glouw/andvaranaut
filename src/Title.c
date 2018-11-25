@@ -12,7 +12,7 @@ void t_advance_title(const int now)
     tt.now = now;
 }
 
-void t_set_title(const int start, const int end, const int linger, const char* const fmt, ...)
+void t_set_title(const int start, const int length, const int linger, const char* const fmt, ...)
 {
     va_list args;
 
@@ -31,7 +31,7 @@ void t_set_title(const int start, const int end, const int linger, const char* c
     // If lingering the max alpha for the alpha will be used after 50% sine in/out fade.
     tt.linger = linger;
     tt.start = start;
-    tt.end = end;
+    tt.end = start + length;
 }
 
 void t_clear_title(void)

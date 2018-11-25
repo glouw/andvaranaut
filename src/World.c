@@ -1,5 +1,6 @@
 #include "World.h"
 
+#include "Title.h"
 #include "Tris.h"
 #include "Frame.h"
 #include "util.h"
@@ -101,9 +102,20 @@ static Hero service_fatigue(Hero hero, const Map map, const Sprites sprites, con
     (void) map;
     (void) sprites;
 
-    hero.fatigue = (hero.gauge.max - hero.gauge.count) / hero.gauge.divisor;
-    if(g_fizzled(hero.gauge, tm))
-        hero.fatigue = 0;
+    if(hero.gauge.warning)
+    {
+        hero.gauge.warning = false;
+
+        const char* const tireds[] = {
+            "Exausted...",
+            "So tired...",
+            "Muscles aching...",
+        };
+        const int which = rand() % u_len(tireds);
+        t_set_title(tm.renders, 120, false, tireds[which]);
+    }
+
+    hero.fatigue = g_fizzled(hero.gauge, tm) ? 0.0f : (hero.gauge.max - hero.gauge.count);
 
     return hero;
 }

@@ -212,9 +212,9 @@ static void broke_lootbag(const int ascii, const Inventory inv, const Timer tm)
         const Item item = i_rand();
         const int fit = i_add(inv.items, item);
         if(fit)
-            t_set_title(tm.renders, tm.renders + 120, false, "Picked up %s", item.cstr);
+            t_set_title(tm.renders, 120, false, "Picked up %s", item.cstr);
         else
-            t_set_title(tm.renders, tm.renders + 120, false, "Inventory Full");
+            t_set_title(tm.renders, 120, false, "Inventory Full");
     }
 }
 
@@ -224,7 +224,7 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
     static Point zero;
     if(p_same(attack.velocity, zero))
     {
-        t_set_title(tm.renders, tm.renders + 60, false, "Too slow!");
+        t_set_title(tm.renders, 60, false, "Too slow!");
         return sprites;
     }
 
@@ -246,7 +246,7 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
     || (sprite->state == BLOCK_S && n)
     || (sprite->state == BLOCK_W && e)
     || (sprite->state == BLOCK_E && w))
-        t_set_title(tm.renders, tm.renders + 60, false, "Blocked!");
+        t_set_title(tm.renders, 60, false, "Blocked!");
     // If the block was not successful Sprite is now either hurt or dead.
     else
     {
@@ -342,9 +342,9 @@ static Sprites damage_magic(Sprites sprites, const Timer tm, const Hero hero)
     return sprites;
 }
 
-Sprites s_hero_damage_sprites(Sprites sprites, const Hero hero, const Input in, const Timer tm)
+Sprites s_hero_damage_sprites(Sprites sprites, const Hero hero, const Timer tm)
 {
-    if(in.lu)
+    if(hero.gauge.ready)
     {
         sprites.last = hero.attack.method;
 
@@ -580,10 +580,6 @@ Sprites s_populate(Sprites sprites, const Map map)
 
         switch(map.rooms.themes[i])
         {
-        case A_WELL_OF_WATER:
-            sprites = place_dummy(sprites, map, center);
-            break;
-
         case AN_EMPTY_ROOM:
             sprites = place_dummy(sprites, map, center);
             break;
@@ -592,8 +588,12 @@ Sprites s_populate(Sprites sprites, const Map map)
             sprites = lay_nice_garden(sprites, map, center);
             break;
 
-        case THEMES:
+        case A_WELL_OF_WATER:
+            sprites = place_dummy(sprites, map, center);
+            break;
+
         case NO_THEME:
+        case THEMES:
             break;
         }
     }

@@ -15,7 +15,7 @@ Title;
 
 void t_advance_title(const int now);
 
-void t_set_title(const int start, const int end, const int linger, const char* const text, ...);
+void t_set_title(const int start, const int length, const int linger, const char* const text, ...);
 
 void t_show_title(const Text, const Sdl);
 

@@ -59,14 +59,12 @@ Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
     inv = check_tile_change(inv);
     if(inv.change && inv.hilited < inv.items.max)
     {
-        const int a = tm.renders;
-        const int b = tm.renders + 90;
         const Item it = inv.items.item[inv.hilited];
 
         if(it.clas == SCROLL)
         {
             char* const squares = s_scroll_to_str(sc, it.index);
-            t_set_title(a, b, true,
+            t_set_title(tm.renders, 90, true,
                 "%s\n"
                 "%s\n"
                 "%s\n"
@@ -76,12 +74,12 @@ Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
         }
         else
         if(it.clas == LETTER)
-            t_set_title(a, b, true,
+            t_set_title(tm.renders, 90, true,
                 "%s\n"
                 "%s\n",
                 it.name, it.desc);
         else
-            t_set_title(a, b, true,
+            t_set_title(tm.renders, 90, true,
                 "%s\n"
                 "%s\n"
                 "%s\n"

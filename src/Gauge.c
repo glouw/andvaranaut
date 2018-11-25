@@ -1,16 +1,13 @@
 #include "Gauge.h"
 
-#include "Title.h"
-
 #include "util.h"
 
-Gauge g_new(void)
+Gauge g_new(const int max)
 {
     static Gauge zero;
     Gauge g = zero;
-    g.max = 500;
+    g.max = max;
     g.points = u_toss(Point, g.max);
-    g.divisor = 2;
     return g;
 }
 
@@ -24,25 +21,16 @@ static Gauge reset(Gauge g)
     g.mx = 0;
     g.my = 0;
     g.count = 0;
+    g.ready = false;
+    g.warning = false;
     return g;
 }
 
 static Gauge fizzle(Gauge g, const Timer tm)
 {
     g = reset(g);
-
-    const int timeout = 30;
-    g.ticks = tm.ticks + timeout;
-
-    const char* const tireds[] = {
-        "Exausted...",
-        "So tired...",
-        "Muscles aching...",
-    };
-    const int which = rand() % u_len(tireds);
-    const char* const tired = tireds[which];
-    t_set_title(tm.renders, tm.renders + 120, false, tired);
-
+    g.ticks = tm.ticks + 30;
+    g.warning = true;
     return g;
 }
 
@@ -67,7 +55,14 @@ Gauge g_wind(Gauge g, const Input input, const Timer tm)
             g.count++;
             return g.count == g.max ? fizzle(g, tm) : g;
         }
-        else return reset(g);
+        else
+        if(input.lu)
+        {
+            g.ready = true;
+            return g;
+        }
+        else
+            return reset(g);
     }
 }
 

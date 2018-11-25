@@ -30,11 +30,12 @@ Hero h_birth(const float focal, const Map map[], const int floor)
     hero.pitch = 1.0f;
     hero.tall = 0.5f;
     hero.height = hero.tall;
-    hero.gauge = g_new();
     hero.health = hero.health_max = 9.0f;
     hero.mana = hero.mana_max = 10.0f;
-    hero.fatigue = hero.fatigue_max = hero.gauge.max / hero.gauge.divisor;
+    hero.fatigue = hero.fatigue_max = 200.0f;
     hero.warning = 0.25f;
+
+    hero.gauge = g_new(hero.fatigue_max);
     hero.inventory = i_create();
 
     return hero;
@@ -219,13 +220,14 @@ static Hero recoil(Hero hero, const Method last)
     return hero;
 }
 
-Hero h_sustain(Hero hero, const Map map, const Input input, const Flow current, const Method last)
+Hero h_sustain(Hero hero, const Map map, const Input input, const Flow current, const Method last, const Timer tm)
 {
     hero = do_vert_math(hero, map, input);
     hero = look(hero, input);
     hero = move(hero, map, input, current);
     hero = recoil(hero, last);
     hero.torch = t_burn(hero.torch);
+    hero.gauge = g_wind(hero.gauge, input, tm);
     return hero;
 }
 

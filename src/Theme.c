@@ -8,7 +8,7 @@ Theme* t_rand(const int count)
     for(int i = 0; i < count; i++)
     {
         const Theme theme = (Theme) (rand() % (int) THEMES);
-        th[i] = (theme == NO_THEME) ? A_WELL_OF_WATER : theme;
+        th[i] = (theme == NO_THEME) ? AN_EMPTY_ROOM : theme;
     }
     return th;
 }

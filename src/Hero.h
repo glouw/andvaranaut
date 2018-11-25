@@ -23,7 +23,7 @@ typedef struct
     float speed;
     float acceleration;
     float yaw;
-    float d_yaw; // Rate of change of yaw (TODO: IMPLEMENT)
+    float d_yaw; // Rate of change of yaw.
     float pitch;
     float d_pitch; // Rate of change of pitch.
     Torch torch;
@@ -56,7 +56,7 @@ Hero h_teleporting(Hero, const Map, const Input, const Timer);
 
 Hero h_teleport(Hero, const Map);
 
-Hero h_sustain(Hero, const Map, const Input, const Flow, const Method);
+Hero h_sustain(Hero, const Map, const Input, const Flow, const Method, const Timer);
 
 Ray h_cast(const Hero, const Hit, const Sheer, const int yres, const int xres);
 

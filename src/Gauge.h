@@ -12,15 +12,14 @@ typedef struct
     int mx;
     int my;
     int ticks;
-    int divisor;
+    int warning;
+    int ready;
 }
 Gauge;
 
-Gauge g_new(void);
+Gauge g_new(const int max);
 
 void g_free(const Gauge);
-
-int g_fizzled(const Gauge, const Timer);
 
 Gauge g_wind(Gauge, const Input, const Timer);
 
@@ -31,3 +30,5 @@ Point g_position(const Gauge);
 Point g_velocity(const Gauge);
 
 Point g_acceleration(const Gauge);
+
+int g_fizzled(const Gauge, const Timer);

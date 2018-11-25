@@ -58,9 +58,22 @@ static Theme look_up_theme(const Map map, const Point where)
     return NO_THEME;
 }
 
-static const char* get_theme_string(const Map map, const Point where)
+static char* beautify(const char* const string)
 {
-    return t_get_name(look_up_theme(map, where));
+    char* const copy = u_str_dup(string);
+    const int len = strlen(copy);
+
+    // Remove underscores.
+    for(int i = 0; i < len; i++)
+        if(copy[i] == '_')
+            copy[i] = ' ';
+
+    return copy;
+}
+
+static char* get_theme_string(const Map map, const Point where)
+{
+    return beautify(t_get_name(look_up_theme(map, where)));
 }
 
 Theme m_get_theme(const Theme last, const Map map, const Point where, const Timer tm)
@@ -68,8 +81,9 @@ Theme m_get_theme(const Theme last, const Map map, const Point where, const Time
     const Theme now = look_up_theme(map, where);
     if(now != last && now != NO_THEME)
     {
-        const char* const string = get_theme_string(map, where);
-        t_set_title(tm.renders, tm.renders + 120, false, string);
+        char* const string = get_theme_string(map, where);
+        t_set_title(tm.renders, 120, false, string);
+        free(string);
     }
     return now;
 }
@@ -285,6 +299,9 @@ void m_themeate(const Map map)
         const Point where = map.rooms.wheres[i];
         switch(map.rooms.themes[i])
         {
+        case AN_EMPTY_ROOM:
+            break;
+
         case A_NICE_GARDEN:
             lay_grass(map, where);
             lay_down_path(map, where);
@@ -295,9 +312,9 @@ void m_themeate(const Map map)
             m_place_platform(map, where.x, where.y, FLORING);
             break;
 
-        default:
-        case AN_EMPTY_ROOM:;
-            break;
+        case NO_THEME:
+        case THEMES:
+           break;
         }
     }
 }
