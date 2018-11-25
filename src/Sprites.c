@@ -580,14 +580,20 @@ Sprites s_populate(Sprites sprites, const Map map)
 
         switch(map.rooms.themes[i])
         {
-        case NICE_GARDEN:
+        case A_WELL_OF_WATER:
+            sprites = place_dummy(sprites, map, center);
+            break;
+
+        case AN_EMPTY_ROOM:
+            sprites = place_dummy(sprites, map, center);
+            break;
+
+        case A_NICE_GARDEN:
             sprites = lay_nice_garden(sprites, map, center);
             break;
 
-        // TODO: TEMP.
-        // Just puts a guy in a room for now so that each room has some sort of placeholder.
-        default:
-            sprites = place_dummy(sprites, map, center);
+        case THEMES:
+        case NO_THEME:
             break;
         }
     }

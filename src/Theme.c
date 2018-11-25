@@ -8,31 +8,17 @@ Theme* t_rand(const int count)
     for(int i = 0; i < count; i++)
     {
         const Theme theme = (Theme) (rand() % (int) THEMES);
-        th[i] = (theme == NO_THEME) ? TIMS_HOUSE : theme;
+        th[i] = (theme == NO_THEME) ? A_WELL_OF_WATER : theme;
     }
     return th;
 }
 
-const char* t_name(const Theme th)
+const char* t_get_name(const Theme th)
 {
-    switch(th)
-    {
-    case NO_THEME: default:
-        return "An Empty Room";
-
-    case HALL_OF_THE_DEAD:
-        return "Hall of the Dead";
-
-    case DEAD_KNIGHT_PARTY:
-        return "A Party of Dead Knights";
-
-    case NICE_GARDEN:
-        return "A Nice Garden";
-
-    case TIMS_HOUSE:
-        return "Timothy's House";
-
-    case WATER_WELL:
-        return "A Well of Water";
-    }
+    static const char* const strings[] = {
+        #define X(a) #a,
+        LIST_OF_THEMES
+        #undef X
+    };
+    return strings[th];
 }

@@ -60,7 +60,7 @@ static Theme look_up_theme(const Map map, const Point where)
 
 static const char* get_theme_string(const Map map, const Point where)
 {
-    return t_name(look_up_theme(map, where));
+    return t_get_name(look_up_theme(map, where));
 }
 
 Theme m_get_theme(const Theme last, const Map map, const Point where, const Timer tm)
@@ -285,17 +285,18 @@ void m_themeate(const Map map)
         const Point where = map.rooms.wheres[i];
         switch(map.rooms.themes[i])
         {
-        case NICE_GARDEN:
+        case A_NICE_GARDEN:
             lay_grass(map, where);
             lay_down_path(map, where);
             break;
 
-        case WATER_WELL:
+        case A_WELL_OF_WATER:
             m_place_room(map, where, m_min(map), m_min(map), FLORING);
             m_place_platform(map, where.x, where.y, FLORING);
             break;
 
         default:
+        case AN_EMPTY_ROOM:;
             break;
         }
     }
