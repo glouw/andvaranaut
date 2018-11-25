@@ -4,7 +4,7 @@
 
 #include <SDL2/SDL.h>
 
-static Line lens(const float focal)
+static Line get_lens(const float focal)
 {
     const Line fov = {
         { focal, -1.0f },
@@ -13,13 +13,15 @@ static Line lens(const float focal)
     return fov;
 }
 
-Hero h_birth(const float focal, const Point where, const int floor)
+Hero h_birth(const float focal, const Map map[], const int floor)
 {
-    static Hero zero; // From zero to hero.
+    static Hero zero;
     Hero hero = zero;
+
+    // From zero to hero.
     hero.floor = floor;
-    hero.fov = lens(focal);
-    hero.where = where;
+    hero.fov = get_lens(focal);
+    hero.where = map[floor].trapdoors.point[0];
     hero.speed = 0.12f;
     hero.acceleration = 0.0150f;
     hero.torch = t_snuff();
@@ -29,11 +31,12 @@ Hero h_birth(const float focal, const Point where, const int floor)
     hero.tall = 0.5f;
     hero.height = hero.tall;
     hero.gauge = g_new();
-    hero.health = hero.health_max= 9.0f;
+    hero.health = hero.health_max = 9.0f;
     hero.mana = hero.mana_max = 10.0f;
     hero.fatigue = hero.fatigue_max = hero.gauge.max / hero.gauge.divisor;
     hero.warning = 0.25f;
     hero.inventory = i_create();
+
     return hero;
 }
 
@@ -83,8 +86,9 @@ static Hero do_vert_math(Hero hero, const Map map, const Input input)
     const int jumped = input.key[SDL_SCANCODE_SPACE];
     const int crouch = input.key[SDL_SCANCODE_LCTRL];
 
-    if(jumped && hero.height <= tall)
-        hero.vertical_velocity = 0.05f;
+    if(jumped)
+        if(hero.height <= tall)
+            hero.vertical_velocity = 0.05f;
 
     hero.height += hero.vertical_velocity;
 
@@ -209,8 +213,9 @@ Ray h_cast(const Hero hero, const Hit hit, const Sheer sheer, const int yres, co
 
 static Hero recoil(Hero hero, const Method last)
 {
+    // TODO: Different weapons have different recoil?
     if(last == RANGE)
-        hero.d_pitch = 0.12f; // TODO: Different weapons have different recoil?
+        hero.d_pitch = 0.12f;
     return hero;
 }
 

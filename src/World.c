@@ -4,7 +4,6 @@
 #include "Frame.h"
 #include "util.h"
 
-// Appends a new floor to the world map.
 static World append(World w, const Map map, const Sprites sprites)
 {
     if(w.floor == w.floors)
@@ -15,14 +14,12 @@ static World append(World w, const Map map, const Sprites sprites)
     return w;
 }
 
-// Allocates memory for all floors.
 static World make(const int floors)
 {
     const World w = { u_toss(Map, floors), u_toss(Sprites, floors), 0, floors };
     return w;
 }
 
-// Carves rooms into each floor.
 static World carve(World w)
 {
     for(int i = 0; i < w.floors; i++)
@@ -30,14 +27,12 @@ static World carve(World w)
     return w;
 }
 
-// Applies theme to each room of each floor.
 static void theme(const World w)
 {
     for(int i = 0; i < w.floors; i++)
         m_themeate(w.map[i]);
 }
 
-// Links all floors with trapdoors.
 static void attach(const World w)
 {
     for(int i = 0; i < w.floors; i++)
@@ -47,7 +42,6 @@ static void attach(const World w)
         m_set_trapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
 }
 
-// Populates rooms with sprites based on room theme.
 static void populate(const World w)
 {
     for(int i = 0; i < w.floors; i++)
@@ -56,15 +50,20 @@ static void populate(const World w)
 
 World w_make(const int floors)
 {
-    World w = carve(make(floors));
+    World w = make(floors);
+    w = carve(w);
     theme(w);
     attach(w);
     populate(w);
     return w;
 }
 
-static Hero damage_hero_health(Hero hero, const Sprites sprites, const Input in, const Timer tm)
+static Hero service_health(Hero hero, const Map map, const Sprites sprites, const Timer tm, const Input in)
 {
+    (void) map;
+    (void) sprites;
+    (void) tm;
+
     const Item equipped = i_get_equipped(hero.inventory);
 
     for(int i = 0; i < sprites.count; i++)
@@ -76,28 +75,30 @@ static Hero damage_hero_health(Hero hero, const Sprites sprites, const Input in,
 
         if(h_close_enough(hero, sprite->where))
         {
-            // Take damage from sprite.
             if(s_impulse(sprite, tm))
-                hero = h_struck(hero, sprite->state, sprite->damage);
-
-            // Block sprite for a stun.
-            if(i_successful_block(equipped, in, tm))
-                s_parried(sprite, hero.attack.velocity, tm);
+            {
+                if(i_successful_block(equipped, in, tm))
+                    s_parried(sprite, hero.attack.velocity, tm);
+                else
+                    hero = h_struck(hero, sprite->state, sprite->damage);
+            }
         }
     }
     return hero;
 }
 
-static Hero damage_hero_mana(Hero hero, const Sprites sprites, const Timer tm)
+static Hero service_mana(Hero hero, const Map map, const Sprites sprites, const Timer tm)
 {
+    (void) map;
     (void) sprites;
     (void) tm;
+
     return hero;
 }
 
-static Hero damage_hero_fatigue(Hero hero, const Sprites sprites, const Timer tm)
+static Hero service_fatigue(Hero hero, const Map map, const Sprites sprites, const Timer tm)
 {
-    (void) tm;
+    (void) map;
     (void) sprites;
 
     hero.fatigue = (hero.gauge.max - hero.gauge.count) / hero.gauge.divisor;
@@ -107,13 +108,14 @@ static Hero damage_hero_fatigue(Hero hero, const Sprites sprites, const Timer tm
     return hero;
 }
 
-// @:
-// To resolve a circular dependency between Hero and Sprites, this function
-// must be placed here even though the World type is not used.
-Hero w_interact(Hero hero, const Sprites sprites, const Input in, const Timer tm)
+Hero w_interact(const World world, Hero hero, const Input in, const Timer tm)
 {
-    hero = damage_hero_health(hero, sprites, in, tm);
-    hero = damage_hero_mana(hero, sprites, tm);
-    hero = damage_hero_fatigue(hero, sprites, tm);
+    const Sprites sprites = world.sprites[hero.floor];
+    const Map map = world.map[hero.floor];
+
+    hero = service_health (hero, map, sprites, tm, in);
+    hero = service_mana   (hero, map, sprites, tm);
+    hero = service_fatigue(hero, map, sprites, tm);
+
     return hero;
 }

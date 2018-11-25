@@ -48,7 +48,7 @@ typedef struct
 }
 Hero;
 
-Hero h_birth(const float focal, const Point where, const int floor);
+Hero h_birth(const float focal, const Map[], const int floor);
 
 Point h_touch(const Hero);
 

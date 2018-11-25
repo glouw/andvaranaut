@@ -13,13 +13,9 @@ int main(int argc, char* argv[])
 
     const Args args = a_parse(argc, argv);
 
-    const World wd = w_make(32);
+    const World world = w_make(32);
 
-    const int floor = 0;
-
-    const Point start = wd.map[floor].trapdoors.point[0];
-
-    Hero hero = h_birth(args.focal, start, floor);
+    Hero hero = h_birth(args.focal, world.map, 0);
 
     Overview ov = o_init();
 
@@ -27,9 +23,9 @@ int main(int argc, char* argv[])
 
     Flow clouds = f_start(9.0f);
 
-    Field field = f_prepare(wd.map[hero.floor], hero.aura);
+    Field field = f_prepare(world.map[hero.floor], hero.aura);
 
-    Fire fire = f_kindle(wd.map[hero.floor]);
+    Fire fire = f_kindle(world.map[hero.floor]);
 
     Scroll scroll = s_new();
 
@@ -54,27 +50,27 @@ int main(int argc, char* argv[])
 
         t_advance_title(renders);
 
-        theme = m_get_theme(theme, wd.map[hero.floor], hero.where, tm);
+        theme = m_get_theme(theme, world.map[hero.floor], hero.where, tm);
 
         if(i_using_world_edit_mode(in))
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
 
-            s_render_overlay(sdl, ov, wd.sprites[hero.floor], wd.map[hero.floor], tm);
+            s_render_overlay(sdl, ov, world.sprites[hero.floor], world.map[hero.floor], tm);
 
             ov = o_update(ov, in, sdl.xres);
 
-            m_edit(wd.map[hero.floor], ov);
+            m_edit(world.map[hero.floor], ov);
 
-            wd.sprites[hero.floor] = s_lay(wd.sprites[hero.floor], wd.map[hero.floor], ov);
+            world.sprites[hero.floor] = s_lay(world.sprites[hero.floor], world.map[hero.floor], ov);
         }
         else
         {
-            wd.map[hero.floor] = s_count_agents(wd.sprites[hero.floor], wd.map[hero.floor]);
+            world.map[hero.floor] = s_count_agents(world.sprites[hero.floor], world.map[hero.floor]);
 
-            m_place_barricades(wd.map[hero.floor]);
+            m_place_barricades(world.map[hero.floor]);
 
-            hero = h_teleporting(hero, wd.map[hero.floor], in, tm);
+            hero = h_teleporting(hero, world.map[hero.floor], in, tm);
 
             current = f_stream(current);
 
@@ -82,28 +78,28 @@ int main(int argc, char* argv[])
 
             if(hero.teleporting)
             {
-                hero = h_teleport(hero, wd.map[hero.floor]);
+                hero = h_teleport(hero, world.map[hero.floor]);
 
                 f_ruin(field);
 
-                field = f_prepare(wd.map[hero.floor], hero.aura);
+                field = f_prepare(world.map[hero.floor], hero.aura);
 
                 f_extinguish(fire);
 
-                fire = f_kindle(wd.map[hero.floor]);
+                fire = f_kindle(world.map[hero.floor]);
             }
 
-            s_caretake(wd.sprites[hero.floor], hero, wd.map[hero.floor], field, fire, tm);
+            s_caretake(world.sprites[hero.floor], hero, world.map[hero.floor], field, fire, tm);
 
-            hero = w_interact(hero, wd.sprites[hero.floor], in, tm);
+            hero = w_interact(world, hero, in, tm);
 
-            wd.sprites[hero.floor] = s_spread_fire(wd.sprites[hero.floor], fire, wd.map[hero.floor], tm);
+            world.sprites[hero.floor] = s_spread_fire(world.sprites[hero.floor], fire, world.map[hero.floor], tm);
 
             ov = o_pan(ov, hero.where, sdl.xres, sdl.yres);
 
             hero.inventory = i_select(hero.inventory, in);
 
-            s_render_playing(sdl, text, hero, wd.sprites[hero.floor], wd.map[hero.floor], current, clouds, tm);
+            s_render_playing(sdl, text, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, tm);
 
             if(i_using_inventory(in))
             {
@@ -123,9 +119,9 @@ int main(int argc, char* argv[])
 
                 hero.gauge = g_wind(hero.gauge, in, tm);
 
-                hero = h_sustain(hero, wd.map[hero.floor], in, current, wd.sprites[hero.floor].last);
+                hero = h_sustain(hero, world.map[hero.floor], in, current, world.sprites[hero.floor].last);
 
-                wd.sprites[hero.floor] = s_hero_damage_sprites(wd.sprites[hero.floor], hero, in, tm);
+                world.sprites[hero.floor] = s_hero_damage_sprites(world.sprites[hero.floor], hero, in, tm);
             }
 
             f_clear(fire);

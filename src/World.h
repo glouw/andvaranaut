@@ -14,4 +14,4 @@ World;
 
 World w_make(const int floors);
 
-Hero w_interact(Hero, const Sprites, const Input, const Timer);
+Hero w_interact(const World, Hero, const Input, const Timer);
