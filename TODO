@@ -1,4 +1,4 @@
-[ ] finish item descriptions
+[x] finish item descriptions
 [ ] add bomb sprite to break down '!' doors (can also hurt enemies)
 [x] remove lootbags as agent count for rooms.
 [ ] work on room themes
@@ -45,7 +45,7 @@
 [ ] scroll to cast fire in circle around player.
 [ ] scroll to make someone not aggressive.
 
-[ ] sprite stands in ring of fire. says "love is a burnin thing bound by wild desire" when you enter.
+[ ] sprite stands in ring of fire. sings "love is a burnin' thing bound by wild desire" when you enter.
     get instrument if he dies.
 
 [ ] Ducking to avoid left / right attacks.
@@ -57,3 +57,7 @@
 [x] stun animation
 
 [ ] go busy should vary to make it less predictable
+
+[ ] musical instruments can play songs. can learn songs. songs are taught by sprites. randomized c scale?
+
+[ ] dark brotherhood like sprite. wants you to assassianate other key sprites.
