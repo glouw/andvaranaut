@@ -32,7 +32,7 @@ Hero h_birth(const float focal, const Map map[], const int floor)
     hero.height = hero.tall;
     hero.health = hero.health_max = 9.0f;
     hero.mana = hero.mana_max = 10.0f;
-    hero.fatigue = hero.fatigue_max = 50.0f;
+    hero.fatigue = hero.fatigue_max = 200.0f;
     hero.warning = 0.25f;
 
     hero.gauge = g_new(hero.fatigue_max);

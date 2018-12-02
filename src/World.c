@@ -59,7 +59,7 @@ World w_make(const int floors)
     return w;
 }
 
-static Hero service_health(Hero hero, const Map map, const Sprites sprites, const Timer tm, const Input in)
+static Hero service_health(Hero hero, const Map map, const Sprites sprites, const Timer tm)
 {
     (void) map;
     (void) sprites;
@@ -77,12 +77,10 @@ static Hero service_health(Hero hero, const Map map, const Sprites sprites, cons
         if(h_close_enough(hero, sprite->where))
         {
             if(s_impulse(sprite, tm))
-            {
-                if(i_successful_block(equipped, in, tm))
-                    s_parried(sprite, hero.attack.velocity, tm);
-                else
-                    hero = h_struck(hero, sprite->state, sprite->damage);
-            }
+                hero = h_struck(hero, sprite->state, sprite->damage);
+
+            if(i_successful_block(equipped, hero.gauge))
+                s_parried(sprite, hero.attack.velocity, tm);
         }
     }
     return hero;
@@ -120,12 +118,12 @@ static Hero service_fatigue(Hero hero, const Map map, const Sprites sprites, con
     return hero;
 }
 
-Hero w_interact(const World world, Hero hero, const Input in, const Timer tm)
+Hero w_interact(const World world, Hero hero, const Timer tm)
 {
     const Sprites sprites = world.sprites[hero.floor];
     const Map map = world.map[hero.floor];
 
-    hero = service_health (hero, map, sprites, tm, in);
+    hero = service_health (hero, map, sprites, tm);
     hero = service_mana   (hero, map, sprites, tm);
     hero = service_fatigue(hero, map, sprites, tm);
 

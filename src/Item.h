@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Classification.h"
+#include "Gauge.h"
 #include "Input.h"
 #include "Timer.h"
 
@@ -26,4 +27,4 @@ void i_test(void);
 
 int i_can_block(const Item);
 
-int i_successful_block(const Item, const Input, const Timer);
+int i_successful_block(const Item, const Gauge);

@@ -830,7 +830,7 @@ int i_can_block(const Item item)
     return item.clas == SHIELD;
 }
 
-int i_successful_block(const Item equipped, const Input in, const Timer tm)
+int i_successful_block(const Item equipped, const Gauge g)
 {
-    return in.lu && t_hi(tm) && i_can_block(equipped);
+    return g.ready && i_can_block(equipped);
 }

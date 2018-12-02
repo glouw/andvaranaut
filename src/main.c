@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 
             s_caretake(world.sprites[hero.floor], hero, world.map[hero.floor], field, fire, tm);
 
-            hero = w_interact(world, hero, in, tm);
+            hero = w_interact(world, hero, tm);
 
             world.sprites[hero.floor] = s_spread_fire(world.sprites[hero.floor], fire, world.map[hero.floor], tm);
 
