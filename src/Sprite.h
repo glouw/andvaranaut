@@ -9,9 +9,11 @@
 
 typedef struct
 {
+    // Trait.
     int ascii;
     int evil;
     int transparent;
+    int block_time;
 
     // Stats.
     float size;
@@ -32,6 +34,7 @@ typedef struct
     Speech speech;
 
     int busy_ticks;
+    int block_start;
 }
 Sprite;
 

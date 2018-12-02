@@ -255,24 +255,15 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
         // Hurt.
         if(sprite->health <= 0.0f)
         {
-            sprite->state =
-                s ? DEAD_N :
-                n ? DEAD_S :
-                e ? DEAD_W : DEAD_E;
-
+            sprite->state = s ? DEAD_N : n ? DEAD_S : e ? DEAD_W : DEAD_E;
             broke_lootbag(sprite->ascii, inv, tm);
-
             if(u_d10() == 0)
                 return drop_item(sprites, attack, sprite->where);
         }
         // Dead.
         else
         {
-            const State hurt =
-                s ? HURT_N :
-                n ? HURT_S :
-                e ? HURT_W : HURT_E;
-
+            const State hurt = s ? HURT_N : n ? HURT_S : e ? HURT_W : HURT_E;
             // TODO: Different sprites have different stun times.
             s_go_busy(sprite, tm, 3 * FRAMES, hurt);
         }
@@ -412,14 +403,21 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
 
             if(h_close_enough(hero, sprite->where))
             {
-                // TODO:
-                // Subtract sprite dependent value from gauge count to have sprites react slower.
+                // TODO: Subtract sprite dependent value from gauge count to have sprites react slower.
                 const Point block = g_sum(hero.gauge, hero.gauge.count);
                 if(p_north(block)) sprite->state = BLOCK_N;
                 if(p_east (block)) sprite->state = BLOCK_E;
                 if(p_south(block)) sprite->state = BLOCK_S;
                 if(p_west (block)) sprite->state = BLOCK_W;
+                if(tm.fall
+                && sprite->evil
+                && tm.ticks > sprite->block_time + sprite->block_start)
+                {
+                    sprite->state = IDLE;
+                    sprite->block_start = tm.ticks;
+                }
             }
+            else sprite->block_start = tm.ticks;
         }
     }
 }
