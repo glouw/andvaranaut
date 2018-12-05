@@ -401,6 +401,9 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
             if(i_can_block(equipped))
                 continue;
 
+            if(s_inanimate(sprite->ascii))
+                continue;
+
             if(h_close_enough(hero, sprite->where))
             {
                 // TODO: Subtract sprite dependent value from gauge count to have sprites react slower.
