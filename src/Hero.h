@@ -27,7 +27,6 @@ typedef struct
     float pitch;
     float d_pitch; // Rate of change of pitch.
     Torch torch;
-    float reach;
     int floor;
     int aura;
     float height;
@@ -49,8 +48,6 @@ typedef struct
 Hero;
 
 Hero h_birth(const float focal, const Map[], const int floor);
-
-Point h_touch(const Hero);
 
 Hero h_teleporting(Hero, const Map, const Input, const Timer);
 

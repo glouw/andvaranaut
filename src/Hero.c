@@ -25,7 +25,6 @@ Hero h_birth(const float focal, const Map map[], const int floor)
     hero.speed = 0.12f;
     hero.acceleration = 0.0150f;
     hero.torch = t_snuff();
-    hero.reach = 0.75f;
     hero.aura = 12;
     hero.pitch = 1.0f;
     hero.tall = 0.5f;
@@ -110,13 +109,6 @@ static Hero do_vert_math(Hero hero, const Map map, const Input input)
         hero.height = calc_duck_height(hero);
 
     return hero;
-}
-
-Point h_touch(const Hero hero)
-{
-    const Point reference = { hero.reach, 0.0f };
-    const Point direction = p_turn(reference, hero.yaw);
-    return p_add(hero.where, direction);
 }
 
 static Point accelerate(const Hero hero)
