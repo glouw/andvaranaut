@@ -13,5 +13,6 @@ int s_nearest_first(const void* const a, const void* const b)
 
 int s_furthest_first(const void* const a, const void* const b)
 {
-    return -s_nearest_first(a, b);
+    // Negating nearest first per comparison will yield a furthest first check.
+    return -1 * s_nearest_first(a, b);
 }
