@@ -2,7 +2,7 @@
 
 The open source dungeon crawler
 
-![](art/screenshots/demo.gif)
+![](art/screenshots/demo2.gif)
 
 ## Dependencies
     SDL2-ttf-devel
