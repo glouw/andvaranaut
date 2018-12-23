@@ -7,11 +7,12 @@ typedef struct
 {
     Map* map;
     Sprites* sprites;
-    int floor;
-    int floors;
+    int last_floor;
+    int index;
+    int max;
 }
 World;
 
-World w_make(const int floors);
+World w_make(const int max);
 
 Hero w_interact(const World, Hero, const Timer);

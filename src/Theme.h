@@ -9,9 +9,9 @@
 
 typedef enum
 {
-    #define X(a) a,
+#define X(a) a,
     LIST_OF_THEMES
-    #undef X
+#undef X
     THEMES
 }
 Theme;
@@ -19,3 +19,5 @@ Theme;
 Theme* t_rand(const int count);
 
 const char* t_get_name(const Theme);
+
+int t_themes_left(void);

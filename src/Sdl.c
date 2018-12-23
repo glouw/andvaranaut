@@ -133,7 +133,7 @@ static void render_all_sprites(const Sdl sdl, const Text text, const Sprites spr
 {
     s_pull(sprites, hero);
     s_turn(sprites, -hero.yaw);
-    s_sort(sprites, s_furthest_first);
+    s_sort(sprites, s_furthest_sprite_first);
     for(int which = 0; which < sprites.count; which++)
     {
         Sprite* const sprite = &sprites.sprite[which];
@@ -154,7 +154,7 @@ static void render_all_sprites(const Sdl sdl, const Text text, const Sprites spr
             }
         }
     }
-    s_sort(sprites, s_nearest_first);
+    s_sort(sprites, s_nearest_sprite_first);
     s_turn(sprites, hero.yaw);
     s_push(sprites, hero);
 }
@@ -250,7 +250,7 @@ static Attack draw_gauge_range(const Sdl sdl, const Gauge g, const Item it, cons
 
         // Range attacks will just have south facing hurt animation drawn.
         const Point dir = { 0.0f, -1.0f };
-        const Point zero;
+        static Point zero;
         const Attack range = { it, dir, zero, RANGE, 0, reticule };
         return range;
     }

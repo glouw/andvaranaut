@@ -1,6 +1,7 @@
 #include "Tris.h"
 
 #include "Points.h"
+#include "Sorter.h"
 #include "Map.h"
 #include "Flags.h"
 #include "util.h"
@@ -172,21 +173,9 @@ static Points prand(const int w, const int h, const int max, const int grid, con
     return ps;
 }
 
-static float len(const Tri edge)
-{
-    return p_mag(p_sub(edge.b, edge.a));
-}
-
-static int descend(const void* a, const void* b)
-{
-    const Tri ea = *(const Tri*) a;
-    const Tri eb = *(const Tri*) b;
-    return len(ea) < len(eb) ? 1 : len(ea) > len(eb) ? -1 : 0;
-}
-
 static void sort(const Tris edges)
 {
-    qsort(edges.tri, edges.count, sizeof(Tri), descend);
+    qsort(edges.tri, edges.count, sizeof(Tri), s_descend_tris);
 }
 
 static int connected(const Point a, const Point b, const Tris edges, const Flags flags)
@@ -194,6 +183,7 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
     Points todo = p_new(edges.max);
     Points done = p_new(edges.max);
     Tris reach = make(edges.max);
+
     todo = p_append(todo, a);
 
     int connection = false;
@@ -309,40 +299,45 @@ static void carve(const Map map, const Tris edges, const Flags flags)
     }
 }
 
-Map t_generate(const Points extra)
+static Points get_traps(const Points rooms, const int count)
 {
-    const int w = 100;
-    const int h = 200;
-    const int grid = 30;
-    const int max = 5 * (1 + u_d2());
-    const int ntraps = 2;
-    const int border = 2 * grid;
+    Points trapdoors = p_new(count);
+    for(int i = 0; i < count; i++)
+        trapdoors = p_add_unique(trapdoors, rooms);
+    return trapdoors;
+}
 
+Map t_generate(const Points extra, const int w, const int h, const int grid, const int traps)
+{
     if(u_odd(grid))
         u_bomb("Grid size must be even\n");
 
-    const Flags flags = {
-        { 0.0, 0.0 },
-        { 1.0, 1.0 },
-    };
+    const int max = traps + (3 + u_d10());
+    const int border = 2 * grid;
+    const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
 
     Points rooms = prand(w, h, max, grid, border, extra);
-    const Tris tris = triangulate(rooms , w, h, 9 * max, flags);
-    const Tris edges = collect(make(27 * max), tris, flags);
-    reverse_delete(edges, w, h, flags);
 
-    // Randomly select which rooms will become trapdoors.
-    Points trapdoors = p_new(ntraps);
-    for(int i = 0; i < ntraps; i++)
-        trapdoors = p_add_unique(trapdoors, rooms);
+    const Points trapdoors = get_traps(rooms, u_min(traps, rooms.count));
 
-    // Build a map with trapdoors and carve out rooms.
     const Map map = m_generate(h, w, trapdoors, rooms, grid);
-    remove_dups(edges, flags);
-    carve(map, edges, flags);
 
-    free(tris.tri);
-    free(edges.tri);
+    if(rooms.count == 1)
+    {
+        const Party parts[] = { WALLING, CEILING };
+        for(int i = 0; i < u_len(parts); i++)
+            m_place_room(map, rooms.point[0], m_min(map), m_min(map), parts[i]);
+    }
+    else
+    {
+        const Tris tris = triangulate(rooms, w, h, 3 * rooms.max, flags);
+        const Tris edges = collect(make(3 * tris.max), tris, flags);
+        reverse_delete(edges, w, h, flags);
+        remove_dups(edges, flags);
+        carve(map, edges, flags);
+        free(tris.tri);
+        free(edges.tri);
+    }
 
     return map;
 }

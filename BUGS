@@ -26,3 +26,6 @@
 
 [x] Fire causing segfault.
     -> caretake() must be called before spread_fire()
+
+[x] There are trapdoors going down on the last floor.
+    -> World.c::attach() needed w.floors - 1 for FLORING

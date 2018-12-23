@@ -7,51 +7,57 @@
 
 static World append(World w, const Map map, const Sprites sprites)
 {
-    if(w.floor == w.floors)
+    if(w.index == w.max)
         u_bomb("World size limitation reached");
-    w.map[w.floor] = map;
-    w.sprites[w.floor] = sprites;
-    w.floor++;
+    w.map[w.index] = map;
+    w.sprites[w.index] = sprites;
+    w.index++;
     return w;
 }
 
-static World make(const int floors)
+static World make(const int max)
 {
-    const World w = { u_toss(Map, floors), u_toss(Sprites, floors), 0, floors };
+    const World w = { u_toss(Map, max), u_toss(Sprites, max), 0, 0, max };
     return w;
 }
 
 static World carve(World w)
 {
-    for(int i = 0; i < w.floors; i++)
-        w = append(w, t_generate(i == 0 ? p_new(0) : w.map[i - 1].trapdoors), s_spawn(128));
+    while(t_themes_left())
+    {
+        printf("gen floor %d\n", w.index);
+        const Points trapdoors = w.index == 0 ? p_new(0) : w.map[w.index - 1].trapdoors;
+        const Map map = t_generate(trapdoors, 200, 300, 40, 3);
+        const Sprites sprites = s_spawn(128);
+        w = append(w, map, sprites);
+    }
     return w;
 }
 
 static void theme(const World w)
 {
-    for(int i = 0; i < w.floors; i++)
+    for(int i = 0; i < w.index; i++)
         m_themeate(w.map[i]);
 }
 
 static void attach(const World w)
 {
-    for(int i = 0; i < w.floors; i++)
+    for(int i = 0; i < w.index - 1; i++)
         m_set_trapdoors(w.map[i], w.map[i - 0].trapdoors, FLORING);
 
-    for(int i = 1; i < w.floors; i++)
+    for(int i = 1; i < w.index - 0; i++)
         m_set_trapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
 }
 
 static void populate(const World w)
 {
-    for(int i = 0; i < w.floors; i++)
+    for(int i = 0; i < w.index; i++)
         w.sprites[i] = s_populate(w.sprites[i], w.map[i]);
 }
 
-World w_make(const int floors)
+World w_make(const int max)
 {
-    World w = make(floors);
+    World w = make(max);
     w = carve(w);
     theme(w);
     attach(w);

@@ -11,14 +11,15 @@ Points p_new(const int max)
 Points p_append(Points ps, const Point p)
 {
     if(ps.count == ps.max)
-        u_bomb("points size limitation reached\n");
+        u_bomb("points size limitation reached: count %d: max %d\n", ps.count, ps.max);
     ps.point[ps.count++] = p;
     return ps;
 }
 
 Points p_add_unique(Points a, const Points b)
 {
-    const Point point = b.point[rand() % b.count];
+    const int index = rand() % b.count;
+    const Point point = b.point[index];
     return p_find(a, point) ? p_add_unique(a, b) : p_append(a, point);
 }
 

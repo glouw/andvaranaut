@@ -516,7 +516,7 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
 void s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Fire fire, const Timer tm)
 {
     s_pull(sprites, hero);
-    s_sort(sprites, s_nearest_first);
+    s_sort(sprites, s_nearest_sprite_first);
     s_push(sprites, hero);
 
     idle(sprites, tm);
