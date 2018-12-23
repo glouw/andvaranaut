@@ -2,14 +2,15 @@
 
 #include "Point.h"
 #include "Method.h"
+#include "Item.h"
 
 typedef struct
 {
-    float power;
+    Item item;
     Point velocity;
-    int hurts;
+    Point sum;
     Method method;
-    int scindex;
+    int scroll_index;
     Point reticule;
 }
 Attack;

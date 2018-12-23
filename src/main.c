@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 
     const Args args = a_parse(argc, argv);
 
-    const World world = w_make(32);
+    const World world = w_make(2);
 
     Hero hero = h_birth(args.focal, world.map, 0);
 

@@ -311,10 +311,10 @@ static void carve(const Map map, const Tris edges, const Flags flags)
 
 Map t_generate(const Points extra)
 {
-    const int w = 150;
-    const int h = 350;
+    const int w = 100;
+    const int h = 200;
     const int grid = 30;
-    const int max = 20 * (1 + u_d2());
+    const int max = 5 * (1 + u_d2());
     const int ntraps = 2;
     const int border = 2 * grid;
 

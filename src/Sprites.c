@@ -250,7 +250,7 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
     // If the block was not successful Sprite is now either hurt or dead.
     else
     {
-        sprite->health -= attack.power;
+        sprite->health -= attack.item.damage;
 
         // Hurt.
         if(sprite->health <= 0.0f)
@@ -273,8 +273,6 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
 
 static Sprites damage_melee(Sprites sprites, const Timer tm, const Hero hero)
 {
-    const Item equipped = i_get_equipped(hero.inventory);
-
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
@@ -282,13 +280,13 @@ static Sprites damage_melee(Sprites sprites, const Timer tm, const Hero hero)
         if(s_useless(sprite))
             continue;
 
-        if(i_can_block(equipped))
+        if(i_can_block(hero.attack.item))
             continue;
 
         if(h_close_enough(hero, sprite->where))
         {
             sprites = damage(sprites, sprite, hero.attack, hero.inventory, tm);
-            if(++hurts == equipped.hurts)
+            if(++hurts == hero.attack.item.hurts)
                 return sprites;
         }
     }
@@ -301,8 +299,6 @@ static Sprites damage_range(Sprites sprites, const Timer tm, const Hero hero)
         (int) hero.attack.reticule.x,
         (int) hero.attack.reticule.y,
     };
-    const Item it = i_get_equipped(hero.inventory);
-
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
@@ -313,7 +309,7 @@ static Sprites damage_range(Sprites sprites, const Timer tm, const Hero hero)
         if(SDL_PointInRect(&point, &sprite->seen))
         {
             sprites = damage(sprites, sprite, hero.attack, hero.inventory, tm);
-            if(++hurts == it.hurts)
+            if(++hurts == hero.attack.item.hurts)
                 return sprites;
         }
     }
@@ -326,10 +322,8 @@ static Sprites damage_magic(Sprites sprites, const Timer tm, const Hero hero)
     // Casting magic scrolls will spawn new sprites.
     // These sprites will do something like heal the hero, teleport the hero, or be something like fire
     // which hurts, heals, or teleports other sprites.
-    const Item it = i_get_equipped(hero.inventory);
     (void) hero;
     (void) tm;
-    (void) it;
     return sprites;
 }
 
@@ -384,8 +378,6 @@ static void rage(const Sprites sprites, const Hero hero, const Timer tm)
 
 static void block(const Sprites sprites, const Hero hero, const Timer tm)
 {
-    const Item equipped = i_get_equipped(hero.inventory);
-
     if(hero.gauge.count > 0)
     {
         for(int i = 0; i < sprites.count; i++)
@@ -398,7 +390,7 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
             if(s_busy(sprite, tm))
                 continue;
 
-            if(i_can_block(equipped))
+            if(i_can_block(hero.attack.item))
                 continue;
 
             if(s_inanimate(sprite->ascii))

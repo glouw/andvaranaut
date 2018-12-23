@@ -118,7 +118,7 @@ int s_firey(const int ascii)
 
 int s_inanimate(const int ascii)
 {
-    return ascii == 'd';
+    return ascii == 'd' || s_firey(ascii);
 }
 
 int s_useless(const Sprite* const sprite)

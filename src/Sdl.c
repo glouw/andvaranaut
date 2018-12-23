@@ -228,7 +228,7 @@ static Attack draw_gauge_melee(const Sdl sdl, const Gauge g, const Item it, cons
         return zero;
     }
     static Point zero;
-    const Attack melee = { it.damage, g_velocity(g), it.hurts, MELEE, 0, zero };
+    const Attack melee = { it, g_velocity(g), g_sum(g, g.count), MELEE, 0, zero };
     return melee;
 }
 
@@ -243,9 +243,6 @@ static Attack draw_gauge_range(const Sdl sdl, const Gauge g, const Item it, cons
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
         draw_box(sdl, x, y, width, sdl.wht, false);
 
-        // TODO: Fix this so that range attack is based on sinc steady state.
-        const float mag = 100.0f;
-
         const Point reticule = {
             (float) (x + rand() % (width < 1 ? 1 : width)), // Divide by zero check.
             (float) (y + rand() % (width < 1 ? 1 : width)),
@@ -253,7 +250,8 @@ static Attack draw_gauge_range(const Sdl sdl, const Gauge g, const Item it, cons
 
         // Range attacks will just have south facing hurt animation drawn.
         const Point dir = { 0.0f, -1.0f };
-        const Attack range = { mag, dir, it.hurts, RANGE, 0, reticule };
+        const Point zero;
+        const Attack range = { it, dir, zero, RANGE, 0, reticule };
         return range;
     }
     else
@@ -316,12 +314,7 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
         draw_box(sdl, center.x, center.y, 6, sdl.red, true);
     }
 
-    // Calculate attack.
-    const int scindex = s_index(sc);
-
-    // TODO: Maybe accuracy to scroll gives better attack + item base attack?
-    (void) it;
-    const float mag = 0.0f;
+    const int scroll_index = s_index(sc);
 
     // If the scroll index is not found in the inventory the attack will go from MAGIC to NOATTACK.
     (void) inv;
@@ -330,7 +323,7 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
     // attack sprites (fire / ice), etc.
     const Point dir = { 0.0f, 0.0f };
     static Point zero;
-    const Attack magic = { mag, dir, 0, MAGIC, scindex, zero };
+    const Attack magic = { it, dir, zero, MAGIC, scroll_index, zero };
     return magic;
 }
 
