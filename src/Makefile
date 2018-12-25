@@ -15,11 +15,11 @@ DEBUG = 0
 
 # 0: Compile with gcc.
 # 1: Compile with clang.
-CLANG = 1
+CLANG = 0
 
 # 0: Compile as C.
 # 1: Compile as C++ (Better type checking).
-C++ = 1
+CC = 0
 
 BINARY = ../andvaranaut
 
@@ -69,19 +69,19 @@ SRCS += Tris.c
 SRCS += Vram.c
 SRCS += World.c
 
-ifeq (00, $(CLANG)$(C++))
+ifeq (00, $(CLANG)$(CC))
 COMPILER = gcc -std=c99
 endif
 
-ifeq (01, $(CLANG)$(C++))
+ifeq (01, $(CLANG)$(CC))
 COMPILER = g++ -std=c++98
 endif
 
-ifeq (10, $(CLANG)$(C++))
+ifeq (10, $(CLANG)$(CC))
 COMPILER = clang -std=c99
 endif
 
-ifeq (11, $(CLANG)$(C++))
+ifeq (11, $(CLANG)$(CC))
 COMPILER = clang++ -std=c++98
 endif
 
@@ -90,7 +90,6 @@ COMPILER_FLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -ma
 ifeq (1, $(DEBUG))
 COMPILER_FLAGS += -g -fsanitize=address
 else
-# Cannot combine flto and fsanitize - gives useless crash logs.
 COMPILER_FLAGS += -flto
 endif
 
