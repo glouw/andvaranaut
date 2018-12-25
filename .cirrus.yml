@@ -1,7 +1,0 @@
-container:
-    image:
-        gcc:latest
-        clang:latest
-task:
-  tests_script:
-      sh test.sh
