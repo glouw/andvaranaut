@@ -1,6 +1,0 @@
-script:
-
-    - sudo apt-get update -qq
-    - sudo apt-get install libsdl2-dev -y
-    - sudo apt-get install libsdl2-ttf-dev -y
-    - make -C src
