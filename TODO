@@ -1,3 +1,5 @@
+[ ] inventory management (movement + delete + give items)
+
 [x] finish item descriptions
 
 [ ] add bomb sprite to break down '!' doors (can also hurt enemies)
@@ -19,8 +21,6 @@
 [ ] gloves grab things sprites
 
 [ ] old man who speaks constant gibberish
-
-[ ] inventory management (movement + delete + give items)
 
 [ ] shovel can dig (to protect against fire)
 

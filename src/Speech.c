@@ -23,6 +23,8 @@ Speech s_use_greet(void)
 {
     const char* const sentences[] = {
         "Hello there!",
+        "How are you doing?",
+        "Nice weather huh?",
         ""
     };
     return build(sentences, u_len(sentences));
