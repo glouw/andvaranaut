@@ -13,3 +13,5 @@ typedef struct
 Rooms;
 
 Rooms r_init(const Points);
+
+int r_themes_left(void);

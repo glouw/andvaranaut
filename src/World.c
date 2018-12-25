@@ -23,11 +23,11 @@ static World make(const int max)
 
 static World carve(World w)
 {
-    while(t_themes_left())
+    while(r_themes_left())
     {
         printf("gen floor %d\n", w.index);
         const Points trapdoors = w.index == 0 ? p_new(0) : w.map[w.index - 1].trapdoors;
-        const Map map = t_generate(trapdoors, 200, 300, 40, 3);
+        const Map map = t_generate(trapdoors, 150, 250, 30, 3);
         const Sprites sprites = s_spawn(128);
         w = append(w, map, sprites);
     }

@@ -16,8 +16,4 @@ typedef enum
 }
 Theme;
 
-Theme* t_rand(const int count);
-
 const char* t_get_name(const Theme);
-
-int t_themes_left(void);

@@ -5,8 +5,8 @@
 
 int s_nearest_sprite_first(const void* const a, const void* const b)
 {
-    const Sprite* const sa = (const Sprite*) a;
-    const Sprite* const sb = (const Sprite*) b;
+    const Sprite* const sa = (Sprite*) a;
+    const Sprite* const sb = (Sprite*) b;
     return
         p_mag(sa->where) < p_mag(sb->where) ? -1 :
         p_mag(sa->where) > p_mag(sb->where) ? +1 : 0;
@@ -17,11 +17,11 @@ int s_furthest_sprite_first(const void* const a, const void* const b)
     return -1 * s_nearest_sprite_first(a, b);
 }
 
-int s_largest_int_first(const void* const a, const void* const b)
+int s_largest_theme_first(const void* const a, const void* const b)
 {
-    const int ia = *((const int*) a);
-    const int ib = *((const int*) b);
-    return ia < ib;
+    const Theme ta = *((Theme*) a);
+    const Theme tb = *((Theme*) b);
+    return (int) ta < (int) tb;
 }
 
 static float len(const Tri edge)
@@ -31,7 +31,7 @@ static float len(const Tri edge)
 
 int s_descend_tris(const void* const a, const void* const b)
 {
-    const Tri ea = *(const Tri*) a;
-    const Tri eb = *(const Tri*) b;
+    const Tri ea = *((Tri*) a);
+    const Tri eb = *((Tri*) b);
     return len(ea) < len(eb) ? 1 : len(ea) > len(eb) ? -1 : 0;
 }

@@ -312,7 +312,7 @@ Map t_generate(const Points extra, const int w, const int h, const int grid, con
     if(u_odd(grid))
         u_bomb("Grid size must be even\n");
 
-    const int max = traps + (3 + u_d10());
+    const int max = traps + (10 + u_d10());
     const int border = 2 * grid;
     const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
 

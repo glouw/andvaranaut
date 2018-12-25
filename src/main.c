@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     t_clear_title();
 
     // X-Resolution 512 reserved for performance testing.
-    for(int renders = 0, fps = 0; args.xres == 512 ? renders < 20 : !in.done; renders++)
+    for(int renders = 0, fps = 0; args.xres == 512 ? renders < 5 : !in.done; renders++)
     {
         const int t0 = SDL_GetTicks();
 
