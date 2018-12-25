@@ -44,7 +44,9 @@ Color pallette by DawnBringer
 
 ## Special Thanks
 Cam
+
     Artwork - Prototype tiles and sprites
 
 Paolo
+
     Questline - Dwarven Brothers
