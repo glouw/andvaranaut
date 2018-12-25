@@ -34,7 +34,8 @@ static void raster_wall(const Scanline sl, const Ray r)
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
         const Point offset = { (x - r.proj.bot) / r.proj.size, r.offset };
-        pixel_xfer(sl, x, offset, r.surface, t_illuminate(r.torch, r.corrected.x));
+        const int lum = t_illuminate(r.torch, r.corrected.x);
+        pixel_xfer(sl, x, offset, r.surface, lum);
     }
 }
 
@@ -46,7 +47,8 @@ static void raster_flor(const Scanline sl, const Ray r, const Map map)
         const int tile = p_tile(offset, map.floring);
         if(!tile)
             continue;
-        pixel_xfer(sl, x, offset, tile, t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
+        const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
+        pixel_xfer(sl, x, offset, tile, lum);
     }
 }
 
@@ -58,7 +60,8 @@ static void raster_ceil(const Scanline sl, const Ray r, const Map map)
         const int tile = p_tile(offset, map.ceiling);
         if(!tile)
             continue;
-        pixel_xfer(sl, x, offset, tile, t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
+        const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
+        pixel_xfer(sl, x, offset, tile, lum);
     }
 }
 
@@ -70,7 +73,8 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
         {
             const Sheer sa = { 0.0f, clouds.height };
             const Point a = l_lerp(r.trace, p_ceil_cast(p_sheer(r.proj, sa), x));
-            pixel_xfer(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', t_illuminate(r.torch, p_mag(p_sub(a, r.trace.a))));
+            const int lum = t_illuminate(r.torch, p_mag(p_sub(a, r.trace.a)));
+            pixel_xfer(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', lum);
         }
     }
     else
@@ -79,7 +83,8 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
             const Point offset = l_lerp(r.trace, p_ceil_cast(r.proj, x));
             if(p_tile(offset, map.ceiling))
                 continue;
-            pixel_xfer(sl, x, offset, '#' - ' ', t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
+            const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
+            pixel_xfer(sl, x, offset, '#' - ' ', lum);
         }
 }
 
@@ -90,7 +95,8 @@ static void raster_pit(const Scanline sl, const Ray r, const Map map, const Flow
         const Point offset = l_lerp(r.trace, p_flor_cast(r.proj, x));
         if(p_tile(offset, map.floring))
             continue;
-        pixel_xfer(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a))));
+        const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
+        pixel_xfer(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', lum);
     }
 }
 
