@@ -161,20 +161,20 @@ void p_print(const Point a)
 
 int p_north(const Point p)
 {
-    return p.y < 0 && fabs(p.y) > fabs(p.x);
+    return p.y < 0 && fabsf(p.y) > fabsf(p.x);
 }
 
 int p_south(const Point p)
 {
-    return p.y > 0 && fabs(p.y) > fabs(p.x);
+    return p.y > 0 && fabsf(p.y) > fabsf(p.x);
 }
 
 int p_west(const Point p)
 {
-    return p.x < 0 && fabs(p.x) > fabs(p.y);
+    return p.x < 0 && fabsf(p.x) > fabsf(p.y);
 }
 
 int p_east(const Point p)
 {
-    return p.x > 0 && fabs(p.x) > fabs(p.y);
+    return p.x > 0 && fabsf(p.x) > fabsf(p.y);
 }

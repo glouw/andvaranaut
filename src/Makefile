@@ -13,9 +13,13 @@
 # 1: Best crash messages.
 DEBUG = 0
 
-# 0: Compile with C.
-# 1: Compile with C++ (Better type checking).
-C++ = 0
+# 0: Compile with gcc.
+# 1: Compile with clang.
+CLANG = 1
+
+# 0: Compile as C.
+# 1: Compile as C++ (Better type checking).
+C++ = 1
 
 BINARY = ../andvaranaut
 
@@ -65,10 +69,20 @@ SRCS += Tris.c
 SRCS += Vram.c
 SRCS += World.c
 
-ifeq (1, $(C++))
-COMPILER = g++ -std=c++98
-else
+ifeq (00, $(CLANG)$(C++))
 COMPILER = gcc -std=c99
+endif
+
+ifeq (01, $(CLANG)$(C++))
+COMPILER = g++ -std=c++98
+endif
+
+ifeq (10, $(CLANG)$(C++))
+COMPILER = clang -std=c99
+endif
+
+ifeq (11, $(CLANG)$(C++))
+COMPILER = clang++ -std=c++98
 endif
 
 COMPILER_FLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -march=native

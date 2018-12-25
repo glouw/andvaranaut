@@ -1,24 +1,41 @@
 [x] finish item descriptions
+
 [ ] add bomb sprite to break down '!' doors (can also hurt enemies)
+
 [x] remove lootbags as agent count for rooms.
+
 [ ] work on room themes
+
 [ ] implement magic effects
+
 [ ] tie items to attack
+
 [x] maybe remove all comments and restart documentation
+
 [ ] programmable computer sprite?
+
 [ ] movable blocks
+
 [ ] gloves grab things sprites
+
 [ ] old man who speaks constant gibberish
+
 [ ] inventory management (movement + delete + give items)
+
 [ ] shovel can dig (to protect against fire)
+
 [ ] last enemy in room surrenders and asks for mercy kill
 
 [x] attacking a friendly sprite changes speech into anger
+
 [x] also makes him evil and prone to attacking
 
 [x] sprites can attack (melee)
+
 [ ] sprites can hurt hero
+
 [ ] sprites can attack (ranged / magic)
+
 [ ] some sprites have helmets or shields for directional defense.
 
 [ ] each room is a node which forms some connection to a quest
@@ -41,8 +58,11 @@
 [ ] enemy mage can cast fire in circle around himself.
 
 [ ] scroll to bring someone back to life
+
 [ ] scroll to blow everyone away (and put out fires)
+
 [ ] scroll to cast fire in circle around player.
+
 [ ] scroll to make someone not aggressive.
 
 [ ] sprite stands in ring of fire. sings "love is a burnin' thing bound by wild desire" when you enter.
@@ -61,3 +81,7 @@
 [ ] musical instruments can play songs. can learn songs. songs are taught by sprites. randomized c scale?
 
 [ ] dark brotherhood like sprite. wants you to assassianate other key sprites.
+
+[ ] surrounded and attacked by many dwaves. betrayal questline? fight your way out.
+
+[ ] ramping up difficulty - teach player basic combat. have a room for that.

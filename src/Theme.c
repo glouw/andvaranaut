@@ -14,7 +14,7 @@ static int size = THEMES; /* warning: mutates */
 
 static void sort(void)
 {
-    qsort(themes, THEMES, sizeof(int), s_largest_int_first);
+    qsort(themes, THEMES, sizeof(themes[0]), s_largest_int_first);
 }
 
 int t_themes_left(void)
@@ -26,6 +26,8 @@ static Theme reuse(void)
 {
     const Theme reusables[] = {
         AN_EMPTY_ROOM,
+        A_WELL_OF_WATER,
+        A_NICE_GARDEN,
     };
     const int index = rand() % u_len(reusables);
     return reusables[index];
