@@ -111,11 +111,7 @@ int main(int argc, char* argv[])
             }
             else
             if(i_using_lookup(in))
-            {
-                const int key = i_get_key(in);
-                s_draw_room_lookup(sdl, yel, red, world.map[hero.floor].rooms, key);
-                hero = h_transport(hero, world.map[hero.floor], key);
-            }
+                hero = w_transport(world, hero, sdl, red, yel, in);
             else
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);

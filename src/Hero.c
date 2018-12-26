@@ -180,19 +180,25 @@ Hero h_teleporting(Hero hero, const Map map, const Input input, const Timer tm)
     return hero;
 }
 
-Hero h_teleport(Hero hero, const Map map, const Point where)
+Hero h_place(Hero hero, const Point where, const int floor, const float height)
 {
-    if(teleporting_up(hero, map))
-        hero.floor--;
-    if(teleporting_down(hero, map))
-    {
-        hero.floor++;
-        hero.height = 0.90;
-    }
     hero.pitch = 1.0f;
     hero.torch = t_snuff();
     hero.where = where;
+    hero.floor = floor;
+    hero.height = height;
     return hero;
+}
+
+Hero h_teleport(Hero hero, const Map map, const Point where)
+{
+    if(teleporting_up(hero, map))
+        return h_place(hero, where, hero.floor - 1, hero.height);
+
+    if(teleporting_down(hero, map))
+        return h_place(hero, where, hero.floor + 1, 0.90);
+
+    return h_place(hero, where, hero.floor, hero.height);
 }
 
 Ray h_cast(const Hero hero, const Hit hit, const Sheer sheer, const int yres, const int xres)
@@ -237,15 +243,4 @@ Hero h_struck(Hero hero, const State state, const float damage)
 int h_close_enough(const Hero hero, const Point other)
 {
     return p_eql(hero.where, other, 2.2f);
-}
-
-Hero h_transport(Hero hero, const Map map, const int key)
-{
-    if(key != EOF)
-    {
-        const int index = key - 'A';
-        if(index < map.rooms.count)
-            hero = h_teleport(hero, map, map.rooms.wheres[index]);
-    }
-    return hero;
 }

@@ -42,4 +42,4 @@ void s_render_overlay(const Sdl, const Overview, const Sprites, const Map, const
 
 Hero s_draw_gauge(const Sdl, Hero, const Scroll);
 
-void s_draw_room_lookup(const Sdl, const Text yel, const Text red, const Rooms, const int key);
+void s_draw_room_lookup(const Sdl, const Text yel, const Text red, const Rooms, const int floor, const int room);

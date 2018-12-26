@@ -17,7 +17,7 @@ static World append(World w, const Map map, const Sprites sprites)
 
 static World make(const int max)
 {
-    const World w = { u_toss(Map, max), u_toss(Sprites, max), 0, 0, max };
+    const World w = { u_toss(Map, max), u_toss(Sprites, max), 0, max };
     return w;
 }
 
@@ -25,7 +25,6 @@ static World carve(World w)
 {
     while(r_themes_left())
     {
-        printf("gen floor %d\n", w.index);
         const Points trapdoors = w.index == 0 ? p_new(0) : w.map[w.index - 1].trapdoors;
         const Map map = t_generate(trapdoors, 150, 250, 30, 3);
         const Sprites sprites = s_spawn(128);
@@ -133,5 +132,26 @@ Hero w_interact(const World world, Hero hero, const Timer tm)
     hero = service_mana   (hero, map, sprites, tm);
     hero = service_fatigue(hero, map, sprites, tm);
 
+    return hero;
+}
+
+Hero w_transport(const World world, const Hero hero, const Sdl sdl, const Text red, const Text yel, const Input in)
+{
+    const int numer = i_get_numer_key(in);
+    const int alpha = i_get_alpha_key(in);
+
+    const int flor = numer == EOF ? hero.floor : numer - '0';
+    const int room = alpha == EOF ? EOF : alpha - 'A';
+
+    const Rooms rooms = world.map[flor].rooms;
+
+    if(flor < world.index)
+    {
+        s_draw_room_lookup(sdl, yel, red, rooms, flor, room);
+
+        if(room != EOF
+        && room < rooms.count)
+            return h_place(hero, rooms.wheres[room], flor, hero.height);
+    }
     return hero;
 }

@@ -60,6 +60,7 @@ void t_write(const Text text, SDL_Renderer* const rend, const int x, const int y
     render_text(text, rend, to, str, alpha);
 }
 
+// Handles '\n' but not extended formatting.
 void t_print(const Text text, SDL_Renderer* const rend, const int x, const int y, const Position position, const int alpha, const char* const str)
 {
     char* const copy = u_str_dup(str);
@@ -70,6 +71,7 @@ void t_print(const Text text, SDL_Renderer* const rend, const int x, const int y
     free(copy);
 }
 
+// Handles extended formatting but not '\n'.
 void t_scrib(const Text text, SDL_Renderer* const rend, const int x, const int y, const Position position, const int alpha, const int line, const char* const fmt, ...)
 {
     va_list args;

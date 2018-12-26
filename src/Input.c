@@ -60,7 +60,7 @@ int i_using_lookup(const Input in)
     return in.key[SDL_SCANCODE_BACKSPACE];
 }
 
-int i_get_key(const Input in)
+int i_get_alpha_key(const Input in)
 {
     if(in.key[SDL_SCANCODE_A]) return 'A';
     if(in.key[SDL_SCANCODE_B]) return 'B';
@@ -88,6 +88,22 @@ int i_get_key(const Input in)
     if(in.key[SDL_SCANCODE_X]) return 'X';
     if(in.key[SDL_SCANCODE_Y]) return 'Y';
     if(in.key[SDL_SCANCODE_Z]) return 'Z';
+
+    return EOF;
+}
+
+int i_get_numer_key(const Input in)
+{
+    if(in.key[SDL_SCANCODE_0]) return '0';
+    if(in.key[SDL_SCANCODE_1]) return '1';
+    if(in.key[SDL_SCANCODE_2]) return '2';
+    if(in.key[SDL_SCANCODE_3]) return '3';
+    if(in.key[SDL_SCANCODE_4]) return '4';
+    if(in.key[SDL_SCANCODE_5]) return '5';
+    if(in.key[SDL_SCANCODE_6]) return '6';
+    if(in.key[SDL_SCANCODE_7]) return '7';
+    if(in.key[SDL_SCANCODE_8]) return '8';
+    if(in.key[SDL_SCANCODE_9]) return '9';
 
     return EOF;
 }

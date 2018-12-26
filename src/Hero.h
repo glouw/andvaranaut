@@ -51,6 +51,8 @@ Hero h_birth(const float focal, const Map[], const int floor);
 
 Hero h_teleporting(Hero, const Map, const Input, const Timer);
 
+Hero h_place(Hero, const Point where, const int floor, const float height);
+
 Hero h_teleport(Hero, const Map, const Point);
 
 Hero h_sustain(Hero, const Map, const Input, const Flow, const Method, const Timer);
@@ -60,5 +62,3 @@ Ray h_cast(const Hero, const Hit, const Sheer, const int yres, const int xres);
 Hero h_struck(Hero, const State, const float damage);
 
 int h_close_enough(const Hero, const Point other);
-
-Hero h_transport(Hero, const Map, const int key);
