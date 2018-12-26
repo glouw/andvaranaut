@@ -48,3 +48,5 @@ int i_using_inventory(const Input);
 int i_using_world_edit_mode(const Input);
 
 int i_using_lookup(const Input);
+
+int i_get_key(const Input);
