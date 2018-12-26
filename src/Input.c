@@ -57,7 +57,7 @@ int i_using_world_edit_mode(const Input in)
 
 int i_using_lookup(const Input in)
 {
-    return in.key[SDL_SCANCODE_HOME];
+    return in.key[SDL_SCANCODE_BACKSPACE];
 }
 
 int i_get_key(const Input in)

@@ -61,4 +61,4 @@ Hero h_struck(Hero, const State, const float damage);
 
 int h_close_enough(const Hero, const Point other);
 
-Hero h_transport(Hero, const Map, const Input);
+Hero h_transport(Hero, const Map, const int key);

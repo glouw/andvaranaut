@@ -77,7 +77,7 @@ static void render_speech(Sprite* const sprite, const Sdl sdl, const Text text, 
         const char* const sentence = sprite->speech.sentences[sprite->speech.index];
         const int x = target.x + target.w / 2;
         const int y = target.y + target.h / 3; // TODO: Maybe tune the offset per sprite?
-        t_put(text, sentence, 0xFF, sdl.renderer, x, y);
+        t_write(text, sdl.renderer, x, y, MIDDLE, 0xFF, 0, sentence);
     }
 }
 
@@ -537,55 +537,15 @@ static void draw_map(const Sdl sdl, const Map map, const Point where)
     SDL_DestroyTexture(texture);
 }
 
-void s_log(const Sdl sdl, const Text text, const int x, const int y, const char* const fmt, ...)
+void s_draw_room_lookup(const Sdl sdl, const Text yel, const Text red, const Rooms rooms, const int key)
 {
-    va_list args;
-
-    // Get string length for formatter.
-    va_start(args, fmt);
-    const int len = vsnprintf(NULL, 0, fmt, args);
-    va_end(args);
-
-    // Rewind and format.
-    va_start(args, fmt);
-    char* const str = u_toss(char, len + 1);
-    vsprintf(str, fmt, args);
-    va_end(args);
-
-    t_put_top_left(text, str, 0xFF, sdl.renderer, x, y);
-
-    free(str);
-}
-
-void s_draw_fps(const Sdl sdl, const Text text, const int x, const int y, const char* const fmt, ...)
-{
-    va_list args;
-
-    // Get string length for formatter.
-    va_start(args, fmt);
-    const int len = vsnprintf(NULL, 0, fmt, args);
-    va_end(args);
-
-    // Rewind and format.
-    va_start(args, fmt);
-    char* const str = u_toss(char, len + 1);
-    vsprintf(str, fmt, args);
-    va_end(args);
-
-    t_put_bottom_right(text, str, 0xFF, sdl.renderer, x, y);
-
-    free(str);
-}
-
-void s_draw_room_lookup(const Sdl sdl, const Text text, const Rooms rooms)
-{
-    int y = 0;
+    const int index = key - 'A';
+    t_scrib(yel, sdl.renderer, sdl.xres, 0, TOP_RITE, 0xFF, 0, "FLOOR: %2d", 4);
     for(int i = 0; i < rooms.count; i++)
     {
-        const char* get = t_get_name(rooms.themes[i]);
-        const SDL_Rect size = f_calc_size(text.fill, get);
-        s_log(sdl, text, 0, y, "[%c] %s", i + 'A', get);
-        y += size.h;
+        const Text text = index == i ? red : yel;
+        const char* name = t_get_name(rooms.themes[i]);
+        t_scrib(text, sdl.renderer, 0, 0, TOP_LEFT, 0xFF, i, "[%c] %s", i + 'A', name);
     }
 }
 

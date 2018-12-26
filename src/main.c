@@ -37,7 +37,8 @@ int main(int argc, char* argv[])
 
     Sdl sdl = s_setup(args);
 
-    const Text text = t_build("art/gui/SDS_8x8.ttf", 24, sdl.yel, sdl.blk);
+    const Text yel = t_build("art/gui/SDS_8x8.ttf", 24, sdl.yel, sdl.blk);
+    const Text red = t_build("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
 
     t_clear_title();
 
@@ -98,7 +99,7 @@ int main(int argc, char* argv[])
 
             hero.inventory = i_select(hero.inventory, in);
 
-            s_render_playing(sdl, text, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, tm);
+            s_render_playing(sdl, yel, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, tm);
 
             if(i_using_inventory(in))
             {
@@ -111,8 +112,9 @@ int main(int argc, char* argv[])
             else
             if(i_using_lookup(in))
             {
-                s_draw_room_lookup(sdl, text, world.map[hero.floor].rooms);
-                hero = h_transport(hero, world.map[hero.floor], in);
+                const int key = i_get_key(in);
+                s_draw_room_lookup(sdl, yel, red, world.map[hero.floor].rooms, key);
+                hero = h_transport(hero, world.map[hero.floor], key);
             }
             else
             {
@@ -129,9 +131,9 @@ int main(int argc, char* argv[])
 
             f_clear(fire);
         }
-        t_show_title(text, sdl);
+        t_show_title(yel, sdl);
 
-        s_draw_fps(sdl, text, sdl.xres, sdl.yres, "%d", fps);
+        t_scrib(yel, sdl.renderer, sdl.xres, sdl.yres, BOT_RITE, 0xFF, 0, "%d", fps);
 
         s_present(sdl);
 

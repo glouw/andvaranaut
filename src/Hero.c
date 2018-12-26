@@ -239,9 +239,8 @@ int h_close_enough(const Hero hero, const Point other)
     return p_eql(hero.where, other, 2.2f);
 }
 
-Hero h_transport(Hero hero, const Map map, const Input in)
+Hero h_transport(Hero hero, const Map map, const int key)
 {
-    const int key = i_get_key(in);
     if(key != EOF)
     {
         const int index = key - 'A';
