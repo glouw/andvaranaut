@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
             else
             if(i_using_lookup(in))
             {
-                s_draw_lookup(sdl, text, world.map[hero.floor].rooms);
+                s_draw_room_lookup(sdl, text, world.map[hero.floor].rooms);
                 hero = h_transport(hero, world.map[hero.floor], in);
             }
             else
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
         }
         t_show_title(text, sdl);
 
-        s_draw_fps(sdl, text, "%d", fps);
+        s_draw_fps(sdl, text, sdl.xres, sdl.yres, "%d", fps);
 
         s_present(sdl);
 

@@ -551,12 +551,13 @@ void s_log(const Sdl sdl, const Text text, const int x, const int y, const char*
     char* const str = u_toss(char, len + 1);
     vsprintf(str, fmt, args);
     va_end(args);
+
     t_put_top_left(text, str, 0xFF, sdl.renderer, x, y);
 
     free(str);
 }
 
-void s_draw_fps(const Sdl sdl, const Text text, const char* const fmt, ...)
+void s_draw_fps(const Sdl sdl, const Text text, const int x, const int y, const char* const fmt, ...)
 {
     va_list args;
 
@@ -571,12 +572,12 @@ void s_draw_fps(const Sdl sdl, const Text text, const char* const fmt, ...)
     vsprintf(str, fmt, args);
     va_end(args);
 
-    t_put_bottom_right(text, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);
+    t_put_bottom_right(text, str, 0xFF, sdl.renderer, x, y);
 
     free(str);
 }
 
-void s_draw_lookup(const Sdl sdl, const Text text, const Rooms rooms)
+void s_draw_room_lookup(const Sdl sdl, const Text text, const Rooms rooms)
 {
     int y = 0;
     for(int i = 0; i < rooms.count; i++)
