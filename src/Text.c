@@ -44,6 +44,18 @@ void t_put_bottom_right(const Text text, const char* const str, const int alpha,
     render_text(text, rend, target, str, alpha);
 }
 
+void t_put_top_left(const Text text, const char* const str, const int alpha, SDL_Renderer* const rend, const int x, const int y)
+{
+    const SDL_Rect sz = f_calc_size(text.fill, str);
+    const SDL_Rect target = {
+        x,
+        y,
+        sz.w,
+        sz.h,
+    };
+    render_text(text, rend, target, str, alpha);
+}
+
 void t_print(const Text text, const char* const str, const int alpha, SDL_Renderer* const rend, const int x, const int y)
 {
     char* const copy = u_str_dup(str);

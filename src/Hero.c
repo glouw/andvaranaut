@@ -180,7 +180,7 @@ Hero h_teleporting(Hero hero, const Map map, const Input input, const Timer tm)
     return hero;
 }
 
-Hero h_teleport(Hero hero, const Map map)
+Hero h_teleport(Hero hero, const Map map, const Point where)
 {
     if(teleporting_up(hero, map))
         hero.floor--;
@@ -191,6 +191,7 @@ Hero h_teleport(Hero hero, const Map map)
     }
     hero.pitch = 1.0f;
     hero.torch = t_snuff();
+    hero.where = where;
     return hero;
 }
 
@@ -236,4 +237,43 @@ Hero h_struck(Hero hero, const State state, const float damage)
 int h_close_enough(const Hero hero, const Point other)
 {
     return p_eql(hero.where, other, 2.2f);
+}
+
+Hero h_transport(Hero hero, const Map map, const Input in)
+{
+    int key = EOF;
+    if(in.key[SDL_SCANCODE_A]) key = 'A';
+    if(in.key[SDL_SCANCODE_B]) key = 'B';
+    if(in.key[SDL_SCANCODE_C]) key = 'C';
+    if(in.key[SDL_SCANCODE_D]) key = 'D';
+    if(in.key[SDL_SCANCODE_E]) key = 'E';
+    if(in.key[SDL_SCANCODE_F]) key = 'F';
+    if(in.key[SDL_SCANCODE_G]) key = 'G';
+    if(in.key[SDL_SCANCODE_H]) key = 'H';
+    if(in.key[SDL_SCANCODE_I]) key = 'I';
+    if(in.key[SDL_SCANCODE_J]) key = 'J';
+    if(in.key[SDL_SCANCODE_K]) key = 'K';
+    if(in.key[SDL_SCANCODE_L]) key = 'L';
+    if(in.key[SDL_SCANCODE_M]) key = 'M';
+    if(in.key[SDL_SCANCODE_N]) key = 'N';
+    if(in.key[SDL_SCANCODE_O]) key = 'O';
+    if(in.key[SDL_SCANCODE_P]) key = 'P';
+    if(in.key[SDL_SCANCODE_Q]) key = 'Q';
+    if(in.key[SDL_SCANCODE_R]) key = 'R';
+    if(in.key[SDL_SCANCODE_S]) key = 'S';
+    if(in.key[SDL_SCANCODE_T]) key = 'T';
+    if(in.key[SDL_SCANCODE_U]) key = 'U';
+    if(in.key[SDL_SCANCODE_V]) key = 'V';
+    if(in.key[SDL_SCANCODE_W]) key = 'W';
+    if(in.key[SDL_SCANCODE_X]) key = 'X';
+    if(in.key[SDL_SCANCODE_Y]) key = 'Y';
+    if(in.key[SDL_SCANCODE_Z]) key = 'Z';
+
+    if(key != EOF)
+    {
+        const int index = key - 'A';
+        if(index < map.rooms.count)
+            hero = h_teleport(hero, map, map.rooms.wheres[index]);
+    }
+    return hero;
 }

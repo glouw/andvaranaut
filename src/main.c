@@ -41,7 +41,6 @@ int main(int argc, char* argv[])
 
     t_clear_title();
 
-    // X-Resolution 512 reserved for performance testing.
     for(int renders = 0, fps = 0; args.xres == 512 ? renders < 5 : !in.done; renders++)
     {
         const int t0 = SDL_GetTicks();
@@ -78,7 +77,7 @@ int main(int argc, char* argv[])
 
             if(hero.teleporting)
             {
-                hero = h_teleport(hero, world.map[hero.floor]);
+                hero = h_teleport(hero, world.map[hero.floor], hero.where);
 
                 f_ruin(field);
 
@@ -110,6 +109,12 @@ int main(int argc, char* argv[])
                 hero.inventory = i_what_is(hero.inventory, scroll, tm);
             }
             else
+            if(i_using_lookup(in))
+            {
+                s_draw_lookup(sdl, text, world.map[hero.floor].rooms);
+                hero = h_transport(hero, world.map[hero.floor], in);
+            }
+            else
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -132,7 +137,6 @@ int main(int argc, char* argv[])
 
         in = i_pump(in);
 
-        // Caps framerate in software.
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0f / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
@@ -142,6 +146,5 @@ int main(int argc, char* argv[])
             fps = 1000.0f / (t2 - t0);
     }
 
-    // No need to free anything - the OS will do it with a quicker exit.
     return 0;
 }

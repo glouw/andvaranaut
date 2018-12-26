@@ -537,6 +537,24 @@ static void draw_map(const Sdl sdl, const Map map, const Point where)
     SDL_DestroyTexture(texture);
 }
 
+void s_log(const Sdl sdl, const Text text, const int x, const int y, const char* const fmt, ...)
+{
+    va_list args;
+
+    // Get string length for formatter.
+    va_start(args, fmt);
+    const int len = vsnprintf(NULL, 0, fmt, args);
+    va_end(args);
+
+    // Rewind and format.
+    va_start(args, fmt);
+    char* const str = u_toss(char, len + 1);
+    vsprintf(str, fmt, args);
+    va_end(args);
+    t_put_top_left(text, str, 0xFF, sdl.renderer, x, y);
+
+    free(str);
+}
 
 void s_draw_fps(const Sdl sdl, const Text text, const char* const fmt, ...)
 {
@@ -556,6 +574,18 @@ void s_draw_fps(const Sdl sdl, const Text text, const char* const fmt, ...)
     t_put_bottom_right(text, str, 0xFF, sdl.renderer, sdl.xres, sdl.yres);
 
     free(str);
+}
+
+void s_draw_lookup(const Sdl sdl, const Text text, const Rooms rooms)
+{
+    int y = 0;
+    for(int i = 0; i < rooms.count; i++)
+    {
+        const char* get = t_get_name(rooms.themes[i]);
+        const SDL_Rect size = f_calc_size(text.fill, get);
+        s_log(sdl, text, 0, y, "[%c] %s", i + 'A', get);
+        y += size.h;
+    }
 }
 
 void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)

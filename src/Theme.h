@@ -1,10 +1,12 @@
 #pragma once
 
-#define LIST_OF_THEMES \
-    X(NO_THEME)        \
-    X(AN_EMPTY_ROOM)   \
-    X(GUNNARS_HOLDING) \
-    X(A_NICE_GARDEN)   \
+#define LIST_OF_THEMES        \
+    X(NO_THEME)               \
+    X(AN_EMPTY_ROOM)          \
+    X(THE_HOLDING_OF_GUNNAR)  \
+    X(A_DWARVEN_OUTPOST)      \
+    X(THE_ENTRAPMENT_OF_OLAN) \
+    X(A_NICE_GARDEN)          \
     X(A_WELL_OF_WATER)
 
 typedef enum

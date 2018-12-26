@@ -54,3 +54,8 @@ int i_using_world_edit_mode(const Input in)
 {
     return in.key[SDL_SCANCODE_TAB];
 }
+
+int i_using_lookup(const Input in)
+{
+    return in.key[SDL_SCANCODE_HOME];
+}
