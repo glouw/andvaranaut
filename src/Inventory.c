@@ -7,7 +7,7 @@
 
 Inventory i_create(void)
 {
-    const Inventory inv = { i_build(10), 0, 64, -1, false, false, -1 };
+    const Inventory inv = { i_build(10), 0, 32, -1, false, false, -1, i_none() };
     const Item noobits[] = {
         i_new(SHORTWEP, 0),
         i_new(WAND, 0),
@@ -25,9 +25,14 @@ Inventory i_create(void)
     return inv;
 }
 
+static int calc_index(const Inventory inv, const Input in)
+{
+    return in.y / inv.width;
+}
+
 static int inside(const Inventory inv, const Input in, const int xres)
 {
-    return in.x > xres - inv.width;
+    return in.x > xres - inv.width && calc_index(inv, in) < inv.items.max;
 }
 
 Inventory i_select(Inventory inv, const Input in)
@@ -41,7 +46,7 @@ Inventory i_select(Inventory inv, const Input in)
 
 Inventory i_highlite(Inventory inv, const Input in, const int xres)
 {
-    inv.hilited = inside(inv, in, xres) ? in.y / inv.width : -1;
+    inv.hilited = inside(inv, in, xres) ? calc_index(inv, in) : -1;
     return inv;
 }
 
@@ -98,7 +103,7 @@ static Inventory drag(Inventory inv, const Input in, const int xres)
 {
     if(in.ld)
         if(inside(inv, in, xres))
-            inv.drag = in.y / inv.width;
+            inv.drag = calc_index(inv, in);
 
     return inv;
 }
@@ -107,15 +112,19 @@ static Inventory swap(Inventory inv, const Input in, const int xres)
 {
     if(in.lu)
     {
-        const int from = inv.drag;
-        if(inside(inv, in, xres))
+        if(inv.drag != -1)
         {
-            const int to = in.y / inv.width;
-            if(to < inv.items.max)
+            if(inside(inv, in, xres))
             {
+                const int to = calc_index(inv, in);
                 const Item temp = inv.items.item[to];
-                inv.items.item[to] = inv.items.item[from];
-                inv.items.item[from] = temp;
+                inv.items.item[to] = inv.items.item[inv.drag];
+                inv.items.item[inv.drag] = temp;
+            }
+            else
+            {
+                inv.trade = inv.items.item[inv.drag];
+                inv.items.item[inv.drag] = i_none();
             }
         }
         inv.drag = -1;
@@ -126,7 +135,6 @@ static Inventory swap(Inventory inv, const Input in, const int xres)
 Inventory i_manage(Inventory inv, const Input in, const int xres)
 {
     inv = drag(inv, in, xres);
-
     inv = swap(inv, in, xres);
 
     return inv;

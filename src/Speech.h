@@ -2,7 +2,7 @@
 
 typedef struct
 {
-    const char* sentences[64];
+    const char* sentences[8];
     int index;
     int count;
     int ticks;
@@ -10,3 +10,5 @@ typedef struct
 Speech;
 
 Speech s_use_greet(void);
+
+Speech s_use_grateful(void);

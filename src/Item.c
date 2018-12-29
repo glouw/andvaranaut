@@ -744,7 +744,7 @@ static void check(const Classification c, const Item items[], const int len)
         assert(items[i].index == i);
 }
 
-static Item none(void)
+Item i_none(void)
 {
     static Item zero;
     Item item = zero;
@@ -759,7 +759,7 @@ Item i_new(const Classification c, const int index)
     // Do not use default.
     // Will remind of any new items that are missing.
     case CLASSIFICATIONS:
-    case     NONE: return none();
+    case     NONE: return i_none();
     case     AMMO: return ammos     [index];
     case   AMULET: return amulets   [index];
     case    ARMOR: return armors    [index];
@@ -786,7 +786,7 @@ Item i_new(const Classification c, const int index)
     case     TOOL: return tools     [index];
     case     WAND: return wands     [index];
     }
-    return none();
+    return i_none();
 }
 
 Item i_rand(void)

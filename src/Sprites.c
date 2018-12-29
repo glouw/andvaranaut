@@ -513,7 +513,97 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
     return sprites;
 }
 
-void s_caretake(const Sprites sprites, const Hero hero, const Map map, const Field field, const Fire fire, const Timer tm)
+static Hero service_hero_health(Hero hero, const Map map, const Sprites sprites, const Timer tm)
+{
+    (void) map;
+    (void) sprites;
+    (void) tm;
+
+    const Item equipped = i_get_equipped(hero.inventory);
+
+    for(int i = 0; i < sprites.count; i++)
+    {
+        Sprite* const sprite = &sprites.sprite[i];
+
+        if(s_useless(sprite))
+            continue;
+
+        if(h_close_enough(hero, sprite->where))
+        {
+            if(s_impulse(sprite, tm))
+                hero = h_struck(hero, sprite->state, sprite->damage);
+
+            if(i_successful_block(equipped, hero.gauge))
+                s_parried(sprite, hero.attack.velocity, tm);
+        }
+    }
+    return hero;
+}
+
+static Hero service_hero_mana(Hero hero, const Map map, const Sprites sprites, const Timer tm)
+{
+    (void) map;
+    (void) sprites;
+    (void) tm;
+
+    return hero;
+}
+
+static Hero service_hero_fatigue(Hero hero, const Map map, const Sprites sprites, const Timer tm)
+{
+    (void) map;
+    (void) sprites;
+
+    if(hero.gauge.warning)
+    {
+        hero.gauge.warning = false;
+
+        const char* const tireds[] = {
+            "Exausted...",
+            "So tired...",
+            "Muscles aching...",
+        };
+        const int which = rand() % u_len(tireds);
+        t_set_title(tm.renders, 120, false, tireds[which]);
+    }
+
+    hero.fatigue = g_fizzled(hero.gauge, tm) ? 0.0f : (hero.gauge.max - hero.gauge.count);
+
+    return hero;
+}
+
+static Hero sprites_damage_hero(const Sprites sprites, Hero hero, const Map map, const Timer tm)
+{
+    hero = service_hero_health (hero, map, sprites, tm);
+    hero = service_hero_mana   (hero, map, sprites, tm);
+    hero = service_hero_fatigue(hero, map, sprites, tm);
+
+    return hero;
+}
+
+static Hero trade(const Sprites sprites, Hero hero, const Input in)
+{
+    if(hero.inventory.trade.clas != NONE)
+    {
+        for(int i = 0; i < sprites.count; i++)
+        {
+            Sprite* const sprite = &sprites.sprite[i];
+
+            // TODO: Check for sprite->WANTS.
+            const SDL_Point to = { in.x, in.y };
+
+            if(SDL_PointInRect(&to, &sprite->seen))
+            {
+                sprite->speech = s_use_grateful();
+                break;
+            }
+        }
+    }
+    hero.inventory.trade = i_none();
+    return hero;
+}
+
+Hero s_caretake(const Sprites sprites, Hero hero, const Map map, const Field field, const Fire fire, const Timer tm, const Input in)
 {
     s_pull(sprites, hero);
     s_sort(sprites, s_nearest_sprite_first);
@@ -528,6 +618,10 @@ void s_caretake(const Sprites sprites, const Hero hero, const Map map, const Fie
     track(sprites, fire);
     burn(sprites, fire);
     rage(sprites, hero, tm);
+
+    hero = trade(sprites, hero, in);
+
+    return sprites_damage_hero(sprites, hero, map, tm);
 }
 
 static Point avail(const Point center, const Map map)

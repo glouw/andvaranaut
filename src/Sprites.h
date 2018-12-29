@@ -2,6 +2,7 @@
 
 #include "Hero.h"
 #include "Attack.h"
+#include "Input.h"
 #include "Sprite.h"
 #include "Field.h"
 #include "Gauge.h"
@@ -35,7 +36,7 @@ void s_sort(const Sprites, Sorter);
 
 Sprites s_hero_damage_sprites(Sprites, const Hero, const Timer);
 
-void s_caretake(const Sprites, const Hero, const Map, const Field, const Fire, const Timer);
+Hero s_caretake(const Sprites, Hero, const Map, const Field, const Fire, const Timer, const Input);
 
 Sprites s_gen(const int max, const Map);
 

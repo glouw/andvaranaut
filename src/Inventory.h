@@ -14,6 +14,7 @@ typedef struct
     int change;
     int last;
     int drag;
+    Item trade;
 }
 Inventory;
 

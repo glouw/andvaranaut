@@ -19,6 +19,15 @@ static Speech build(const char* const sentences[], const int len)
     return sp;
 }
 
+Speech s_use_grateful(void)
+{
+    const char* const sentences[] = {
+        "Wow, I always wanted this!",
+        ""
+    };
+    return build(sentences, u_len(sentences));
+}
+
 Speech s_use_greet(void)
 {
     const char* const sentences[] = {
