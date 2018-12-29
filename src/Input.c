@@ -23,6 +23,10 @@ Input i_pump(Input input)
     input.mu = (input.m == 0 && input.lm == 1);
     input.ru = (input.r == 0 && input.lr == 1);
 
+    input.ld = (input.l == 1 && input.ll == 0);
+    input.md = (input.m == 1 && input.lm == 0);
+    input.rd = (input.r == 1 && input.lr == 0);
+
     input.ll = input.l;
     input.lm = input.m;
     input.lr = input.r;

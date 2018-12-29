@@ -13,6 +13,7 @@ typedef struct
     int hilited;
     int change;
     int last;
+    int drag;
 }
 Inventory;
 
@@ -25,3 +26,5 @@ Inventory i_highlite(Inventory, const Input, const int xres);
 Inventory i_what_is(Inventory, const Scroll, const Timer);
 
 Item i_get_equipped(const Inventory);
+
+Inventory i_manage(Inventory, const Input, const int xres);

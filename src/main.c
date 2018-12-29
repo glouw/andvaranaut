@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 
             hero.inventory = i_select(hero.inventory, in);
 
-            s_render_playing(sdl, yel, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, tm);
+            s_render_playing(sdl, yel, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, tm, in);
 
             if(i_using_inventory(in))
             {
@@ -108,6 +108,8 @@ int main(int argc, char* argv[])
                 hero.inventory = i_highlite(hero.inventory, in, sdl.xres);
 
                 hero.inventory = i_what_is(hero.inventory, scroll, tm);
+
+                hero.inventory = i_manage(hero.inventory, in, sdl.xres);
             }
             else
             if(i_using_lookup(in))

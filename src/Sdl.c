@@ -493,7 +493,7 @@ static void draw_inventory_panel(const Sdl sdl, const Inventory inv)
     }
 }
 
-static void draw_inventory_items(const Sdl sdl, const Inventory inv)
+static void draw_inventory_items(const Sdl sdl, const Inventory inv, const Input in)
 {
     for(int i = 0; i < inv.items.max; i++)
     {
@@ -505,15 +505,22 @@ static void draw_inventory_items(const Sdl sdl, const Inventory inv)
         SDL_Surface* const surface = sdl.surfaces.surface[index];
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
-        const SDL_Rect from = { 0, w * item.index, w, w }, to = { xx, inv.width * i, inv.width, inv.width };
+        const SDL_Rect from = { 0, w * item.index, w, w };
+        const int dragging = i == inv.drag;
+        const SDL_Rect to = {
+            dragging ? in.x : xx,
+            dragging ? in.y : inv.width * i,
+            inv.width,
+            inv.width,
+        };
         SDL_RenderCopy(sdl.renderer, texture, &from, &to);
     }
 }
 
-static void draw_inventory(const Sdl sdl, const Inventory inv)
+static void draw_inventory(const Sdl sdl, const Inventory inv, const Input in)
 {
     draw_inventory_panel(sdl, inv);
-    draw_inventory_items(sdl, inv);
+    draw_inventory_items(sdl, inv, in);
 }
 
 static void draw_map(const Sdl sdl, const Map map, const Point where)
@@ -547,7 +554,7 @@ void s_draw_room_lookup(const Sdl sdl, const Text yel, const Text red, const Roo
     }
 }
 
-void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm)
+void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Sprites sprites, const Map map, const Flow current, const Flow clouds, const Timer tm, const Input in)
 {
     Point* const zbuff = u_toss(Point, sdl.xres);
     const Line camera = l_rotate(hero.fov, hero.yaw);
@@ -584,7 +591,7 @@ void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Spr
     render_all_sprites(sdl, text, sprites, zbuff, hero, tm);
 
     // Draw the user interface.
-    draw_inventory(sdl, hero.inventory);
+    draw_inventory(sdl, hero.inventory, in);
     draw_all_bars(sdl, hero, tm);
     draw_map(sdl, map, hero.where);
 

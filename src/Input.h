@@ -32,6 +32,11 @@ typedef struct
     int mu;
     int ru;
 
+    // Mouse button was down last frame (Left, Middle, Right).
+    int ld;
+    int md;
+    int rd;
+
     // Last states (Left, middle, right).
     int ll;
     int lm;

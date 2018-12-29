@@ -36,7 +36,7 @@ Sdl s_setup(const Args);
 
 void s_present(const Sdl);
 
-void s_render_playing(const Sdl, const Text, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const Timer);
+void s_render_playing(const Sdl, const Text, const Hero, const Sprites, const Map, const Flow current, const Flow clouds, const Timer, const Input);
 
 void s_render_overlay(const Sdl, const Overview, const Sprites, const Map, const Timer);
 

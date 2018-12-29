@@ -7,7 +7,7 @@
 
 Inventory i_create(void)
 {
-    const Inventory inv = { i_build(10), 0, 32, -1, false, false };
+    const Inventory inv = { i_build(10), 0, 64, -1, false, false, -1 };
     const Item noobits[] = {
         i_new(SHORTWEP, 0),
         i_new(WAND, 0),
@@ -92,4 +92,42 @@ Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
 Item i_get_equipped(const Inventory inv)
 {
     return inv.items.item[inv.selected];
+}
+
+static Inventory drag(Inventory inv, const Input in, const int xres)
+{
+    if(in.ld)
+        if(inside(inv, in, xres))
+            inv.drag = in.y / inv.width;
+
+    return inv;
+}
+
+static Inventory swap(Inventory inv, const Input in, const int xres)
+{
+    if(in.lu)
+    {
+        const int from = inv.drag;
+        if(inside(inv, in, xres))
+        {
+            const int to = in.y / inv.width;
+            if(to < inv.items.max)
+            {
+                const Item temp = inv.items.item[to];
+                inv.items.item[to] = inv.items.item[from];
+                inv.items.item[from] = temp;
+            }
+        }
+        inv.drag = -1;
+    }
+    return inv;
+}
+
+Inventory i_manage(Inventory inv, const Input in, const int xres)
+{
+    inv = drag(inv, in, xres);
+
+    inv = swap(inv, in, xres);
+
+    return inv;
 }
