@@ -20,7 +20,8 @@ static void render_text(const Text text, SDL_Renderer* const rend, const SDL_Rec
     SDL_DestroyTexture(tline);
 }
 
-void t_write(const Text text, SDL_Renderer* const rend, const int x, const int y, const Position position, const int alpha, const int line, const char* const str)
+void t_write(
+    const Text text, SDL_Renderer* const rend, const int x, const int y, const Position position, const int alpha, const int line, const char* const str)
 {
     const SDL_Rect sz = f_calc_size(text.fill, str);
     SDL_Rect to = { 0, 0, sz.w, sz.h };
@@ -60,19 +61,23 @@ void t_write(const Text text, SDL_Renderer* const rend, const int x, const int y
     render_text(text, rend, to, str, alpha);
 }
 
-// Handles '\n' but not extended formatting.
-void t_print(const Text text, SDL_Renderer* const rend, const int x, const int y, const Position position, const int alpha, const char* const str)
+int t_puts(
+    const Text text, SDL_Renderer* const rend, const int x, const int y, const Position position, const int alpha, const int line, const char* const str)
 {
     char* const copy = u_str_dup(str);
     const char* const delim = "\n";
-    int line = 0;
+
+    int newlines = 0;
     for(char* tok = strtok(copy, delim); tok; tok = strtok(NULL, delim))
-        t_write(text, rend, x, y, position, alpha, line++, tok);
+        t_write(text, rend, x, y, position, alpha, line + newlines++, tok);
+
     free(copy);
+
+    return newlines;
 }
 
-// Handles extended formatting but not '\n'.
-void t_scrib(const Text text, SDL_Renderer* const rend, const int x, const int y, const Position position, const int alpha, const int line, const char* const fmt, ...)
+int t_printf(
+    const Text text, SDL_Renderer* const rend, const int x, const int y, const Position position, const int alpha, const int line, const char* const fmt, ...)
 {
     va_list args;
 
@@ -85,7 +90,9 @@ void t_scrib(const Text text, SDL_Renderer* const rend, const int x, const int y
     vsprintf(str, fmt, args);
     va_end(args);
 
-    t_write(text, rend, x, y, position, alpha, line, str);
+    const int newlines = t_puts(text, rend, x, y, position, alpha, line, str);
 
     free(str);
+
+    return newlines;
 }

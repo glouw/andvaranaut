@@ -539,11 +539,11 @@ static void draw_map(const Sdl sdl, const Map map, const Point where)
 
 void s_draw_room_lookup(const Sdl sdl, const Text yel, const Text red, const Rooms rooms, const int floor, const int room)
 {
-    t_scrib(yel, sdl.renderer, sdl.xres, 0, TOP_RITE, 0xFF, 0, "FLOOR: %2d", floor);
+    t_printf(yel, sdl.renderer, sdl.xres, 0, TOP_RITE, 0xFF, 0, "FLOOR: %2d", floor);
     for(int i = 0; i < rooms.count; i++)
     {
         const char* name = t_get_name(rooms.themes[i]);
-        t_scrib(room == i ? red : yel, sdl.renderer, 0, 0, TOP_LEFT, 0xFF, i, "[%c] %s", i + 'A', name);
+        t_printf(room == i ? red : yel, sdl.renderer, 0, 0, TOP_LEFT, 0xFF, i, "[%c] %s", i + 'A', name);
     }
 }
 

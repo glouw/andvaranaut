@@ -54,15 +54,18 @@ void t_show_title(const Text text, const Sdl sdl)
 {
     if(done())
         return;
+
     const float percent = (tt.now - tt.start) / (float) (tt.end - tt.start);
     const float max = 0xFF;
     const float alpha = max * sinf(percent * U_PI);
-    t_print(
+
+    t_printf(
         text,
         sdl.renderer,
         sdl.xres / 2,
         sdl.yres / 2,
         MIDDLE,
         (percent > 0.5f && tt.linger) ? max : alpha, // If lingering, do not fade out.
+        0,
         tt.str);
 }

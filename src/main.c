@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
         }
         t_show_title(yel, sdl);
 
-        t_scrib(yel, sdl.renderer, sdl.xres, sdl.yres, BOT_RITE, 0xFF, 0, "%d", fps);
+        t_printf(yel, sdl.renderer, sdl.xres, sdl.yres, BOT_RITE, 0xFF, 0, "%d", fps);
 
         s_present(sdl);
 
