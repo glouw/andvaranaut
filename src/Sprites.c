@@ -29,14 +29,14 @@ static Sprites append(Sprites sprites, const Sprite sprite)
     return sprites;
 }
 
-Sprites s_lay(Sprites sprites, const Map map, const Overview ov)
+Sprites s_lay(Sprites sprites, const Map map, const Overview ov, const Timer tm)
 {
     if(m_out_of_bounds(map, ov.where))
         return sprites;
 
     const int ascii = ov.selected + ' ';
     if(s_sprite(ascii))
-        sprites = append(sprites, s_register(ascii, ov.where));
+        sprites = append(sprites, s_register(ascii, ov.where, tm));
 
     return sprites;
 }
@@ -199,10 +199,10 @@ static void route(const Sprites sprites, const Field field, const Map map, const
     f_diffuse(field, hero.where);
 }
 
-static Sprites drop_item(Sprites sprites, const Attack attack, const Point where)
+static Sprites drop_item(Sprites sprites, const Attack attack, const Point where, const Timer tm)
 {
     const Point delta = p_mul(p_rot90(attack.velocity), 0.5f);
-    return append(sprites, s_register('d', p_add(where, delta)));
+    return append(sprites, s_register('d', p_add(where, delta), tm));
 }
 
 static void broke_lootbag(const int ascii, const Inventory inv, const Timer tm)
@@ -231,8 +231,8 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
     // Sprite is now angry.
     if(sprite->evil == false)
     {
-        sprite->evil = true;
         static Speech none;
+        sprite->evil = true;
         sprite->speech = none;
     }
 
@@ -258,7 +258,7 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
             sprite->state = s ? DEAD_N : n ? DEAD_S : e ? DEAD_W : DEAD_E;
             broke_lootbag(sprite->ascii, inv, tm);
             if(u_d10() == 0)
-                return drop_item(sprites, attack, sprite->where);
+                return drop_item(sprites, attack, sprite->where, tm);
         }
         // Dead.
         else
@@ -423,14 +423,17 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
     {
         Sprite* const sprite = &sprites.sprite[i];
 
-        // Mute check very important else segfault.
-        if(s_dead(sprite->state) || s_muted(sprite))
+        if(s_dead(sprite->state))
+            continue;
+
+        if(s_muted(sprite))
             continue;
 
         if(h_close_enough(hero, sprite->where))
         {
             const int speed = 8; // How fast sprite talks (arbitrary pick).
             const int ticks = tm.ticks - sprite->speech.ticks;
+
             sprite->speech.index = (ticks / speed) % sprite->speech.count;
 
             const int index = sprite->speech.index;
@@ -502,7 +505,7 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
                     const int yy = where.y;
                     if(fire.embers[yy][xx].count < 2)
                     {
-                        sprites = append(sprites, s_register('c', where));
+                        sprites = append(sprites, s_register('c', where, tm));
                         Sprite* const ember = &sprites.sprite[sprites.count - 1];
                         fire.embers[yy][xx] = e_append(fire.embers[yy][xx], ember);
                     }
@@ -581,21 +584,33 @@ static Hero sprites_damage_hero(const Sprites sprites, Hero hero, const Map map,
     return hero;
 }
 
-static Hero trade(const Sprites sprites, Hero hero, const Input in)
+static Hero trade(const Sprites sprites, Hero hero, const Input in, const Timer tm)
 {
-    if(hero.inventory.trade.clas != NONE)
+    if(hero.inventory.trade.id.clas != NONE)
     {
         for(int i = 0; i < sprites.count; i++)
         {
             Sprite* const sprite = &sprites.sprite[i];
 
-            // TODO: Check for sprite->WANTS.
+            if(s_useless(sprite))
+                continue;
+
             const SDL_Point to = { in.x, in.y };
 
             if(SDL_PointInRect(&to, &sprite->seen))
             {
-                sprite->speech = s_use_grateful();
-                break;
+                if(i_same_id(sprite->wants, hero.inventory.trade.id)) // Wants.
+                {
+                    sprite->speech = s_use_grateful(tm);
+                    sprite->wants.clas = NONE;
+                    break;
+                }
+                else // Does not want.
+                {
+                    sprite->speech = s_use_unwanted(tm);
+                    i_add(hero.inventory.items, hero.inventory.trade); // Put back.
+                    break;
+                }
             }
         }
     }
@@ -619,7 +634,7 @@ Hero s_caretake(const Sprites sprites, Hero hero, const Map map, const Field fie
     burn(sprites, fire);
     rage(sprites, hero, tm);
 
-    hero = trade(sprites, hero, in);
+    hero = trade(sprites, hero, in, tm);
 
     return sprites_damage_hero(sprites, hero, map, tm);
 }
@@ -643,23 +658,23 @@ static Point seek(const Point center, const Map map, const int ascii)
     return p_char(where, map.floring) == ascii ? where : seek(center, map, ascii);
 }
 
-static Sprites lay_nice_garden(Sprites sprites, const Map map, const Point center)
+static Sprites lay_nice_garden(Sprites sprites, const Map map, const Point center, const Timer tm)
 {
     const int flowers = 256;
     for(int i = 0; i < flowers; i++)
-        sprites = append(sprites, s_register('a', seek(center, map, '(')));
+        sprites = append(sprites, s_register('a', seek(center, map, '('), tm));
 
     // Gardener.
-    sprites = append(sprites, s_register('b', avail(center, map)));
+    sprites = append(sprites, s_register('b', avail(center, map), tm));
     return sprites;
 }
 
-static Sprites place_dummy(const Sprites sprites, const Map map, const Point center)
+static Sprites place_dummy(const Sprites sprites, const Map map, const Point center, const Timer tm)
 {
-    return append(sprites, s_register('b', avail(center, map)));
+    return append(sprites, s_register('b', avail(center, map), tm));
 }
 
-Sprites s_populate(Sprites sprites, const Map map)
+Sprites s_populate(Sprites sprites, const Map map, const Timer tm)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {
@@ -668,15 +683,15 @@ Sprites s_populate(Sprites sprites, const Map map)
         switch(map.rooms.themes[i])
         {
         case AN_EMPTY_ROOM:
-            sprites = place_dummy(sprites, map, center);
+            sprites = place_dummy(sprites, map, center, tm);
             break;
 
         case A_NICE_GARDEN:
-            sprites = lay_nice_garden(sprites, map, center);
+            sprites = lay_nice_garden(sprites, map, center, tm);
             break;
 
         case A_WELL_OF_WATER:
-            sprites = place_dummy(sprites, map, center);
+            sprites = place_dummy(sprites, map, center, tm);
             break;
 
         case NO_THEME:

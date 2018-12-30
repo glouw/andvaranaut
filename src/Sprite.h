@@ -3,6 +3,7 @@
 #include "Point.h"
 #include "State.h"
 #include "Timer.h"
+#include "Identification.h"
 #include "Speech.h"
 
 #include <SDL2/SDL.h>
@@ -35,6 +36,9 @@ typedef struct
 
     int busy_ticks;
     int block_start;
+
+    // Sprite really wants this item.
+    Identification wants;
 }
 Sprite;
 
@@ -54,7 +58,7 @@ int s_stuck(const Sprite* const);
 
 void s_test(void);
 
-Sprite s_register(const int ascii, const Point where);
+Sprite s_register(const int ascii, const Point where, const Timer);
 
 void s_place(Sprite* const, const Point);
 

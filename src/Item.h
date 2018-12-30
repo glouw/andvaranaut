@@ -1,14 +1,13 @@
 #pragma once
 
-#include "Classification.h"
+#include "Identification.h"
 #include "Gauge.h"
 #include "Input.h"
 #include "Timer.h"
 
 typedef struct
 {
-    int index;
-    Classification clas;
+    Identification id;
     const char* cstr;
     const char* name;
     const char* desc;
@@ -19,7 +18,7 @@ typedef struct
 }
 Item;
 
-Item i_new(const Classification, const int index);
+Item i_new(const Identification);
 
 Item i_rand(void);
 

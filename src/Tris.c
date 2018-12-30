@@ -307,14 +307,31 @@ static Points get_traps(const Points rooms, const int count)
     return trapdoors;
 }
 
+static void generate_simple(const Map map, const Points rooms)
+{
+    const Party parts[] = { WALLING, CEILING };
+    for(int i = 0; i < u_len(parts); i++)
+        m_place_room(map, rooms.point[0], m_min(map), m_min(map), parts[i]);
+}
+
+static void generate_complex(const Map map, const Points rooms, const int w, const int h)
+{
+    const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
+    const Tris tris = triangulate(rooms, w, h, 3 * rooms.max, flags);
+    const Tris edges = collect(make(3 * tris.max), tris, flags);
+
+    reverse_delete(edges, w, h, flags);
+    remove_dups(edges, flags);
+    carve(map, edges, flags);
+
+    free(tris.tri);
+    free(edges.tri);
+}
+
 Map t_generate(const Points extra, const int w, const int h, const int grid, const int traps)
 {
-    if(u_odd(grid))
-        u_bomb("Grid size must be even\n");
-
     const int max = traps + (10 + u_d10());
     const int border = 2 * grid;
-    const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
 
     Points rooms = prand(w, h, max, grid, border, extra);
 
@@ -322,22 +339,7 @@ Map t_generate(const Points extra, const int w, const int h, const int grid, con
 
     const Map map = m_generate(h, w, trapdoors, rooms, grid);
 
-    if(rooms.count == 1)
-    {
-        const Party parts[] = { WALLING, CEILING };
-        for(int i = 0; i < u_len(parts); i++)
-            m_place_room(map, rooms.point[0], m_min(map), m_min(map), parts[i]);
-    }
-    else
-    {
-        const Tris tris = triangulate(rooms, w, h, 3 * rooms.max, flags);
-        const Tris edges = collect(make(3 * tris.max), tris, flags);
-        reverse_delete(edges, w, h, flags);
-        remove_dups(edges, flags);
-        carve(map, edges, flags);
-        free(tris.tri);
-        free(edges.tri);
-    }
+    rooms.count == 1 ?  generate_simple(map, rooms) : generate_complex(map, rooms, w, h);
 
     return map;
 }

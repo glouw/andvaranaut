@@ -41,6 +41,7 @@ SRCS += Hero.c
 SRCS += Hits.c
 SRCS += Input.c
 SRCS += Item.c
+SRCS += Identification.c
 SRCS += Items.c
 SRCS += Inventory.c
 SRCS += Line.c

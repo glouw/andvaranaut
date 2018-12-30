@@ -32,7 +32,7 @@ typedef enum
 }
 Classification;
 
-int c_get_index(const Classification);
+int c_get_surface_index(const Classification);
 
 int c_max_indices(const Classification);
 

@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-int c_get_index(const Classification c)
+int c_get_surface_index(const Classification c)
 {
     return '~' + 1 - ' ' + (int) c;
 }

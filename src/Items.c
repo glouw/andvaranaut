@@ -6,14 +6,17 @@ Items i_build(const int max)
 {
     const Items its = { u_toss(Item, max), max };
     for(int i = 0; i < max; i++)
-        its.item[i] = i_new(NONE, 0);
+    {
+        const Identification id = { 0, NONE };
+        its.item[i] = i_new(id);
+    }
     return its;
 }
 
 static int avail(const Items its)
 {
     for(int i = 0; i < its.max; i++)
-        if(its.item[i].clas == NONE)
+        if(its.item[i].id.clas == NONE)
             return i;
     return -1;
 }

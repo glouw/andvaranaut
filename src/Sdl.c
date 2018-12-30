@@ -333,9 +333,9 @@ Hero s_draw_gauge(const Sdl sdl, Hero hero, const Scroll scroll)
     const Item item = hero.inventory.items.item[hero.inventory.selected];
     static Attack zero;
     hero.attack =
-        c_is_melee(item.clas) ? draw_gauge_melee(sdl, hero.gauge, item, sens) :
-        c_is_range(item.clas) ? draw_gauge_range(sdl, hero.gauge, item, sens) :
-        c_is_magic(item.clas) ? draw_gauge_magic(sdl, hero.gauge, item, sens, hero.inventory, scroll) : zero;
+        c_is_melee(item.id.clas) ? draw_gauge_melee(sdl, hero.gauge, item, sens) :
+        c_is_range(item.id.clas) ? draw_gauge_range(sdl, hero.gauge, item, sens) :
+        c_is_magic(item.id.clas) ? draw_gauge_magic(sdl, hero.gauge, item, sens, hero.inventory, scroll) : zero;
     return hero;
 }
 
@@ -498,14 +498,14 @@ static void draw_inventory_items(const Sdl sdl, const Inventory inv, const Input
     for(int i = 0; i < inv.items.max; i++)
     {
         const Item item = inv.items.item[i];
-        if(item.clas == NONE)
+        if(item.id.clas == NONE)
             continue;
-        const int index = c_get_index(item.clas);
+        const int index = c_get_surface_index(item.id.clas);
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
-        const SDL_Rect from = { 0, w * item.index, w, w };
+        const SDL_Rect from = { 0, w * item.id.index, w, w };
         const int dragging = i == inv.drag;
         const SDL_Rect to = {
             dragging ? in.x : xx,

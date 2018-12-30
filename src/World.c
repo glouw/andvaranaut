@@ -48,19 +48,19 @@ static void attach(const World w)
         m_set_trapdoors(w.map[i], w.map[i - 1].trapdoors, CEILING);
 }
 
-static void populate(const World w)
+static void populate(const World w, const Timer tm)
 {
     for(int i = 0; i < w.index; i++)
-        w.sprites[i] = s_populate(w.sprites[i], w.map[i]);
+        w.sprites[i] = s_populate(w.sprites[i], w.map[i], tm);
 }
 
-World w_make(const int max)
+World w_make(const int max, const Timer tm)
 {
     World w = make(max);
     w = carve(w);
     theme(w);
     attach(w);
-    populate(w);
+    populate(w, tm);
     return w;
 }
 

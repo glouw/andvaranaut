@@ -24,7 +24,7 @@ Sprites;
 
 Sprites s_spawn(const int max);
 
-Sprites s_lay(Sprites, const Map, const Overview);
+Sprites s_lay(Sprites, const Map, const Overview, const Timer);
 
 void s_pull(const Sprites, const Hero);
 
@@ -40,7 +40,7 @@ Hero s_caretake(const Sprites, Hero, const Map, const Field, const Fire, const T
 
 Sprites s_gen(const int max, const Map);
 
-Sprites s_populate(Sprites, const Map);
+Sprites s_populate(Sprites, const Map, const Timer);
 
 Map s_count_agents(const Sprites, Map);
 

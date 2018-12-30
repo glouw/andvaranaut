@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Timer.h"
+
 typedef struct
 {
     const char* sentences[8];
@@ -9,6 +11,8 @@ typedef struct
 }
 Speech;
 
-Speech s_use_greet(void);
+Speech s_use_greet(const Timer);
 
-Speech s_use_grateful(void);
+Speech s_use_unwanted(const Timer);
+
+Speech s_use_grateful(const Timer);

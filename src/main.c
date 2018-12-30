@@ -11,9 +11,11 @@ int main(int argc, char* argv[])
 
     srand(time(NULL));
 
+    Timer tm = t_new();
+
     const Args args = a_parse(argc, argv);
 
-    const World world = w_make(32);
+    const World world = w_make(32, tm);
 
     Hero hero = h_birth(args.focal, world.map, 0);
 
@@ -32,8 +34,6 @@ int main(int argc, char* argv[])
     Input in = i_ready(args.msen);
 
     Theme theme = NO_THEME;
-
-    Timer tm = t_new();
 
     Sdl sdl = s_setup(args);
 
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
 
             m_edit(world.map[hero.floor], ov);
 
-            world.sprites[hero.floor] = s_lay(world.sprites[hero.floor], world.map[hero.floor], ov);
+            world.sprites[hero.floor] = s_lay(world.sprites[hero.floor], world.map[hero.floor], ov, tm);
         }
         else
         {
@@ -139,6 +139,7 @@ int main(int argc, char* argv[])
 
         const int t1 = SDL_GetTicks();
         const int ms = 1000.0f / args.fps - (t1 - t0);
+
         SDL_Delay(ms < 0 ? 0 : ms);
 
         const int t2 = SDL_GetTicks();
