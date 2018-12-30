@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
             {
                 SDL_SetRelativeMouseMode(SDL_FALSE);
 
-                hero.inventory = i_highlite(hero.inventory, in, sdl.xres);
+                hero.inventory = i_hilite(hero.inventory, in, sdl.xres);
 
                 hero.inventory = i_what_is(hero.inventory, scroll, tm);
 
@@ -115,6 +115,8 @@ int main(int argc, char* argv[])
             else
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
+
+                hero.inventory = i_unhilite(hero.inventory);
 
                 t_clear_title_when_linger();
 

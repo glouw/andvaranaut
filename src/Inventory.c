@@ -44,7 +44,7 @@ Inventory i_select(Inventory inv, const Input in)
     return inv;
 }
 
-Inventory i_highlite(Inventory inv, const Input in, const int xres)
+Inventory i_hilite(Inventory inv, const Input in, const int xres)
 {
     inv.hilited = inside(inv, in, xres) ? calc_index(inv, in) : -1;
     return inv;
@@ -137,5 +137,11 @@ Inventory i_manage(Inventory inv, const Input in, const int xres)
     inv = drag(inv, in, xres);
     inv = swap(inv, in, xres);
 
+    return inv;
+}
+
+Inventory i_unhilite(Inventory inv)
+{
+    inv.hilited = -1;
     return inv;
 }
