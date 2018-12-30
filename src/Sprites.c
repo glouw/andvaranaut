@@ -522,8 +522,6 @@ static Hero service_hero_health(Hero hero, const Map map, const Sprites sprites,
     (void) sprites;
     (void) tm;
 
-    const Item equipped = i_get_equipped(hero.inventory);
-
     for(int i = 0; i < sprites.count; i++)
     {
         Sprite* const sprite = &sprites.sprite[i];
@@ -536,7 +534,7 @@ static Hero service_hero_health(Hero hero, const Map map, const Sprites sprites,
             if(s_impulse(sprite, tm))
                 hero = h_struck(hero, sprite->state, sprite->damage);
 
-            if(i_successful_block(equipped, hero.gauge))
+            if(i_successful_block(hero.attack.item, hero.gauge))
                 s_parried(sprite, hero.attack.velocity, tm);
         }
     }

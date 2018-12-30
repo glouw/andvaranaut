@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     {
         const int t0 = SDL_GetTicks();
 
-        tm = t_tick(tm, hero.gauge.count && i_can_block(i_get_equipped(hero.inventory)), renders);
+        tm = t_tick(tm, hero.gauge.count && i_can_block(hero.attack.item), renders);
 
         t_advance_title(renders);
 

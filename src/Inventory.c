@@ -109,11 +109,6 @@ Inventory i_what_is(Inventory inv, const Scroll sc, const Timer tm)
     return inv;
 }
 
-Item i_get_equipped(const Inventory inv)
-{
-    return inv.items.item[inv.selected];
-}
-
 static Inventory drag(Inventory inv, const Input in, const int xres)
 {
     if(in.ld)
