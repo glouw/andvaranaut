@@ -603,14 +603,14 @@ static Hero trade(const Sprites sprites, Hero hero, const Input in, const Timer 
                 {
                     sprite->speech = s_use_grateful(tm);
                     sprite->wants.clas = NONE;
-                    break;
+                    sprite->evil = false;
                 }
                 else // Does not want.
                 {
                     sprite->speech = s_use_unwanted(tm);
                     i_add(hero.inventory.items, hero.inventory.trade); // Put back.
-                    break;
                 }
+                break;
             }
         }
     }
