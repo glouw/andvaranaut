@@ -62,3 +62,5 @@ Ray h_cast(const Hero, const Hit, const Sheer, const int yres, const int xres);
 Hero h_struck(Hero, const State, const float damage);
 
 int h_close_enough(const Hero, const Point other);
+
+int h_slowmo(const Hero);

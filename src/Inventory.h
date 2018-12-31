@@ -29,3 +29,5 @@ Inventory i_what_is(Inventory, const Scroll, const Timer);
 Inventory i_manage(Inventory, const Input, const int xres);
 
 Inventory i_unhilite(Inventory);
+
+Inventory i_handle(Inventory, const Input, const Scroll, const Timer, const int xres);

@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
     Sdl sdl = s_setup(args);
 
     const Text yel = t_build("art/gui/SDS_8x8.ttf", 24, sdl.yel, sdl.blk);
+
     const Text red = t_build("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
 
     t_clear_title();
@@ -46,7 +47,7 @@ int main(int argc, char* argv[])
     {
         const int t0 = SDL_GetTicks();
 
-        tm = t_tick(tm, hero.gauge.count && i_can_block(hero.attack.item), renders);
+        tm = t_tick(tm, h_slowmo(hero), renders);
 
         t_advance_title(renders);
 
@@ -56,25 +57,27 @@ int main(int argc, char* argv[])
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
 
-            s_render_overlay(sdl, ov, world.sprites[hero.floor], world.map[hero.floor], tm);
-
             ov = o_update(ov, in, sdl.xres);
 
             m_edit(world.map[hero.floor], ov);
 
             world.sprites[hero.floor] = s_lay(world.sprites[hero.floor], world.map[hero.floor], ov, tm);
+
+            s_render_overlay(sdl, ov, world.sprites[hero.floor], world.map[hero.floor], tm);
         }
-        else
+        else // Playing.
         {
+            ov = o_pan(ov, hero.where, sdl.xres, sdl.yres);
+
             world.map[hero.floor] = s_count_agents(world.sprites[hero.floor], world.map[hero.floor]);
 
             m_place_barricades(world.map[hero.floor]);
 
-            hero = h_teleporting(hero, world.map[hero.floor], in, tm);
-
             current = f_stream(current);
 
             clouds = f_stream(clouds);
+
+            hero = h_teleporting(hero, world.map[hero.floor], in, tm);
 
             if(hero.teleporting)
             {
@@ -88,45 +91,36 @@ int main(int argc, char* argv[])
 
                 fire = f_kindle(world.map[hero.floor]);
             }
-
             hero = s_caretake(world.sprites[hero.floor], hero, world.map[hero.floor], field, fire, tm, in);
 
             world.sprites[hero.floor] = s_spread_fire(world.sprites[hero.floor], fire, world.map[hero.floor], tm);
 
-            ov = o_pan(ov, hero.where, sdl.xres, sdl.yres);
+            s_render_playing(sdl, yel, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, tm, in);
+
+            hero.inventory = i_unhilite(hero.inventory);
 
             hero.inventory = i_select(hero.inventory, in);
 
-            s_render_playing(sdl, yel, hero, world.sprites[hero.floor], world.map[hero.floor], current, clouds, tm, in);
-
             if(i_using_inventory(in))
             {
-                SDL_SetRelativeMouseMode(SDL_FALSE);
-
-                hero.inventory = i_hilite(hero.inventory, in, sdl.xres);
-
-                hero.inventory = i_what_is(hero.inventory, scroll, tm);
-
-                hero.inventory = i_manage(hero.inventory, in, sdl.xres);
+                hero.inventory = i_handle(hero.inventory, in, scroll, tm, sdl.xres);
             }
-            else
-            if(i_using_lookup(in))
+            else if(i_using_lookup(in))
+            {
                 hero = w_transport(world, hero, sdl, red, yel, in);
-            else
+            }
+            else // Combat.
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
 
-                hero.inventory = i_unhilite(hero.inventory);
-
                 t_clear_title_when_linger();
-
-                hero = h_sustain(hero, world.map[hero.floor], in, current, world.sprites[hero.floor].last, tm);
 
                 hero = s_draw_gauge(sdl, hero, scroll);
 
+                hero = h_sustain(hero, world.map[hero.floor], in, current, world.sprites[hero.floor].last, tm);
+
                 world.sprites[hero.floor] = s_hero_damage_sprites(world.sprites[hero.floor], hero, tm);
             }
-
             f_clear(fire);
         }
         t_show_title(yel, sdl);
@@ -138,14 +132,13 @@ int main(int argc, char* argv[])
         in = i_pump(in);
 
         const int t1 = SDL_GetTicks();
-        const int ms = 1000.0f / args.fps - (t1 - t0);
 
+        const int ms = 1000.0f / args.fps - (t1 - t0);
         SDL_Delay(ms < 0 ? 0 : ms);
 
         const int t2 = SDL_GetTicks();
         if(tm.rise)
             fps = 1000.0f / (t2 - t0);
     }
-
     return 0;
 }

@@ -146,13 +146,22 @@ Inventory i_manage(Inventory inv, const Input in, const int xres)
 {
     inv = drag(inv, in, xres);
     inv = swap(inv, in, xres);
-
     return inv;
 }
 
 Inventory i_unhilite(Inventory inv)
 {
     inv.hilited = -1;
+    return inv;
+}
+
+Inventory i_handle(Inventory inv, const Input in, const Scroll scroll, const Timer tm, const int xres)
+{
+    SDL_SetRelativeMouseMode(SDL_FALSE);
+
+    inv = i_hilite(inv, in, xres);
+    inv = i_what_is(inv, scroll, tm);
+    inv = i_manage(inv, in, xres);
 
     return inv;
 }

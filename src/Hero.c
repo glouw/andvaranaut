@@ -244,3 +244,8 @@ int h_close_enough(const Hero hero, const Point other)
 {
     return p_eql(hero.where, other, 2.2f);
 }
+
+int h_slowmo(const Hero hero)
+{
+    return hero.gauge.count && i_can_block(hero.attack.item);
+}
