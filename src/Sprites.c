@@ -271,7 +271,7 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
     return sprites;
 }
 
-static Sprites damage_melee(Sprites sprites, const Timer tm, const Hero hero)
+static Sprites use_melee(Sprites sprites, const Timer tm, const Hero hero)
 {
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
@@ -293,7 +293,7 @@ static Sprites damage_melee(Sprites sprites, const Timer tm, const Hero hero)
     return sprites;
 }
 
-static Sprites damage_range(Sprites sprites, const Timer tm, const Hero hero)
+static Sprites use_range(Sprites sprites, const Timer tm, const Hero hero)
 {
     const SDL_Point point = {
         (int) hero.attack.reticule.x,
@@ -316,7 +316,7 @@ static Sprites damage_range(Sprites sprites, const Timer tm, const Hero hero)
     return sprites;
 }
 
-static Sprites damage_magic(Sprites sprites, const Timer tm, const Hero hero)
+static Sprites use_magic(Sprites sprites, const Timer tm, const Hero hero)
 {
     // TODO
     // Casting magic scrolls will spawn new sprites.
@@ -333,9 +333,11 @@ Sprites s_hero_damage_sprites(Sprites sprites, const Hero hero, const Timer tm)
     {
         sprites.last = hero.attack.method;
 
-        if(hero.attack.method == MELEE) return damage_melee(sprites, tm, hero);
-        if(hero.attack.method == RANGE) return damage_range(sprites, tm, hero);
-        if(hero.attack.method == MAGIC) return damage_magic(sprites, tm, hero);
+        if(hero.attack.method == MELEE) return use_melee(sprites, tm, hero);
+
+        if(hero.attack.method == RANGE) return use_range(sprites, tm, hero);
+
+        if(hero.attack.method == MAGIC) return use_magic(sprites, tm, hero);
     }
     sprites.last = NO_ATTACK;
 
@@ -493,8 +495,8 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
             if(s_must_spread(sprite, map.floring))
             {
                 const Point dir = {
-                    2.0f * (u_frand() - 0.5f),
-                    2.0f * (u_frand() - 0.5f),
+                    u_frand() - 0.5f,
+                    u_frand() - 0.5f,
                 };
                 const Point where = p_add(sprite->where, dir);
 
@@ -516,7 +518,7 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
     return sprites;
 }
 
-static Hero service_hero_health(Hero hero, const Map map, const Sprites sprites, const Timer tm)
+static Hero manage_bar_health(Hero hero, const Map map, const Sprites sprites, const Timer tm)
 {
     (void) map;
     (void) sprites;
@@ -541,7 +543,7 @@ static Hero service_hero_health(Hero hero, const Map map, const Sprites sprites,
     return hero;
 }
 
-static Hero service_hero_mana(Hero hero, const Map map, const Sprites sprites, const Timer tm)
+static Hero manage_bar_mana(Hero hero, const Map map, const Sprites sprites, const Timer tm)
 {
     (void) map;
     (void) sprites;
@@ -550,7 +552,7 @@ static Hero service_hero_mana(Hero hero, const Map map, const Sprites sprites, c
     return hero;
 }
 
-static Hero service_hero_fatigue(Hero hero, const Map map, const Sprites sprites, const Timer tm)
+static Hero manage_bar_fatigue(Hero hero, const Map map, const Sprites sprites, const Timer tm)
 {
     (void) map;
     (void) sprites;
@@ -573,11 +575,13 @@ static Hero service_hero_fatigue(Hero hero, const Map map, const Sprites sprites
     return hero;
 }
 
-static Hero sprites_damage_hero(const Sprites sprites, Hero hero, const Map map, const Timer tm)
+static Hero manage_bars(const Sprites sprites, Hero hero, const Map map, const Timer tm)
 {
-    hero = service_hero_health (hero, map, sprites, tm);
-    hero = service_hero_mana   (hero, map, sprites, tm);
-    hero = service_hero_fatigue(hero, map, sprites, tm);
+    hero = manage_bar_health(hero, map, sprites, tm);
+
+    hero = manage_bar_mana(hero, map, sprites, tm);
+
+    hero = manage_bar_fatigue(hero, map, sprites, tm);
 
     return hero;
 }
@@ -597,22 +601,37 @@ static Hero trade(const Sprites sprites, Hero hero, const Input in, const Timer 
 
             if(SDL_PointInRect(&to, &sprite->seen))
             {
-                if(i_same_id(sprite->wants, hero.inventory.trade.id)) // Wants.
+                const int trading = i_same_id(sprite->wants, hero.inventory.trade.id);
+                if(trading)
                 {
-                    sprite->speech = s_use_grateful(tm);
-                    sprite->wants.clas = NONE;
                     sprite->evil = false;
+
+                    const Item item = i_new(sprite->gives);
+                    const int added = i_add(hero.inventory.items, item);
+                    if(added)
+                    {
+                        sprite->speech = s_use_grateful(tm);
+                        sprite->wants.clas = NONE;
+                        sprite->gives.clas = NONE;
+                    }
+                    else
+                    {
+                        sprite->speech = s_use_inv_full(tm);
+                        i_revert_trade(hero.inventory);
+                    }
                 }
-                else // Does not want.
+                else
                 {
                     sprite->speech = s_use_unwanted(tm);
-                    i_add(hero.inventory.items, hero.inventory.trade); // Put back.
+                    i_revert_trade(hero.inventory);
                 }
                 break;
             }
         }
     }
+
     hero.inventory.trade = i_none();
+
     return hero;
 }
 
@@ -623,18 +642,26 @@ Hero s_caretake(const Sprites sprites, Hero hero, const Map map, const Field fie
     s_push(sprites, hero);
 
     idle(sprites, tm);
+
     route(sprites, field, map, hero);
+
     move(sprites, field, hero.where, map, tm);
+
     bound(sprites, map);
+
     speak(sprites, hero, tm);
+
     block(sprites, hero, tm);
+
     track(sprites, fire);
+
     burn(sprites, fire);
+
     rage(sprites, hero, tm);
 
     hero = trade(sprites, hero, in, tm);
 
-    return sprites_damage_hero(sprites, hero, map, tm);
+    return manage_bars(sprites, hero, map, tm);
 }
 
 static Point avail(const Point center, const Map map)

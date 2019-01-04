@@ -165,3 +165,8 @@ Inventory i_handle(Inventory inv, const Input in, const Scroll scroll, const Tim
 
     return inv;
 }
+
+void i_revert_trade(const Inventory inv)
+{
+    i_add(inv.items, inv.trade);
+}

@@ -37,8 +37,9 @@ typedef struct
     int busy_ticks;
     int block_start;
 
-    // Sprite really wants this item.
     Identification wants;
+
+    Identification gives;
 }
 Sprite;
 

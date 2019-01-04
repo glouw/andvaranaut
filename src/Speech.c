@@ -45,3 +45,22 @@ Speech s_use_greet(const Timer tm)
     };
     return build(sentences, u_len(sentences), tm);
 }
+
+Speech s_use_inv_full(const Timer tm)
+{
+    const char* const sentences[] = {
+        "I cannot give this to you!",
+        "Your inventory is full!",
+    };
+    return build(sentences, u_len(sentences), tm);
+
+}
+
+Speech s_use_no_give(const Timer tm)
+{
+    const char* const sentences[] = {
+        "I have nothing to give you!",
+        "Sorry!",
+    };
+    return build(sentences, u_len(sentences), tm);
+}

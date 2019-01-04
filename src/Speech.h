@@ -16,3 +16,7 @@ Speech s_use_greet(const Timer);
 Speech s_use_unwanted(const Timer);
 
 Speech s_use_grateful(const Timer);
+
+Speech s_use_inv_full(const Timer);
+
+Speech s_use_no_give(const Timer);
