@@ -64,8 +64,9 @@ static Hero calc_pitch(Hero hero, const Input input)
 
 static Hero look(const Hero hero, const Input input)
 {
-    if(input.l)
+    if(hero.gauge.count > 0)
         return hero;
+
     return calc_pitch(calc_yaw(hero, input), input);
 }
 
@@ -118,12 +119,14 @@ static Point accelerate(const Hero hero)
     return p_mul(direction, hero.acceleration);
 }
 
-static Hero move(Hero hero, const Map map, const Input input, const Flow current)
+static Hero move(Hero hero, const Map map, const Input input, const Flow current, const Timer tm)
 {
     const Point last = hero.where;
     const int swimming = hero.height <= calc_swim_height(hero);
     const int crouchin = hero.height <= calc_duck_height(hero);
-    const float speed = swimming ? 0.3f * hero.speed : crouchin ? 0.5f * hero.speed : hero.speed;
+    const float slowdown = tm.slowmo ? tm.slowdown : 1.0f;
+    const float speed = (1.0f / slowdown) * (swimming ? 0.3f * hero.speed : crouchin ? 0.5f * hero.speed : hero.speed);
+    const float accel = (1.0f / slowdown) * hero.acceleration;
 
     // Accelerate?
     if(input.key[SDL_SCANCODE_W]
@@ -138,7 +141,7 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
         if(input.key[SDL_SCANCODE_A]) hero.velocity = p_sub(hero.velocity, p_rot90(acceleration));
     }
     else // Slow down.
-        hero.velocity = p_mul(hero.velocity, 1.0f - hero.acceleration / speed);
+        hero.velocity = p_mul(hero.velocity, 1.0f - accel / speed);
 
     if(swimming)
         hero.velocity = p_add(hero.velocity, current.velocity);
@@ -223,7 +226,7 @@ Hero h_sustain(Hero hero, const Map map, const Input input, const Flow current, 
 {
     hero = do_vert_math(hero, map, input);
     hero = look(hero, input);
-    hero = move(hero, map, input, current);
+    hero = move(hero, map, input, current, tm);
     hero = recoil(hero, last);
     hero.torch = t_burn(hero.torch);
     hero.gauge = g_wind(hero.gauge, input, tm);
@@ -243,9 +246,4 @@ Hero h_struck(Hero hero, const State state, const float damage)
 int h_close_enough(const Hero hero, const Point other)
 {
     return p_eql(hero.where, other, 2.2f);
-}
-
-int h_slowmo(const Hero hero)
-{
-    return hero.gauge.count && i_can_block(hero.attack.item);
 }

@@ -212,8 +212,10 @@ static Attack draw_gauge_melee(const Sdl sdl, const Gauge g, const Item it, cons
         const float growth = i / (float) g.count;
         const int size = 16;
         const int width = growth * size;
-        const int green = 0xFF * growth;
-        const uint32_t color = (0xFF << 0x10) | (green << 0x08);
+        const int red = 0xFF;
+        const int grn = 0xFF * growth;
+        const int blu = 0xFF * g.alternate;
+        const uint32_t color = (red << 0x10) | (grn << 0x08) | blu;
         const Point mid = {
             (width - sdl.xres) / 2.0f,
             (width - sdl.yres) / 2.0f,
@@ -461,9 +463,8 @@ static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, con
     }
 }
 
-static void draw_all_bars(const Sdl sdl, const Hero hero, const Timer tm)
+static void draw_all_bars(const Sdl sdl, const Hero hero, const Timer tm, const int size)
 {
-    const int size = 1;
     draw_one_bar(sdl, hero, 2, tm, size, HEALTH);
     draw_one_bar(sdl, hero, 1, tm, size, MANA);
     draw_one_bar(sdl, hero, 0, tm, size, FATIGUE);
@@ -592,7 +593,7 @@ void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Spr
 
     // Draw the user interface.
     draw_inventory(sdl, hero.inventory, in);
-    draw_all_bars(sdl, hero, tm);
+    draw_all_bars(sdl, hero, tm, 1);
     draw_map(sdl, map, hero.where);
 
     // Cleanup.

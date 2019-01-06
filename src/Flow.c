@@ -15,11 +15,15 @@ Flow f_start(const float height)
     return f;
 }
 
-Flow f_stream(Flow f)
+Flow f_stream(Flow f, const Timer tm)
 {
-    f.velocity = p_add(f.velocity, p_mul(f.direction, f.acceleration));
-    if(p_mag(f.velocity) > f.speed)
-        f.velocity = p_mul(p_unit(f.velocity), f.speed);
+    const float slowdown = tm.slowmo ? tm.slowdown : 1.0f;
+    const float speed = f.speed / slowdown;
+    const float accel = f.acceleration / slowdown;
+
+    f.velocity = p_add(f.velocity, p_mul(f.direction, accel));
+    if(p_mag(f.velocity) > speed)
+        f.velocity = p_mul(p_unit(f.velocity), speed);
     f.where = p_add(f.where, f.velocity);
     return f;
 }

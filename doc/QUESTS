@@ -28,3 +28,33 @@ Dwarven Brothers
     supposed to inspire courage [Ring of Steinulf grants +%5 health]. As the dwarf dies, he asks the hero to
     burn his body as well, and add it to the urn his brother is in.
     If the hero does as requested, the ring gains [+%2 luck].
+
+
+    -> [THE HOLDING OF GUNNAR]
+        Finds Gunnar
+        Gets letter for old man
+
+    -> [A DWARVEN OUTPOST]
+        Finds aging dwarf
+        Gives letter to old man
+        Gets letter for Gunnar
+
+    -> [THE HOLDING OF GUNNAR]
+        Find Gunnar
+        Gives letter to Gunnar
+        Requested to find Olan
+
+    -> [OLANS DEMISE]
+        Finds Olan
+        Gets Olan's Journal
+
+    -> [THE HOLDING OF GUNNAR]
+        Find Gunnar
+        Give journal to Gunnar
+        Requested to burn Olan's body and return ashes
+
+    -> [OLANS DEMISE]
+        Finds Olan
+        Burns Olan's body
+
+    -> [THE HOLDING OF GUNNAR]

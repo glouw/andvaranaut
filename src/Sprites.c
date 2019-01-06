@@ -280,7 +280,7 @@ static Sprites use_melee(Sprites sprites, const Timer tm, const Hero hero)
         if(s_useless(sprite))
             continue;
 
-        if(i_can_block(hero.attack.item))
+        if(g_blocking(hero.gauge))
             continue;
 
         if(h_close_enough(hero, sprite->where))
@@ -392,23 +392,27 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
             if(s_busy(sprite, tm))
                 continue;
 
-            if(i_can_block(hero.attack.item))
+            if(s_inanimate(sprite->ascii))
                 continue;
 
-            if(s_inanimate(sprite->ascii))
+            if(g_blocking(hero.gauge))
                 continue;
 
             if(h_close_enough(hero, sprite->where))
             {
                 // TODO: Subtract sprite dependent value from gauge count to have sprites react slower.
                 const Point block = g_sum(hero.gauge, hero.gauge.count);
+
                 if(p_north(block)) sprite->state = BLOCK_N;
                 if(p_east (block)) sprite->state = BLOCK_E;
                 if(p_south(block)) sprite->state = BLOCK_S;
                 if(p_west (block)) sprite->state = BLOCK_W;
+
+                const int end = rand() % sprite->block_time;
+
                 if(tm.fall
                 && sprite->evil
-                && tm.ticks > sprite->block_time + sprite->block_start)
+                && tm.ticks > sprite->block_start + end)
                 {
                     sprite->state = IDLE;
                     sprite->block_start = tm.ticks;
@@ -533,11 +537,11 @@ static Hero manage_bar_health(Hero hero, const Map map, const Sprites sprites, c
 
         if(h_close_enough(hero, sprite->where))
         {
+            if(g_successful_block(hero.gauge))
+                s_parried(sprite, hero.attack.velocity, tm);
+            else
             if(s_impulse(sprite, tm))
                 hero = h_struck(hero, sprite->state, sprite->damage);
-
-            if(i_successful_block(hero.attack.item, hero.gauge))
-                s_parried(sprite, hero.attack.velocity, tm);
         }
     }
     return hero;

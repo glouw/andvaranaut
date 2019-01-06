@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     {
         const int t0 = SDL_GetTicks();
 
-        tm = t_tick(tm, h_slowmo(hero), renders);
+        tm = t_tick(tm, g_slowmo(hero.gauge), renders);
 
         t_advance_title(renders);
 
@@ -73,9 +73,9 @@ int main(int argc, char* argv[])
 
             m_place_barricades(world.map[hero.floor]);
 
-            current = f_stream(current);
+            current = f_stream(current, tm);
 
-            clouds = f_stream(clouds);
+            clouds = f_stream(clouds, tm);
 
             hero = h_teleporting(hero, world.map[hero.floor], in, tm);
 

@@ -15,6 +15,7 @@ typedef struct
     int evil;
     int transparent;
     int block_time;
+    int stun_ticks;
 
     // Stats.
     float size;
@@ -29,6 +30,9 @@ typedef struct
     Point last;
     Point velocity;
 
+    Identification wants;
+    Identification gives;
+
     State state;
 
     SDL_Rect seen;
@@ -36,10 +40,6 @@ typedef struct
 
     int busy_ticks;
     int block_start;
-
-    Identification wants;
-
-    Identification gives;
 }
 Sprite;
 

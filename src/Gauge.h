@@ -14,6 +14,7 @@ typedef struct
     int ticks;
     int warning;
     int ready;
+    int alternate;
 }
 Gauge;
 
@@ -32,3 +33,9 @@ Point g_velocity(const Gauge);
 Point g_acceleration(const Gauge);
 
 int g_fizzled(const Gauge, const Timer);
+
+int g_blocking(const Gauge);
+
+int g_slowmo(const Gauge);
+
+int g_successful_block(const Gauge);

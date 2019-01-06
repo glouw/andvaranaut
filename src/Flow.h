@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Point.h"
+#include "Timer.h"
 
 typedef struct
 {
@@ -15,4 +16,4 @@ Flow;
 
 Flow f_start(const float height);
 
-Flow f_stream(Flow);
+Flow f_stream(Flow, const Timer tm);

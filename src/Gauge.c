@@ -23,6 +23,8 @@ static Gauge reset(Gauge g)
     g.count = 0;
     g.ready = false;
     g.warning = false;
+    g.alternate = false;
+
     return g;
 }
 
@@ -45,18 +47,20 @@ Gauge g_wind(Gauge g, const Input input, const Timer tm)
         return g;
     else
     {
-        if(input.r)
-            return reset(g);
-        else
-        if(input.l)
+        if(input.l
+        || input.r)
         {
+            g.alternate = input.r;
+
             g.points[g.count].x = (g.mx += input.dx);
             g.points[g.count].y = (g.my += input.dy);
             g.count++;
+
             return g.count == g.max ? fizzle(g, tm) : g;
         }
         else
-        if(input.lu)
+        if(input.lu
+        || input.ru)
         {
             g.ready = true;
             return g;
@@ -85,4 +89,21 @@ Point g_velocity(const Gauge g)
     }
     static Point zero;
     return zero;
+}
+
+int g_blocking(const Gauge g)
+{
+    return g.alternate;
+}
+
+int g_slowmo(const Gauge g)
+{
+    return g.count > 0
+        && g_blocking(g);
+}
+
+int g_successful_block(const Gauge g)
+{
+    return g.ready
+        && g_blocking(g);
 }

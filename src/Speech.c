@@ -32,6 +32,7 @@ Speech s_use_grateful(const Timer tm)
 {
     const char* const sentences[] = {
         "Wow, I always wanted this!",
+        "Please, take this in return.",
     };
     return build(sentences, u_len(sentences), tm);
 }

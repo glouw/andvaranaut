@@ -367,21 +367,9 @@ static const Item lights[] = {
     { {6,LIGHT}, "Light", "", "", 25.0f, 1, 360.0f, 0.5f },
 };
 
-static const Item letter[] = { {
-        {0,LETTER},
-        "Letter", "Letter to ...",
-        "This is a sample letter\n"
-        "written for a sprite to read.\n"
-        "It will be for fetch quests and the like.\n",
-        0,0,0,0
-    },{
-        {1,LETTER},
-        "Letter", "Letter to ...",
-        "This is another letter.\n"
-        "There are many letters.\n"
-        "Different quests have different letters.\n",
-        0,0,0,0
-    },
+static const Item letter[] = {
+    { {0,LETTER}, "Letter", "Letter to ...", "This is a sample letter\n" "This is a sample letter\n", 0,0,0,0 },
+    { {1,LETTER}, "Letter", "Letter to ...", "Different quests have different letters.\n" "Different quests have different letters.\n", 0,0,0,0 },
 };
 
 static const Item longweps[] = {
@@ -836,14 +824,4 @@ void i_test(void)
     check(SHORTWEP, shortweps, u_len(shortweps));
     check(TOOL    , tools    , u_len(tools)    );
     check(WAND    , wands    , u_len(wands)    );
-}
-
-int i_can_block(const Item item)
-{
-    return item.id.clas == SHIELD;
-}
-
-int i_successful_block(const Item equipped, const Gauge g)
-{
-    return g.ready && i_can_block(equipped);
 }

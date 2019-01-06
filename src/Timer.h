@@ -4,7 +4,7 @@
 
 typedef struct
 {
-    int slowdown;
+    float slowdown;
     int slowmo;
     int renders;
     int ticks;
