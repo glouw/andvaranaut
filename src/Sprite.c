@@ -24,7 +24,6 @@ static Sprite init_speech(Sprite sprite, const Timer tm)
 
 // Be sure to map these sprites to their surface paths in Surfaces.c.
 static const Sprite lower[] = {
-    /*             | -- Trait -- | - Stats --------------------------------- | - Physics -------- | */
     /* Flower  */ { 'a', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 200.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, {0,NONE  }, {0,NONE  }, IDLE, {0,0,0,0}, {{0},0,0,0}, 0, 0 },
     /* Dwarf   */ { 'b', 0, 0, 8, 6, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, {0,LETTER}, {1,LETTER}, IDLE, {0,0,0,0}, {{0},0,0,0}, 0, 0 },
     /* Ember   */ { 'c', 1, 1, 4, 0, 1.0f, 0.000f, 0.0000f,   1.0f, 0.50f, 0.0f, {0,0}, {0,0}, {0,0}, {0,NONE  }, {0,NONE  }, IDLE, {0,0,0,0}, {{0},0,0,0}, 0, 0 },
@@ -145,7 +144,7 @@ void s_place(Sprite* const sprite, const Point to)
 
 int s_muted(const Sprite* const sprite)
 {
-    return sprite->speech.count <= 1; // Includes padding.
+    return sprite->speech.count <= 1; // Includes empty ("") padding.
 }
 
 int s_busy(const Sprite* const sprite, const Timer tm)

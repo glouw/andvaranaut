@@ -65,7 +65,6 @@ void s_place(Sprite* const, const Point);
 
 int s_muted(const Sprite* const);
 
-// Busy sprites cannot be interrupted and must wait for the timer ticks to expire.
 int s_busy(const Sprite* const, const Timer);
 
 void s_go_busy(Sprite* const, const Timer, const int ticks, const State);

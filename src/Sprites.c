@@ -539,7 +539,8 @@ static Hero manage_bar_health(Hero hero, const Map map, const Sprites sprites, c
         {
             if(g_successful_block(hero.gauge))
                 s_parried(sprite, hero.attack.velocity, tm);
-            else
+
+            // TODO: Give back health from block.
             if(s_impulse(sprite, tm))
                 hero = h_struck(hero, sprite->state, sprite->damage);
         }

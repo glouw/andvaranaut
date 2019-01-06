@@ -25,14 +25,15 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
     const Point hor = p_jump_hor(where, direction);
     const Point ver = p_jump_ver(where, direction);
     const Point ray = p_cmp(where, hor, ver);
+
     const Point delta = p_mul(direction, 0.01f);
+
     const Point dx = { delta.x, 0.0f };
     const Point dy = { 0.0f, delta.y };
 
-    const Line test = {
-        p_add(ray, p_mag(p_sub(hor, ver)) < 0.001f ? delta : u_dec(ray.x) == 0.0f ? dx : dy),
-        p_sub(ray, p_mag(p_sub(hor, ver)) < 0.001f ? delta : u_dec(ray.x) == 0.0f ? dx : dy),
-    };
+    const Point fixed = p_mag(p_sub(hor, ver)) < 0.001f ? delta : u_dec(ray.x) == 0.0f ? dx : dy;
+
+    const Line test = { p_add(ray, fixed), p_sub(ray, fixed) };
 
     // Floor wall.
     if(p_tile(test.a, map.floring) && !p_tile(test.b, map.floring))
