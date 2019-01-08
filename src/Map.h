@@ -30,7 +30,7 @@ typedef struct
 }
 Map;
 
-Map m_generate(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid);
+Map m_generate(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid, const int floor);
 
 Theme m_get_theme(const Theme last, const Map, const Point where, const Timer);
 

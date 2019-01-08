@@ -25,6 +25,8 @@ static SDL_Surface* load(const char* const path)
 
 Surfaces s_load_surfaces(void)
 {
+#pragma message "Maintainer: Apply new sprite pixel art in Surfaces.c::s_load_surfaces"
+
     static const char* const names[] = {
         // Sprites: Alpha ASCII
         // Tiles: Non-Alpha ASCII
@@ -151,6 +153,7 @@ Surfaces s_load_surfaces(void)
         /* ~ + 25 */ "art/items/wand.bmp",
         /* ~ + 26 */ "art/gui/gui.bmp",
     };
+
     const int count = u_len(names);
     SDL_Surface** const surface = u_toss(SDL_Surface*, count);
 
@@ -158,5 +161,6 @@ Surfaces s_load_surfaces(void)
         surface[i] = load(names[i]);
 
     const Surfaces surfaces = { surface, count };
+
     return surfaces;
 }

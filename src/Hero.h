@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Sheer.h"
+#include "Room.h"
 #include "Method.h"
 #include "Attack.h"
 #include "State.h"
@@ -41,13 +42,16 @@ typedef struct
     float warning;
     int teleported;
     int teleporting;
+
     Gauge gauge;
+
     Inventory inventory;
+
     Attack attack;
 }
 Hero;
 
-Hero h_birth(const float focal, const Map[], const int floor);
+Hero h_birth(const float focal, const Room);
 
 Hero h_teleporting(Hero, const Map, const Input, const Timer);
 

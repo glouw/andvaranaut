@@ -11,4 +11,4 @@ typedef struct
 }
 Tris;
 
-Map t_generate(const Points extra, const int w, const int h, const int grid, const int traps);
+Map t_generate(const Points extra, const int w, const int h, const int grid, const int traps, const int floor);

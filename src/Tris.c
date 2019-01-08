@@ -328,7 +328,7 @@ static void generate_complex(const Map map, const Points rooms, const int w, con
     free(edges.tri);
 }
 
-Map t_generate(const Points extra, const int w, const int h, const int grid, const int traps)
+Map t_generate(const Points extra, const int w, const int h, const int grid, const int traps, const int floor)
 {
     const int max = traps + (10 + u_d10());
     const int border = 2 * grid;
@@ -337,7 +337,7 @@ Map t_generate(const Points extra, const int w, const int h, const int grid, con
 
     const Points trapdoors = get_traps(rooms, u_min(traps, rooms.count));
 
-    const Map map = m_generate(h, w, trapdoors, rooms, grid);
+    const Map map = m_generate(h, w, trapdoors, rooms, grid, floor);
 
     rooms.count == 1 ?  generate_simple(map, rooms) : generate_complex(map, rooms, w, h);
 

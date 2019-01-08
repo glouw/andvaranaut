@@ -754,6 +754,8 @@ Item i_none(void)
 
 Item i_new(const Identification id)
 {
+#pragma message "Maintainer: Apply item characteristics in Item.c::i_new"
+
     switch(id.clas)
     {
     // Do not use default.

@@ -706,11 +706,13 @@ static Sprites place_dummy(const Sprites sprites, const Map map, const Point cen
 
 Sprites s_populate(Sprites sprites, const Map map, const Timer tm)
 {
+#pragma message "Maintainer: Apply new map sprite themes in Sprites.c::s_populate"
+
     for(int i = 0; i < map.rooms.count; i++)
     {
-        const Point center = map.rooms.wheres[i];
+        const Point center = map.rooms.room[i].where;
 
-        switch(map.rooms.themes[i])
+        switch(map.rooms.room[i].theme)
         {
         case AN_EMPTY_ROOM:
             sprites = place_dummy(sprites, map, center, tm);
@@ -736,7 +738,7 @@ Map s_count_agents(const Sprites sprites, Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {
-        map.rooms.agents[i] = 0;
+        map.rooms.room[i].agents = 0;
         for(int s = 0; s < sprites.count; s++)
         {
             Sprite* const sprite = &sprites.sprite[s];
@@ -744,8 +746,8 @@ Map s_count_agents(const Sprites sprites, Map map)
             if(s_not_agent(sprite))
                 continue;
 
-            if(p_eql(sprite->where, map.rooms.wheres[i], map.grid))
-                map.rooms.agents[i]++;
+            if(p_eql(sprite->where, map.rooms.room[i].where, map.grid))
+                map.rooms.room[i].agents++;
         }
     }
     return map;

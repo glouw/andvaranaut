@@ -13,15 +13,15 @@ static Line get_lens(const float focal)
     return fov;
 }
 
-Hero h_birth(const float focal, const Map map[], const int floor)
+Hero h_birth(const float focal, const Room room)
 {
     static Hero zero;
     Hero hero = zero;
 
     // From zero to hero.
-    hero.floor = floor;
+    hero.floor = room.floor;
     hero.fov = get_lens(focal);
-    hero.where = map[floor].trapdoors.point[0];
+    hero.where = room.where;
     hero.speed = 0.12f;
     hero.acceleration = 0.0150f;
     hero.torch = t_snuff();

@@ -17,7 +17,9 @@ int main(int argc, char* argv[])
 
     const World world = w_make(32, tm);
 
-    Hero hero = h_birth(args.focal, world.map, 0);
+    const Room start = w_get_starting_room(world);
+
+    Hero hero = h_birth(args.focal, start);
 
     Overview ov = o_init();
 

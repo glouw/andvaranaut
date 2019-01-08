@@ -15,3 +15,5 @@ World;
 World w_make(const int max, const Timer);
 
 Hero w_transport(const World, const Hero, const Sdl, const Text red, const Text yel, const Input);
+
+Room w_get_starting_room(const World);

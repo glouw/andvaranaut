@@ -1,17 +1,14 @@
 #pragma once
 
-#include "Points.h"
-#include "Theme.h"
+#include "Room.h"
 
 typedef struct
 {
-    Point* wheres;
-    Theme* themes;
-    int* agents;
+    Room* room;
     int count;
 }
 Rooms;
 
-Rooms r_init(const Points);
+Rooms r_init(const Points, const int floor);
 
 int r_themes_left(void);

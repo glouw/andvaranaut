@@ -26,8 +26,11 @@ static World carve(World w)
     while(r_themes_left())
     {
         const Points trapdoors = w.index == 0 ? p_new(0) : w.map[w.index - 1].trapdoors;
-        const Map map = t_generate(trapdoors, 150, 250, 30, 3);
+
+        const Map map = t_generate(trapdoors, 150, 250, 30, 3, w.index);
+
         const Sprites sprites = s_spawn(128);
+
         w = append(w, map, sprites);
     }
     return w;
@@ -80,7 +83,28 @@ Hero w_transport(const World world, const Hero hero, const Sdl sdl, const Text r
 
         if(room != EOF
         && room < rooms.count)
-            return h_place(hero, rooms.wheres[room], flor, hero.height);
+            return h_place(hero, rooms.room[room].where, flor, hero.height);
     }
     return hero;
+}
+
+Room w_get_starting_room(const World world)
+{
+    for(int j = 0; j < world.index; j++)
+    {
+        const Map map = world.map[j];
+
+        for(int i = 0; i < map.rooms.count; i++)
+        {
+            const Room room = map.rooms.room[i];
+            puts(t_get_name(room.theme));
+            if(room.theme == STARTING_ROOM)
+            {
+                puts("... MATCH");
+                return room;
+            }
+        }
+    }
+    static Room none;
+    return none;
 }

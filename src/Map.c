@@ -2,6 +2,7 @@
 
 #include "Sprites.h"
 #include "Title.h"
+#include "Room.h"
 #include "util.h"
 
 #include <math.h>
@@ -24,12 +25,13 @@ static char** make(const int rows, const int cols, const int blok)
     return reset(block, rows, cols, blok);
 }
 
-Map m_generate(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid)
+Map m_generate(const int rows, const int cols, const Points trapdoors, const Points interests, const int grid, const int floor)
 {
     const Sheer mid = {
         0.0f,
         mid.a + (float) (rand() % 2)
     };
+
     const Sheer top = {
         mid.b + 1.0f,
         top.a + (float) (rand() % 2)
@@ -43,18 +45,19 @@ Map m_generate(const int rows, const int cols, const Points trapdoors, const Poi
     map.walling = make(map.rows, map.cols, '#');
     map.floring = make(map.rows, map.cols, '"');
     map.trapdoors = trapdoors;
-    map.rooms = r_init(interests);
+    map.rooms = r_init(interests, floor);
     map.top = top;
     map.mid = mid;
     map.grid = grid;
+
     return map;
 }
 
 static Theme look_up_theme(const Map map, const Point where)
 {
     for(int i = 0; i < map.rooms.count; i++)
-        if(p_eql(where, map.rooms.wheres[i], map.grid))
-            return map.rooms.themes[i];
+        if(p_eql(where, map.rooms.room[i].where, map.grid))
+            return map.rooms.room[i].theme;
     return NO_THEME;
 }
 
@@ -246,14 +249,14 @@ void m_place_barricades(const Map map)
 {
     for(int i = 0; i < map.rooms.count; i++)
     {
-        const Point mid = map.rooms.wheres[i];
+        const Point mid = map.rooms.room[i].where;
         place_door(map, mid.x, mid.y);
     }
     for(int i = 0; i < map.rooms.count; i++)
     {
-        const Point mid = map.rooms.wheres[i];
+        const Point mid = map.rooms.room[i].where;
 
-        if(map.rooms.agents[i] == 0)
+        if(map.rooms.room[i].agents == 0)
             place_pass(map, mid.x, mid.y);
     }
 }
@@ -294,10 +297,12 @@ static void lay_down_path(const Map map, const Point where)
 
 void m_themeate(const Map map)
 {
+#pragma message "Maintainer: Apply new map room themes in Map.c::m_themeate"
+
     for(int i = 0; i < map.rooms.count; i++)
     {
-        const Point where = map.rooms.wheres[i];
-        switch(map.rooms.themes[i])
+        const Point where = map.rooms.room[i].where;
+        switch(map.rooms.room[i].theme)
         {
         case AN_EMPTY_ROOM:
             break;
