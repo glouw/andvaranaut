@@ -690,18 +690,47 @@ static Point seek(const Point center, const Map map, const int ascii)
 
 static Sprites lay_nice_garden(Sprites sprites, const Map map, const Point center, const Timer tm)
 {
-    const int flowers = 256;
-    for(int i = 0; i < flowers; i++)
+    for(int flower = 0; flower < 256; flower++)
         sprites = append(sprites, s_register('a', seek(center, map, '('), tm));
 
     // Gardener.
     sprites = append(sprites, s_register('b', avail(center, map), tm));
+
     return sprites;
 }
 
 static Sprites place_dummy(const Sprites sprites, const Map map, const Point center, const Timer tm)
 {
     return append(sprites, s_register('b', avail(center, map), tm));
+}
+
+static Sprites place_tutorial(Sprites sprites, const Map map, const Point center, const Timer tm)
+{
+    sprites = append(sprites, s_register('b', avail(center, map), tm));
+
+    Sprite* const tutor = &sprites.sprite[sprites.count - 1];
+    tutor->speech = s_use_tutorial(tm);
+
+    return sprites;
+}
+
+Map s_count_agents(const Sprites sprites, Map map)
+{
+    for(int i = 0; i < map.rooms.count; i++)
+    {
+        map.rooms.room[i].agents = 0;
+        for(int s = 0; s < sprites.count; s++)
+        {
+            Sprite* const sprite = &sprites.sprite[s];
+
+            if(s_not_agent(sprite))
+                continue;
+
+            if(p_eql(sprite->where, map.rooms.room[i].where, map.grid))
+                map.rooms.room[i].agents++;
+        }
+    }
+    return map;
 }
 
 Sprites s_populate(Sprites sprites, const Map map, const Timer tm)
@@ -726,29 +755,14 @@ Sprites s_populate(Sprites sprites, const Map map, const Timer tm)
             sprites = place_dummy(sprites, map, center, tm);
             break;
 
+        case STARTING_ROOM:
+            sprites = place_tutorial(sprites, map, center, tm);
+            break;
+
         case NO_THEME:
         case THEMES:
             break;
         }
     }
     return sprites;
-}
-
-Map s_count_agents(const Sprites sprites, Map map)
-{
-    for(int i = 0; i < map.rooms.count; i++)
-    {
-        map.rooms.room[i].agents = 0;
-        for(int s = 0; s < sprites.count; s++)
-        {
-            Sprite* const sprite = &sprites.sprite[s];
-
-            if(s_not_agent(sprite))
-                continue;
-
-            if(p_eql(sprite->where, map.rooms.room[i].where, map.grid))
-                map.rooms.room[i].agents++;
-        }
-    }
-    return map;
 }

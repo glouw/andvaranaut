@@ -176,10 +176,13 @@ static int teleporting_down(const Hero hero, const Map map)
 Hero h_teleporting(Hero hero, const Map map, const Input input, const Timer tm)
 {
     hero.teleporting = false;
+
     if(tm.ticks < hero.teleported + 2 || !input.key[SDL_SCANCODE_E])
         return hero;
+
     hero.teleported = tm.ticks;
     hero.teleporting = teleporting_up(hero, map) || teleporting_down(hero, map);
+
     return hero;
 }
 
@@ -207,10 +210,15 @@ Hero h_teleport(Hero hero, const Map map, const Point where)
 Ray h_cast(const Hero hero, const Hit hit, const Sheer sheer, const int yres, const int xres)
 {
     const Point end = p_sub(hit.where, hero.where);
+
     const Point corrected = p_turn(end, -hero.yaw);
+
     const Line trace = { hero.where, hit.where };
+
     const Projection projection = p_project(yres, xres, hero.fov.a.x, hero.pitch, corrected, hero.height);
+
     const Ray ray = { trace, corrected, p_sheer(projection, sheer), hit.surface, hit.offset, hero.torch };
+
     return ray;
 }
 

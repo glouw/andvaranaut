@@ -40,8 +40,8 @@ Hero s_caretake(const Sprites, Hero, const Map, const Field, const Fire, const T
 
 Sprites s_gen(const int max, const Map);
 
-Sprites s_populate(Sprites, const Map, const Timer);
+Sprites s_spread_fire(Sprites, const Fire, const Map, const Timer);
 
 Map s_count_agents(const Sprites, Map);
 
-Sprites s_spread_fire(Sprites, const Fire, const Map, const Timer);
+Sprites s_populate(Sprites, const Map, const Timer);

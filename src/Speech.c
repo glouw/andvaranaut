@@ -65,3 +65,14 @@ Speech s_use_no_give(const Timer tm)
     };
     return build(sentences, u_len(sentences), tm);
 }
+
+Speech s_use_tutorial(const Timer tm)
+{
+    const char* const sentences[] = {
+        "You've woken up.",
+        "This is Andvaranaut dungeon.",
+        "Some say Andvari's ring is here,",
+        "but you'll get it over my dead body.",
+    };
+    return build(sentences, u_len(sentences), tm);
+}

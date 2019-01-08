@@ -18,10 +18,10 @@ typedef struct
 }
 Item;
 
-Item i_new(const Identification);
-
 Item i_rand(void);
 
 void i_test(void);
 
 Item i_none(void);
+
+Item i_new(const Identification);

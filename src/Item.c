@@ -752,6 +752,43 @@ Item i_none(void)
     return item;
 }
 
+Item i_rand(void)
+{
+    const Classification c = c_rand();
+    const int index = rand() % c_max_indices(c);
+    const Identification id = { index, c };
+    return i_new(id);
+}
+
+void i_test(void)
+{
+    check(AMMO    , ammos    , u_len(ammos)    );
+    check(AMULET  , amulets  , u_len(amulets)  );
+    check(ARMOR   , armors   , u_len(armors)   );
+    check(BOOK    , books    , u_len(books)    );
+    check(BOOT    , boots    , u_len(boots)    );
+    check(CHEST   , chests   , u_len(chests)   );
+    check(FLESH   , fleshes  , u_len(fleshes)  );
+    check(FOOD    , foods    , u_len(foods)    );
+    check(GLOVE   , gloves   , u_len(gloves)   );
+    check(HAT     , hats     , u_len(hats)     );
+    check(KEY     , keys     , u_len(keys)     );
+    check(LETTER  , letter   , u_len(letter)   );
+    check(LIGHT   , lights   , u_len(lights)   );
+    check(LONGWEP , longweps , u_len(longweps) );
+    check(MEDWEP  , medweps  , u_len(medweps)  );
+    check(MONEY   , monies   , u_len(monies)   );
+    check(MUSIC   , musics   , u_len(musics)   );
+    check(POTION  , potions  , u_len(potions)  );
+    check(RING    , rings    , u_len(rings)    );
+    check(ROCK    , rocks    , u_len(rocks)    );
+    check(SCROLL  , scrolls  , u_len(scrolls)  );
+    check(SHIELD  , shields  , u_len(shields)  );
+    check(SHORTWEP, shortweps, u_len(shortweps));
+    check(TOOL    , tools    , u_len(tools)    );
+    check(WAND    , wands    , u_len(wands)    );
+}
+
 Item i_new(const Identification id)
 {
 #pragma message "Maintainer: Apply item characteristics in Item.c::i_new"
@@ -789,41 +826,4 @@ Item i_new(const Identification id)
     case     WAND: return wands     [ id.index ];
     }
     return i_none();
-}
-
-Item i_rand(void)
-{
-    const Classification c = c_rand();
-    const int index = rand() % c_max_indices(c);
-    const Identification id = { index, c };
-    return i_new(id);
-}
-
-void i_test(void)
-{
-    check(AMMO    , ammos    , u_len(ammos)    );
-    check(AMULET  , amulets  , u_len(amulets)  );
-    check(ARMOR   , armors   , u_len(armors)   );
-    check(BOOK    , books    , u_len(books)    );
-    check(BOOT    , boots    , u_len(boots)    );
-    check(CHEST   , chests   , u_len(chests)   );
-    check(FLESH   , fleshes  , u_len(fleshes)  );
-    check(FOOD    , foods    , u_len(foods)    );
-    check(GLOVE   , gloves   , u_len(gloves)   );
-    check(HAT     , hats     , u_len(hats)     );
-    check(KEY     , keys     , u_len(keys)     );
-    check(LETTER  , letter   , u_len(letter)   );
-    check(LIGHT   , lights   , u_len(lights)   );
-    check(LONGWEP , longweps , u_len(longweps) );
-    check(MEDWEP  , medweps  , u_len(medweps)  );
-    check(MONEY   , monies   , u_len(monies)   );
-    check(MUSIC   , musics   , u_len(musics)   );
-    check(POTION  , potions  , u_len(potions)  );
-    check(RING    , rings    , u_len(rings)    );
-    check(ROCK    , rocks    , u_len(rocks)    );
-    check(SCROLL  , scrolls  , u_len(scrolls)  );
-    check(SHIELD  , shields  , u_len(shields)  );
-    check(SHORTWEP, shortweps, u_len(shortweps));
-    check(TOOL    , tools    , u_len(tools)    );
-    check(WAND    , wands    , u_len(wands)    );
 }

@@ -20,3 +20,5 @@ Speech s_use_grateful(const Timer);
 Speech s_use_inv_full(const Timer);
 
 Speech s_use_no_give(const Timer);
+
+Speech s_use_tutorial(const Timer);
