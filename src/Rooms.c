@@ -11,14 +11,9 @@ static Theme themes[] = {
 #undef X
 };
 
-static int avail_themes(void)
-{
-    int avail = 0;
-    for(int i = 0; i < u_len(themes); i++)
-        if(themes[i] != (Theme) -1)
-            avail++;
-    return avail;
-}
+static int avail_themes = THEMES;
+
+static int first = true;
 
 static void sort(void)
 {
@@ -34,22 +29,28 @@ static Theme reuse(void)
 
 static Theme del(const int index)
 {
-    sort();
     const Theme theme = themes[index];
     themes[index] = (Theme) -1;
+    avail_themes--;
+    sort();
     return theme;
 }
 
 static Theme pick(void)
 {
-    const int index = rand() % avail_themes();
+    const int index = rand() % avail_themes;
     const Theme theme = del(index);
     return theme == NO_THEME ? reuse() : theme;
 }
 
 static Theme get(void)
 {
-    return (u_d2() == 0 && avail_themes() > 0) ? pick() : reuse();
+    if(first)
+    {
+        first = false;
+        return del(STARTING_ROOM);
+    }
+    return (u_d2() == 0 && avail_themes > 0) ? pick() : reuse();
 }
 
 static void get_themes(const Rooms rooms)
@@ -72,7 +73,7 @@ static void set_floors(const Rooms rooms, const int floor)
 
 int r_themes_left(void)
 {
-    return avail_themes() > 0;
+    return avail_themes > 0;
 }
 
 Rooms r_init(const Points interests, const int floor)
