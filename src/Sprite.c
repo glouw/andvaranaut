@@ -7,8 +7,7 @@
 #include <assert.h>
 #include <ctype.h>
 
-// Be sure to map these sprites to their surface paths in Surfaces.c.
-static const Sprite lower[] = {
+static const Sprite lower[] = { // Enemy sprites or non living things.
     /* Flower  */ { 'a', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 200.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* Dwarf   */ { 'b', 0, 0, 8, 6, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,LETTER}, {1,LETTER}, "Do you have my brother's letter?\n\n", "Thanks.\nGive my brother this letter.\n\n", "..." },
     /* Ember   */ { 'c', 1, 1, 4, 0, 1.0f, 0.000f, 0.0000f,   1.0f, 0.50f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
@@ -37,7 +36,7 @@ static const Sprite lower[] = {
     /* */         { 'z', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 200.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
 };
 
-static const Sprite upper[] = {
+static const Sprite upper[] = { // Important sprites with quest lines.
     /* */         { 'A', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* */         { 'B', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* */         { 'C', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },

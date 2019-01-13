@@ -27,8 +27,10 @@ static SDL_Rect left_clip(SDL_Rect seen, const int xres, const Point where, Poin
     for(; seen.w > 0; seen.w--, seen.x++)
     {
         const int x = seen.x;
+
         if(x < 0 || x >= xres)
             continue;
+
         if(where.x < zbuff[x].x)
             break;
     }
@@ -40,8 +42,10 @@ static SDL_Rect rite_clip(SDL_Rect seen, const int xres, const Point where, Poin
     for(; seen.w > 0; seen.w--)
     {
         const int x = seen.x + seen.w;
+
         if(x < 0 || x >= xres)
             continue;
+
         if(where.x < zbuff[x].x)
         {
             seen.w = seen.w + 1;
