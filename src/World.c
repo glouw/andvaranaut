@@ -99,10 +99,7 @@ Room w_get_starting_room(const World world)
             const Room room = map.rooms.room[i];
             puts(t_get_name(room.theme));
             if(room.theme == STARTING_ROOM)
-            {
-                puts("... MATCH");
                 return room;
-            }
         }
     }
     static Room none;

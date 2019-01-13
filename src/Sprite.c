@@ -38,7 +38,7 @@ static const Sprite lower[] = { // Enemy sprites or non living things.
 
 static const Sprite upper[] = { // Important sprites with quest lines.
     /* */         { 'A', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
-    /* */         { 'B', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
+    /* Tutor   */ { 'B', 0, 0, 8, 6, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,LETTER}, {1,LETTER}, "You've woken up.\nClimb down the trapdoors.\nBring me Andvari's Gift\n\n", "Thanks.\n\n", "..." },
     /* */         { 'C', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* */         { 'D', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* */         { 'E', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
@@ -82,6 +82,7 @@ Sprite s_register(const int ascii, const Point where, const Timer tm)
 {
     Sprite sprite = islower(ascii) ? lower[ascii - 'a'] : upper[ascii - 'A'];
     sprite.where = sprite.last = where;
+    sprite.speech = s_swap(sprite.speech, sprite.quest_start, tm);
     return sprite;
 }
 
@@ -163,7 +164,6 @@ int s_must_spread(const Sprite* const sprite, char** const floring)
 }
 
 // TODO: Different ticks for each sprite.
-// TODO: Make a stunned animation.
 void s_parried(Sprite* const sprite, const Point velocity, const Timer tm)
 {
     const Point dir = p_unit(velocity);

@@ -271,7 +271,7 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
     return sprites;
 }
 
-static Sprites use_melee(Sprites sprites, const Timer tm, const Hero hero)
+static Sprites use_melee(Sprites sprites, const Hero hero, const Timer tm)
 {
     for(int i = 0, hurts = 0; i < sprites.count; i++)
     {
@@ -293,7 +293,7 @@ static Sprites use_melee(Sprites sprites, const Timer tm, const Hero hero)
     return sprites;
 }
 
-static Sprites use_range(Sprites sprites, const Timer tm, const Hero hero)
+static Sprites use_range(Sprites sprites, const Hero hero, const Timer tm)
 {
     const SDL_Point point = {
         (int) hero.attack.reticule.x,
@@ -316,14 +316,14 @@ static Sprites use_range(Sprites sprites, const Timer tm, const Hero hero)
     return sprites;
 }
 
-static Sprites use_magic(Sprites sprites, const Timer tm, const Hero hero)
+static Sprites use_magic(Sprites sprites, const Hero hero, const Timer tm)
 {
     // TODO
     // Casting magic scrolls will spawn new sprites.
     // These sprites will do something like heal the hero, teleport the hero, or be something like fire
     // which hurts, heals, or teleports other sprites.
-    (void) hero;
     (void) tm;
+    (void) hero;
     return sprites;
 }
 
@@ -333,11 +333,11 @@ Sprites s_hero_damage_sprites(Sprites sprites, const Hero hero, const Timer tm)
     {
         sprites.last = hero.attack.method;
 
-        if(hero.attack.method == MELEE) return use_melee(sprites, tm, hero);
+        if(hero.attack.method == MELEE) return use_melee(sprites, hero, tm);
 
-        if(hero.attack.method == RANGE) return use_range(sprites, tm, hero);
+        if(hero.attack.method == RANGE) return use_range(sprites, hero, tm);
 
-        if(hero.attack.method == MAGIC) return use_magic(sprites, tm, hero);
+        if(hero.attack.method == MAGIC) return use_magic(sprites, hero, tm);
     }
     sprites.last = NO_ATTACK;
 
@@ -444,8 +444,9 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
 
             const int index = sprite->speech.index;
             const char* const sentence = sprite->speech.sentences[index];
+
             if(strlen(sentence) > 0)
-                sprite->state = SPEAKING;
+                sprite->state = SPEAKING; // Sprites will move their mouth.
         }
         else sprite->speech.ticks = tm.ticks;
     }
@@ -700,13 +701,7 @@ static Sprites place_dummy(const Sprites sprites, const Map map, const Point cen
 
 static Sprites place_tutorial(Sprites sprites, const Map map, const Point center, const Timer tm)
 {
-    sprites = append(sprites, s_register('b', avail(center, map), tm));
-
-    Sprite* const tutor = &sprites.sprite[sprites.count - 1];
-    tutor->speech = s_swap(tutor->speech,
-        "Welcome to Andvaranaut dungeon.\nSome say Andvari's ring is here.\n\n", tm);
-
-    return sprites;
+    return append(sprites, s_register('B', avail(center, map), tm));
 }
 
 Map s_count_agents(const Sprites sprites, Map map)
