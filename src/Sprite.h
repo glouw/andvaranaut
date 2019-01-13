@@ -42,11 +42,11 @@ typedef struct
     Identification wants;
     Identification gives;
 
-    char* quest_start;
+    const char* quest_start;
 
-    char* quest_completed;
+    const char* quest_completed;
 
-    char* quest_failed;
+    const char* quest_failed;
 }
 Sprite;
 

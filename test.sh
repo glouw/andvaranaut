@@ -2,28 +2,26 @@
 
 set -e
 
-build()
+run()
+{
+    for i in {0..25..1}
+    do
+        ./andvaranaut -x 512
+    done
+
+    echo "SUCCESS"
+}
+
+main()
 {
     for i in 11 10 01 00
     do
         make -C src clean
+
         make -j10 -C src CLANG=${i:0:1} CC=${i:1:2}
+
+        run
     done
 }
 
-run()
-{
-    for i in {0..100..1}
-    do
-        ./andvaranaut -x 512
-    done
-}
-
-fin()
-{
-    echo "SUCCESS"
-}
-
-build
-run
-fin
+main
