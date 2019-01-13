@@ -7,20 +7,22 @@
 
 Inventory i_create(void)
 {
+    // Notice how dragging and hilighting are both negative.
     const Inventory inv = {
         i_build(10), 0, 32, -1, false, false, -1, i_none()
     };
+
     const Identification ids[] = {
-        /* 0 */ {  0, SHORTWEP },
-        /* 1 */ {  0, WAND     },
-        /* 2 */ {  8, AMMO     },
-        /* 3 */ {  0, SHIELD   },
-        /* 4 */ { 14, AMMO     },
-        /* 5 */ {  3, SCROLL   },
-        /* 6 */ {  1, SCROLL   },
-        /* 7 */ {  9, SCROLL   },
-        /* 8 */ {  1, LETTER   },
-        /* 9 */ {  0, LETTER   },
+        {  0, SHORTWEP }, // 0
+        {  0, WAND     }, // 1
+        {  8, AMMO     }, // 2
+        {  0, SHIELD   }, // 3
+        { 14, AMMO     }, // 4
+        {  3, SCROLL   }, // 5
+        {  1, SCROLL   }, // 6
+        {  9, SCROLL   }, // 7
+        {  1, LETTER   }, // 8
+        {  0, LETTER   }, // 9
     };
     for(int i = 0; i < u_len(ids); i++)
         i_add(inv.items, i_new(ids[i]));
@@ -124,7 +126,7 @@ static Inventory swap(Inventory inv, const Input in, const int xres)
     {
         if(dragging(inv))
         {
-            if(inside(inv, in, xres))
+            if(inside(inv, in, xres)) // Swapping.
             {
                 const int to = calc_index(inv, in);
                 const Item temp = inv.items.item[to];

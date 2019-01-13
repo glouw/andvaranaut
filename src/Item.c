@@ -368,8 +368,8 @@ static const Item lights[] = {
 };
 
 static const Item letter[] = {
-    { {0,LETTER}, "Letter", "Letter to ...", "This is a sample letter\n" "This is a sample letter\n", 0,0,0,0 },
-    { {1,LETTER}, "Letter", "Letter to ...", "Different quests have different letters.\n" "Different quests have different letters.\n", 0,0,0,0 },
+    { {0,LETTER}, "Letter", "Letter to ...", "This is a sample letter\nThis is a new line\n", 0,0,0,0 },
+    { {1,LETTER}, "Letter", "Letter to ...", "Different quests have different letters.\nThis is a new line.\n", 0,0,0,0 },
 };
 
 static const Item longweps[] = {

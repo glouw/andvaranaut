@@ -606,35 +606,27 @@ static Hero trade(const Sprites sprites, Hero hero, const Input in, const Timer 
 
             if(SDL_PointInRect(&to, &sprite->seen))
             {
-                const int trading = i_same_id(sprite->wants, hero.inventory.trade.id);
-                if(trading)
+                if(i_same_id(sprite->wants, hero.inventory.trade.id))
                 {
-                    sprite->evil = false;
+                    sprite->evil = false; // Sprites are not evil when they get what they want.
 
                     const Item item = i_new(sprite->gives);
                     const int added = i_add(hero.inventory.items, item);
                     if(added)
                     {
-                        sprite->speech = s_use_grateful(tm);
+                        sprite->speech = s_swap(sprite->speech, sprite->quest_completed, tm);
                         sprite->wants.clas = NONE;
                         sprite->gives.clas = NONE;
                     }
-                    else
-                    {
-                        sprite->speech = s_use_inv_full(tm);
-                        i_revert_trade(hero.inventory);
-                    }
                 }
                 else
-                {
-                    sprite->speech = s_use_unwanted(tm);
                     i_revert_trade(hero.inventory);
-                }
+
+                // Only trade once.
                 break;
             }
         }
     }
-
     hero.inventory.trade = i_none();
 
     return hero;
@@ -643,7 +635,9 @@ static Hero trade(const Sprites sprites, Hero hero, const Input in, const Timer 
 Hero s_caretake(const Sprites sprites, Hero hero, const Map map, const Field field, const Fire fire, const Timer tm, const Input in)
 {
     s_pull(sprites, hero);
+
     s_sort(sprites, s_nearest_sprite_first);
+
     s_push(sprites, hero);
 
     idle(sprites, tm);
@@ -709,7 +703,8 @@ static Sprites place_tutorial(Sprites sprites, const Map map, const Point center
     sprites = append(sprites, s_register('b', avail(center, map), tm));
 
     Sprite* const tutor = &sprites.sprite[sprites.count - 1];
-    tutor->speech = s_use_tutorial(tm);
+    tutor->speech = s_swap(tutor->speech,
+        "Welcome to Andvaranaut dungeon.\nSome say Andvari's ring is here.\n\n", tm);
 
     return sprites;
 }

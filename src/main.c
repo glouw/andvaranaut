@@ -5,11 +5,11 @@
 
 int main(int argc, char* argv[])
 {
+    srand(time(NULL));
+
     i_test();
 
     s_test();
-
-    srand(time(NULL));
 
     Timer tm = t_new();
 

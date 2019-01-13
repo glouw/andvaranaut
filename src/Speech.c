@@ -2,77 +2,54 @@
 
 #include "util.h"
 
-static Speech append(Speech sp, const char* const sentence)
-{
-    if(sp.count == u_len(sp.sentences))
-        u_bomb("error: cannot append '%s': sprite sentence buffer overflow", sentence);
-    sp.sentences[sp.count++] = sentence;
-    return sp;
-}
-
-static Speech build(const char* const sentences[], const int len, const Timer tm)
+static Speech init(const char* const str, const Timer tm)
 {
     static Speech zero;
     Speech sp = zero;
-    for(int i = 0; i < len; i++)
-        sp = append(sp, sentences[i]);
+
     sp.ticks = tm.ticks;
-    return append(sp, ""); // Extra padding.
+    sp.count = u_char_count(str, '\n');
+
+    sp.sentences = u_toss(char*, sp.count);
+    for(int i = 0; i < sp.count; i++)
+        sp.sentences[i] = u_str_dup("");
+
+    return sp;
 }
 
-Speech s_use_unwanted(const Timer tm)
+static Speech parse(Speech sp, const char* const str)
 {
-    const char* const sentences[] = {
-        "I do not want this.",
-    };
-    return build(sentences, u_len(sentences), tm);
+    char* const dup = u_str_dup(str);
+
+    const char* const delim = "\n";
+
+    int i = 0;
+    for(char* sentence = strtok(dup, delim); sentence; sentence = strtok(NULL, delim))
+        sp.sentences[i++] = u_str_dup(sentence);
+
+    free(dup);
+
+    return sp;
 }
 
-Speech s_use_grateful(const Timer tm)
+static Speech build(const char* const str, const Timer tm)
 {
-    const char* const sentences[] = {
-        "Wow, I always wanted this!",
-        "Please, take this in return.",
-    };
-    return build(sentences, u_len(sentences), tm);
+    const Speech sp = init(str, tm);
+    return parse(sp, str);
 }
 
-Speech s_use_greet(const Timer tm)
+static void kill(const Speech sp)
 {
-    const char* const sentences[] = {
-        "Hello there!",
-        "How are you doing?",
-        "Nice weather huh?",
-    };
-    return build(sentences, u_len(sentences), tm);
+    if(sp.sentences)
+    {
+        for(int i = 0; i < sp.count; i++)
+            free(sp.sentences[i]);
+        free(sp.sentences);
+    }
 }
 
-Speech s_use_inv_full(const Timer tm)
+Speech s_swap(const Speech sp, const char* const str, const Timer tm)
 {
-    const char* const sentences[] = {
-        "I cannot give this to you!",
-        "Your inventory is full!",
-    };
-    return build(sentences, u_len(sentences), tm);
-
-}
-
-Speech s_use_no_give(const Timer tm)
-{
-    const char* const sentences[] = {
-        "I have nothing to give you!",
-        "Sorry!",
-    };
-    return build(sentences, u_len(sentences), tm);
-}
-
-Speech s_use_tutorial(const Timer tm)
-{
-    const char* const sentences[] = {
-        "You've woken up.",
-        "This is Andvaranaut dungeon.",
-        "Some say Andvari's ring is here,",
-        "but you'll get it over my dead body.",
-    };
-    return build(sentences, u_len(sentences), tm);
+    kill(sp);
+    return build(str, tm);
 }

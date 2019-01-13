@@ -10,6 +10,8 @@
 
 char* u_str_dup(const char* s);
 
+int u_char_count(const char* const str, const char delim);
+
 int u_fl(const float x);
 
 int u_cl(const float x);

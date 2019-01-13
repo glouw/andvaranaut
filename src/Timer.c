@@ -33,9 +33,11 @@ Timer t_tick(Timer tm, const int slowmo, const int renders)
     tm.slowdown = 2.0f;
     tm.slowmo = slowmo;
     tm.last = tm.ticks;
+
     const int norm = 10;
     const int slow = norm * tm.slowdown;
     tm.ticks += (tm.renders % (slowmo ? slow : norm)) == 0;
+
     tm.renders = renders;
     tm.rise = rise(tm);
     tm.fall = fall(tm);

@@ -132,8 +132,11 @@ static void render_one_sprite(const Sdl sdl, const Text text, Sprite* const spri
 static void render_all_sprites(const Sdl sdl, const Text text, const Sprites sprites, Point* const zbuff, const Hero hero, const Timer tm)
 {
     s_pull(sprites, hero);
+
     s_turn(sprites, -hero.yaw);
+
     s_sort(sprites, s_furthest_sprite_first);
+
     for(int which = 0; which < sprites.count; which++)
     {
         Sprite* const sprite = &sprites.sprite[which];
@@ -155,16 +158,18 @@ static void render_all_sprites(const Sdl sdl, const Text text, const Sprites spr
         }
     }
     s_sort(sprites, s_nearest_sprite_first);
+
     s_turn(sprites, hero.yaw);
+
     s_push(sprites, hero);
 }
 
 Sdl s_setup(const Args args)
 {
-    SDL_Init(SDL_INIT_VIDEO);
-
     static Sdl zero;
     Sdl sdl = zero;
+
+    SDL_Init(SDL_INIT_EVERYTHING); // 1031 ms
 
     sdl.window = SDL_CreateWindow(
         "Andvaranaut",
@@ -181,21 +186,23 @@ Sdl s_setup(const Args args)
         sdl.window,
         -1,
         SDL_RENDERER_ACCELERATED |
-        (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0x0));
+        (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0x0)); // 933 ms
 
     sdl.canvas = SDL_CreateTexture(
         sdl.renderer,
         SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_STREAMING,
-        // XRES and YRES swapped since rendering is done 90 degrees on side.
-        args.yres, args.xres);
+        args.yres, args.xres); // XRES and YRES swapped since rendering is done 90 degrees on side.
 
     sdl.xres = args.xres;
     sdl.yres = args.yres;
     sdl.fps = args.fps;
     sdl.threads = args.threads;
-    sdl.surfaces = s_load_surfaces();
+
+    sdl.surfaces = s_load_surfaces(); // 599 ms
+
     sdl.textures = t_cache(sdl.surfaces, sdl.renderer);
+
     sdl.gui = '~' - ' ' + 26;
     sdl.wht = 0xFFDFEFD7;
     sdl.blk = 0xFF000000;

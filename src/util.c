@@ -11,6 +11,18 @@ char* u_str_dup(const char* s)
     return d;
 }
 
+int u_char_count(const char* const str, const char delim)
+{
+    const int len = strlen(str);
+
+    int count = 0;
+    for(int i = 0; i < len; i++)
+        if(str[i] == delim)
+            count++;
+
+    return count;
+}
+
 int u_fl(const float x)
 {
     return (int) x - (x < (int) x);

@@ -30,16 +30,23 @@ typedef struct
     Point last;
     Point velocity;
 
-    Identification wants;
-    Identification gives;
-
     State state;
 
     SDL_Rect seen;
-    Speech speech;
 
     int busy_ticks;
     int block_start;
+
+    Speech speech;
+
+    Identification wants;
+    Identification gives;
+
+    char* quest_start;
+
+    char* quest_completed;
+
+    char* quest_failed;
 }
 Sprite;
 
