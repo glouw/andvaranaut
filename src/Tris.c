@@ -111,14 +111,12 @@ static Tris triangulate(const Points ps, const int w, const int h, const int max
     Tris tris = make(max);
     Tris edges = make(max);
 
-    // Note:
-    // Shallow copies are exploited here for quick array concatentations.
-    // In doing so, the original tris triangle is lost. This dummy pointer
-    // will keep track of it for later freeing.
     Tri* dummy = tris.tri;
 
-    // The super triangle will snuggley fit over the screen.
-    const Tri super = { { (float) -w, 0.0f }, { 2.0f * w, 0.0f }, { w / 2.0f, 2.0f * h } };
+    const Tri super = {
+        { (float) -w, 0.0f }, { 2.0f * w, 0.0f }, { w / 2.0f, 2.0f * h }
+    };
+
     tris = append(tris, super);
     for(int j = 0; j < ps.count; j++)
     {
@@ -129,23 +127,17 @@ static Tris triangulate(const Points ps, const int w, const int h, const int max
         {
             const Tri tri = tris.tri[i];
 
-            // Get triangles where point lies inside their circumcenter.
             if(in_circumcenter(tri, p))
                 in = append(in, tri);
-            // Get triangles where point lies outside of their circumcenter.
             else out = append(out, tri);
         }
 
-        // Collect all triangle edges where point was inside circumcenter.
         edges = collect(edges, in, flags);
 
-        // Flag edges that are non-unique.
         mark(edges, flags);
 
-        // Construct new triangles with unique edges.
         out = join(out, edges, p, flags);
 
-        // Update triangle list. (See note above on shallow copying).
         tris = out;
     }
     free(dummy);
@@ -309,15 +301,18 @@ static Points get_traps(const Points rooms, const int count)
 
 static void generate_simple(const Map map, const Points rooms)
 {
-    const Party parts[] = { WALLING, CEILING };
-    for(int i = 0; i < u_len(parts); i++)
-        m_place_room(map, rooms.point[0], m_min(map), m_min(map), parts[i]);
+    const int min = m_min(map);
+    const Point mid = rooms.point[0];
+    m_place_room(map, mid, min, min, WALLING);
+    m_place_room(map, mid, min, min, CEILING);
 }
 
 static void generate_complex(const Map map, const Points rooms, const int w, const int h)
 {
     const Flags flags = { { 0.0, 0.0 }, { 1.0, 1.0 } };
+
     const Tris tris = triangulate(rooms, w, h, 3 * rooms.max, flags);
+
     const Tris edges = collect(make(3 * tris.max), tris, flags);
 
     reverse_delete(edges, w, h, flags);
@@ -331,15 +326,17 @@ static void generate_complex(const Map map, const Points rooms, const int w, con
 Map t_generate(const Points extra, const int w, const int h, const int grid, const int traps, const int floor)
 {
     const int max = traps + (10 + u_d10());
+
     const int border = 2 * grid;
 
-    Points rooms = prand(w, h, max, grid, border, extra);
+    const Points rooms = prand(w, h, max, grid, border, extra);
 
     const Points trapdoors = get_traps(rooms, u_min(traps, rooms.count));
 
     const Map map = m_generate(h, w, trapdoors, rooms, grid, floor);
 
-    rooms.count == 1 ?  generate_simple(map, rooms) : generate_complex(map, rooms, w, h);
+    // Complex generation only works with more than one room.
+    rooms.count > 1 ?  generate_complex(map, rooms, w, h) : generate_simple(map, rooms);
 
     return map;
 }

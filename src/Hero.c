@@ -16,9 +16,7 @@ static Line get_lens(const float focal)
 Hero h_birth(const float focal, const Room room)
 {
     static Hero zero;
-    Hero hero = zero;
-
-    // From zero to hero.
+    Hero hero = zero; // From zero to hero.
     hero.floor = room.floor;
     hero.fov = get_lens(focal);
     hero.where = room.where;
@@ -33,7 +31,6 @@ Hero h_birth(const float focal, const Room room)
     hero.mana = hero.mana_max = 10.0f;
     hero.fatigue = hero.fatigue_max = 200.0f;
     hero.warning = 0.25f;
-
     hero.gauge = g_new(hero.fatigue_max);
     hero.inventory = i_create();
 
@@ -49,9 +46,10 @@ static Hero calc_yaw(Hero hero, const Input input)
 
 static Hero calc_pitch(Hero hero, const Input input)
 {
+    const float limit = 0.4f;
+    const float max = 2.0f - limit;
+    const float min = limit;
     hero.pitch += input.dy * input.sy;
-    const float max = 1.80f;
-    const float min = 0.20f;
     hero.pitch =
         hero.pitch > max ? max :
         hero.pitch < min ? min :
@@ -222,9 +220,9 @@ Ray h_cast(const Hero hero, const Hit hit, const Sheer sheer, const int yres, co
     return ray;
 }
 
+// TODO: Different weapons have different recoil?
 static Hero recoil(Hero hero, const Method last)
 {
-    // TODO: Different weapons have different recoil?
     if(last == RANGE)
         hero.d_pitch = 0.12f;
     return hero;

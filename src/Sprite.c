@@ -9,7 +9,7 @@
 
 static const Sprite lower[] = { // Enemy sprites or non living things.
     /* Flower  */ { 'a', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 200.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
-    /* Dwarf   */ { 'b', 0, 0, 8, 6, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,LETTER}, {1,LETTER}, "Do you have my brother's letter?\n\n", "Thanks.\nGive my brother this letter.\n\n", "..." },
+    /* Dwarf   */ { 'b', 0, 0, 8, 6, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* Ember   */ { 'c', 1, 1, 4, 0, 1.0f, 0.000f, 0.0000f,   1.0f, 0.50f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* Lootbag */ { 'd', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f,   1.0f, 0.00f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* */         { 'e', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 200.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
@@ -38,7 +38,7 @@ static const Sprite lower[] = { // Enemy sprites or non living things.
 
 static const Sprite upper[] = { // Important sprites with quest lines.
     /* */         { 'A', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
-    /* Tutor   */ { 'B', 0, 0, 8, 6, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,LETTER}, {1,LETTER}, "You've woken up.\nClimb down the trapdoors.\nBring me Andvari's Gift\n\n", "Thanks.\n\n", "..." },
+    /* Tutor   */ { 'B', 0, 0, 8, 6, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,LETTER}, {1,LETTER}, "You've woken up.\nClimb down the trapdoors.\nBring me Andvari's Gift.\n\n", "Thanks.\n\n", "..." },
     /* */         { 'C', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* */         { 'D', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* */         { 'E', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },

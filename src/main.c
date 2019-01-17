@@ -136,9 +136,11 @@ int main(int argc, char* argv[])
         const int t1 = SDL_GetTicks();
 
         const int ms = 1000.0f / args.fps - (t1 - t0);
+
         SDL_Delay(ms < 0 ? 0 : ms);
 
         const int t2 = SDL_GetTicks();
+
         if(tm.rise)
             fps = 1000.0f / (t2 - t0);
     }
