@@ -25,7 +25,10 @@ Projection p_project(const int yres, const int xres, const float focal, const fl
 
 Projection p_sheer(Projection p, const Sheer s)
 {
+    //
     // Not sure where the math went wrong. Adding these pixel offsets is required.
+    //
+
     p.bot += p.size * s.a - (s.b >= s.a  ? 1.0f : 0.0f);
     p.top += p.size * s.b + (s.b >= s.a  ? 0.0f : 2.0f);
     p.clamped = c_clamp(p.yres, p.bot, p.top);

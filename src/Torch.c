@@ -16,10 +16,14 @@ Torch t_burn(const Torch torch)
 
 Torch t_snuff(void)
 {
+    //
+    // Arbitrary divisor.
+    //
+
     static Torch zero;
     Torch torch = zero;
     torch.light = 0;
     torch.brightness = 750;
-    torch.dlight = torch.brightness / 32; // Arbitrary divisor.
+    torch.dlight = torch.brightness / 32;
     return torch;
 }

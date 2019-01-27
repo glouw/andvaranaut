@@ -4,40 +4,67 @@
 
 typedef struct
 {
+    //
     // Keyboard state.
+    //
+
     const uint8_t* key;
 
+    //
     // User closed window.
+    //
+
     int done;
 
+    //
     // Mouse sensitivity.
+    //
+
     float sx;
     float sy;
 
+    //
     // Mouse position.
+    //
+
     int x;
     int y;
 
+    //
     // Mouse deltas.
+    //
+
     int dx;
     int dy;
 
+    //
     // Mouse button is pushed (Left, Middle, Right):
+    //
+
     int l;
     int m;
     int r;
 
+    //
     // Mouse button was up last frame (Left, Middle, Right).
+    //
+
     int lu;
     int mu;
     int ru;
 
+    //
     // Mouse button was down last frame (Left, Middle, Right).
+    //
+
     int ld;
     int md;
     int rd;
 
+    //
     // Last states (Left, middle, right).
+    //
+
     int ll;
     int lm;
     int lr;

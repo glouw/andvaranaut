@@ -66,7 +66,6 @@ static char* beautify(const char* const string)
     char* const copy = u_str_dup(string);
     const int len = strlen(copy);
 
-    // Remove underscores.
     for(int i = 0; i < len; i++)
         if(copy[i] == '_')
             copy[i] = ' ';

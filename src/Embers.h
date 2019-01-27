@@ -2,9 +2,13 @@
 
 #include "Sprite.h"
 
+//
+// Non-contiguous ember reference in sprite array.
+//
+
 typedef struct
 {
-    Sprite** ember; // Non-contiguous ember reference in sprite array.
+    Sprite** ember;
     int count;
     int max;
 }

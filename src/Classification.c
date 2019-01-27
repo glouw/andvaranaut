@@ -9,9 +9,12 @@ int c_get_surface_index(const Classification c)
 
 int c_max_indices(const Classification c)
 {
+    //
+    // Do not use default in switch so that compiler can warn of new additions.
+    //
+
     switch(c)
     {
-    // Do not use default.
     case     AMMO: return 25;
     case   AMULET: return 17;
     case    ARMOR: return 59;

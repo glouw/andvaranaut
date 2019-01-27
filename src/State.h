@@ -1,6 +1,9 @@
 #pragma once
 
+//
 // Always append states as art work relies on offsets.
+//
+
 typedef enum
 {
     CHASING,

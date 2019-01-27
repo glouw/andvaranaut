@@ -8,7 +8,10 @@ static SDL_Surface* load(const char* const path)
     if(bmp == NULL)
         u_bomb("%s\n", SDL_GetError());
 
+    //
     // Color keys can not be set in SDL when an alpha channel is present.
+    //
+
     SDL_PixelFormat* const allocation = SDL_AllocFormat(SDL_PIXELFORMAT_RGB888);
     SDL_Surface* const converted = SDL_ConvertSurface(bmp, allocation, 0);
     SDL_FreeFormat(allocation);
@@ -27,10 +30,13 @@ Surfaces s_load_surfaces(void)
 {
 #pragma message "Maintainer: Apply new sprite pixel art in Surfaces.c::s_load_surfaces"
 
+    //
+    // Sprites: Alpha ASCII
+    // Tiles: Non-Alpha ASCII
+    // Items and GUI: '~' and up.
+    //
+
     static const char* const names[] = {
-        // Sprites: Alpha ASCII
-        // Tiles: Non-Alpha ASCII
-        // Items and GUI: '~' and up.
         /*        */ "art/tiles/delete.bmp",
         /* !      */ "art/tiles/error.bmp",
         /* "      */ "art/tiles/floor.bmp",

@@ -92,6 +92,7 @@ static Args parse(Args args, int argc, char* argv[])
     }
     print(args);
     check(args);
+
     return args;
 }
 
@@ -104,13 +105,17 @@ static Args make(void)
     args.focal = 0.8f;
     args.vsync = true;
 
-    // Do not change.
+    //
+    // Do not change the FPS argument.
     // Many timings are linked to tihs cycle rate.
     // Higher refresh rate monitors with VSYNC will still run at this speed.
+    //
+
     args.fps = 60;
 
     args.msen = 0.007f;
     args.threads = 8;
+
     return args;
 }
 

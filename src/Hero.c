@@ -15,8 +15,12 @@ static Line get_lens(const float focal)
 
 Hero h_birth(const float focal, const Room room)
 {
+    //
+    // From zero to hero.
+    //
+
     static Hero zero;
-    Hero hero = zero; // From zero to hero.
+    Hero hero = zero;
     hero.floor = room.floor;
     hero.fov = get_lens(focal);
     hero.where = room.where;
@@ -137,26 +141,36 @@ static Hero move(Hero hero, const Map map, const Input input, const Flow current
         if(input.key[SDL_SCANCODE_D]) hero.velocity = p_add(hero.velocity, p_rot90(acceleration));
         if(input.key[SDL_SCANCODE_A]) hero.velocity = p_sub(hero.velocity, p_rot90(acceleration));
     }
-    else // Slow down.
+    else
         hero.velocity = p_mul(hero.velocity, 1.0f - accel / speed);
 
     if(swimming)
         hero.velocity = p_add(hero.velocity, current.velocity);
 
+    //
     // Top speed check.
+    //
+
     if(p_mag(hero.velocity) > speed)
         hero.velocity = p_mul(p_unit(hero.velocity), speed);
 
+    //
     // Speed apply.
+    //
+
     hero.where = p_add(hero.where, hero.velocity);
 
+    //
     // Collision detection.
+    //
+
     if(p_tile(hero.where, map.walling))
     {
         static Point zero;
         hero.velocity = zero;
         hero.where = last;
     }
+
     return hero;
 }
 
@@ -219,7 +233,10 @@ Ray h_cast(const Hero hero, const Hit hit, const Sheer sheer, const int yres, co
     return ray;
 }
 
+//
 // TODO: Different weapons have different recoil?
+//
+
 static Hero recoil(Hero hero, const Method last)
 {
     if(last == RANGE)

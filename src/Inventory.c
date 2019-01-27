@@ -4,26 +4,33 @@
 #include "util.h"
 
 #include <SDL2/SDL.h>
+#include <assert.h>
 
 Inventory i_create(void)
 {
+    //
     // Notice how dragging and hilighting are both negative.
+    //
+
     const Inventory inv = {
         i_build(10), 0, 32, -1, false, false, -1, i_none()
     };
 
     const Identification ids[] = {
-        {  0, SHORTWEP }, // 0
-        {  0, WAND     }, // 1
-        {  8, AMMO     }, // 2
-        {  0, SHIELD   }, // 3
-        { 14, AMMO     }, // 4
-        {  3, SCROLL   }, // 5
-        {  1, SCROLL   }, // 6
-        {  9, SCROLL   }, // 7
-        {  1, LETTER   }, // 8
-        {  0, LETTER   }, // 9
+        {  0, SHORTWEP },
+        {  0, WAND     },
+        {  8, AMMO     },
+        {  0, SHIELD   },
+        { 14, AMMO     },
+        {  3, SCROLL   },
+        {  1, SCROLL   },
+        {  9, SCROLL   },
+        {  1, LETTER   },
+        {  0, LETTER   },
     };
+
+    assert(u_len(ids) <= inv.items.max);
+
     for(int i = 0; i < u_len(ids); i++)
         i_add(inv.items, i_new(ids[i]));
 
@@ -126,14 +133,18 @@ static Inventory swap(Inventory inv, const Input in, const int xres)
     {
         if(dragging(inv))
         {
-            if(inside(inv, in, xres)) // Swapping.
+            //
+            // Swapping items within inventory, else dropping items from inventory.
+            //
+
+            if(inside(inv, in, xres))
             {
                 const int to = calc_index(inv, in);
                 const Item temp = inv.items.item[to];
                 inv.items.item[to] = inv.items.item[inv.drag];
                 inv.items.item[inv.drag] = temp;
             }
-            else // Drop.
+            else
             {
                 inv.trade = inv.items.item[inv.drag];
                 inv.items.item[inv.drag] = i_none();
@@ -164,7 +175,6 @@ Inventory i_handle(Inventory inv, const Input in, const Scroll scroll, const Tim
     inv = i_hilite(inv, in, xres);
     inv = i_what_is(inv, scroll, tm);
     inv = i_manage(inv, in, xres);
-
     return inv;
 }
 

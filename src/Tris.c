@@ -103,7 +103,10 @@ static Tris collect(Tris edges, const Tris in, const Flags flags)
     return edges;
 }
 
+//
 // https://en.wikipedia.org/wiki/Delaunay_triangulation
+//
+
 static Tris triangulate(const Points ps, const int w, const int h, const int max, const Flags flags)
 {
     Tris in = make(max);
@@ -184,7 +187,10 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
         const Point removed = todo.point[--todo.count];
         done = p_append(done, removed);
 
+        //
         // Get reachable edges from current point.
+        //
+
         reach.count = 0;
         for(int i = 0; i < edges.count; i++)
         {
@@ -197,16 +203,26 @@ static int connected(const Point a, const Point b, const Tris edges, const Flags
                 reach = append(reach, edge);
         }
 
+        //
         // For all reachable edges
+        //
+
         for(int i = 0; i < reach.count; i++)
         {
+            //
             // Was the destination reached?
+            //
+
             if(p_same(reach.tri[i].b, b))
             {
                 connection = true;
                 break;
             }
+
+            //
             // Otherwise add point of reachable edge to todo list.
+            //
+
             if(!p_find(done, reach.tri[i].b))
                 todo = p_append(todo, reach.tri[i].b);
         }
@@ -225,7 +241,10 @@ static void reverse_delete(Tris edges, const int w, const int h, const Flags fla
     {
         Tri* edge = &edges.tri[i];
 
+        //
         // Flag out of bound edges.
+        //
+
         if(out_of_bounce(edge->a, w, h)
         || out_of_bounce(edge->b, w, h))
         {
@@ -233,14 +252,21 @@ static void reverse_delete(Tris edges, const int w, const int h, const Flags fla
             continue;
         }
 
+        //
         // Break connection.
+        //
+
         edge->c = flags.one;
 
+        //
         // If two points are not connected in anyway then reconnect.
         // Occasionally a loop will be created as edges are doubled (sibling reversed)
         // and not perfectly paired when sorted by magnitude.
         // This benefits the map design; perfectly linear dungeons are boring.
-        if(!connected(edge->a, edge->b, edges, flags)) edge->c = flags.zer;
+        //
+
+        if(!connected(edge->a, edge->b, edges, flags))
+            edge->c = flags.zer;
     }
 }
 
@@ -257,6 +283,7 @@ static void remove_dups(const Tris edges, const Flags flags)
     }
 }
 
+//
 // #############################################
 // #           #####################           #
 // #           #####################           #
@@ -264,6 +291,8 @@ static void remove_dups(const Tris edges, const Flags flags)
 // #           #####################           #
 // #           #####################           #
 // #############################################
+//
+
 static void place_bone(const Map map, const Tri e, const int w, const int h)
 {
     m_place_room(map, e.a, w, h, WALLING);
@@ -337,7 +366,10 @@ Map t_generate(const Points extra, const int w, const int h, const int grid, con
 
     const Map map = m_generate(h, w, trapdoors, rooms, grid, floor);
 
+    //
     // Complex generation only works with more than one room.
+    //
+
     rooms.count > 1 ?  generate_complex(map, rooms, w, h) : generate_simple(map, rooms);
 
     return map;

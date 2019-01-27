@@ -37,56 +37,78 @@ Overview o_update(Overview ov, const Input input, const int xres)
 {
     const int textures = '~' - ' ' + 1;
 
+    //
     // Selecting either 1, 2, or 3 will change the overview party to either the flooring, walling, or ceiling tiles.
+    //
+
     if(input.key[SDL_SCANCODE_1]) ov.party = FLORING;
     if(input.key[SDL_SCANCODE_2]) ov.party = WALLING;
     if(input.key[SDL_SCANCODE_3]) ov.party = CEILING;
 
-    // Selection wheel update.
+    //
+    // Holding Q or E will scroll the overview wheel selectoin panel.
+    //
+
     if(input.key[SDL_SCANCODE_Q]) ov.wheel--;
     if(input.key[SDL_SCANCODE_E]) ov.wheel++;
 
-    // Selection wheel lower clamp.
-    if(ov.wheel < 0) ov.wheel = 0;
+    //
+    // Wheel clamp.
+    //
+    if(ov.wheel < 0)
+        ov.wheel = 0;
 
-    // Selection wheel upper clamp.
     const int seen = xres / ov.w;
-    if(textures - ov.wheel < seen) ov.wheel = textures - seen;
 
+    if(textures - ov.wheel < seen)
+        ov.wheel = textures - seen;
+
+    //
     // The left mouse button will update the x and y tile position of the overview.
+    //
+
     if(input.lu)
     {
+        //
         // Overview global tiles.
+        //
+
         ov.where.x = (input.x - ov.px) / (float) ov.w;
         ov.where.y = (input.y - ov.py) / (float) ov.h;
 
+        //
         // Overview relative tiles.
+        //
+
         const int x = input.x / ov.w;
         const int y = input.y / ov.h;
 
-        // If the zeroth row was chosen, then:
+        //
+        // Select a tile.
+        //
+
         if(y == 0)
         {
-            // Reset the overview global tiles to -1.
             ov = reset(ov);
-
-            // Selection update and...
             ov.selected = ov.wheel + x;
         }
     }
-    // Map editing checks to see if the overview global tile selection
-    // is out of map range or not before continuing. Reset here if left input is not pressed.
     else ov = reset(ov);
 
+    //
     // The right mouse button will pan the overview x and y pixels.
+    //
+
     if(input.r)
     {
         ov.px += input.dx;
         ov.py += input.dy;
     }
 
-    // The right mouse button does not have to be used to pan.
-    // The arrow keys can be used too with an acceleration effect.
+    //
+    // The arrow keys also pan with an acceleration effect.
+    //
+
     if(input.key[SDL_SCANCODE_W]
     || input.key[SDL_SCANCODE_S]
     || input.key[SDL_SCANCODE_D]
@@ -99,13 +121,24 @@ Overview o_update(Overview ov, const Input input, const int xres)
     }
     else ov.velocity = p_mul(ov.velocity, 1.0f - ov.acceleration / ov.speed);
 
-    // Arrow key top speed check.
-    if(p_mag(ov.velocity) > ov.speed) ov.velocity = p_mul(p_unit(ov.velocity), ov.speed);
+    //
+    // Pan top speed check.
+    //
+
+    if(p_mag(ov.velocity) > ov.speed)
+        ov.velocity = p_mul(p_unit(ov.velocity), ov.speed);
+
+    //
     // Due to integer rounding, velocities less than one must be ignored.
+    //
+
     if(fabsf(ov.velocity.x) < 1.0f) ov.velocity.x = 0.0f;
     if(fabsf(ov.velocity.y) < 1.0f) ov.velocity.y = 0.0f;
 
+    //
     // Add velocity to pan.
+    //
+
     ov.px += ov.velocity.x;
     ov.py += ov.velocity.y;
 

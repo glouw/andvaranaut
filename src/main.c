@@ -55,6 +55,10 @@ int main(int argc, char* argv[])
 
         theme = m_get_theme(theme, world.map[hero.floor], hero.where, tm);
 
+        //
+        // World edit mode, otherwise playing.
+        //
+
         if(i_using_world_edit_mode(in))
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
@@ -67,7 +71,7 @@ int main(int argc, char* argv[])
 
             s_render_overlay(sdl, ov, world.sprites[hero.floor], world.map[hero.floor], tm);
         }
-        else // Playing.
+        else
         {
             ov = o_pan(ov, hero.where, sdl.xres, sdl.yres);
 
@@ -103,6 +107,10 @@ int main(int argc, char* argv[])
 
             hero.inventory = i_select(hero.inventory, in);
 
+            //
+            // Inventory use, lookup use, or otherwise combat mode.
+            //
+
             if(i_using_inventory(in))
             {
                 hero.inventory = i_handle(hero.inventory, in, scroll, tm, sdl.xres);
@@ -111,7 +119,7 @@ int main(int argc, char* argv[])
             {
                 hero = w_transport(world, hero, sdl, red, yel, in);
             }
-            else // Combat.
+            else
             {
                 SDL_SetRelativeMouseMode(SDL_TRUE);
 

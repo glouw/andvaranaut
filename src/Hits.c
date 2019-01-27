@@ -35,23 +35,38 @@ static Hits step(Hits hits, const Point where, const Point direction, const Map 
 
     const Line test = { p_add(ray, fixed), p_sub(ray, fixed) };
 
+    //
     // Floor wall.
+    //
+
     if(p_tile(test.a, map.floring) && !p_tile(test.b, map.floring))
         hits.floring = push(hits.floring, collision(ray, test, map.floring));
 
+    //
     // Ceiling wall.
+    //
+
     if(p_tile(test.a, map.ceiling) && !p_tile(test.b, map.ceiling))
         hits.ceiling = push(hits.ceiling, collision(ray, test, map.ceiling));
 
+    //
     // Eye level Wall.
+    //
+
     if(p_tile(test.a, map.walling) && !hits.walling.surface)
         hits.walling = collision(ray, test, map.walling);
 
+    //
     // Done casting?
+    //
+
     if(hits.walling.surface && p_tile(test.a, map.ceiling) && p_tile(test.a, map.floring))
         return hits;
 
-    // Else keep on walking.
+    //
+    // Otherwise keep on stepping the ray.
+    //
+
     return step(hits, ray, direction, map);
 }
 

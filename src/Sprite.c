@@ -7,7 +7,11 @@
 #include <assert.h>
 #include <ctype.h>
 
-static const Sprite lower[] = { // Enemy sprites or non living things.
+//
+// Enemy sprites or non-living things.
+//
+
+static const Sprite lower[] = {
     /* Flower  */ { 'a', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 200.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* Dwarf   */ { 'b', 0, 0, 8, 6, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* Ember   */ { 'c', 1, 1, 4, 0, 1.0f, 0.000f, 0.0000f,   1.0f, 0.50f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
@@ -36,7 +40,11 @@ static const Sprite lower[] = { // Enemy sprites or non living things.
     /* */         { 'z', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 200.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
 };
 
-static const Sprite upper[] = { // Important sprites with quest lines.
+//
+// Important sprites with quest lines.
+//
+
+static const Sprite upper[] = {
     /* */         { 'A', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
     /* Tutor   */ { 'B', 0, 0, 8, 6, 1.0f, 0.038f, 0.0032f, 800.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,LETTER}, {1,LETTER}, "You've woken up.\nClimb down the trapdoors.\nBring me Andvari's Gift.\n\n", "Thanks.\n\n", "..." },
     /* */         { 'C', 0, 0, 4, 0, 1.0f, 0.000f, 0.0000f, 000.0f, 0.20f, 0.0f, {0,0}, {0,0}, {0,0}, IDLE, {0,0,0,0}, 0, 0, {NULL,0,0,0}, {0,NONE  }, {0,NONE  }, "", "", "" },
@@ -163,7 +171,10 @@ int s_must_spread(const Sprite* const sprite, char** const floring)
     return s_firey(sprite->ascii) && s_alive(sprite->state) && p_char(sprite->where, floring) == '(';
 }
 
+//
 // TODO: Different ticks for each sprite.
+//
+
 void s_parried(Sprite* const sprite, const Point velocity, const Timer tm)
 {
     const Point dir = p_unit(velocity);

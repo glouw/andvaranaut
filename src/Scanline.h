@@ -9,7 +9,10 @@ typedef struct
     uint32_t* pixels;
     int width;
 
+    //
     // Scanlines are rotated 90 degrees.
+    //
+
     int y;
 }
 Scanline;

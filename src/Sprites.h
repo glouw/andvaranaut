@@ -17,7 +17,10 @@ typedef struct
     int count;
     int max;
 
+    //
     // How the sprites were last hurt.
+    //
+
     Method last;
 }
 Sprites;

@@ -81,14 +81,20 @@ static void bound(const Sprites sprites, const Map map)
 
         static Point zero;
 
+        //
         // Stuck in a wall.
+        //
+
         if(p_tile(sprite->where, map.walling))
         {
             s_place(sprite, p_mid(sprite->last));
             sprite->velocity = zero;
         }
 
+        //
         // Stuck in water.
+        //
+
         if(p_char(sprite->where, map.floring) == ' ')
         {
             s_place(sprite, p_mid(sprite->last));
@@ -112,7 +118,10 @@ static void move(const Sprites sprites, const Field field, const Point to, const
 
         const Point dir = f_generate_force(field, sprite->where, to, map);
 
-        // No force applied - slow down.
+        //
+        // No force applied - slow down - else a force is applied: speedup.
+        //
+
         if(dir.x == 0.0f && dir.y == 0.0f)
         {
             if(speed == 0.0f)
@@ -120,7 +129,6 @@ static void move(const Sprites sprites, const Field field, const Point to, const
 
             sprite->velocity = p_mul(sprite->velocity, 1.0f - accel / speed);
         }
-        // Force applied - speed up.
         else
         {
             const Point acc = p_mul(dir, accel);
@@ -135,7 +143,10 @@ static void move(const Sprites sprites, const Field field, const Point to, const
         if(s_busy(sprite, tm))
             continue;
 
+        //
         // Sprite will stop running if close to player.
+        //
+
         sprite->state = p_mag(sprite->velocity) > 0.005f ? CHASING : IDLE;
     }
 }
@@ -155,10 +166,16 @@ static void scent_wall(const Field field, const Point where, const Map map, cons
 
         if(f_is_on(field, j, i))
         {
+            //
             // Scent walls.
+            //
+
             field.mesh[j][i] = map.walling[y][x] == ' ' ? 0.0f : -scent;
 
+            //
             // Scent water.
+            //
+
             if(map.floring[y][x] == ' ')
                 field.mesh[j][i] = -scent;
         }
@@ -220,7 +237,10 @@ static void broke_lootbag(const int ascii, const Inventory inv, const Timer tm)
 
 static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack, const Inventory inv, const Timer tm)
 {
+    //
     // Check attack speed.
+    //
+
     static Point zero;
     if(p_same(attack.velocity, zero))
     {
@@ -228,7 +248,10 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
         return sprites;
     }
 
-    // Sprite is now angry.
+    //
+    // Attack had some force. Sprite is now angry.
+    //
+
     if(sprite->evil == false)
     {
         static Speech none;
@@ -236,7 +259,10 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
         sprite->speech = none;
     }
 
-    // Sprite attempts to Block.
+    //
+    // Sprite attempts to Block. If the block was not successful Sprite is now either hurt or dead.
+    //
+
     const Point vel = p_unit(attack.velocity);
     const int s = p_south(vel);
     const int n = p_north(vel);
@@ -247,12 +273,14 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
     || (sprite->state == BLOCK_W && e)
     || (sprite->state == BLOCK_E && w))
         t_set_title(tm.renders, 60, false, "Blocked!");
-    // If the block was not successful Sprite is now either hurt or dead.
     else
     {
         sprite->health -= attack.item.damage;
 
+        //
         // Hurt.
+        //
+
         if(sprite->health <= 0.0f)
         {
             sprite->state = s ? DEAD_N : n ? DEAD_S : e ? DEAD_W : DEAD_E;
@@ -260,11 +288,14 @@ static Sprites damage(Sprites sprites, Sprite* const sprite, const Attack attack
             if(u_d10() == 0)
                 return drop_item(sprites, attack, sprite->where, tm);
         }
-        // Dead.
-        else
+        else // Dead.
         {
             const State hurt = s ? HURT_N : n ? HURT_S : e ? HURT_W : HURT_E;
+
+            //
             // TODO: Different sprites have different stun times.
+            //
+
             s_go_busy(sprite, tm, 3 * FRAMES, hurt);
         }
     }
@@ -318,12 +349,16 @@ static Sprites use_range(Sprites sprites, const Hero hero, const Timer tm)
 
 static Sprites use_magic(Sprites sprites, const Hero hero, const Timer tm)
 {
+    //
     // TODO
     // Casting magic scrolls will spawn new sprites.
     // These sprites will do something like heal the hero, teleport the hero, or be something like fire
     // which hurts, heals, or teleports other sprites.
+    //
+
     (void) tm;
     (void) hero;
+
     return sprites;
 }
 
@@ -400,7 +435,10 @@ static void block(const Sprites sprites, const Hero hero, const Timer tm)
 
             if(h_close_enough(hero, sprite->where))
             {
+                //
                 // TODO: Subtract sprite dependent value from gauge count to have sprites react slower.
+                //
+
                 const Point block = g_sum(hero.gauge, hero.gauge.count);
 
                 if(p_north(block)) sprite->state = BLOCK_N;
@@ -437,7 +475,11 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
 
         if(h_close_enough(hero, sprite->where))
         {
-            const int speed = 8; // How fast sprite talks (arbitrary pick).
+            //
+            // Speed: how fast sprite talks (arbitrary pick).
+            //
+
+            const int speed = 8;
             const int ticks = tm.ticks - sprite->speech.ticks;
 
             sprite->speech.index = (ticks / speed) % sprite->speech.count;
@@ -445,8 +487,12 @@ static void speak(const Sprites sprites, const Hero hero, const Timer tm)
             const int index = sprite->speech.index;
             const char* const sentence = sprite->speech.sentences[index];
 
+            //
+            // Sprites will move their mouth.
+            //
+
             if(strlen(sentence) > 0)
-                sprite->state = SPEAKING; // Sprites will move their mouth.
+                sprite->state = SPEAKING;
         }
         else sprite->speech.ticks = tm.ticks;
     }
@@ -480,7 +526,10 @@ static void burn(const Sprites sprites, const Fire fire)
         const int y = sprite->where.y;
         const Embers embers = fire.embers[y][x];
 
+        //
         // TODO fire must hurt sprites.
+        //
+
         for(int j = 0; j < embers.count; j++)
             embers.ember[j]->state = ATTACK_N;
     }
@@ -490,7 +539,10 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
 {
     if(tm.rise)
     {
+        //
         // Do not want growing sprite count.
+        //
+
         const int count = sprites.count;
 
         for(int i = 0; i < count; i++)
@@ -505,7 +557,10 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
                 };
                 const Point where = p_add(sprite->where, dir);
 
+                //
                 // Do no burn into walls.
+                //
+
                 if(p_char(where, map.walling) == ' ')
                 {
                     const int xx = where.x;
@@ -541,7 +596,10 @@ static Hero manage_bar_health(Hero hero, const Map map, const Sprites sprites, c
             if(g_successful_block(hero.gauge))
                 s_parried(sprite, hero.attack.velocity, tm);
 
+            //
             // TODO: Give back health from block.
+            //
+
             if(s_impulse(sprite, tm))
                 hero = h_struck(hero, sprite->state, sprite->damage);
         }
@@ -609,7 +667,11 @@ static Hero trade(const Sprites sprites, Hero hero, const Input in, const Timer 
             {
                 if(i_same_id(sprite->wants, hero.inventory.trade.id))
                 {
-                    sprite->evil = false; // Sprites are not evil when they get what they want.
+                    //
+                    // Sprites are not evil when they get what they want.
+                    //
+
+                    sprite->evil = false;
 
                     const Item item = i_new(sprite->gives);
                     const int added = i_add(hero.inventory.items, item);
@@ -623,7 +685,10 @@ static Hero trade(const Sprites sprites, Hero hero, const Input in, const Timer 
                 else
                     i_revert_trade(hero.inventory);
 
+                //
                 // Only trade once.
+                //
+
                 break;
             }
         }
@@ -672,7 +737,10 @@ static Point avail(const Point center, const Map map)
     };
     const Point where = p_add(center, random);
 
+    //
     // Available tile space is no wall and not above water.
+    //
+
     return p_char(where, map.walling) == ' '
         && p_char(where, map.floring) != ' ' ? where : avail(center, map);
 }
@@ -688,7 +756,10 @@ static Sprites lay_nice_garden(Sprites sprites, const Map map, const Point cente
     for(int flower = 0; flower < 256; flower++)
         sprites = append(sprites, s_register('a', seek(center, map, '('), tm));
 
+    //
     // Gardener.
+    //
+
     sprites = append(sprites, s_register('b', avail(center, map), tm));
 
     return sprites;

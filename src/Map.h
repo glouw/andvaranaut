@@ -19,13 +19,19 @@ typedef struct
     Points trapdoors;
     Rooms rooms;
 
-    // These sheers form an optical illusion with the middle and upper ceiling heights.
+    //
+    // These sheers extend the middle and upper ceiling heights.
     // A larger upper sheer will extend the ceiling depth, and a larger middle sheer will
     // extend the height of the walls.
+    //
+
     Sheer mid;
     Sheer top;
 
+    //
     // Each room occupies at most (grid * grid) area of the map.
+    //
+
     int grid;
 }
 Map;

@@ -4,9 +4,14 @@
 
 static uint32_t shade_pixel(const uint32_t pixel, const int shading)
 {
-    const uint32_t r = (((pixel >> 0x10) /****/) * shading) >> 0x08; // Shift right by 0x08 is same as
-    const uint32_t g = (((pixel >> 0x08) & 0xFF) * shading) >> 0x08; // dividing by 256. Somehow
-    const uint32_t b = (((pixel /*****/) & 0xFF) * shading) >> 0x08; // gcc -Ofast was not catching this.
+    //
+    // Shift right by 0x08 is same as dividing by 256. Somehow gcc -Ofast was not catching this.
+    //
+
+    const uint32_t r = (((pixel >> 0x10) /****/) * shading) >> 0x08;
+    const uint32_t g = (((pixel >> 0x08) & 0xFF) * shading) >> 0x08;
+    const uint32_t b = (((pixel /*****/) & 0xFF) * shading) >> 0x08;
+
     return r << 0x10 | g << 0x08 | b;
 }
 
@@ -45,8 +50,10 @@ static void raster_flor(const Scanline sl, const Ray r, const Map map)
     {
         const Point offset = l_lerp(r.trace, p_flor_cast(r.proj, x));
         const int tile = p_tile(offset, map.floring);
+
         if(!tile)
             continue;
+
         const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
         pixel_xfer(sl, x, offset, tile, lum);
     }
@@ -58,8 +65,10 @@ static void raster_ceil(const Scanline sl, const Ray r, const Map map)
     {
         const Point offset = l_lerp(r.trace, p_ceil_cast(r.proj, x));
         const int tile = p_tile(offset, map.ceiling);
+
         if(!tile)
             continue;
+
         const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
         pixel_xfer(sl, x, offset, tile, lum);
     }
@@ -81,8 +90,10 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
             const Point offset = l_lerp(r.trace, p_ceil_cast(r.proj, x));
+
             if(p_tile(offset, map.ceiling))
                 continue;
+
             const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
             pixel_xfer(sl, x, offset, '#' - ' ', lum);
         }
@@ -93,8 +104,10 @@ static void raster_pit(const Scanline sl, const Ray r, const Map map, const Flow
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         const Point offset = l_lerp(r.trace, p_flor_cast(r.proj, x));
+
         if(p_tile(offset, map.floring))
             continue;
+
         const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
         pixel_xfer(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', lum);
     }
@@ -107,8 +120,10 @@ static void raster_upper_section(const Scanline sl, const Hits hits, const Hero 
     {
         const Hit* const which = hit;
         const Ray ray = h_cast(hero, *which, map.top, sl.sdl.yres, sl.sdl.xres);
+
         if(link++ == 0)
             raster_sky(sl, ray, map, hero.floor, clouds);
+
         raster_wall(sl, ray);
     }
 }
@@ -121,8 +136,10 @@ static void raster_lower_section(const Scanline sl, const Hits hits, const Hero 
         const Hit* const which = hit;
         const Sheer sheer = { current.height, -1.0f };
         const Ray ray = h_cast(hero, *which, sheer, sl.sdl.yres, sl.sdl.xres);
+
         if(link++ == 0)
             raster_pit(sl, ray, map, current);
+
         raster_wall(sl, ray);
     }
 }

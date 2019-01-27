@@ -15,9 +15,9 @@ Input i_pump(Input input)
 
     const uint32_t buttons = SDL_GetRelativeMouseState(&input.dx, &input.dy);
 
-    input.l = (buttons >> 0) & 0x1; // Left.
-    input.m = (buttons >> 1) & 0x1; // Middle.
-    input.r = (buttons >> 2) & 0x1; // Right.
+    input.l = (buttons >> 0) & 0x1;
+    input.m = (buttons >> 1) & 0x1;
+    input.r = (buttons >> 2) & 0x1;
 
     input.lu = (input.l == 0 && input.ll == 1);
     input.mu = (input.m == 0 && input.lm == 1);

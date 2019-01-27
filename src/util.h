@@ -42,7 +42,9 @@ float u_sinc(const float x, const float p);
 
 #define U_PI (3.1416f)
 
+//
 // DnD dice where 0 is a valid roll.
+//
 
 #define u_d2() (rand() % 2)
 

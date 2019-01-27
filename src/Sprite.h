@@ -10,14 +10,20 @@
 
 typedef struct
 {
+    //
     // Trait.
+    //
+
     int ascii;
     int evil;
     int transparent;
     int block_time;
     int stun_ticks;
 
+    //
     // Stats.
+    //
+
     float size;
     float speed;
     float acceleration;
@@ -25,7 +31,10 @@ typedef struct
     float damage;
     float defense;
 
+    //
     // Physics.
+    //
+
     Point where;
     Point last;
     Point velocity;

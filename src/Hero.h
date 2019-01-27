@@ -24,9 +24,9 @@ typedef struct
     float speed;
     float acceleration;
     float yaw;
-    float d_yaw; // Rate of change of yaw.
+    float d_yaw;
     float pitch;
-    float d_pitch; // Rate of change of pitch.
+    float d_pitch;
     Torch torch;
     int floor;
     int aura;

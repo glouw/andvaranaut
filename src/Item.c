@@ -662,7 +662,11 @@ static const Item shortweps[] = {
     { {19,SHORTWEP}, "Shortwep", "", "", 25.0f, 1, 360.0f, 0.5f },
 };
 
-static const Item tools[] = { // PRYING OPEN MY THIRD EYE.
+//
+// PRYING OPEN MY THIRD EYE.
+//
+
+static const Item tools[] = {
     { { 0,TOOL}, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
     { { 1,TOOL}, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
     { { 2,TOOL}, "Tool", "", "", 25.0f, 1, 360.0f, 0.5f },
@@ -793,10 +797,13 @@ Item i_new(const Identification id)
 {
 #pragma message "Maintainer: Apply item characteristics in Item.c::i_new"
 
-    switch(id.clas)
-    {
+    //
     // Do not use default.
     // Will remind of any new items that are missing.
+    //
+
+    switch(id.clas)
+    {
     case CLASSIFICATIONS:
     case     NONE: return i_none();
     case     AMMO: return ammos     [ id.index ];

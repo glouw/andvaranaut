@@ -78,16 +78,23 @@ static void render_speech(Sprite* const sprite, const Sdl sdl, const Text text, 
 {
     if(sprite->state == SPEAKING)
     {
+        //
+        // TODO: Maybe tune the (y) offset per sprite?
+        //
+
         const char* const sentence = sprite->speech.sentences[sprite->speech.index];
         const int x = target.x + target.w / 2;
-        const int y = target.y + target.h / 3; // TODO: Maybe tune the offset per sprite?
+        const int y = target.y + target.h / 3;
         t_write(text, sdl.renderer, x, y, MIDDLE, 0xFF, 0, sentence);
     }
 }
 
 static SDL_Rect calc_sprite_size(const Sdl sdl, Sprite* const sprite, const Hero hero)
 {
+    //
     // Projection.[ch] does the same thing, but this one accounts for sprite jitter.
+    //
+
     const int size = sprite->size * hero.fov.a.x * 0.5f * sdl.xres / sprite->where.x;
     const int osize = u_odd(size) ? size + 1 : size;
     const int my = 0.5f * sdl.yres * (2.0f - hero.pitch);
@@ -109,27 +116,45 @@ static SDL_Rect calc_state_frame(SDL_Surface* const surface, const State state, 
 
 static void render_one_sprite(const Sdl sdl, const Text text, Sprite* const sprite, const Hero hero, SDL_Texture* const texture, const SDL_Rect image, const SDL_Rect target)
 {
+    //
     // Apply lighting to the sprite.
+    //
+
     const int modding = t_illuminate(hero.torch, sprite->where.x);
     SDL_SetTextureColorMod(texture, modding, modding, modding);
 
+    //
     // Apply transparency to the sprite, if required.
+    //
+
     if(sprite->transparent)
         SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_ADD);
 
+    //
     // Render the sprite.
+    //
+
     SDL_RenderSetClipRect(sdl.renderer, &sprite->seen);
     SDL_RenderCopy(sdl.renderer, texture, &image, &target);
     SDL_RenderSetClipRect(sdl.renderer, NULL);
 
+    //
     // Remove transparancy from the sprite.
+    //
+
     if(sprite->transparent)
         SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
+    //
     // Remove lighting from the sprite.
+    //
+
     SDL_SetTextureColorMod(texture, 0xFF, 0xFF, 0xFF);
 
+    //
     // If the sprite is within earshot of hero then render speech sentences.
+    //
+
     render_speech(sprite, sdl, text, target);
 }
 
@@ -173,7 +198,12 @@ Sdl s_setup(const Args args)
     static Sdl zero;
     Sdl sdl = zero;
 
-    SDL_Init(SDL_INIT_EVERYTHING); // 1031 ms
+    //
+    // On cold boot, an everything init takes more than one second.
+    // Sequential boots are near instant.
+    //
+
+    SDL_Init(SDL_INIT_EVERYTHING);
 
     sdl.window = SDL_CreateWindow(
         "Andvaranaut",
@@ -186,24 +216,36 @@ Sdl s_setup(const Args args)
     if(sdl.window == NULL)
         u_bomb("error: could not open window\n");
 
+    //
+    // Renderer construcction also measured to take about one second.
+    //
+
     sdl.renderer = SDL_CreateRenderer(
         sdl.window,
         -1,
         SDL_RENDERER_ACCELERATED |
-        (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0x0)); // 933 ms
+        (args.vsync ? SDL_RENDERER_PRESENTVSYNC : 0x0)); 
+
+    //
+    // xres and yres swapped since software rendering is done flipped 90 degrees on its side.
+    //
 
     sdl.canvas = SDL_CreateTexture(
         sdl.renderer,
         SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_STREAMING,
-        args.yres, args.xres); // XRES and YRES swapped since rendering is done 90 degrees on side.
+        args.yres, args.xres);
 
     sdl.xres = args.xres;
     sdl.yres = args.yres;
     sdl.fps = args.fps;
     sdl.threads = args.threads;
 
-    sdl.surfaces = s_load_surfaces(); // 599 ms
+    //
+    // Surface loading also measured to be about half a second.
+    //
+
+    sdl.surfaces = s_load_surfaces();
 
     sdl.textures = t_cache(sdl.surfaces, sdl.renderer);
 
@@ -212,6 +254,10 @@ Sdl s_setup(const Args args)
     sdl.blk = 0xFF000000;
     sdl.red = 0xFFD34549;
     sdl.yel = 0xFFDBD75D;
+
+    //
+    // Cold boot is about three seconds all together.
+    //
 
     return sdl;
 }
@@ -256,15 +302,23 @@ static Attack draw_gauge_range(const Sdl sdl, const Gauge g, const Item it, cons
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
         draw_box(sdl, x, y, width, sdl.wht, false);
 
+        //
+        // Reticule includes divide by zero check.
+        //
+
         const Point reticule = {
-            (float) (x + rand() % (width < 1 ? 1 : width)), // Divide by zero check.
+            (float) (x + rand() % (width < 1 ? 1 : width)),
             (float) (y + rand() % (width < 1 ? 1 : width)),
         };
 
+        //
         // Range attacks will just have south facing hurt animation drawn.
+        //
+
         const Point dir = { 0.0f, -1.0f };
         static Point zero;
         const Attack range = { it, dir, zero, RANGE, 0, reticule };
+
         return range;
     }
     else
@@ -274,7 +328,10 @@ static Attack draw_gauge_range(const Sdl sdl, const Gauge g, const Item it, cons
     }
 }
 
-// TODO: Format... way too long.
+//
+// TODO: This function ins too long. Needs to be cleaned up.
+//
+
 static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, const float sens, const Inventory inv, const Scroll sc)
 {
     s_clear(sc);
@@ -283,13 +340,22 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
         const int size = (sc.width - 1) / 2;
         const int grid = sdl.yres / (sc.width / 0.8f);
 
+        //
         // Middle of the screen.
+        //
+
         const Point middle = { (float) sdl.xres / 2, (float) sdl.yres / 2 };
 
+        //
         // Half a grid for centering grid squares.
+        //
+
         const Point shift = { (float) grid / 2, (float) grid / 2 };
 
+        //
         // Animate attack (inside square for mouse cursor).
+        //
+
         for(int i = 0; i < g.count; i++)
         {
             const Point point = p_add(p_mul(g.points[i], sens), shift);
@@ -298,17 +364,26 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
 
             draw_box(sdl, center.x, center.y, grid, sdl.wht, true);
 
+            //
             // Populate Scroll int array that was cleared earlier.
+            //
+
             const int x = size + corner.x / grid;
             const int y = size + corner.y / grid;
 
+            //
             // Clamp if over boundry.
+            //
+
             const int xc = x < 0 ? 0 : x >= sc.width ? sc.width - 1 : x;
             const int yc = y < 0 ? 0 : y >= sc.width ? sc.width - 1 : y;
             sc.casting[xc + yc * size] = 1;
         }
 
+        //
         // Animate attack (grid squares).
+        //
+
         for(int x = -size; x <= size; x++)
         for(int y = -size; y <= size; y++)
         {
@@ -321,7 +396,10 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
             draw_box(sdl, center.x, center.y, grid, sdl.red, false);
         }
 
+        //
         // Draw the cursor.
+        //
+
         const Point point = p_add(p_mul(g.points[g.count - 1], sens), shift);
         const Point center = p_sub(p_add(point, middle), shift);
         draw_box(sdl, center.x, center.y, 6, sdl.red, true);
@@ -329,11 +407,17 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
 
     const int scroll_index = s_index(sc);
 
+    //
     // If the scroll index is not found in the inventory the attack will go from MAGIC to NOATTACK.
+    //
+
     (void) inv;
 
+    //
     // Direction won't be needed for magic attacks as magic will spawn new sprites, be it food sprites,
     // attack sprites (fire / ice), etc.
+    //
+
     const Point dir = { 0.0f, 0.0f };
     static Point zero;
     const Attack magic = { it, dir, zero, MAGIC, scroll_index, zero };
@@ -363,7 +447,10 @@ static void draw_grid_layout(const Sdl sdl, const Overview ov, const Sprites spr
     SDL_SetRenderDrawColor(sdl.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(sdl.renderer);
 
+    //
     // Put down tiles. Snaps to grid.
+    //
+
     for(int j = 0; j < map.rows; j++)
     for(int i = 0; i < map.cols; i++)
     {
@@ -379,7 +466,10 @@ static void draw_grid_layout(const Sdl sdl, const Overview ov, const Sprites spr
         SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &to);
     }
 
+    //
     // Put down sprites.
+    //
+
     for(int s = 0; s < sprites.count; s++)
     {
         Sprite* const sprite = &sprites.sprite[s];
@@ -405,7 +495,10 @@ static void draw_sprite_panel(const Sdl sdl, const Overview ov, const Timer tm)
     {
         const SDL_Rect to = { ov.w * (i - ov.wheel), 0, ov.w, ov.h };
 
-        // Draw sprite on panel.
+        //
+        // Draw sprite on panel, otherwise draw tile block on panel.
+        //
+
         if(s_sprite(i + ' '))
         {
             const int w = sdl.surfaces.surface[i]->w / FRAMES;
@@ -415,7 +508,6 @@ static void draw_sprite_panel(const Sdl sdl, const Overview ov, const Timer tm)
                 continue;
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
         }
-        // Draw tile block on panel.
         else SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], NULL, &to);
     }
 }
@@ -444,7 +536,10 @@ static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, con
     const SDL_Rect glass = { 0, 32, w, w };
     const SDL_Rect grite = { 0, 64, w, w };
 
+    //
     // Will animate bar to flicker if below threshold.
+    //
+
     const int frame = t_lo(tm);
     const SDL_Rect fluid = { 0, (int) bar + (level < threshold ? w * frame : 0), w, w };
     const SDL_Rect empty[] = {
@@ -459,17 +554,26 @@ static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, con
         const int yy = sdl.yres - ww * (1 + position);
         const SDL_Rect to = { ww * i, yy, ww, ww };
 
+        //
         // Full fluid level.
+        //
+
         if(u_fl(level) > i)
             SDL_RenderCopy(sdl.renderer, texture, &fluid, &to);
 
+        //
         // Partial fluid level.
+        //
+
         if(u_fl(level) == i)
             u_dec(level) > 0.75f ? SDL_RenderCopy(sdl.renderer, texture, &empty[0], &to) :
             u_dec(level) > 0.50f ? SDL_RenderCopy(sdl.renderer, texture, &empty[1], &to) :
             u_dec(level) > 0.25f ? SDL_RenderCopy(sdl.renderer, texture, &empty[2], &to) : 0;
 
+        //
         // Glass around fluid.
+        //
+
         SDL_RenderCopy(sdl.renderer, texture, i == 0 ? &gleft : i == max - 1 ? &grite : &glass, &to);
     }
 }
@@ -486,6 +590,7 @@ static void draw_inventory_panel(const Sdl sdl, const Inventory inv)
     const Point wht = { 0.0, 512.0 };
     const Point red = { 0.0, 528.0 };
     const Point grn = { 0.0, 544.0 };
+
     for(int i = 0; i < inv.items.max; i++)
     {
         SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
@@ -493,7 +598,10 @@ static void draw_inventory_panel(const Sdl sdl, const Inventory inv)
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
 
+        //
         // Selected inventory item is highlighted.
+        //
+
         const SDL_Rect from = {
             (int) (i == inv.hilited ? grn.x : i == inv.selected ? red.x : wht.x),
             (int) (i == inv.hilited ? grn.y : i == inv.selected ? red.y : wht.y),
@@ -510,8 +618,10 @@ static void draw_inventory_items(const Sdl sdl, const Inventory inv, const Input
     for(int i = 0; i < inv.items.max; i++)
     {
         const Item item = inv.items.item[i];
+
         if(item.id.clas == NONE)
             continue;
+
         const int index = c_get_surface_index(item.id.clas);
         SDL_Texture* const texture = sdl.textures.texture[index];
         SDL_Surface* const surface = sdl.surfaces.surface[index];
@@ -572,7 +682,10 @@ void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Spr
     const Line camera = l_rotate(hero.fov, hero.yaw);
     const Vram vram = v_lock(sdl.canvas);
 
+    //
     // Threaded software rendering - each thread handles vertical columns <a> to <b> of the screen.
+    //
+
     Bundle* const b = u_toss(Bundle, sdl.threads);
     for(int i = 0; i < sdl.threads; i++)
     {
@@ -592,22 +705,35 @@ void s_render_playing(const Sdl sdl, const Text text, const Hero hero, const Spr
         threads[i] = SDL_CreateThread(b_raster, "n/a", &b[i]);
     for(int i = 0; i < sdl.threads; i++)
     {
-        int status; // Ignored.
+        int status;
         SDL_WaitThread(threads[i], &status);
     }
     v_unlock(sdl.canvas);
 
+    //
     // Render was done sideways for cache efficiency. Rotate upwards.
+    //
+
     churn(sdl);
+
+    //
+    // Sprites are rendered upwards.
+    //
 
     render_all_sprites(sdl, text, sprites, zbuff, hero, tm);
 
+    //
     // Draw the user interface.
+    //
+
     draw_inventory(sdl, hero.inventory, in);
     draw_all_bars(sdl, hero, tm, 1);
     draw_map(sdl, map, hero.where);
 
+    //
     // Cleanup.
+    //
+
     free(zbuff);
     free(b);
     free(threads);

@@ -2,10 +2,14 @@
 
 #include "Field.h"
 
+//
+// Notice y and x are in reverse here, contrary to the Point type.
+//
+
 typedef struct
 {
-    int y; // Notice y and x are in reverse
-    int x; // here, contrary to the Point type.
+    int y;
+    int x;
     float val;
 }
 Atom;

@@ -300,8 +300,10 @@ Scroll s_new(void)
     sc.width = WIDTH;
     sc.squares = SQUARES;
     sc.scrolls = SCROLLS;
+
     for(int i = 0; i < sc.scrolls; i++)
         sc.castables[i] = runes[i];
+
     return sc;
 }
 
@@ -309,9 +311,12 @@ char* s_scroll_to_str(const Scroll sc, const int scindex)
 {
     const int len = sc.squares + sc.width + 1;
     char* const str = u_wipe(char, len);
+
     memset(str, '\n', len - 1);
+
     for(int j = 0; j < sc.width; j++)
     for(int i = 0; i < sc.width; i++)
         str[i + j * (sc.width + 1)] = sc.castables[scindex][i + j * sc.width] ? 'x' : '-';
+
     return str;
 }

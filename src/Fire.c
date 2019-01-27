@@ -9,9 +9,14 @@ Fire f_kindle(const Map map)
     f.rows = map.rows;
     f.cols = map.cols;
     f.embers = u_wipe(Embers*, f.rows);
+
+    //
+    // Notice the wipe; ember append needs ember max and count to be zero.
+    //
+
     for(int j = 0; j < f.rows; j++)
-        // Notice the wipe; ember append needs ember max and count to be zero.
         f.embers[j] = u_wipe(Embers, f.cols);
+
     return f;
 }
 
