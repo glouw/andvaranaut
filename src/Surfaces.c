@@ -65,7 +65,7 @@ Surfaces s_load_surfaces(void)
         /* ?      */ "art/tiles/error.bmp",
         /* @      */ "art/tiles/error.bmp",
         /* A      */ "art/sprites/missing.bmp",
-        /* B      */ "art/sprites/dwarf.bmp",
+        /* B      */ "art/sprites/dwarf.bmp", // MAKE ME MY OWN TUTOR SPRITE
         /* C      */ "art/sprites/missing.bmp",
         /* D      */ "art/sprites/missing.bmp",
         /* E      */ "art/sprites/missing.bmp",

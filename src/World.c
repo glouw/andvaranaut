@@ -17,7 +17,9 @@ static World append(World w, const Map map, const Sprites sprites)
 
 static World make(const int max)
 {
-    const World w = { u_toss(Map, max), u_toss(Sprites, max), 0, max };
+    const World w = {
+        u_toss(Map, max), u_toss(Sprites, max), 0, max
+    };
     return w;
 }
 

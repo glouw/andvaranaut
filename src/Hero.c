@@ -33,7 +33,6 @@ Hero h_birth(const float focal, const Room room)
     hero.warning = 0.25f;
     hero.gauge = g_new(hero.fatigue_max);
     hero.inventory = i_create();
-
     return hero;
 }
 

@@ -316,7 +316,9 @@ static void generate_complex(const Map map, const Points rooms, const int w, con
     const Tris edges = collect(make(3 * tris.max), tris, flags);
 
     reverse_delete(edges, w, h, flags);
+
     remove_dups(edges, flags);
+
     carve(map, edges, flags);
 
     free(tris.tri);
