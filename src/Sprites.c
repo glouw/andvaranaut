@@ -565,7 +565,7 @@ Sprites s_spread_fire(Sprites sprites, const Fire fire, const Map map, const Tim
                 {
                     const int xx = where.x;
                     const int yy = where.y;
-                    if(fire.embers[yy][xx].count < 2)
+                    if(fire.embers[yy][xx].count < 3)
                     {
                         sprites = append(sprites, s_register('c', where, tm));
                         Sprite* const ember = &sprites.sprite[sprites.count - 1];

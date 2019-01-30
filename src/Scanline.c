@@ -8,11 +8,11 @@
 
 static uint32_t** clut;
 
+//
+// These two x marks below represent which bits to use for the hash function.
+//
+
 static const uint32_t palette[] = {
-    //
-    // These two x marks below represent which bits to use for the hash
-    // function as they are unique.
-    //
     //---xx-
     0x000000,
     0x140C1C,
@@ -49,7 +49,7 @@ static uint32_t shade_pixel(const uint32_t pixel, const int shading)
     return r << 0x10 | g << 0x08 | b;
 }
 
-void s_init(void)
+void s_init_clut(void)
 {
     //
     // 8-bit color lookup table hashing reveals 256 bins.
@@ -90,7 +90,7 @@ static void set_pixel(const Scanline sl, const int x, const uint32_t pixel)
     sl.pixels[x + sl.y * sl.width] = pixel;
 }
 
-static void pixel_xfer(const Scanline sl, const int x, const Point offset, const int tile, const int shade)
+static void transfer_pixel(const Scanline sl, const int x, const Point offset, const int tile, const int shade)
 {
     const uint32_t color = get_pixel(sl.sdl.surfaces.surface[tile], offset);
 
@@ -113,7 +113,7 @@ static void raster_wall(const Scanline sl, const Ray r)
 
         const int shade = t_illuminate(r.torch, r.corrected.x);
 
-        pixel_xfer(sl, x, offset, r.surface, shade);
+        transfer_pixel(sl, x, offset, r.surface, shade);
     }
 }
 
@@ -134,7 +134,7 @@ static void raster_flor(const Scanline sl, const Ray r, const Map map)
 
         const int shade = t_illuminate(r.torch, distance);
 
-        pixel_xfer(sl, x, offset, tile, shade);
+        transfer_pixel(sl, x, offset, tile, shade);
     }
 }
 
@@ -155,7 +155,7 @@ static void raster_ceil(const Scanline sl, const Ray r, const Map map)
 
         const int shade = t_illuminate(r.torch, distance);
 
-        pixel_xfer(sl, x, offset, tile, shade);
+        transfer_pixel(sl, x, offset, tile, shade);
     }
 }
 
@@ -175,7 +175,7 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
 
             const int shade = t_illuminate(r.torch, distance);
 
-            pixel_xfer(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', shade);
+            transfer_pixel(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', shade);
         }
     }
     else
@@ -192,7 +192,7 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
 
             const int shade = t_illuminate(r.torch, distance);
 
-            pixel_xfer(sl, x, offset, '#' - ' ', shade);
+            transfer_pixel(sl, x, offset, '#' - ' ', shade);
         }
 }
 
@@ -211,7 +211,7 @@ static void raster_pit(const Scanline sl, const Ray r, const Map map, const Flow
 
         const int shade = t_illuminate(r.torch, distance);
 
-        pixel_xfer(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', shade);
+        transfer_pixel(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', shade);
     }
 }
 

@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 
     t_clear_title();
 
-    s_init();
+    s_init_clut();
 
     for(int renders = 0, fps = 0; args.xres == 512 ? renders < 5 : !in.done; renders++)
     {

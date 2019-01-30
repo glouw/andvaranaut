@@ -100,8 +100,8 @@ static Args make(void)
 {
     static Args zero;
     Args args = zero;
-    args.xres = 1000;
-    args.yres = 600;
+    args.xres = 1200;
+    args.yres = 700;
     args.focal = 0.8f;
     args.vsync = true;
 
