@@ -5,6 +5,7 @@
 static SDL_Surface* load(const char* const path)
 {
     SDL_Surface* const bmp = SDL_LoadBMP(path);
+
     if(bmp == NULL)
         u_bomb("%s\n", SDL_GetError());
 
@@ -43,7 +44,7 @@ Surfaces s_load_surfaces(void)
         /* #      */ "art/tiles/wall.bmp",
         /* $      */ "art/tiles/ceiling.bmp",
         /* %      */ "art/tiles/water.bmp",
-        /* &      */ "art/tiles/cloud.bmp",
+        /* &      */ "art/tiles/error.bmp",
         /* '      */ "art/tiles/board.bmp",
         /* (      */ "art/tiles/grass.bmp",
         /* )      */ "art/tiles/dirt.bmp",
