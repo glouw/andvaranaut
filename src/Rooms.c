@@ -20,8 +20,10 @@ static int avail_themes = THEMES;
 static inline void dump(void)
 {
     printf("\t%d\n", avail_themes);
+
     for(int i = 0; i < avail_themes; i++)
         printf("\t %s\n", t_get_name(themes[i]));
+
     putchar('\n');
 }
 
