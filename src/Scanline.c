@@ -2,24 +2,67 @@
 
 #include "util.h"
 
+//
+// Color Lookup Table.
+//
+
+static uint32_t** clut;
+
+static const uint32_t palette[] = {
+    0x000000, 0x140C1C, 0x30346D, 0x346524, 0x452434, 0x4D494D,
+    0x597DCF, 0x6DAA2C, 0x6DC3CB, 0x757161, 0x8696A2, 0x864D30,
+    0xD34549, 0xD37D2C, 0xD3AA9A, 0xDBD75D, 0xDFEFD7, 0x00FFFF,
+};
+
+static const int shades = 256;
+
 static uint32_t shade_pixel(const uint32_t pixel, const int shading)
 {
-    //
-    // Shift right by 0x08 is same as dividing by 256. Somehow gcc -Ofast was not catching this.
-    //
-
-    const uint32_t r = (((pixel >> 0x10) /****/) * shading) >> 0x08;
-    const uint32_t g = (((pixel >> 0x08) & 0xFF) * shading) >> 0x08;
-    const uint32_t b = (((pixel /*****/) & 0xFF) * shading) >> 0x08;
+    const uint32_t r = (((pixel >> 0x10) /****/) * shading) / shades;
+    const uint32_t g = (((pixel >> 0x08) & 0xFF) * shading) / shades;
+    const uint32_t b = (((pixel /*****/) & 0xFF) * shading) / shades;
 
     return r << 0x10 | g << 0x08 | b;
+}
+
+static uint32_t hash(const uint32_t color)
+{
+    return (color >> 4) & 0xFF;
+}
+
+void s_init(void)
+{
+    //
+    // 8-bit color lookup table hashing reveals 256 bins.
+    //
+
+    clut = u_toss(uint32_t*, 256);
+
+    //
+    // Each bin holds a number of precomputed pixel shades.
+    //
+
+    const int colors = u_len(palette);
+
+    for(int i = 0; i < colors; i++)
+    {
+        const uint32_t color = palette[i];
+
+        const int index = hash(color);
+        clut[index] = u_toss(uint32_t, shades);
+
+        for(int j = 0; j < shades; j++)
+            clut[index][j] = shade_pixel(color, j);
+    }
 }
 
 static uint32_t get_pixel(const SDL_Surface* const surface, const Point offset)
 {
     const int row = surface->h * u_dec(offset.y);
     const int col = surface->w * u_dec(offset.x);
+
     const uint32_t* const pixels = (uint32_t*) surface->pixels;
+
     return pixels[col + row * surface->w];
 }
 
@@ -31,16 +74,26 @@ static void set_pixel(const Scanline sl, const int x, const uint32_t pixel)
 static void pixel_xfer(const Scanline sl, const int x, const Point offset, const int tile, const int distance)
 {
     const uint32_t color = get_pixel(sl.sdl.surfaces.surface[tile], offset);
-    set_pixel(sl, x, shade_pixel(color, distance));
+
+    const int index = hash(color);
+
+    const uint32_t pixel = clut[index][distance];
+
+    set_pixel(sl, x, pixel);
 }
 
 static void raster_wall(const Scanline sl, const Ray r)
 {
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
-        const Point offset = { (x - r.proj.bot) / r.proj.size, r.offset };
-        const int lum = t_illuminate(r.torch, r.corrected.x);
-        pixel_xfer(sl, x, offset, r.surface, lum);
+        const float xx = (x - r.proj.bot) / r.proj.size;
+        const float yy = r.offset;
+
+        const Point offset = { xx, yy };
+
+        const int distance = t_illuminate(r.torch, r.corrected.x);
+
+        pixel_xfer(sl, x, offset, r.surface, distance);
     }
 }
 
@@ -48,14 +101,18 @@ static void raster_flor(const Scanline sl, const Ray r, const Map map)
 {
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
-        const Point offset = l_lerp(r.trace, p_flor_cast(r.proj, x));
+        const float percentage = p_flor_cast(r.proj, x);
+
+        const Point offset = l_lerp(r.trace, percentage);
+
         const int tile = p_tile(offset, map.floring);
 
         if(!tile)
             continue;
 
-        const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
-        pixel_xfer(sl, x, offset, tile, lum);
+        const int distance = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
+
+        pixel_xfer(sl, x, offset, tile, distance);
     }
 }
 
@@ -64,13 +121,15 @@ static void raster_ceil(const Scanline sl, const Ray r, const Map map)
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         const Point offset = l_lerp(r.trace, p_ceil_cast(r.proj, x));
+
         const int tile = p_tile(offset, map.ceiling);
 
         if(!tile)
             continue;
 
-        const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
-        pixel_xfer(sl, x, offset, tile, lum);
+        const int distance = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
+
+        pixel_xfer(sl, x, offset, tile, distance);
     }
 }
 
@@ -81,9 +140,12 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
             const Sheer sa = { 0.0f, clouds.height };
+
             const Point a = l_lerp(r.trace, p_ceil_cast(p_sheer(r.proj, sa), x));
-            const int lum = t_illuminate(r.torch, p_mag(p_sub(a, r.trace.a)));
-            pixel_xfer(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', lum);
+
+            const int distance = t_illuminate(r.torch, p_mag(p_sub(a, r.trace.a)));
+
+            pixel_xfer(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', distance);
         }
     }
     else
@@ -94,8 +156,9 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
             if(p_tile(offset, map.ceiling))
                 continue;
 
-            const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
-            pixel_xfer(sl, x, offset, '#' - ' ', lum);
+            const int distance = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
+
+            pixel_xfer(sl, x, offset, '#' - ' ', distance);
         }
 }
 
@@ -108,8 +171,9 @@ static void raster_pit(const Scanline sl, const Ray r, const Map map, const Flow
         if(p_tile(offset, map.floring))
             continue;
 
-        const int lum = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
-        pixel_xfer(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', lum);
+        const int distance = t_illuminate(r.torch, p_mag(p_sub(offset, r.trace.a)));
+
+        pixel_xfer(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', distance);
     }
 }
 
@@ -147,15 +211,19 @@ static void raster_lower_section(const Scanline sl, const Hits hits, const Hero 
 static Point raster_middle_section(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     const Ray ray = h_cast(hero, hits.walling, map.mid, sl.sdl.yres, sl.sdl.xres);
+
     raster_wall(sl, ray);
     raster_flor(sl, ray, map);
     raster_ceil(sl, ray, map);
+
     return ray.corrected;
 }
 
 Point s_raster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
     raster_upper_section(sl, hits, hero, map, clouds);
+
     raster_lower_section(sl, hits, hero, map, current);
+
     return raster_middle_section(sl, hits, hero, map);
 }

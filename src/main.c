@@ -1,11 +1,11 @@
 #include "World.h"
 #include "Title.h"
-#include "Fire.h"
+#include "Scanline.h"
 #include "util.h"
 
 int main(int argc, char* argv[])
 {
-    srand(time(NULL));
+    //srand(time(NULL));
 
     i_test();
 
@@ -44,6 +44,8 @@ int main(int argc, char* argv[])
     const Text red = t_build("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
 
     t_clear_title();
+
+    s_init();
 
     for(int renders = 0, fps = 0; args.xres == 512 ? renders < 5 : !in.done; renders++)
     {

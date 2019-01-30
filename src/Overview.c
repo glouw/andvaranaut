@@ -55,6 +55,7 @@ Overview o_update(Overview ov, const Input input, const int xres)
     //
     // Wheel clamp.
     //
+
     if(ov.wheel < 0)
         ov.wheel = 0;
 

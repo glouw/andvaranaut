@@ -17,4 +17,7 @@ typedef struct
 }
 Scanline;
 
+void s_init(void);
+
 Point s_raster(const Scanline, const Hits, const Hero, const Flow current, const Flow clouds, const Map);
+
