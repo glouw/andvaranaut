@@ -33,9 +33,9 @@ static const uint32_t palette[] = {
     0xDFEFD7,
 };
 
-static uint8_t hash(const uint32_t color)
+static int hash(const uint32_t color)
 {
-    return color >> 4;
+    return (color >> 4) & 0xFF;
 }
 
 static const int shades = 256;
@@ -67,7 +67,7 @@ void s_init_clut(void)
     {
         const uint32_t color = palette[i];
 
-        const uint8_t index = hash(color);
+        const int index = hash(color);
         clut[index] = u_toss(uint32_t, shades);
 
         for(int j = 0; j < shades; j++)
@@ -94,7 +94,7 @@ static void transfer_pixel(const Scanline sl, const int x, const Point offset, c
 {
     const uint32_t color = get_pixel(sl.sdl.surfaces.surface[tile], offset);
 
-    const uint8_t index = hash(color);
+    const int index = hash(color);
 
     const uint32_t pixel = clut[index][shade];
 

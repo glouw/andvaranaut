@@ -19,9 +19,9 @@ CLANG = 0
 
 # 0: Compile as C.
 # 1: Compile as C++ (Better type checking).
-CC = 0
+CPP = 0
 
-BINARY = ../andvaranaut
+BIN = ../andvaranaut
 
 SRCS  = main.c
 SRCS += util.c
@@ -70,51 +70,46 @@ SRCS += Tris.c
 SRCS += Vram.c
 SRCS += World.c
 
-ifeq (00, $(CLANG)$(CC))
-COMPILER = gcc -std=c99
+ifeq (00, $(CLANG)$(CPP))
+CC = gcc -std=c99
 endif
 
-ifeq (01, $(CLANG)$(CC))
-COMPILER = g++ -std=c++98
+ifeq (01, $(CLANG)$(CPP))
+CC = g++ -std=c++98
 endif
 
-ifeq (10, $(CLANG)$(CC))
-COMPILER = clang -std=c99
+ifeq (10, $(CLANG)$(CPP))
+CC = clang -std=c99
 endif
 
-ifeq (11, $(CLANG)$(CC))
-COMPILER = clang++ -std=c++98
+ifeq (11, $(CLANG)$(CPP))
+CC = clang++ -std=c++98
 endif
 
-COMPILER_FLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -march=native
+CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -march=native
 
 ifeq (1, $(DEBUG))
-COMPILER_FLAGS += -g -fsanitize=address
+CFLAGS += -g -fsanitize=address
 else
-COMPILER_FLAGS += -flto
+CFLAGS += -flto
 endif
 
-LIBRARY_FLAGS = -lm -lSDL2 -lSDL2_ttf
+LDFLAGS = -lm -lSDL2 -lSDL2_ttf
 
-# Linker.
-$(BINARY): $(SRCS:.c=.o)
-	$(COMPILER) $(COMPILER_FLAGS) $(SRCS:.c=.o) $(LIBRARY_FLAGS) -o $(BINARY)
+$(BIN): $(SRCS:.c=.o)
+	$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
 
-# Compiler.
 %.o : %.c Makefile
-	$(COMPILER) $(COMPILER_FLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
-	@rm -f $*.d
+	$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@mv -f $*.td $*.d
 
-# Dependency generator.
-%.d: ;
 -include *.d
 
 clean:
 	rm -f vgcore.*
 	rm -f cachegrind.out.*
 	rm -f callgrind.out.*
-	rm -f $(BINARY)
+	rm -f $(BIN)
 	rm -f $(SRCS:.c=.o)
 	rm -f $(SRCS:.c=.d)
 

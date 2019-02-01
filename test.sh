@@ -18,7 +18,7 @@ main()
     do
         make -C src clean
 
-        make -j10 -C src CLANG=${i:0:1} CC=${i:1:2}
+        make -j10 -C src CLANG=${i:0:1} CPP=${i:1:2}
 
         run
     done
