@@ -71,39 +71,55 @@ SRCS += Vram.c
 SRCS += World.c
 
 ifeq (00, $(CLANG)$(CPP))
-CC = gcc -std=c99
+    CC = gcc -std=c99
 endif
 
 ifeq (01, $(CLANG)$(CPP))
-CC = g++ -std=c++98
+    CC = g++ -std=c++98
 endif
 
 ifeq (10, $(CLANG)$(CPP))
-CC = clang -std=c99
+    CC = clang -std=c99
 endif
 
 ifeq (11, $(CLANG)$(CPP))
-CC = clang++ -std=c++98
+    CC = clang++ -std=c++98
 endif
 
 CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -march=native
 
 ifeq (1, $(DEBUG))
-CFLAGS += -g -fsanitize=address
+    CFLAGS += -g -fsanitize=address
 else
-CFLAGS += -flto
+    CFLAGS += -flto
 endif
 
 LDFLAGS = -lm -lSDL2 -lSDL2_ttf
 
+#
+# Linker.
+#
+
 $(BIN): $(SRCS:.c=.o)
 	$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
+
+#
+# Compiler.
+#
 
 %.o : %.c Makefile
 	$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@mv -f $*.td $*.d
 
+#
+# Dependency Tracker.
+#
+
 -include *.d
+
+#
+# Other.
+#
 
 clean:
 	rm -f vgcore.*
