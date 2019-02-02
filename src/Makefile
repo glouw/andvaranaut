@@ -5,20 +5,31 @@
 #                             THE DUNGEON CRAWLER
 #
 # -----------------------------------------------------------------------------
+#
 # Dependencies:
-#   SDL2-devel
-#   SDL2-devel-ttf
+#   SDL2-devel.
+#   SDL2-devel-ttf.
+#
 
+#
 # 0: Fastest performance.
 # 1: Best crash messages.
+#
+
 DEBUG = 0
 
+#
 # 0: Compile with gcc.
 # 1: Compile with clang.
+#
+
 CLANG = 0
 
+#
 # 0: Compile as C.
 # 1: Compile as C++ (Better type checking).
+#
+
 CPP = 0
 
 BIN = ../andvaranaut

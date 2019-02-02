@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 
     const Args args = a_parse(argc, argv);
 
-    const World world = w_make(32, tm);
+    const World world = w_make(tm);
 
     const Room start = w_get_starting_room(world);
 

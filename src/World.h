@@ -12,7 +12,7 @@ typedef struct
 }
 World;
 
-World w_make(const int max, const Timer);
+World w_make(const Timer);
 
 Hero w_transport(const World, const Hero, const Sdl, const Text red, const Text yel, const Input);
 

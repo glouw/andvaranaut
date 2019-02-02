@@ -8,15 +8,22 @@
 static World append(World w, const Map map, const Sprites sprites)
 {
     if(w.index == w.max)
-        u_bomb("World size limitation reached");
+    {
+        w.max *= 2;
+        u_retoss(w.map, Map, w.max);
+        u_retoss(w.sprites, Sprites, w.max);
+    }
+
     w.map[w.index] = map;
     w.sprites[w.index] = sprites;
     w.index++;
+
     return w;
 }
 
-static World make(const int max)
+static World make(void)
 {
+    const int max = 4;
     const World w = {
         u_toss(Map, max), u_toss(Sprites, max), 0, max
     };
@@ -59,9 +66,9 @@ static void populate(const World w, const Timer tm)
         w.sprites[i] = s_populate(w.sprites[i], w.map[i], tm);
 }
 
-World w_make(const int max, const Timer tm)
+World w_make(const Timer tm)
 {
-    World w = make(max);
+    World w = make();
     w = carve(w);
     theme(w);
     attach(w);

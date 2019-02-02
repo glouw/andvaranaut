@@ -66,38 +66,20 @@ int i_using_lookup(const Input in)
 
 int i_get_alpha_key(const Input in)
 {
-    if(in.key[SDL_SCANCODE_A]) return 'A';
-    if(in.key[SDL_SCANCODE_B]) return 'B';
-    if(in.key[SDL_SCANCODE_C]) return 'C';
-    if(in.key[SDL_SCANCODE_D]) return 'D';
-    if(in.key[SDL_SCANCODE_E]) return 'E';
-    if(in.key[SDL_SCANCODE_F]) return 'F';
-    if(in.key[SDL_SCANCODE_G]) return 'G';
-    if(in.key[SDL_SCANCODE_H]) return 'H';
-    if(in.key[SDL_SCANCODE_I]) return 'I';
-    if(in.key[SDL_SCANCODE_J]) return 'J';
-    if(in.key[SDL_SCANCODE_K]) return 'K';
-    if(in.key[SDL_SCANCODE_L]) return 'L';
-    if(in.key[SDL_SCANCODE_M]) return 'M';
-    if(in.key[SDL_SCANCODE_N]) return 'N';
-    if(in.key[SDL_SCANCODE_O]) return 'O';
-    if(in.key[SDL_SCANCODE_P]) return 'P';
-    if(in.key[SDL_SCANCODE_Q]) return 'Q';
-    if(in.key[SDL_SCANCODE_R]) return 'R';
-    if(in.key[SDL_SCANCODE_S]) return 'S';
-    if(in.key[SDL_SCANCODE_T]) return 'T';
-    if(in.key[SDL_SCANCODE_U]) return 'U';
-    if(in.key[SDL_SCANCODE_V]) return 'V';
-    if(in.key[SDL_SCANCODE_W]) return 'W';
-    if(in.key[SDL_SCANCODE_X]) return 'X';
-    if(in.key[SDL_SCANCODE_Y]) return 'Y';
-    if(in.key[SDL_SCANCODE_Z]) return 'Z';
+    const int base = 'A';
+    for(int key = base; key <= 'Z'; key++)
+        if(in.key[SDL_SCANCODE_A + key - base])
+            return key;
 
     return EOF;
 }
 
 int i_get_numer_key(const Input in)
 {
+    //
+    // The ordering of these scancodes are not linear.
+    //
+
     if(in.key[SDL_SCANCODE_0]) return '0';
     if(in.key[SDL_SCANCODE_1]) return '1';
     if(in.key[SDL_SCANCODE_2]) return '2';
