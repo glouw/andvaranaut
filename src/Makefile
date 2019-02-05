@@ -11,6 +11,8 @@
 #   SDL2-devel-ttf.
 #
 
+BIN = ../andvaranaut
+
 #
 # 0: Fastest performance.
 # 1: Best crash messages.
@@ -31,8 +33,6 @@ CLANG = 0
 #
 
 CPP = 0
-
-BIN = ../andvaranaut
 
 SRCS  = main.c
 SRCS += util.c
@@ -82,62 +82,45 @@ SRCS += Vram.c
 SRCS += World.c
 
 ifeq (00, $(CLANG)$(CPP))
-CC = gcc -std=c99
+COMPILER = gcc -std=c99
 endif
 
 ifeq (01, $(CLANG)$(CPP))
-CC = g++ -std=c++98
+COMPILER = g++ -std=c++98
 endif
 
 ifeq (10, $(CLANG)$(CPP))
-CC = clang -std=c99
+COMPILER = clang -std=c99
 endif
 
 ifeq (11, $(CLANG)$(CPP))
-CC = clang++ -std=c++98
+COMPILER = clang++ -std=c++98
 endif
 
-CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -march=native
+FLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -march=native
 
 ifeq (1, $(DEBUG))
-CFLAGS += -g
-CFLAGS += -fsanitize=address
-LDFLAGS = -fsanitize=address
+FLAGS += -g -fsanitize=address
 else
-CFLAGS += -flto
+FLAGS += -flto
 endif
 
-LDLIBS = -lm -lSDL2 -lSDL2_ttf
+LIBS = -lm -lSDL2 -lSDL2_ttf
 
-#
-# Linker.
-#
+OBJS = $(SRCS:.c=.o)
+DEPS = $(SRCS:.c=.d)
 
-$(BIN): $(SRCS:.c=.o)
-	$(CC) $(SRCS:.c=.o) $(LDFLAGS) $(LDLIBS) -o $(BIN)
+$(BIN): $(OBJS) $(DEPS)
+	$(COMPILER) $(FLAGS) $(OBJS) $(LIBS) -o $(BIN)
 
-#
-# Compiler and dependency generator.
-#
-
-%.o : %.c Makefile
-	$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
-	@mv -f $*.td $*.d
+%.o : %.c %.d Makefile
+	$(COMPILER) $(FLAGS) -MMD -MP -MT $@ -MF $*.d -c $<
 
 -include *.d
 
-#
-# Other.
-#
+%.d : ;
 
-.PHONY: clean
 clean:
-	rm -f vgcore.*
-	rm -f cachegrind.out.*
-	rm -f callgrind.out.*
 	rm -f $(BIN)
-	rm -f $(SRCS:.c=.o)
-	rm -f $(SRCS:.c=.d)
-
-love:
-	@echo "Not war?"
+	rm -f $(OBJS)
+	rm -f $(DEPS)
