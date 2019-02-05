@@ -105,14 +105,16 @@ else
     CFLAGS += -flto
 endif
 
-LDFLAGS = -lm -lSDL2 -lSDL2_ttf
+LDFLAGS =
+
+LDLIBS = -lm -lSDL2 -lSDL2_ttf
 
 #
 # Linker.
 #
 
 $(BIN): $(SRCS:.c=.o)
-	$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) -o $(BIN)
+	$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) $(LDLIBS) -o $(BIN)
 
 #
 # Compiler.
