@@ -82,30 +82,30 @@ SRCS += Vram.c
 SRCS += World.c
 
 ifeq (00, $(CLANG)$(CPP))
-    CC = gcc -std=c99
+CC = gcc -std=c99
 endif
 
 ifeq (01, $(CLANG)$(CPP))
-    CC = g++ -std=c++98
+CC = g++ -std=c++98
 endif
 
 ifeq (10, $(CLANG)$(CPP))
-    CC = clang -std=c99
+CC = clang -std=c99
 endif
 
 ifeq (11, $(CLANG)$(CPP))
-    CC = clang++ -std=c++98
+CC = clang++ -std=c++98
 endif
 
 CFLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -march=native
 
 ifeq (1, $(DEBUG))
-    CFLAGS += -g -fsanitize=address
+CFLAGS += -g
+CFLAGS += -fsanitize=address
+LDFLAGS = -fsanitize=address
 else
-    CFLAGS += -flto
+CFLAGS += -flto
 endif
-
-LDFLAGS =
 
 LDLIBS = -lm -lSDL2 -lSDL2_ttf
 
@@ -114,19 +114,15 @@ LDLIBS = -lm -lSDL2 -lSDL2_ttf
 #
 
 $(BIN): $(SRCS:.c=.o)
-	$(CC) $(CFLAGS) $(SRCS:.c=.o) $(LDFLAGS) $(LDLIBS) -o $(BIN)
+	$(CC) $(SRCS:.c=.o) $(LDFLAGS) $(LDLIBS) -o $(BIN)
 
 #
-# Compiler.
+# Compiler and dependency generator.
 #
 
 %.o : %.c Makefile
 	$(CC) $(CFLAGS) -MMD -MP -MT $@ -MF $*.td -c $<
 	@mv -f $*.td $*.d
-
-#
-# Dependency Tracker.
-#
 
 -include *.d
 
@@ -134,6 +130,7 @@ $(BIN): $(SRCS:.c=.o)
 # Other.
 #
 
+.PHONY: clean
 clean:
 	rm -f vgcore.*
 	rm -f cachegrind.out.*
