@@ -13,7 +13,7 @@ static uint32_t** clut;
 //
 
 static const uint32_t palette[] = {
-    //---xx-
+    // --xx-
     0x000000,
     0x140C1C,
     0x30346D,
@@ -75,30 +75,16 @@ void s_init_clut(void)
     }
 }
 
-static uint32_t get_pixel(const SDL_Surface* const surface, const Point offset)
-{
-    const int row = surface->h * u_dec(offset.y);
-    const int col = surface->w * u_dec(offset.x);
-
-    const uint32_t* const pixels = (uint32_t*) surface->pixels;
-
-    return pixels[col + row * surface->w];
-}
-
-static void set_pixel(const Scanline sl, const int x, const uint32_t pixel)
-{
-    sl.pixels[x + sl.y * sl.width] = pixel;
-}
-
 static void transfer_pixel(const Scanline sl, const int x, const Point offset, const int tile, const int shade)
 {
-    const uint32_t color = get_pixel(sl.sdl.surfaces.surface[tile], offset);
-
+    SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
+    const int row = surface->h * u_dec(offset.y);
+    const int col = surface->w * u_dec(offset.x);
+    const uint32_t* const pixels = (uint32_t*) surface->pixels;
+    const uint32_t color = pixels[col + row * surface->w];
     const int index = hash(color);
-
     const uint32_t pixel = clut[index][shade];
-
-    set_pixel(sl, x, pixel);
+    sl.pixels[x + sl.y * sl.width] = pixel;
 }
 
 static void raster_wall(const Scanline sl, const Ray r)
@@ -106,13 +92,9 @@ static void raster_wall(const Scanline sl, const Ray r)
     for(int x = r.proj.clamped.bot; x < r.proj.clamped.top; x++)
     {
         const float xx = (x - r.proj.bot) / r.proj.size;
-
         const float yy = r.offset;
-
         const Point offset = { xx, yy };
-
         const int shade = t_illuminate(r.torch, r.corrected.x);
-
         transfer_pixel(sl, x, offset, r.surface, shade);
     }
 }
@@ -122,18 +104,14 @@ static void raster_flor(const Scanline sl, const Ray r, const Map map)
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         const float percentage = p_flor_cast(r.proj, x);
-
         const Point offset = l_lerp(r.trace, percentage);
-
         const int tile = p_tile(offset, map.floring);
 
         if(!tile)
             continue;
 
         const float distance = p_mag(p_sub(offset, r.trace.a));
-
         const int shade = t_illuminate(r.torch, distance);
-
         transfer_pixel(sl, x, offset, tile, shade);
     }
 }
@@ -143,18 +121,14 @@ static void raster_ceil(const Scanline sl, const Ray r, const Map map)
     for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
     {
         const float percentage = p_ceil_cast(r.proj, x);
-
         const Point offset = l_lerp(r.trace, percentage);
-
         const int tile = p_tile(offset, map.ceiling);
 
         if(!tile)
             continue;
 
         const float distance = p_mag(p_sub(offset, r.trace.a));
-
         const int shade = t_illuminate(r.torch, distance);
-
         transfer_pixel(sl, x, offset, tile, shade);
     }
 }
@@ -166,15 +140,10 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
             const Sheer sa = { 0.0f, clouds.height };
-
             const float percentage = p_ceil_cast(p_sheer(r.proj, sa), x);
-
             const Point a = l_lerp(r.trace, percentage);
-
             const float distance = p_mag(p_sub(a, r.trace.a));
-
             const int shade = t_illuminate(r.torch, distance);
-
             transfer_pixel(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', shade);
         }
     }
@@ -182,16 +151,13 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
             const float percentage = p_ceil_cast(r.proj, x);
-
             const Point offset = l_lerp(r.trace, percentage);
 
             if(p_tile(offset, map.ceiling))
                 continue;
 
             const float distance = p_mag(p_sub(offset, r.trace.a));
-
             const int shade = t_illuminate(r.torch, distance);
-
             transfer_pixel(sl, x, offset, '#' - ' ', shade);
         }
 }
@@ -201,16 +167,13 @@ static void raster_pit(const Scanline sl, const Ray r, const Map map, const Flow
     for(int x = 0; x < r.proj.clamped.bot; x++)
     {
         const float percentage = p_flor_cast(r.proj, x);
-
         const Point offset = l_lerp(r.trace, percentage);
 
         if(p_tile(offset, map.floring))
             continue;
 
         const float distance = p_mag(p_sub(offset, r.trace.a));
-
         const int shade = t_illuminate(r.torch, distance);
-
         transfer_pixel(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', shade);
     }
 }
@@ -221,7 +184,6 @@ static void raster_upper_section(const Scanline sl, const Hits hits, const Hero 
     for(Hit* hit = hits.ceiling, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
-
         const Ray ray = h_cast(hero, *which, map.top, sl.sdl.yres, sl.sdl.xres);
 
         if(link++ == 0)
@@ -237,9 +199,7 @@ static void raster_lower_section(const Scanline sl, const Hits hits, const Hero 
     for(Hit* hit = hits.floring, *next; hit; next = hit->next, free(hit), hit = next)
     {
         const Hit* const which = hit;
-
         const Sheer sheer = { current.height, -1.0f };
-
         const Ray ray = h_cast(hero, *which, sheer, sl.sdl.yres, sl.sdl.xres);
 
         if(link++ == 0)
@@ -252,19 +212,15 @@ static void raster_lower_section(const Scanline sl, const Hits hits, const Hero 
 static Point raster_middle_section(const Scanline sl, const Hits hits, const Hero hero, const Map map)
 {
     const Ray ray = h_cast(hero, hits.walling, map.mid, sl.sdl.yres, sl.sdl.xres);
-
     raster_wall(sl, ray);
     raster_flor(sl, ray, map);
     raster_ceil(sl, ray, map);
-
     return ray.corrected;
 }
 
 Point s_raster(const Scanline sl, const Hits hits, const Hero hero, const Flow current, const Flow clouds, const Map map)
 {
     raster_upper_section(sl, hits, hero, map, clouds);
-
     raster_lower_section(sl, hits, hero, map, current);
-
     return raster_middle_section(sl, hits, hero, map);
 }
