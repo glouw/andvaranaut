@@ -45,7 +45,6 @@ static uint32_t shade_pixel(const uint32_t pixel, const int shading)
     const uint32_t r = (((pixel >> 0x10) /****/) * shading) / shades;
     const uint32_t g = (((pixel >> 0x08) & 0xFF) * shading) / shades;
     const uint32_t b = (((pixel /*****/) & 0xFF) * shading) / shades;
-
     return r << 0x10 | g << 0x08 | b;
 }
 
@@ -66,10 +65,8 @@ void s_init_clut(void)
     for(int i = 0; i < colors; i++)
     {
         const uint32_t color = palette[i];
-
         const int index = hash(color);
         clut[index] = u_toss(uint32_t, shades);
-
         for(int j = 0; j < shades; j++)
             clut[index][j] = shade_pixel(color, j);
     }
@@ -107,12 +104,12 @@ static void raster_flor(const Scanline sl, const Ray r, const Map map)
         const Point offset = l_lerp(r.trace, percentage);
         const int tile = p_tile(offset, map.floring);
 
-        if(!tile)
-            continue;
-
-        const float distance = p_mag(p_sub(offset, r.trace.a));
-        const int shade = t_illuminate(r.torch, distance);
-        transfer_pixel(sl, x, offset, tile, shade);
+        if(tile)
+        {
+            const float distance = p_mag(p_sub(offset, r.trace.a));
+            const int shade = t_illuminate(r.torch, distance);
+            transfer_pixel(sl, x, offset, tile, shade);
+        }
     }
 }
 
@@ -124,19 +121,18 @@ static void raster_ceil(const Scanline sl, const Ray r, const Map map)
         const Point offset = l_lerp(r.trace, percentage);
         const int tile = p_tile(offset, map.ceiling);
 
-        if(!tile)
-            continue;
-
-        const float distance = p_mag(p_sub(offset, r.trace.a));
-        const int shade = t_illuminate(r.torch, distance);
-        transfer_pixel(sl, x, offset, tile, shade);
+        if(tile)
+        {
+            const float distance = p_mag(p_sub(offset, r.trace.a));
+            const int shade = t_illuminate(r.torch, distance);
+            transfer_pixel(sl, x, offset, tile, shade);
+        }
     }
 }
 
 static void raster_sky(const Scanline sl, const Ray r, const Map map, const int floor, const Flow clouds)
 {
     if(floor == 0)
-    {
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
             const Sheer sa = { 0.0f, clouds.height };
@@ -144,9 +140,10 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
             const Point a = l_lerp(r.trace, percentage);
             const float distance = p_mag(p_sub(a, r.trace.a));
             const int shade = t_illuminate(r.torch, distance);
-            transfer_pixel(sl, x, p_div(p_abs(p_sub(a, clouds.where)), 8.0f), '&' - ' ', shade);
+            const Point new_offset = p_div(p_abs(p_sub(a, clouds.where)), 8.0f);
+            const int tile = '&' - ' ';
+            transfer_pixel(sl, x, new_offset, tile, shade);
         }
-    }
     else
         for(int x = r.proj.clamped.top; x < sl.sdl.yres; x++)
         {
@@ -158,7 +155,8 @@ static void raster_sky(const Scanline sl, const Ray r, const Map map, const int 
 
             const float distance = p_mag(p_sub(offset, r.trace.a));
             const int shade = t_illuminate(r.torch, distance);
-            transfer_pixel(sl, x, offset, '#' - ' ', shade);
+            const int tile = '#' - ' ';
+            transfer_pixel(sl, x, offset, tile, shade);
         }
 }
 
@@ -174,7 +172,9 @@ static void raster_pit(const Scanline sl, const Ray r, const Map map, const Flow
 
         const float distance = p_mag(p_sub(offset, r.trace.a));
         const int shade = t_illuminate(r.torch, distance);
-        transfer_pixel(sl, x, p_abs(p_sub(offset, current.where)), '%' - ' ', shade);
+        const Point new_offset = p_abs(p_sub(offset, current.where));
+        const int tile = '%' - ' ';
+        transfer_pixel(sl, x, new_offset, tile, shade);
     }
 }
 
