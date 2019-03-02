@@ -120,6 +120,9 @@ $(BIN): $(OBJS) $(DEPS)
 
 %.d : ;
 
+.PHONY release:
+	strip $(BIN)
+
 .PHONY clean:
 clean:
 	rm -f $(BIN)
