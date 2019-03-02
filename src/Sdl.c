@@ -120,8 +120,8 @@ static void render_one_sprite(const Sdl sdl, const Text text, Sprite* const spri
     // Apply lighting to the sprite.
     //
 
-    const int modding = t_illuminate(hero.torch, sprite->where.x);
-    SDL_SetTextureColorMod(texture, modding, modding, modding);
+    const int shade = t_illuminate(hero.torch.light, sprite->where.x);
+    SDL_SetTextureColorMod(texture, shade, shade, shade);
 
     //
     // Apply transparency to the sprite, if required.

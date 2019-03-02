@@ -17,7 +17,8 @@ typedef struct
 }
 Scanline;
 
-void s_init_clut(void);
+void s_init_color_table(void);
+
+void s_save_color_pallete_as_pal(void);
 
 Point s_raster(const Scanline, const Hits, const Hero, const Flow current, const Flow clouds, const Map);
-

@@ -5,7 +5,13 @@
 
 int main(int argc, char* argv[])
 {
-    //srand(time(NULL));
+#if 0
+    srand(time(NULL));
+#endif
+
+    u_check_art_directory();
+
+    s_save_color_pallete_as_pal();
 
     i_test();
 
@@ -45,7 +51,7 @@ int main(int argc, char* argv[])
 
     t_clear_title();
 
-    s_init_clut();
+    s_init_color_table();
 
     for(int renders = 0, fps = 0; args.xres == 512 ? renders < 5 : !in.done; renders++)
     {

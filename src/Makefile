@@ -120,6 +120,7 @@ $(BIN): $(OBJS) $(DEPS)
 
 %.d : ;
 
+.PHONY clean:
 clean:
 	rm -f $(BIN)
 	rm -f $(OBJS)

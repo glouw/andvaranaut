@@ -8,7 +8,7 @@ typedef struct
 }
 Torch;
 
-int t_illuminate(const Torch, const float distance);
+int t_illuminate(const int light, const float distance);
 
 Torch t_burn(const Torch);
 

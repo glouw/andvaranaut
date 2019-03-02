@@ -24,6 +24,8 @@ int u_odd(const int a);
 
 float u_sinc(const float x, const float p);
 
+void u_check_art_directory(void);
+
 #define u_frand() (rand() / (float) INT_MAX)
 
 #define u_len(a) ((int) (sizeof(a) / sizeof(*a)))

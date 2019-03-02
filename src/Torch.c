@@ -2,9 +2,9 @@
 
 #include "util.h"
 
-int t_illuminate(const Torch torch, const float distance)
+int t_illuminate(const int light, const float distance)
 {
-    return torch.light / distance > 0xFF ? 0xFF : torch.light / distance;
+    return light / distance > 255.0f ? 255 : light / distance;
 }
 
 Torch t_burn(const Torch torch)
