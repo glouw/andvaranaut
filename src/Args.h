@@ -9,6 +9,7 @@ typedef struct
     int fps;
     float msen;
     int threads;
+    int seed;
 }
 Args;
 

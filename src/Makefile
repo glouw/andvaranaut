@@ -97,12 +97,12 @@ ifeq (11, $(CLANG)$(CPP))
 COMPILER = clang++ -std=c++98
 endif
 
-FLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion -Ofast -march=native
+FLAGS = -Wshadow -Wall -Wpedantic -Wextra -Wdouble-promotion
 
 ifeq (1, $(DEBUG))
-FLAGS += -g -fsanitize=address
+FLAGS += -Og -g -fsanitize=address
 else
-FLAGS += -flto
+FLAGS += -Ofast -flto -march=native
 endif
 
 LIBS = -lm -lSDL2 -lSDL2_ttf
@@ -119,9 +119,6 @@ $(BIN): $(OBJS) $(DEPS)
 -include *.d
 
 %.d : ;
-
-.PHONY release:
-	strip $(BIN)
 
 .PHONY clean:
 clean:

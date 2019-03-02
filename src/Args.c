@@ -10,13 +10,15 @@ static void print(const Args args)
     /* 2 */ "-f: Focal Length           : %f\n"
     /* 3 */ "-v: VSync                  : %s\n"
     /* 4 */ "-m: Mouse Sensitivity      : %f\n"
-    /* 5 */ "-t: CPU Renderer Thread(s) : %d\n",
+    /* 5 */ "-t: CPU Renderer Thread(s) : %d\n"
+    /* 6 */ "-s: Use RNG seeding        : %d\n",
     /* 0 */ args.xres,
     /* 1 */ args.yres,
     /* 2 */ (double) args.focal,
     /* 3 */ args.vsync ? "t" : "f",
     /* 4 */ (double) args.msen,
-    /* 5 */ args.threads);
+    /* 5 */ args.threads,
+    /* 6 */ args.seed);
 }
 
 static void check(const Args args)
@@ -84,6 +86,11 @@ static Args parse(Args args, int argc, char* argv[])
                     strtod(next, NULL);
                 break;
 
+            case 's':
+                args.seed =
+                    strtod(next, NULL);
+                break;
+
             default:
                 u_bomb("error: option -%c not recognized\n", option);
                 break;
@@ -104,6 +111,7 @@ static Args make(void)
     args.yres = 700;
     args.focal = 0.8f;
     args.vsync = true;
+    args.seed = true;
 
     //
     // Do not change the FPS argument.

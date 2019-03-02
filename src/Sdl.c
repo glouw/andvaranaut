@@ -143,7 +143,7 @@ static void render_one_sprite(const Sdl sdl, const Text text, Sprite* const spri
     //
 
     if(sprite->transparent)
-        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+        SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_NONE);
 
     //
     // Remove lighting from the sprite.

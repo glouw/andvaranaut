@@ -5,10 +5,6 @@
 
 int main(int argc, char* argv[])
 {
-#if 0
-    srand(time(NULL));
-#endif
-
     u_check_art_directory();
 
     s_save_color_pallete_as_pal();
@@ -20,6 +16,9 @@ int main(int argc, char* argv[])
     Timer tm = t_new();
 
     const Args args = a_parse(argc, argv);
+
+    if(args.seed)
+        srand(time(NULL));
 
     const World world = w_make(tm);
 
