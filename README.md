@@ -1,6 +1,6 @@
 # Andvaranaut
 
-The open source dungeon crawler
+The open source dungeon crawler!
 
 ![](art/screenshots/2018-12-21-051827_800x400_scrot.png)
 
@@ -24,14 +24,8 @@ Some dungeon dwellers will be friendly. Help them and you will be rewarded, but 
 mind each dweller has their own story to tell and problems to overcome. Choosing to end
 the life of a dweller, or to help the wrong dweller, may have unintended consequences.
 
-## Controls
-    E: Go up or down trapdoors
-    Shift (Hold): Use inventory
-    1, 2, 3, 4: Select inventory attack item
-    W A S D and Mouse: Movement and combat
-
 ## Contributing
-Sprite and tile art is always welcome but must be suitable for all ages. New questlines are welcome.
+Sprite, tile art, and quest lines are always welcome, but must be suitable for all ages.
 
 ## Credits
 Item art by Platino.
@@ -50,4 +44,3 @@ Cam
 Paolo
 
     Questline - Dwarven Brothers
-
