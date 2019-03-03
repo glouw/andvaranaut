@@ -58,6 +58,7 @@ SRCS += Inventory.c
 SRCS += Line.c
 SRCS += Map.c
 SRCS += Overview.c
+SRCS += Palette.c
 SRCS += Point.c
 SRCS += Points.c
 SRCS += Projection.c

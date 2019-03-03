@@ -37,7 +37,7 @@ Surfaces s_load_surfaces(void)
     // Items and GUI: '~' and up.
     //
 
-    static const char* const names[] = {
+    static const char* names[] = {
         /*        */ "art/tiles/delete.bmp",
         /* !      */ "art/tiles/error.bmp",
         /* "      */ "art/tiles/floor.bmp",
@@ -163,11 +163,9 @@ Surfaces s_load_surfaces(void)
 
     const int count = u_len(names);
     SDL_Surface** const surface = u_toss(SDL_Surface*, count);
-
     for(int i = 0; i < count; i++)
-        surface[i] = load(names[i]);
+        surface[i] = load(names[i]); // TODO: Have it load an alternate surface with some colors swapped out.
 
     const Surfaces surfaces = { surface, count };
-
     return surfaces;
 }

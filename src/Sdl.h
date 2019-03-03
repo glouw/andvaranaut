@@ -25,6 +25,8 @@ typedef struct
     Textures textures;
     int threads;
     int gui;
+
+    // TODO: Have palette objet in here and have these take from palette.
     uint32_t wht;
     uint32_t blk;
     uint32_t red;

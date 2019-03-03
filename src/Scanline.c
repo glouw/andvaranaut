@@ -1,5 +1,7 @@
 #include "Scanline.h"
 
+#include "Palette.h"
+
 #include "util.h"
 
 //
@@ -9,12 +11,6 @@
 static const int shades = 256;
 
 static uint32_t** color_table = NULL;
-
-static const uint32_t color_palette[] = {
-    0x00000000, 0x00140C1C, 0x00452434, 0x0030346D, 0x004D494D, 0x00864D30,
-    0x00346524, 0x00D34549, 0x00757161, 0x00597DCF, 0x00D37D2C, 0x008696A2,
-    0x006DAA2C, 0x00D3AA9A, 0x006DC3CB, 0x00DBD75D, 0x00DFEFD7, 0x0000FFFF,
-};
 
 //
 // The shading function is a mockup of SDL_SetTextureColorMod.
@@ -46,50 +42,18 @@ void s_init_color_table(void)
     const int bins = 256;
     color_table = u_toss(uint32_t*, bins);
 
-    for(int i = 0; i < u_len(color_palette); i++)
+    const Palette palette = p_make();
+
+    for(int i = 0; i < palette.count; i++)
     {
-        const uint32_t color = color_palette[i];
+        const uint32_t color = palette.colors[i];
         const int index = hash(color);
         color_table[index] = u_toss(uint32_t, shades);
         for(int j = 0; j < shades; j++)
             color_table[index][j] = shade_pixel(color, j);
     }
-}
 
-void s_save_color_pallete_as_pal(void)
-{
-    FILE* const file = fopen("art/dawn.pal", "w");
-
-    //
-    // Save the JASC header.
-    //
-
-    const char* header[] = { "JASC-PAL", "0100", "256" };
-    for(int i = 0; i < u_len(header); i++)
-        fprintf(file, "%s\n", header[i]);
-
-    //
-    // Dump the color table.
-    //
-
-    for(int i = 0; i < u_len(color_palette); i++)
-    {
-        const uint32_t color = color_palette[i];
-        fprintf(file, "%d %d %d\n",
-            (color >> 0x10) & 0xFF,
-            (color >> 0x08) & 0xFF,
-            (color >> 0x00) & 0xFF);
-    }
-
-    //
-    // GRAFX2 expects a little padding (black will do) for its color palette.
-    //
-
-    const int padding = 136;
-    for(int i = 0; i < padding; i++)
-        fprintf(file, "0 0 0\n");
-
-    fclose(file);
+    free(palette.colors);
 }
 
 static void put_pixel(const Scanline sl, const int x, const Point offset, const int tile, const int shade)

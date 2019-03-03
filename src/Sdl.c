@@ -647,12 +647,20 @@ static void draw_inventory(const Sdl sdl, const Inventory inv, const Input in)
 
 static void draw_map(const Sdl sdl, const Map map, const Point where)
 {
+    //
+    // Background is black with nex texture.
+    //
+
     SDL_Texture* const texture = SDL_CreateTexture(
         sdl.renderer,
         SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_STREAMING,
         map.cols,
         map.rows);
+
+    //
+    // Black background will dissapear with a blending blend mode.
+    //
 
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 

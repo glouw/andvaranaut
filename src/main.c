@@ -1,13 +1,14 @@
 #include "World.h"
 #include "Title.h"
 #include "Scanline.h"
+#include "Palette.h"
 #include "util.h"
 
 int main(int argc, char* argv[])
 {
     u_check_art_directory();
 
-    s_save_color_pallete_as_pal();
+    p_save_color_pallete_as_pal();
 
     i_test();
 
