@@ -176,8 +176,9 @@ static void render_all_sprites(const Sdl sdl, const Text text, const Sprites spr
             {
                 const int selected = sprite->ascii - ' ';
 
-                SDL_Surface* const surface = sdl.surfaces.surface[selected].dye[DYE_WHT];
-                SDL_Texture* const texture = sdl.textures.texture[selected].dye[DYE_WHT];
+                const Dye dye = sprite->dye;
+                SDL_Surface* const surface = sdl.surfaces.surface[selected].dye[dye];
+                SDL_Texture* const texture = sdl.textures.texture[selected].dye[dye];
 
                 const State state = sprite->state;
                 const Frame frame = t_lo(tm) ? FRAME_A : FRAME_B;
@@ -472,8 +473,11 @@ static void draw_grid_layout(const Sdl sdl, const Overview ov, const Sprites spr
     {
         Sprite* const sprite = &sprites.sprite[s];
         const int index = sprite->ascii - ' ';
-        const int w = sdl.surfaces.surface[index].dye[DYE_WHT]->w / FRAMES;
-        const int h = sdl.surfaces.surface[index].dye[DYE_WHT]->h / STATES;
+
+        const Dye dye = sprite->dye;
+        const int w = sdl.surfaces.surface[index].dye[dye]->w / FRAMES;
+        const int h = sdl.surfaces.surface[index].dye[dye]->h / STATES;
+
         const SDL_Rect from = { w * t_lo(tm), h * sprite->state, w, h };
         const SDL_Rect to = {
             (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
@@ -483,7 +487,8 @@ static void draw_grid_layout(const Sdl sdl, const Overview ov, const Sprites spr
 
         if(clipping(sdl, ov, to))
             continue;
-        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[index].dye[DYE_WHT], &from, &to);
+
+        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[index].dye[dye], &from, &to);
     }
 }
 
@@ -497,14 +502,16 @@ static void draw_sprite_panel(const Sdl sdl, const Overview ov, const Timer tm)
         // Draw sprite on panel, otherwise draw tile block on panel.
         //
 
-        if(s_sprite(i + ' '))
+        const int ascii = i + ' ';
+        if(s_sprite(ascii))
         {
-            const int w = sdl.surfaces.surface[i].dye[DYE_WHT]->w / FRAMES;
-            const int h = sdl.surfaces.surface[i].dye[DYE_WHT]->h / STATES;
+            const Dye dye = s_lookup_dye(ascii);
+            const int w = sdl.surfaces.surface[i].dye[dye]->w / FRAMES;
+            const int h = sdl.surfaces.surface[i].dye[dye]->h / STATES;
             const SDL_Rect from = { w * t_lo(tm), h * IDLE, w, h };
             if(clipping(sdl, ov, to))
                 continue;
-            SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i].dye[DYE_WHT], &from, &to);
+            SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i].dye[dye], &from, &to);
         }
         else
             SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i].dye[DYE_WHT], NULL, &to);

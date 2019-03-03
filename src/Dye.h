@@ -6,7 +6,7 @@
 // without having to make copy, paste, and maintain several of the same grafx files.
 //
 
-enum
+typedef enum
 {
     DYE_WHT,
     DYE_RED,

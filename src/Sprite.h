@@ -5,24 +5,17 @@
 #include "Timer.h"
 #include "Identification.h"
 #include "Speech.h"
+#include "Dye.h"
 
 #include <SDL2/SDL.h>
 
 typedef struct
 {
-    //
-    // Trait.
-    //
-
     int ascii;
     int evil;
     int transparent;
     int block_time;
     int stun_ticks;
-
-    //
-    // Stats.
-    //
 
     float size;
     float speed;
@@ -31,9 +24,7 @@ typedef struct
     float damage;
     float defense;
 
-    //
-    // Physics.
-    //
+    Dye dye;
 
     Point where;
     Point last;
@@ -94,3 +85,5 @@ int s_will_rage(const Sprite* const, const Timer);
 int s_must_spread(const Sprite* const, char** const floring);
 
 void s_parried(Sprite* const, const Point, const Timer);
+
+Dye s_lookup_dye(const int ascii);
