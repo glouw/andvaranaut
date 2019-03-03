@@ -12,17 +12,13 @@ The open source dungeon crawler!
     make -C src
     ./andvaranaut
 
-## Recommended System Requirements
-    RAM: 256 MB
-    CPU: 2 cores or more
-    GPU: Just about anything will do
+## Performance Metrics (Thinkpad X230 @ resolution 1200 x 700)
+    RAM: 100 MB
+    CPU: 4 threads @ 40% usage per thread
 
 ## Quest
 Your quest is to reach the bottom of Andvaranaut dungeon and retrieve Andvari's gift.
 Along your way you will encounter beasts and dungeon dwellers searching for gold of similar fortune.
-Some dungeon dwellers will be friendly. Help them and you will be rewarded, but keep in
-mind each dweller has their own story to tell and problems to overcome. Choosing to end
-the life of a dweller, or to help the wrong dweller, may have unintended consequences.
 
 ## Contributing
 Sprite, tile art, and quest lines are always welcome, but must be suitable for all ages.
@@ -44,3 +40,8 @@ Cam
 Paolo
 
     Questline - Dwarven Brothers
+
+## Like Andvaranaut?
+Andvaranaut is free and will never be monitized.
+Support the programmer and his gifted artistic friends with a small donation.
+(A good beer is $3.75 in our country).

@@ -122,7 +122,7 @@ static Args make(void)
     args.fps = 60;
 
     args.msen = 0.007f;
-    args.threads = 8;
+    args.threads = 4;
 
     return args;
 }

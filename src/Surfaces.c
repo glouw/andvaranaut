@@ -86,8 +86,8 @@ Surfaces s_load_surfaces(const Palette palette)
         /* >      */ "art/tiles/error.bmp",
         /* ?      */ "art/tiles/error.bmp",
         /* @      */ "art/tiles/error.bmp",
-        /* A      */ "art/sprites/missing.bmp",
-        /* B      */ "art/sprites/dwarf.bmp", // MAKE ME MY OWN TUTOR SPRITE
+        /* A      */ "art/sprites/dwarf.bmp", // TODO: MAKE ME MY OWN TUTOR SPRITE. DYES ARE FOR LOWER CASE SPRITES.
+        /* B      */ "art/sprites/missing.bmp",
         /* C      */ "art/sprites/missing.bmp",
         /* D      */ "art/sprites/missing.bmp",
         /* E      */ "art/sprites/missing.bmp",

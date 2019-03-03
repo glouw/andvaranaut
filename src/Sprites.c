@@ -772,7 +772,7 @@ static Sprites place_dummy(const Sprites sprites, const Map map, const Point cen
 
 static Sprites place_tutorial(Sprites sprites, const Map map, const Point center, const Timer tm)
 {
-    return append(sprites, s_register('B', avail(center, map), tm));
+    return append(sprites, s_register('A', avail(center, map), tm));
 }
 
 Map s_count_agents(const Sprites sprites, Map map)
