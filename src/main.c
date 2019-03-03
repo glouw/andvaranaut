@@ -8,8 +8,6 @@ int main(int argc, char* argv[])
 {
     u_check_art_directory();
 
-    p_save_color_pallete_as_pal();
-
     i_test();
 
     s_test();
@@ -45,13 +43,15 @@ int main(int argc, char* argv[])
 
     Sdl sdl = s_setup(args);
 
-    const Text yel = t_build("art/gui/SDS_8x8.ttf", 24, sdl.yel, sdl.blk);
+    const char* const text_path = "art/gui/SDS_8x8.ttf";
+    const int text_size = 28;
 
-    const Text red = t_build("art/gui/SDS_8x8.ttf", 24, sdl.red, sdl.blk);
+    const Text yel = t_build(text_path, text_size, sdl.palette.yel, sdl.palette.blk);
+    const Text red = t_build(text_path, text_size, sdl.palette.red, sdl.palette.blk);
 
     t_clear_title();
 
-    s_init_color_table();
+    s_init_color_table(sdl.palette);
 
     for(int renders = 0, fps = 0; args.xres == 512 ? renders < 5 : !in.done; renders++)
     {

@@ -25,16 +25,24 @@ static const uint32_t colors[] = {
 
 Palette p_make(void)
 {
-    const int len = u_len(colors);
-    const Palette pal = {
-        u_toss(uint32_t, len), len
-    };
-    for(int i = 0; i < len; i++)
+    static Palette zero;
+    Palette pal = zero;
+    pal.count = u_len(colors);
+    pal.colors = u_toss(uint32_t, pal.count);
+
+    for(int i = 0; i < pal.count; i++)
         pal.colors[i] = colors[i];
+
+    pal.blk = pal.colors[ 0];
+    pal.brn = pal.colors[ 5];
+    pal.red = pal.colors[ 7];
+    pal.yel = pal.colors[15];
+    pal.wht = pal.colors[16];
+
     return pal;
 }
 
-void p_save_color_pallete_as_pal(void)
+void p_save(const Palette pal)
 {
     FILE* const file = fopen("art/dawn.pal", "w");
 
@@ -50,9 +58,9 @@ void p_save_color_pallete_as_pal(void)
     // Dump the color table.
     //
 
-    for(int i = 0; i < u_len(colors); i++)
+    for(int i = 0; i < pal.count; i++)
     {
-        const uint32_t color = colors[i];
+        const uint32_t color = pal.colors[i];
         fprintf(file, "%d %d %d\n",
                 (color >> 0x10) & 0xFF,
                 (color >> 0x08) & 0xFF,

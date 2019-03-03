@@ -10,6 +10,7 @@
 #include "Scroll.h"
 #include "Attack.h"
 #include "Text.h"
+#include "Palette.h"
 
 #include <SDL2/SDL.h>
 
@@ -18,19 +19,18 @@ typedef struct
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Texture* canvas;
+
     int xres;
     int yres;
     int fps;
+
     Surfaces surfaces;
     Textures textures;
+
     int threads;
     int gui;
 
-    // TODO: Have palette objet in here and have these take from palette.
-    uint32_t wht;
-    uint32_t blk;
-    uint32_t red;
-    uint32_t yel;
+    Palette palette;
 }
 Sdl;
 

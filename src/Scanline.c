@@ -33,7 +33,7 @@ static int hash(const uint32_t color)
     return (color >> 4) & 0xFF;
 }
 
-void s_init_color_table(void)
+void s_init_color_table(const Palette palette)
 {
     //
     // 8-bit color lookup table hashing reveals 2 to the power of 8 bins.
@@ -41,8 +41,6 @@ void s_init_color_table(void)
 
     const int bins = 256;
     color_table = u_toss(uint32_t*, bins);
-
-    const Palette palette = p_make();
 
     for(int i = 0; i < palette.count; i++)
     {
@@ -52,13 +50,11 @@ void s_init_color_table(void)
         for(int j = 0; j < shades; j++)
             color_table[index][j] = shade_pixel(color, j);
     }
-
-    free(palette.colors);
 }
 
 static void put_pixel(const Scanline sl, const int x, const Point offset, const int tile, const int shade)
 {
-    SDL_Surface* const surface = sl.sdl.surfaces.surface[tile];
+    SDL_Surface* const surface = sl.sdl.surfaces.surface[tile].dye[DYE_WHT];
     const int row = surface->h * u_dec(offset.y);
     const int col = surface->w * u_dec(offset.x);
     const uint32_t* const pixels = (uint32_t*) surface->pixels;

@@ -1,12 +1,13 @@
 #pragma once
 
-#include <SDL2/SDL.h>
+#include "Surface.h"
+#include "Palette.h"
 
 typedef struct
 {
-    SDL_Surface** surface;
+    Surface* surface;
     int count;
 }
 Surfaces;
 
-Surfaces s_load_surfaces(void);
+Surfaces s_load_surfaces(const Palette);

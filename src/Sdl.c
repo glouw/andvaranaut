@@ -175,8 +175,10 @@ static void render_all_sprites(const Sdl sdl, const Text text, const Sprites spr
             if(target.x + target.w >= 0 && target.x < sdl.xres)
             {
                 const int selected = sprite->ascii - ' ';
-                SDL_Surface* const surface = sdl.surfaces.surface[selected];
-                SDL_Texture* const texture = sdl.textures.texture[selected];
+
+                SDL_Surface* const surface = sdl.surfaces.surface[selected].dye[DYE_WHT];
+                SDL_Texture* const texture = sdl.textures.texture[selected].dye[DYE_WHT];
+
                 const State state = sprite->state;
                 const Frame frame = t_lo(tm) ? FRAME_A : FRAME_B;
                 const SDL_Rect image = calc_state_frame(surface, state, frame);
@@ -245,15 +247,11 @@ Sdl s_setup(const Args args)
     // Surface loading also measured to be about half a second.
     //
 
-    sdl.surfaces = s_load_surfaces();
-
+    sdl.palette = p_make();
+    sdl.surfaces = s_load_surfaces(sdl.palette);
     sdl.textures = t_cache(sdl.surfaces, sdl.renderer);
 
     sdl.gui = '~' - ' ' + 26;
-    sdl.wht = 0xFFDFEFD7;
-    sdl.blk = 0xFF000000;
-    sdl.red = 0xFFD34549;
-    sdl.yel = 0xFFDBD75D;
 
     //
     // Cold boot is about three seconds all together.
@@ -300,7 +298,7 @@ static Attack draw_gauge_range(const Sdl sdl, const Gauge g, const Item it, cons
 
         const int x = g.points[g.count - 1].x * sens - (width - sdl.xres) / 2;
         const int y = g.points[g.count - 1].y * sens - (width - sdl.yres) / 2;
-        draw_box(sdl, x, y, width, sdl.wht, false);
+        draw_box(sdl, x, y, width, sdl.palette.wht, false);
 
         //
         // Reticule includes divide by zero check.
@@ -362,7 +360,7 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
             const Point corner = p_snap(point, grid);
             const Point center = p_sub(p_add(corner, middle), shift);
 
-            draw_box(sdl, center.x, center.y, grid, sdl.wht, true);
+            draw_box(sdl, center.x, center.y, grid, sdl.palette.wht, true);
 
             //
             // Populate Scroll int array that was cleared earlier.
@@ -393,7 +391,7 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
             };
             const Point corner = p_mul(which, grid);
             const Point center = p_sub(p_add(corner, middle), shift);
-            draw_box(sdl, center.x, center.y, grid, sdl.red, false);
+            draw_box(sdl, center.x, center.y, grid, sdl.palette.red, false);
         }
 
         //
@@ -402,7 +400,7 @@ static Attack draw_gauge_magic(const Sdl sdl, const Gauge g, const Item it, cons
 
         const Point point = p_add(p_mul(g.points[g.count - 1], sens), shift);
         const Point center = p_sub(p_add(point, middle), shift);
-        draw_box(sdl, center.x, center.y, 6, sdl.red, true);
+        draw_box(sdl, center.x, center.y, 6, sdl.palette.red, true);
     }
 
     const int scroll_index = s_index(sc);
@@ -463,7 +461,7 @@ static void draw_grid_layout(const Sdl sdl, const Overview ov, const Sprites spr
         const SDL_Rect to = { ov.w * i + ov.px, ov.h * j + ov.py, ov.w, ov.h };
         if(clipping(sdl, ov, to))
             continue;
-        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch], NULL, &to);
+        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[ch].dye[DYE_WHT], NULL, &to);
     }
 
     //
@@ -474,8 +472,8 @@ static void draw_grid_layout(const Sdl sdl, const Overview ov, const Sprites spr
     {
         Sprite* const sprite = &sprites.sprite[s];
         const int index = sprite->ascii - ' ';
-        const int w = sdl.surfaces.surface[index]->w / FRAMES;
-        const int h = sdl.surfaces.surface[index]->h / STATES;
+        const int w = sdl.surfaces.surface[index].dye[DYE_WHT]->w / FRAMES;
+        const int h = sdl.surfaces.surface[index].dye[DYE_WHT]->h / STATES;
         const SDL_Rect from = { w * t_lo(tm), h * sprite->state, w, h };
         const SDL_Rect to = {
             (int) ((ov.w * sprite->where.x - ov.w / 2) + ov.px),
@@ -485,7 +483,7 @@ static void draw_grid_layout(const Sdl sdl, const Overview ov, const Sprites spr
 
         if(clipping(sdl, ov, to))
             continue;
-        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[index], &from, &to);
+        SDL_RenderCopy(sdl.renderer, sdl.textures.texture[index].dye[DYE_WHT], &from, &to);
     }
 }
 
@@ -501,21 +499,21 @@ static void draw_sprite_panel(const Sdl sdl, const Overview ov, const Timer tm)
 
         if(s_sprite(i + ' '))
         {
-            const int w = sdl.surfaces.surface[i]->w / FRAMES;
-            const int h = sdl.surfaces.surface[i]->h / STATES;
+            const int w = sdl.surfaces.surface[i].dye[DYE_WHT]->w / FRAMES;
+            const int h = sdl.surfaces.surface[i].dye[DYE_WHT]->h / STATES;
             const SDL_Rect from = { w * t_lo(tm), h * IDLE, w, h };
             if(clipping(sdl, ov, to))
                 continue;
-            SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], &from, &to);
+            SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i].dye[DYE_WHT], &from, &to);
         }
-        else SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i], NULL, &to);
+        else
+            SDL_RenderCopy(sdl.renderer, sdl.textures.texture[i].dye[DYE_WHT], NULL, &to);
     }
 }
 
 void s_render_overlay(const Sdl sdl, const Overview ov, const Sprites sprites, const Map map, const Timer tm)
 {
     draw_grid_layout(sdl, ov, sprites, map, tm);
-
     draw_sprite_panel(sdl, ov, tm);
 }
 
@@ -527,8 +525,8 @@ static void draw_one_bar(const Sdl sdl, const Hero hero, const int position, con
 
     const float threshold = hero.warning * max;
 
-    SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
-    SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
+    SDL_Texture* const texture = sdl.textures.texture[sdl.gui].dye[DYE_WHT];
+    SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui].dye[DYE_WHT];
 
     const int w = surface->w;
 
@@ -593,8 +591,8 @@ static void draw_inventory_panel(const Sdl sdl, const Inventory inv)
 
     for(int i = 0; i < inv.items.max; i++)
     {
-        SDL_Texture* const texture = sdl.textures.texture[sdl.gui];
-        SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui];
+        SDL_Texture* const texture = sdl.textures.texture[sdl.gui].dye[DYE_WHT];
+        SDL_Surface* const surface = sdl.surfaces.surface[sdl.gui].dye[DYE_WHT];
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
 
@@ -623,8 +621,8 @@ static void draw_inventory_items(const Sdl sdl, const Inventory inv, const Input
             continue;
 
         const int index = c_get_surface_index(item.id.clas);
-        SDL_Texture* const texture = sdl.textures.texture[index];
-        SDL_Surface* const surface = sdl.surfaces.surface[index];
+        SDL_Texture* const texture = sdl.textures.texture[index].dye[DYE_WHT];
+        SDL_Surface* const surface = sdl.surfaces.surface[index].dye[DYE_WHT];
         const int w = surface->w;
         const int xx = sdl.xres - inv.width;
         const SDL_Rect from = { 0, w * item.id.index, w, w };
@@ -665,8 +663,8 @@ static void draw_map(const Sdl sdl, const Map map, const Point where)
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
     const Vram vram = v_lock(texture);
-    v_draw_rooms(vram, map, sdl.wht, sdl.blk);
-    v_draw_dot(vram, where, 3, sdl.red, sdl.blk);
+    v_draw_rooms(vram, map, sdl.palette.wht, sdl.palette.blk);
+    v_draw_dot(vram, where, 3, sdl.palette.red, sdl.palette.blk);
     v_unlock(texture);
 
     const SDL_Rect dst = { 0, 0, map.cols, map.rows };

@@ -27,7 +27,22 @@ static SDL_Surface* load(const char* const path)
     return converted;
 }
 
-Surfaces s_load_surfaces(void)
+static SDL_Surface* dye(SDL_Surface* const surface, const uint32_t from, const uint32_t to)
+{
+    uint32_t* const pixels = (uint32_t*) surface->pixels;
+    const int size = surface->w * surface->h;
+
+    for(int i = 0; i < size; i++)
+        if(pixels[i] == from)
+            pixels[i] = to;
+    //
+    // Convenience return.
+    //
+
+    return surface;
+}
+
+Surfaces s_load_surfaces(const Palette palette)
 {
 #pragma message "Maintainer: Apply new sprite pixel art in Surfaces.c::s_load_surfaces"
 
@@ -162,9 +177,15 @@ Surfaces s_load_surfaces(void)
     };
 
     const int count = u_len(names);
-    SDL_Surface** const surface = u_toss(SDL_Surface*, count);
+    Surface* surface = u_toss(Surface, count);
+
     for(int i = 0; i < count; i++)
-        surface[i] = load(names[i]); // TODO: Have it load an alternate surface with some colors swapped out.
+    {
+        const char* const name = names[i];
+        surface[i].dye[DYE_WHT] = load(name);
+        surface[i].dye[DYE_RED] = dye(load(name), palette.wht, palette.red);
+        surface[i].dye[DYE_BRN] = dye(load(name), palette.wht, palette.brn);
+    }
 
     const Surfaces surfaces = { surface, count };
     return surfaces;

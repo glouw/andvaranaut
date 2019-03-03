@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Texture.h"
 #include "Surfaces.h"
 
 typedef struct
 {
-    SDL_Texture** texture;
+    Texture* texture;
     int count;
 }
 Textures;
